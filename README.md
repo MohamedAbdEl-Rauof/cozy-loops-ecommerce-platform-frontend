@@ -35,4 +35,65 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
-hi
+
+frontend/
+├── public/                  # Static files
+├── src/
+│   ├── app/                 # App router structure
+│   │   ├── api/             # API routes (if needed)
+│   │   │   └── auth/        # Auth API routes
+│   │   │       └── [...nextauth]/
+│   │   │           └── route.js
+│   │   ├── auth/            # Auth pages
+│   │   │   ├── login/
+│   │   │   │   └── page.js
+│   │   │   ├── register/
+│   │   │   │   └── page.js
+│   │   │   └── forgot-password/
+│   │   │       └── page.js
+│   │   ├── products/        # Product pages
+│   │   │   ├── [id]/
+│   │   │   │   └── page.js  # Product detail page
+│   │   │   └── page.js      # Products listing page
+│   │   ├── cart/
+│   │   │   └── page.js      # Cart page
+│   │   ├── checkout/
+│   │   │   └── page.js      # Checkout page
+│   │   ├── profile/
+│   │   │   └── page.js      # User profile page
+│   │   ├── layout.js        # Root layout
+│   │   └── page.js          # Home page
+│   ├── components/          # Reusable components
+│   │   ├── auth/            # Auth components
+│   │   │   ├── LoginForm.jsx
+│   │   │   ├── RegisterForm.jsx
+│   │   │   └── ForgotPasswordForm.jsx
+│   │   ├── common/          # Shared components
+│   │   │   ├── Button.jsx
+│   │   │   ├── Input.jsx
+│   │   │   ├── Loader.jsx
+│   │   │   └── Alert.jsx
+│   │   ├── layout/          # Layout components
+│   │   │   ├── Header.jsx
+│   │   │   ├── Footer.jsx
+│   │   │   └── Sidebar.jsx
+│   │   └── product/         # Product-related components
+│   │       ├── ProductCard.jsx
+│   │       ├── ProductList.jsx
+│   │       └── ProductDetails.jsx
+│   ├── context/             # React context
+│   │   └── AuthContext.jsx  # Authentication context
+│   ├── hooks/               # Custom hooks
+│   │   └── useAuth.js       # Authentication hook
+│   ├── lib/                 # Utility libraries
+│   │   ├── api.js           # API client setup
+│   │   └── auth.js          # Auth utilities
+│   ├── services/            # Service layer
+│   │   ├── authService.js   # Auth API calls
+│   │   └── productService.js # Product API calls
+│   └── utils/               # Utility functions
+│       ├── tokenUtils.js    # Token handling functions
+│       └── validation.js    # Form validation
+├── middleware.js            # Next.js middleware for auth protection
+├── .env.local               # Environment variables
+└── package.json             # Dependencies
