@@ -1,5 +1,4 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -20,6 +19,11 @@ export function middleware(request: NextRequest) {
     '/auth/register',
     '/auth/forgot-password',
   ];
+
+  // Allow email verification routes to be accessed without authentication
+  if (pathname.startsWith('/user/verify-email/')) {
+    return NextResponse.next();
+  }
 
   // Check if the route is protected and user is not authenticated
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
@@ -44,5 +48,6 @@ export const config = {
     '/checkout/:path*',
     '/orders/:path*',
     '/auth/:path*',
+    '/user/verify-email/:path*',
   ],
 };
