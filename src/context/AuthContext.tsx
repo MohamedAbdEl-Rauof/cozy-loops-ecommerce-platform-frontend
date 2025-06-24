@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { login, register, logout, refreshToken } from '@/services/authService';
 import Cookies from 'js-cookie';
 
-// Define types for user and auth context
 interface User {
   id: string;
   email: string;
@@ -37,13 +36,13 @@ interface AuthContextType {
   register: (userData: RegisterData) => Promise<any>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
+  
 }
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
-// Create context with default values
 export const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: false,
@@ -67,7 +66,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (accessToken) {
         try {
-          // Get user data from stored value
           const userDataString = localStorage.getItem('user');
           if (userDataString) {
             const userData: User = JSON.parse(userDataString);
@@ -78,7 +76,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         } catch (error) {
           if (refreshTokenValue) {
             try {
-              // Try to refresh the token
               const response = await refreshToken(refreshTokenValue);
               Cookies.set('accessToken', response.accessToken, { secure: true, sameSite: 'strict' });
               localStorage.setItem('user', JSON.stringify(response.user));

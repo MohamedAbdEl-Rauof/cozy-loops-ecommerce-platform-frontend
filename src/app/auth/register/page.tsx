@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -12,14 +12,32 @@ import {
   Typography,
   IconButton,
   InputAdornment,
-  Grid,
   Link,
   Container,
   FormHelperText,
+  Grid,
+  Snackbar,
+  Alert,
+  CircularProgress,
+  Collapse,
 } from "@mui/material"
-import { Visibility, VisibilityOff, Check, Google, Apple, Instagram, Pinterest } from "@mui/icons-material"
+import {
+  Visibility,
+  VisibilityOff,
+  Check,
+  Google,
+  Apple,
+  Instagram,
+  Pinterest,
+  CheckCircle,
+  ErrorOutline
+} from "@mui/icons-material"
 import { ThemeProvider, createTheme } from "@mui/material/styles"
+import { Dialog, DialogContent, Fade, Grow } from "@mui/material";
+import { useAuth } from "@/context/AuthContext"
+import { useRouter } from 'next/navigation';
 import Image from "next/image"
+import axios from "axios"
 
 // Custom theme
 const theme = createTheme({
@@ -85,17 +103,24 @@ const registrationSchema = z
 type FormData = z.infer<typeof registrationSchema>
 
 export default function RegistrationPage() {
-  const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPassword, setShowPassword] = useState(false)
+  const [error, setError] = useState<string | null>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const { register } = useAuth();
+  const router = useRouter();
 
   const {
     control,
     handleSubmit,
     watch,
+    reset,
     formState: { errors, isValid, isDirty },
   } = useForm<FormData>({
     resolver: zodResolver(registrationSchema),
-    mode: "onChange", // Enable live validation
+    mode: "onChange",
     defaultValues: {
       email: "",
       firstName: "",
@@ -120,13 +145,53 @@ export default function RegistrationPage() {
     length: (password || "").length >= 8,
   }
 
-  const onSubmit = (data: FormData) => {
-    console.log("Form submitted successfully:", data)
-    // Handle successful submission
-  }
+  const onSubmit = async (data: FormData) => {
+    setIsSubmitting(true);
+    setError(null)
 
+    try {
+      const response = await register({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        password: data.password,
+      });
+
+      setShowSuccess(true);
+
+      reset();
+    } catch (error) {
+      console.error("Error submitting form:", error);
+
+      if (axios.isAxiosError(error) && error.response) {
+
+        if (error.response.status === 400 &&
+          error.response.data?.message?.includes("User already exists")) {
+          setError("This email is already registered. Please use a different email or try logging in.");
+          setShowErrorDialog(true);
+        } else {
+          setError(error.response.data?.message || "Registration failed. Please try again.");
+          setShowErrorDialog(true);
+        }
+      } else {
+        setError("Network error. Please check your connection and try again.");
+        setShowErrorDialog(true);
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Replace the current PasswordRequirement component with this enhanced version
   const PasswordRequirement = ({ met, text }: { met: boolean; text: string }) => (
-    <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
+    <Box sx={{
+      display: "flex",
+      alignItems: "center",
+      gap: 1,
+      mb: 0.5,
+      transition: 'all 0.3s ease',
+      opacity: met ? 1 : 0.7
+    }}>
       <Box
         sx={{
           width: 16,
@@ -136,6 +201,7 @@ export default function RegistrationPage() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          transition: 'background-color 0.3s ease',
         }}
       >
         {met && <Check sx={{ fontSize: 12, color: "white" }} />}
@@ -145,6 +211,7 @@ export default function RegistrationPage() {
         sx={{
           color: met ? "#4caf50" : "#757575",
           fontSize: "0.875rem",
+          transition: 'color 0.3s ease',
         }}
       >
         {text}
@@ -152,9 +219,112 @@ export default function RegistrationPage() {
     </Box>
   )
 
+  const CountdownDialog = () => {
+    const [countdown, setCountdown] = useState(5);
+
+    useEffect(() => {
+      if (showSuccess) {
+        const timer = setInterval(() => {
+          setCountdown((prev) => {
+            if (prev <= 1) {
+              clearInterval(timer);
+              router.push('/auth/login');
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+
+        return () => clearInterval(timer);
+      }
+    }, [showSuccess]);
+
+    return (
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        textAlign: 'center',
+        py: 4,
+        height: '100%',
+        justifyContent: 'center'
+      }}>
+        <Box sx={{ position: 'relative', mb: 4 }}>
+          <Fade in={showSuccess} timeout={1000}>
+            <CheckCircle sx={{
+              fontSize: 230,
+              color: '#4caf50',
+              animation: 'pulse 1.5s infinite',
+              '@keyframes pulse': {
+                '0%': { transform: 'scale(0.95)', opacity: 0.7 },
+                '70%': { transform: 'scale(1.1)', opacity: 1 },
+                '100%': { transform: 'scale(0.95)', opacity: 0.7 },
+              },
+            }} />
+          </Fade>
+        </Box>
+
+        <Typography variant="h4" sx={{ fontWeight: 600, mb: 2 }}>
+          Registration Successful!
+        </Typography>
+
+        <Typography variant="body1" sx={{ mb: 4, color: '#666', fontSize: '1.2rem', maxWidth: 600 }}>
+          Please check your email to confirm your account.
+          <br />
+          You will be redirected to the login page in <strong>{countdown}</strong> seconds.
+        </Typography>
+      </Box>
+    );
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ minHeight: "100vh", display: "flex" }}>
+
+        {/* Success Dialog with Animation */}
+        <Dialog
+          open={showSuccess}
+          TransitionComponent={Grow}
+          transitionDuration={700}
+          PaperProps={{
+            sx: {
+              borderRadius: 2,
+              maxWidth: 800,
+              width: '100%',
+              minHeight: 400,
+              p: 3
+            }
+          }}
+        >
+          <DialogContent>
+            <CountdownDialog />
+          </DialogContent>
+        </Dialog>
+
+        <Snackbar
+          open={showErrorDialog}
+          autoHideDuration={6000}
+          onClose={() => setShowErrorDialog(false)}
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          sx={{ mt: 6 }}
+        >
+          <Alert
+            onClose={() => setShowErrorDialog(false)}
+            severity="error"
+            variant="filled"
+            sx={{
+              width: '100%',
+              boxShadow: 3,
+              alignItems: 'center',
+              '& .MuiAlert-message': {
+                fontSize: '1rem'
+              }
+            }}
+          >
+            {error}
+          </Alert>
+        </Snackbar>
+
         {/* Left side - Image */}
         <Box
           sx={{
@@ -164,7 +334,9 @@ export default function RegistrationPage() {
           }}
         >
           <Image
-            src="/registration-bg.png"
+            src="/images/auth/register.webp"
+            quality={100}
+            priority
             alt="Hands holding a heart with craft materials"
             fill
             style={{ objectFit: "cover" }}
@@ -277,24 +449,31 @@ export default function RegistrationPage() {
                   )}
                 />
 
-                {/* Password Requirements - Only show when user starts typing */}
-                {hasStartedTypingPassword && (
-                  <Box sx={{ mb: 3, p: 2, backgroundColor: "#f9f9f9", borderRadius: 1 }}>
+                <Collapse in={Boolean(hasStartedTypingPassword)} timeout={600}>
+                  <Box sx={{
+                    mb: 3,
+                    p: 2,
+                    backgroundColor: "#f9f9f9",
+                    borderRadius: 1,
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+                    transition: 'all 0.3s ease-in-out'
+                  }}>
                     <Typography variant="body2" sx={{ mb: 1, color: "#666", fontWeight: 500 }}>
                       Your password must include:
                     </Typography>
-                    <Grid container spacing={1}>
-                      <Grid item xs={6}>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                      <Box sx={{ width: '50%' }}>
                         <PasswordRequirement met={passwordChecks.lowercase} text="Lower case letters" />
                         <PasswordRequirement met={passwordChecks.uppercase} text="Capital letters" />
-                      </Grid>
-                      <Grid item xs={6}>
-                        <PasswordRequirement met={passwordChecks.numbers} text="Numbers and symbols" />
+                      </Box>
+                      <Box sx={{ width: '50%' }}>
+                        <PasswordRequirement met={passwordChecks.numbers} text="Numbers" />
+                        <PasswordRequirement met={passwordChecks.symbols} text="Symbols" />
                         <PasswordRequirement met={passwordChecks.length} text="At least 8 characters" />
-                      </Grid>
-                    </Grid>
+                      </Box>
+                    </Box>
                   </Box>
-                )}
+                </Collapse>
 
                 {/* Confirm Password */}
                 <Controller
@@ -361,7 +540,7 @@ export default function RegistrationPage() {
                   )}
                 </Box>
 
-                {/* Submit Button - Disabled until form is valid */}
+                {/* Submit Button */}
                 <Button
                   type="submit"
                   fullWidth
@@ -382,57 +561,42 @@ export default function RegistrationPage() {
                     },
                   }}
                 >
-                  CREATE AN ACCOUNT
+                  {isSubmitting ? <CircularProgress size={30} sx={{ color: "#fff" }} /> : "Create Account"}
                 </Button>
 
                 {/* Social Login */}
                 <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mb: 3 }}>
-                  <IconButton
-                    sx={{
-                      width: 40,
-                      height: 40,
-                      backgroundColor: "#f5f5f5",
-                      "&:hover": { backgroundColor: "#e0e0e0" },
-                    }}
-                  >
-                    <Google sx={{ color: "#4285F4" }} />
-                  </IconButton>
-                  <IconButton
-                    sx={{
-                      width: 40,
-                      height: 40,
-                      backgroundColor: "#f5f5f5",
-                      "&:hover": { backgroundColor: "#e0e0e0" },
-                    }}
-                  >
-                    <Apple sx={{ color: "#000" }} />
-                  </IconButton>
-                  <IconButton
-                    sx={{
-                      width: 40,
-                      height: 40,
-                      backgroundColor: "#f5f5f5",
-                      "&:hover": { backgroundColor: "#e0e0e0" },
-                    }}
-                  >
-                    <Instagram sx={{ color: "#E4405F" }} />
-                  </IconButton>
-                  <IconButton
-                    sx={{
-                      width: 40,
-                      height: 40,
-                      backgroundColor: "#f5f5f5",
-                      "&:hover": { backgroundColor: "#e0e0e0" },
-                    }}
-                  >
-                    <Pinterest sx={{ color: "#BD081C" }} />
-                  </IconButton>
+                  {[
+                    { icon: <Google />, color: "#4285F4", name: "Google" },
+                    { icon: <Apple />, color: "#000", name: "Apple" },
+                    { icon: <Instagram />, color: "#E4405F", name: "Instagram" },
+                    { icon: <Pinterest />, color: "#BD081C", name: "Pinterest" }
+                  ].map((social, index) => (
+                    <IconButton
+                      key={index}
+                      aria-label={`Sign in with ${social.name}`}
+                      sx={{
+                        width: 40,
+                        height: 40,
+                        backgroundColor: "#f5f5f5",
+                        transition: 'transform 0.2s, background-color 0.2s',
+                        "&:hover": {
+                          backgroundColor: "#e0e0e0",
+                          transform: 'scale(1.1)'
+                        },
+                      }}
+                    >
+                      <Box component="span" sx={{ color: social.color }}>
+                        {social.icon}
+                      </Box>
+                    </IconButton>
+                  ))}
                 </Box>
 
                 {/* Sign In Link */}
                 <Typography variant="body2" sx={{ textAlign: "center", color: "#666" }}>
                   Already have an account?{" "}
-                  <Link href="/signin" color="primary" underline="hover">
+                  <Link href="/auth/signin" color="primary" underline="hover">
                     Sign in
                   </Link>
                 </Typography>

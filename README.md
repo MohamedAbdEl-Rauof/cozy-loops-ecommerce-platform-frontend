@@ -97,3 +97,24 @@ frontend/
 ├── middleware.js            # Next.js middleware for auth protection
 ├── .env.local               # Environment variables
 └── package.json             # Dependencies
+
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│                 │     │                 │     │                 │
+│  Registration   │────▶│  Email Sent     │────▶│  Verification   │
+│                 │     │                 │     │                 │
+└─────────────────┘     └─────────────────┘     └────────┬────────┘
+                                                         │
+                                                         ▼
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│                 │     │                 │     │                 │
+│  Protected      │◀────│  User           │◀────│  Login          │
+│  Routes         │     │  Authenticated  │     │                 │
+│                 │     │                 │     │                 │
+└─────────────────┘     └─────────────────┘     └─────────────────┘
+        ▲                                               ▲
+        │                                               │
+        │         ┌─────────────────┐                   │
+        │         │                 │                   │
+        └─────────│  Token Refresh  │◀──────────────────┘
+                  │                 │
+                  └─────────────────┘
