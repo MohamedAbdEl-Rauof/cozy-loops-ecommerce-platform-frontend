@@ -4,6 +4,7 @@ interface LoginResponse {
   accessToken: string;
   refreshToken: string;
   user: {
+    role: string;
     id: string;
     email: string;
     firstName?: string;
@@ -64,31 +65,10 @@ export const resetPassword = async (
 
 export const verifyEmail = async (token: string) => {
   try {
-    // Add directLogin=true query parameter to get tokens back
-    const response = await api.get(`/auth/verify-email/${token}?directLogin=true`, {
-      maxRedirects: 5,
-      validateStatus: function (status) {
-        return status >= 200 && status < 500;
-      }
-    });
-
-    // Check if the response contains tokens (direct login case)
-    if (response.data && response.data.accessToken) {
-      return {
-        success: true,
-        accessToken: response.data.accessToken,
-        refreshToken: response.data.refreshToken,
-        user: response.data.user
-      };
-    }
-
-    // Check if it's a redirect to verified=true (standard case)
-    if (response.status === 302 || response.headers.location?.includes('verified=true')) {
-      return { success: true };
-    }
-
+    const response = await api.get(`/api/auth/verify-email/${token}`);
     return response.data;
   } catch (error) {
+    console.error('Error verifying email:', error);
     throw error;
   }
 };
@@ -99,7 +79,7 @@ export const resendVerificationEmail = async (email: string): Promise<{ message:
 };
 
 export const getUser = async (token: string) => {
-  const response = await api.get('/users/me', {
+  const response = await api.get('/api/users/me', {
     headers: {
       Authorization: `Bearer ${token}`
     }

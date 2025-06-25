@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useState, useEffect, ReactNode, useContext } from 'react';
+import React, { createContext, useState, useEffect, ReactNode, useContext, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { login, register, logout, refreshToken, getUser } from '@/services/authService';
 import Cookies from 'js-cookie';
@@ -11,6 +11,7 @@ interface User {
   firstName?: string;
   lastName?: string;
   role?: string;
+  emailVerified?: boolean;
   [key: string]: any;
 }
 
@@ -33,11 +34,12 @@ interface AuthContextType {
   loading: boolean;
   error: string | null;
   login: (email: string, password: string) => Promise<AuthResponse>;
-  loginWithToken: (token: string) => Promise<User>;
+  loginWithToken: (token: string, refreshTokenValue?: string) => Promise<User>;
   register: (userData: RegisterData) => Promise<any>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
-
+  updateUserData: (userData: Partial<User>) => void;
+  clearError: () => void;
 }
 
 interface AuthProviderProps {
@@ -53,98 +55,99 @@ export const AuthContext = createContext<AuthContextType>({
   register: async () => ({}),
   logout: async () => { },
   isAuthenticated: false,
+  updateUserData: () => { },
+  clearError: () => { },
 });
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const router = useRouter();
+
+  const clearError = useCallback(() => {
+    setError(null);
+  }, []);
+
+  const updateUserData = useCallback((userData: Partial<User>) => {
+    setUser(prevUser => prevUser ? { ...prevUser, ...userData } : null);
+  }, []);
 
   useEffect(() => {
     const checkAuthStatus = async () => {
       const accessToken = Cookies.get('accessToken');
       const refreshTokenValue = Cookies.get('refreshToken');
 
-      if (accessToken) {
-        try {
-          // Try to get fresh user data from API first
-          try {
-            const userData = await getUser(accessToken);
-            setUser(userData);
-            setIsAuthenticated(true);
-            localStorage.setItem('user', JSON.stringify(userData));
-            return;
-          } catch (apiError) {
-            console.warn('Could not fetch fresh user data, falling back to stored data', apiError);
+      if (!accessToken) {
+        setIsAuthenticated(false);
+        setLoading(false);
+        return;
+      }
 
-            // Fall back to stored user data
-            const userDataString = localStorage.getItem('user');
-            if (userDataString) {
-              const userData: User = JSON.parse(userDataString);
+      try {
+        const userData = await getUser(accessToken);
+        setUser(userData);
+        setIsAuthenticated(true);
+      } catch (error) {
+        if (refreshTokenValue) {
+          try {
+            const response = await refreshToken(refreshTokenValue);
+
+            Cookies.set('accessToken', response.accessToken, {
+              secure: true,
+              sameSite: 'strict',
+              expires: 1
+            });
+
+            try {
+              const userData = await getUser(response.accessToken);
               setUser(userData);
               setIsAuthenticated(true);
-            } else {
-              throw new Error('No user data found');
+            } catch (userDataError) {
+              setUser(response.user);
+              setIsAuthenticated(true);
             }
+          } catch (refreshError) {
+            await handleLogout(false);
           }
-        } catch (error) {
-          if (refreshTokenValue) {
-            try {
-              const response = await refreshToken(refreshTokenValue);
-              Cookies.set('accessToken', response.accessToken, { secure: true, sameSite: 'strict' });
-
-              // After refreshing token, get fresh user data
-              try {
-                const userData = await getUser(response.accessToken);
-                setUser(userData);
-                setIsAuthenticated(true);
-                localStorage.setItem('user', JSON.stringify(userData));
-              } catch (userDataError) {
-                // If we can't get fresh data, use what came with the refresh token response
-                setUser(response.user);
-                setIsAuthenticated(true);
-                localStorage.setItem('user', JSON.stringify(response.user));
-              }
-            } catch (refreshError) {
-              handleLogout();
-            }
-          } else {
-            handleLogout();
-          }
+        } else {
+          await handleLogout(false);
         }
-      } else {
-        setIsAuthenticated(false);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     checkAuthStatus();
   }, []);
 
- const handleLogin = async (email: string, password: string): Promise<AuthResponse> => {
+  const handleLogin = async (email: string, password: string): Promise<AuthResponse> => {
     try {
       setLoading(true);
-      setError(null);
-      
-      // 1. Get initial login response with tokens
+      clearError();
+
       const response = await login(email, password);
 
-      // 2. Store tokens in cookies
-      Cookies.set('accessToken', response.accessToken, { secure: true, sameSite: 'strict' });
-      Cookies.set('refreshToken', response.refreshToken, { secure: true, sameSite: 'strict' });
+      Cookies.set('accessToken', response.accessToken, {
+        secure: true,
+        sameSite: 'strict',
+        expires: 1
+      });
 
-      // 3. Get complete user profile with the token
+      Cookies.set('refreshToken', response.refreshToken, {
+        secure: true,
+        sameSite: 'strict',
+        expires: 7
+      });
+
       let userData = response.user;
-      
+
       try {
-        // Try to get more complete user data from the /users/me endpoint
         const fullUserData = await getUser(response.accessToken);
         userData = {
           ...userData,
           ...fullUserData,
-          // Ensure these fields exist
           firstName: fullUserData.firstName || userData.firstName || '',
           lastName: fullUserData.lastName || userData.lastName || ''
         };
@@ -152,28 +155,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.warn('Could not fetch complete profile, using basic user data', profileError);
       }
 
-      // 4. Create the final user object
-      const transformedUser: User = {
-        ...userData,
-        firstName: userData.firstName || '',
-        lastName: userData.lastName || ''
-      };
-
-      // 5. Store user data in localStorage
-      localStorage.setItem('user', JSON.stringify(transformedUser));
-
-      // 6. Update state
-      setUser(transformedUser);
+      setUser(userData);
       setIsAuthenticated(true);
-      
-      // 7. Navigate to home page
-      router.push('/');
-      
-      // 8. Return the response with enhanced user data
+
+      if (userData.role === 'admin') {
+        router.push('/admin/dashboard');
+      } else {
+        router.push('/');
+      }
+
       return {
         accessToken: response.accessToken,
         refreshToken: response.refreshToken,
-        user: transformedUser
+        user: userData
       };
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || 'Login failed';
@@ -184,35 +178,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  // The loginWithToken function now uses the imported getUserDataFromToken
-  const loginWithToken = async (token: string) => {
+  const loginWithToken = async (token: string, refreshTokenValue?: string): Promise<User> => {
     try {
       setLoading(true);
-      setError(null);
+      clearError();
 
-      // Get user data using the token
+      Cookies.set('accessToken', token, {
+        secure: true,
+        sameSite: 'strict',
+        expires: 1 
+      });
+
+      if (refreshTokenValue) {
+        Cookies.set('refreshToken', refreshTokenValue, {
+          secure: true,
+          sameSite: 'strict',
+          expires: 7 
+        });
+      }
+
       const userData = await getUser(token);
 
-      // Store token in cookies (not localStorage for better security)
-      Cookies.set('accessToken', token, { secure: true, sameSite: 'strict' });
-
-      // Transform the user object to match our User interface if needed
-      const user = {
-        id: userData.id,
-        email: userData.email,
-        firstName: userData.firstName || '',
-        lastName: userData.lastName || '',
-        role: userData.role || 'user'
-      };
-
-      // Store user data
-      localStorage.setItem('user', JSON.stringify(user));
-
-      // Update context state
-      setUser(user);
+      setUser(userData);
       setIsAuthenticated(true);
 
-      return user;
+      return userData;
     } catch (error: any) {
       console.error('Login with token failed:', error);
       setError(error.message || 'Failed to authenticate with token');
@@ -222,12 +212,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-
-
   const handleRegister = async (userData: RegisterData): Promise<any> => {
     try {
       setLoading(true);
-      setError(null);
+      clearError();
       const response = await register(userData);
       return response;
     } catch (error: any) {
@@ -239,7 +227,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const handleLogout = async (): Promise<void> => {
+  const handleLogout = async (redirect: boolean = true): Promise<void> => {
     try {
       const refreshTokenValue = Cookies.get('refreshToken');
       if (refreshTokenValue) {
@@ -248,11 +236,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
+
       Cookies.remove('accessToken');
       Cookies.remove('refreshToken');
-      localStorage.removeItem('user');
+
       setUser(null);
-      router.push('/auth/login');
+      setIsAuthenticated(false);
+
+      if (redirect) {
+        router.push('/auth/login');
+      }
     }
   };
 
@@ -261,10 +254,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     loading,
     error,
     login: handleLogin,
-    loginWithToken: loginWithToken,
+    loginWithToken,
     register: handleRegister,
     logout: handleLogout,
-    isAuthenticated: !!user,
+    isAuthenticated,
+    updateUserData,
+    clearError,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

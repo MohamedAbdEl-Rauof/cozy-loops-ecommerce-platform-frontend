@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -36,6 +36,27 @@ export default function LoginPage() {
   const [hasStartedTypingPassword, setHasStartedTypingPassword] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [forgetPasswordOpen, setForgetPasswordOpen] = useState(false)
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: '' });
+
+
+  // Add this to your login page component
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const verified = searchParams.get('verified');
+
+    if (verified === 'true') {
+      // Show success message for email verification
+      setSnackbar({
+        open: true,
+        message: 'Email verified successfully! You can now log in.',
+        severity: 'success'
+      });
+
+      // Remove the verified parameter from the URL to prevent showing the message again on refresh
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, newUrl);
+    }
+  }, []);
 
   const {
     control,
