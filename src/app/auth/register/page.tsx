@@ -15,7 +15,6 @@ import {
   Link,
   Container,
   FormHelperText,
-  Grid,
   Snackbar,
   Alert,
   CircularProgress,
@@ -25,52 +24,16 @@ import {
   Visibility,
   VisibilityOff,
   Check,
-  Google,
-  Apple,
-  Instagram,
-  Pinterest,
   CheckCircle,
   ErrorOutline,
   Close
 } from "@mui/icons-material"
-import { ThemeProvider, createTheme } from "@mui/material/styles"
 import { Dialog, DialogContent, Fade, Grow } from "@mui/material";
 import { useAuth } from "@/context/AuthContext"
-import { useRouter } from 'next/navigation';
 import Image from "next/image"
 import axios from "axios"
 import { resendVerificationEmail } from "@/services/authService"
-
-// Custom theme
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: "#ff7043",
-    },
-  },
-  components: {
-    MuiTextField: {
-      styleOverrides: {
-        root: {
-          "& .MuiOutlinedInput-root": {
-            height: "48px",
-            borderRadius: "8px",
-          },
-        },
-      },
-    },
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          borderRadius: "8px",
-          textTransform: "uppercase",
-          fontWeight: 600,
-          letterSpacing: "0.5px",
-        },
-      },
-    },
-  },
-})
+import SocialAuth from "@/components/shared/SocialAuth"
 
 // Zod validation schema
 const registrationSchema = z
@@ -533,332 +496,337 @@ export default function RegistrationPage() {
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <Box sx={{ minHeight: "100vh", display: "flex" }}>
-        <Dialog
-          open={showSuccess}
-          TransitionComponent={Grow}
-          transitionDuration={700}
-          PaperProps={{
-            sx: {
-              borderRadius: 2,
-              maxWidth: 800,
-              width: '100%',
-              minHeight: 400,
-              p: 3
+    <Box sx={{ minHeight: "100vh", display: "flex" }}>
+      <Dialog
+        open={showSuccess}
+        TransitionComponent={Grow}
+        transitionDuration={700}
+        PaperProps={{
+          sx: {
+            borderRadius: 2,
+            maxWidth: 800,
+            width: '100%',
+            minHeight: 400,
+            p: 3
+          }
+        }}
+      >
+        <DialogContent>
+          <CountdownDialog />
+        </DialogContent>
+      </Dialog>
+
+      <VerificationSnackbar />
+      <Snackbar
+        open={showErrorDialog}
+        autoHideDuration={6000}
+        onClose={() => setShowErrorDialog(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        sx={{ mt: 6 }}
+      >
+        <Alert
+          onClose={() => setShowErrorDialog(false)}
+          severity="error"
+          variant="filled"
+          sx={{
+            width: '100%',
+            boxShadow: 3,
+            alignItems: 'center',
+            '& .MuiAlert-message': {
+              fontSize: '1rem'
             }
           }}
         >
-          <DialogContent>
-            <CountdownDialog />
-          </DialogContent>
-        </Dialog>
+          {error}
+        </Alert>
+      </Snackbar>
 
-        <VerificationSnackbar />
-        <Snackbar
-          open={showErrorDialog}
-          autoHideDuration={6000}
-          onClose={() => setShowErrorDialog(false)}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-          sx={{ mt: 6 }}
-        >
-          <Alert
-            onClose={() => setShowErrorDialog(false)}
-            severity="error"
-            variant="filled"
-            sx={{
-              width: '100%',
-              boxShadow: 3,
-              alignItems: 'center',
-              '& .MuiAlert-message': {
-                fontSize: '1rem'
-              }
-            }}
-          >
-            {error}
-          </Alert>
-        </Snackbar>
+      {/* Left side - Image */}
+      <Box
+        sx={{
+          display: { xs: "none", lg: "flex" },
+          width: { lg: "50%" },
+          position: "relative",
+        }}
+      >
+        <Image
+          src="/images/auth/register.webp"
+          quality={100}
+          priority
+          alt="Hands holding a heart with craft materials"
+          fill
+          style={{ objectFit: "cover" }}
+        />
+      </Box>
 
-        {/* Left side - Image */}
-        <Box
-          sx={{
-            display: { xs: "none", lg: "flex" },
-            width: { lg: "50%" },
-            position: "relative",
-          }}
-        >
-          <Image
-            src="/images/auth/register.webp"
-            quality={100}
-            priority
-            alt="Hands holding a heart with craft materials"
-            fill
-            style={{ objectFit: "cover" }}
-          />
-        </Box>
+      {/* Right side - Form */}
+      <Box
+        sx={{
+          width: { xs: "100%", lg: "50%" },
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          p: 3,
+          backgroundColor: "white",
+        }}
+      >
+        <Container maxWidth="sm">
+          <Box sx={{ width: "100%", maxWidth: 400, mx: "auto" }}>
+            <Typography
+              variant="h4"
+              component="h1"
+              sx={{
+                textAlign: "center",
+                mb: 4,
+                fontWeight: 600,
+                color: "#1a1a1a",
+              }}
+            >
+              Create Your Account
+            </Typography>
 
-        {/* Right side - Form */}
-        <Box
-          sx={{
-            width: { xs: "100%", lg: "50%" },
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            p: 3,
-            backgroundColor: "white",
-          }}
-        >
-          <Container maxWidth="sm">
-            <Box sx={{ width: "100%", maxWidth: 400, mx: "auto" }}>
-              <Typography
-                variant="h4"
-                component="h1"
-                sx={{
-                  textAlign: "center",
-                  mb: 4,
-                  fontWeight: 600,
-                  color: "#1a1a1a",
-                }}
-              >
-                Create Your Account
-              </Typography>
+            <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 3 }}>
+              {/* Email */}
+              <Controller
+                name="email"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label="Email"
+                    type="email"
+                    placeholder="Enter email address"
+                    error={!!errors.email}
+                    helperText={errors.email?.message}
+                    sx={{
+                      mb: 3,
+                      '& .MuiOutlinedInput-root': {
+                        height: 'var(--input-height)',
+                        borderRadius: 'var(--input-border-radius)'
+                      }
+                    }}
+                  />
+                )}
+              />
 
-              <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 3 }}>
-                {/* Email */}
-                <Controller
-                  name="email"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      fullWidth
-                      label="Email"
-                      type="email"
-                      placeholder="Enter email address"
-                      error={!!errors.email}
-                      helperText={errors.email?.message}
-                      sx={{ mb: 3 }}
-                    />
-                  )}
-                />
+              {/* First Name */}
+              <Controller
+                name="firstName"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label="First name"
+                    placeholder="Enter first name"
+                    error={!!errors.firstName}
+                    helperText={errors.firstName?.message}
+                    sx={{
+                      mb: 3,
+                      '& .MuiOutlinedInput-root': {
+                        height: 'var(--input-height)',
+                        borderRadius: 'var(--input-border-radius)'
+                      }
+                    }}
+                  />
+                )}
+              />
 
-                {/* First Name */}
-                <Controller
-                  name="firstName"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      fullWidth
-                      label="First name"
-                      placeholder="Enter first name"
-                      error={!!errors.firstName}
-                      helperText={errors.firstName?.message}
-                      sx={{ mb: 3 }}
-                    />
-                  )}
-                />
+              {/* Last Name */}
+              <Controller
+                name="lastName"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label="Last name"
+                    placeholder="Enter last name"
+                    error={!!errors.lastName}
+                    helperText={errors.lastName?.message}
+                    sx={{
+                      mb: 3,
+                      '& .MuiOutlinedInput-root': {
+                        height: 'var(--input-height)',
+                        borderRadius: 'var(--input-border-radius)'
+                      }
+                    }}
+                  />
+                )}
+              />
 
-                {/* Last Name */}
-                <Controller
-                  name="lastName"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      fullWidth
-                      label="Last name"
-                      placeholder="Enter last name"
-                      error={!!errors.lastName}
-                      helperText={errors.lastName?.message}
-                      sx={{ mb: 3 }}
-                    />
-                  )}
-                />
+              {/* Password */}
+              <Controller
+                name="password"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label="Password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    error={!!errors.password}
+                    helperText={errors.password?.message}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{
+                      mb: hasStartedTypingPassword ? 1 : 3,
+                      '& .MuiOutlinedInput-root': {
+                        height: 'var(--input-height)',
+                        borderRadius: 'var(--input-border-radius)'
+                      }
+                    }}
+                  />
+                )}
+              />
 
-                {/* Password */}
-                <Controller
-                  name="password"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      fullWidth
-                      label="Password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="••••••••"
-                      error={!!errors.password}
-                      helperText={errors.password?.message}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                              {showPassword ? <VisibilityOff /> : <Visibility />}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                      sx={{ mb: hasStartedTypingPassword ? 1 : 3 }}
-                    />
-                  )}
-                />
-
-                <Collapse in={Boolean(hasStartedTypingPassword)} timeout={600}>
-                  <Box sx={{
-                    mb: 3,
-                    p: 2,
-                    backgroundColor: "#f9f9f9",
-                    borderRadius: 1,
-                    boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-                    transition: 'all 0.3s ease-in-out'
-                  }}>
-                    <Typography variant="body2" sx={{ mb: 1, color: "#666", fontWeight: 500 }}>
-                      Your password must include:
-                    </Typography>
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                      <Box sx={{ width: '50%' }}>
-                        <PasswordRequirement met={passwordChecks.lowercase} text="Lower case letters" />
-                        <PasswordRequirement met={passwordChecks.uppercase} text="Capital letters" />
-                      </Box>
-                      <Box sx={{ width: '50%' }}>
-                        <PasswordRequirement met={passwordChecks.numbers} text="Numbers" />
-                        <PasswordRequirement met={passwordChecks.symbols} text="Symbols" />
-                        <PasswordRequirement met={passwordChecks.length} text="At least 8 characters" />
-                      </Box>
+              <Collapse in={Boolean(hasStartedTypingPassword)} timeout={600}>
+                <Box sx={{
+                  mb: 3,
+                  p: 2,
+                  backgroundColor: "#f9f9f9",
+                  borderRadius: 1,
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+                  transition: 'all 0.3s ease-in-out'
+                }}>
+                  <Typography variant="body2" sx={{ mb: 1, color: "#666", fontWeight: 500 }}>
+                    Your password must include:
+                  </Typography>
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                    <Box sx={{ width: '50%' }}>
+                      <PasswordRequirement met={passwordChecks.lowercase} text="Lower case letters" />
+                      <PasswordRequirement met={passwordChecks.uppercase} text="Capital letters" />
+                    </Box>
+                    <Box sx={{ width: '50%' }}>
+                      <PasswordRequirement met={passwordChecks.numbers} text="Numbers" />
+                      <PasswordRequirement met={passwordChecks.symbols} text="Symbols" />
+                      <PasswordRequirement met={passwordChecks.length} text="At least 8 characters" />
                     </Box>
                   </Box>
-                </Collapse>
+                </Box>
+              </Collapse>
 
-                {/* Confirm Password */}
+              {/* Confirm Password */}
+              <Controller
+                name="confirmPassword"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    fullWidth
+                    label="Confirm password"
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    error={!!errors.confirmPassword}
+                    helperText={errors.confirmPassword?.message}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)} edge="end">
+                            {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
+                    sx={{
+                      mb: 3,
+                      '& .MuiOutlinedInput-root': {
+                        height: 'var(--input-height)',
+                        borderRadius: 'var(--input-border-radius)'
+                      }
+                    }}
+                  />
+                )}
+              />
+
+              {/* Checkboxes */}
+              <Box sx={{ mb: 3 }}>
                 <Controller
-                  name="confirmPassword"
+                  name="emailUpdates"
                   control={control}
                   render={({ field }) => (
-                    <TextField
-                      {...field}
-                      fullWidth
-                      label="Confirm password"
-                      type={showConfirmPassword ? "text" : "password"}
-                      placeholder="••••••••"
-                      error={!!errors.confirmPassword}
-                      helperText={errors.confirmPassword?.message}
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)} edge="end">
-                              {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      }}
-                      sx={{ mb: 3 }}
+                    <FormControlLabel
+                      control={<Checkbox {...field} checked={field.value} />}
+                      label="Yes, email me news and updates"
+                      sx={{ mb: 1, color: "black" }}
                     />
                   )}
                 />
 
-                {/* Checkboxes */}
-                <Box sx={{ mb: 3 }}>
-                  <Controller
-                    name="emailUpdates"
-                    control={control}
-                    render={({ field }) => (
-                      <FormControlLabel
-                        control={<Checkbox {...field} checked={field.value} />}
-                        label="Yes, email me news and updates"
-                        sx={{ mb: 1, color: "black" }}
-                      />
-                    )}
-                  />
-
-                  <Controller
-                    name="agreeToTerms"
-                    control={control}
-                    render={({ field }) => (
-                      <FormControlLabel
-                        control={<Checkbox {...field} checked={field.value} />}
-                        label={
-                          <Typography variant="body2" color="black">
-                            I agree to the
-                            <Link href="/terms" color="primary" underline="hover">
-                              Terms of Services
-                            </Link>
-                          </Typography>
-                        }
-                      />
-                    )}
-                  />
-                  {errors.agreeToTerms && (
-                    <FormHelperText error sx={{ ml: 0 }}>
-                      {errors.agreeToTerms.message}
-                    </FormHelperText>
+                <Controller
+                  name="agreeToTerms"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControlLabel
+                      control={<Checkbox {...field} checked={field.value} />}
+                      label={
+                        <Typography variant="body2" color="black">
+                          I agree to the
+                          <Link href="/auth/register" sx={{ color: "var(--primary-color)" }} underline="hover">
+                            Terms of Services
+                          </Link>
+                        </Typography>
+                      }
+                    />
                   )}
-                </Box>
-
-                {/* Submit Button */}
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  size="large"
-                  disabled={!isValid || !isDirty}
-                  sx={{
-                    height: 48,
-                    mb: 3,
-                    backgroundColor: "#FE8253",
-                    color: "white",
-                    "&:hover": {
-                      backgroundColor: "#ff5722",
-                    },
-                    "&:disabled": {
-                      backgroundColor: "#ccc",
-                      color: "#666",
-                    },
-                  }}
-                >
-                  {isSubmitting ? <CircularProgress size={30} sx={{ color: "#fff" }} /> : "Create Account"}
-                </Button>
-
-                {/* Social Login */}
-                <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mb: 3 }}>
-                  {[
-                    { icon: <Google />, color: "#4285F4", name: "Google" },
-                    { icon: <Apple />, color: "#000", name: "Apple" },
-                    { icon: <Instagram />, color: "#E4405F", name: "Instagram" },
-                    { icon: <Pinterest />, color: "#BD081C", name: "Pinterest" }
-                  ].map((social, index) => (
-                    <IconButton
-                      key={index}
-                      aria-label={`Sign in with ${social.name}`}
-                      sx={{
-                        width: 40,
-                        height: 40,
-                        backgroundColor: "#f5f5f5",
-                        transition: 'transform 0.2s, background-color 0.2s',
-                        "&:hover": {
-                          backgroundColor: "#e0e0e0",
-                          transform: 'scale(1.1)'
-                        },
-                      }}
-                    >
-                      <Box component="span" sx={{ color: social.color }}>
-                        {social.icon}
-                      </Box>
-                    </IconButton>
-                  ))}
-                </Box>
-
-                {/* Sign In Link */}
-                <Typography variant="body2" sx={{ textAlign: "center", color: "#666" }}>
-                  Already have an account?{" "}
-                  <Link href="/auth/signin" color="primary" underline="hover">
-                    Sign in
-                  </Link>
-                </Typography>
+                />
+                {errors.agreeToTerms && (
+                  <FormHelperText error sx={{ ml: 0 }}>
+                    {errors.agreeToTerms.message}
+                  </FormHelperText>
+                )}
               </Box>
+
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                size="large"
+                disabled={!isValid || !isDirty}
+                sx={{
+                  height: 'var(--input-height)',
+                  mb: 3,
+                  backgroundColor: "var(--primary-color)",
+                  color: "white",
+                  borderRadius: 'var(--button-border-radius)',
+                  fontWeight: 'var(--button-font-weight)',
+                  letterSpacing: 'var(--button-letter-spacing)',
+                  "&:hover": {
+                    backgroundColor: "var(--primary-hover)",
+                  },
+                  "&:disabled": {
+                    backgroundColor: "var(--primary-disabled)",
+                    color: "#666",
+                  },
+                }}
+              >
+                {isSubmitting ? <CircularProgress size={30} sx={{ color: "#fff" }} /> : "Create Account"}
+              </Button>
+
+              {/* Social Login */}
+              <SocialAuth />
+
+              {/* Sign In Link */}
+              <Typography variant="body2" sx={{ textAlign: "center", color: "#666" }}>
+                Already have an account?{" "}
+                <Link href="/auth/login" sx={{ color: "var(--primary-color)" }} underline="hover">
+                  Sign in
+                </Link>
+              </Typography>
             </Box>
-          </Container>
-        </Box>
+          </Box>
+        </Container>
       </Box>
-    </ThemeProvider>
+    </Box>
   )
 }

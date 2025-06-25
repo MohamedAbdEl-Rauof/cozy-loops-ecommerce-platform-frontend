@@ -2,7 +2,7 @@
 
 import React, { createContext, useState, useEffect, ReactNode, useContext } from 'react';
 import { useRouter } from 'next/navigation';
-import { login, register, logout, refreshToken } from '@/services/authService';
+import { login, register, logout, refreshToken, getUser } from '@/services/authService';
 import Cookies from 'js-cookie';
 
 interface User {
@@ -11,7 +11,7 @@ interface User {
   firstName?: string;
   lastName?: string;
   role?: string;
-  [key: string]: any; 
+  [key: string]: any;
 }
 
 interface AuthResponse {
@@ -33,10 +33,11 @@ interface AuthContextType {
   loading: boolean;
   error: string | null;
   login: (email: string, password: string) => Promise<AuthResponse>;
+  loginWithToken: (token: string) => Promise<User>;
   register: (userData: RegisterData) => Promise<any>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
-  
+
 }
 
 interface AuthProviderProps {
@@ -48,6 +49,7 @@ export const AuthContext = createContext<AuthContextType>({
   loading: false,
   error: null,
   login: async () => ({ accessToken: '', refreshToken: '', user: {} as User }),
+  loginWithToken: async () => ({} as User),
   register: async () => ({}),
   logout: async () => { },
   isAuthenticated: false,
@@ -58,6 +60,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   useEffect(() => {
     const checkAuthStatus = async () => {
@@ -66,20 +69,44 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (accessToken) {
         try {
-          const userDataString = localStorage.getItem('user');
-          if (userDataString) {
-            const userData: User = JSON.parse(userDataString);
+          // Try to get fresh user data from API first
+          try {
+            const userData = await getUser(accessToken);
             setUser(userData);
-          } else {
-            throw new Error('No user data found');
+            setIsAuthenticated(true);
+            localStorage.setItem('user', JSON.stringify(userData));
+            return;
+          } catch (apiError) {
+            console.warn('Could not fetch fresh user data, falling back to stored data', apiError);
+
+            // Fall back to stored user data
+            const userDataString = localStorage.getItem('user');
+            if (userDataString) {
+              const userData: User = JSON.parse(userDataString);
+              setUser(userData);
+              setIsAuthenticated(true);
+            } else {
+              throw new Error('No user data found');
+            }
           }
         } catch (error) {
           if (refreshTokenValue) {
             try {
               const response = await refreshToken(refreshTokenValue);
               Cookies.set('accessToken', response.accessToken, { secure: true, sameSite: 'strict' });
-              localStorage.setItem('user', JSON.stringify(response.user));
-              setUser(response.user);
+
+              // After refreshing token, get fresh user data
+              try {
+                const userData = await getUser(response.accessToken);
+                setUser(userData);
+                setIsAuthenticated(true);
+                localStorage.setItem('user', JSON.stringify(userData));
+              } catch (userDataError) {
+                // If we can't get fresh data, use what came with the refresh token response
+                setUser(response.user);
+                setIsAuthenticated(true);
+                localStorage.setItem('user', JSON.stringify(response.user));
+              }
             } catch (refreshError) {
               handleLogout();
             }
@@ -87,6 +114,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             handleLogout();
           }
         }
+      } else {
+        setIsAuthenticated(false);
       }
       setLoading(false);
     };
@@ -94,37 +123,58 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     checkAuthStatus();
   }, []);
 
-  const handleLogin = async (email: string, password: string): Promise<AuthResponse> => {
+ const handleLogin = async (email: string, password: string): Promise<AuthResponse> => {
     try {
       setLoading(true);
       setError(null);
+      
+      // 1. Get initial login response with tokens
       const response = await login(email, password);
 
-      // Transform the user object to match our User interface
+      // 2. Store tokens in cookies
+      Cookies.set('accessToken', response.accessToken, { secure: true, sameSite: 'strict' });
+      Cookies.set('refreshToken', response.refreshToken, { secure: true, sameSite: 'strict' });
+
+      // 3. Get complete user profile with the token
+      let userData = response.user;
+      
+      try {
+        // Try to get more complete user data from the /users/me endpoint
+        const fullUserData = await getUser(response.accessToken);
+        userData = {
+          ...userData,
+          ...fullUserData,
+          // Ensure these fields exist
+          firstName: fullUserData.firstName || userData.firstName || '',
+          lastName: fullUserData.lastName || userData.lastName || ''
+        };
+      } catch (profileError) {
+        console.warn('Could not fetch complete profile, using basic user data', profileError);
+      }
+
+      // 4. Create the final user object
       const transformedUser: User = {
-        ...response.user,
-        // Add derived firstName and lastName if they don't exist
-        firstName: response.user.firstName || '',
-        lastName: response.user.lastName || ''
+        ...userData,
+        firstName: userData.firstName || '',
+        lastName: userData.lastName || ''
       };
 
-      // Create a transformed response that matches AuthResponse
-      const transformedResponse: AuthResponse = {
+      // 5. Store user data in localStorage
+      localStorage.setItem('user', JSON.stringify(transformedUser));
+
+      // 6. Update state
+      setUser(transformedUser);
+      setIsAuthenticated(true);
+      
+      // 7. Navigate to home page
+      router.push('/');
+      
+      // 8. Return the response with enhanced user data
+      return {
         accessToken: response.accessToken,
         refreshToken: response.refreshToken,
         user: transformedUser
       };
-
-      // Store tokens in cookies
-      Cookies.set('accessToken', transformedResponse.accessToken, { secure: true, sameSite: 'strict' });
-      Cookies.set('refreshToken', transformedResponse.refreshToken, { secure: true, sameSite: 'strict' });
-
-      // Store user data in localStorage
-      localStorage.setItem('user', JSON.stringify(transformedUser));
-
-      setUser(transformedUser);
-      router.push('/');
-      return transformedResponse;
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || 'Login failed';
       setError(errorMessage);
@@ -133,6 +183,46 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setLoading(false);
     }
   };
+
+  // The loginWithToken function now uses the imported getUserDataFromToken
+  const loginWithToken = async (token: string) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Get user data using the token
+      const userData = await getUser(token);
+
+      // Store token in cookies (not localStorage for better security)
+      Cookies.set('accessToken', token, { secure: true, sameSite: 'strict' });
+
+      // Transform the user object to match our User interface if needed
+      const user = {
+        id: userData.id,
+        email: userData.email,
+        firstName: userData.firstName || '',
+        lastName: userData.lastName || '',
+        role: userData.role || 'user'
+      };
+
+      // Store user data
+      localStorage.setItem('user', JSON.stringify(user));
+
+      // Update context state
+      setUser(user);
+      setIsAuthenticated(true);
+
+      return user;
+    } catch (error: any) {
+      console.error('Login with token failed:', error);
+      setError(error.message || 'Failed to authenticate with token');
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
 
   const handleRegister = async (userData: RegisterData): Promise<any> => {
     try {
@@ -171,6 +261,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     loading,
     error,
     login: handleLogin,
+    loginWithToken: loginWithToken,
     register: handleRegister,
     logout: handleLogout,
     isAuthenticated: !!user,
