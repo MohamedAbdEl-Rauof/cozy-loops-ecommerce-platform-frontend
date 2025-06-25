@@ -112,8 +112,8 @@ export default function RegistrationPage() {
   const [error, setError] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const { register } = useAuth();
-  const router = useRouter();
   const [showVerificationSnackbar, setShowVerificationSnackbar] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState<string>("");
 
   const {
     control,
@@ -148,9 +148,10 @@ export default function RegistrationPage() {
     length: (password || "").length >= 8,
   }
 
+
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
-    setError(null)
+    setError(null);
 
     try {
       const response = await register({
@@ -160,24 +161,22 @@ export default function RegistrationPage() {
         password: data.password,
       });
 
+      setRegisteredEmail(data.email);
       setShowSuccess(true);
-
       reset();
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error submitting form:", error);
 
-      if (axios.isAxiosError(error) && error.response) {
+      if (axios.isAxiosError(error)) {
 
-        if (error.response.status === 400 &&
-          error.response.data?.message?.includes("User already exists")) {
-          setError("This email is already registered. Please use a different email or try logging in.");
-          setShowErrorDialog(true);
-        } else {
-          setError(error.response.data?.message || "Registration failed. Please try again.");
-          setShowErrorDialog(true);
-        }
+        const errorMessage = error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Registration failed. Please try again later.";
+
+        setError(errorMessage);
+        setShowErrorDialog(true);
       } else {
-        setError("Network error. Please check your connection and try again.");
+        setError("An unexpected error occurred. Please try again later.");
         setShowErrorDialog(true);
       }
     } finally {
@@ -185,7 +184,7 @@ export default function RegistrationPage() {
     }
   };
 
-  // Replace the current PasswordRequirement component with this enhanced version
+  // Password requirement component
   const PasswordRequirement = ({ met, text }: { met: boolean; text: string }) => (
     <Box sx={{
       display: "flex",
@@ -222,16 +221,8 @@ export default function RegistrationPage() {
     </Box>
   )
 
-
-
   const CountdownDialog = () => {
     const [countdown, setCountdown] = useState(5);
-    const [resendCountdown, setResendCountdown] = useState(60);
-    const [resendEnabled, setResendEnabled] = useState(false);
-    const [resendLoading, setResendLoading] = useState(false);
-    const [resendSuccess, setResendSuccess] = useState(false);
-    const [resendError, setResendError] = useState<string | null>(null);
-    const userEmail = watch("email"); // Get the email from the form
 
     // Handle dialog countdown and close
     useEffect(() => {
@@ -242,9 +233,8 @@ export default function RegistrationPage() {
           setCountdown(countdown - 1);
         }, 1000);
       } else if (countdown === 0) {
-        // Close dialog and show snackbar
         setShowSuccess(false);
-        setShowVerificationSnackbar(true); // Use the parent component's state
+        setShowVerificationSnackbar(true);
       }
 
       return () => {
@@ -259,56 +249,13 @@ export default function RegistrationPage() {
       }
     }, [showSuccess]);
 
-    // Handle resend countdown
-    useEffect(() => {
-      if (showVerificationSnackbar && !resendEnabled) {
-        const timer = setInterval(() => {
-          setResendCountdown((prev) => {
-            if (prev <= 1) {
-              clearInterval(timer);
-              setResendEnabled(true);
-              return 0;
-            }
-            return prev - 1;
-          });
-        }, 1000);
-
-        return () => clearInterval(timer);
-      }
-    }, [showVerificationSnackbar, resendEnabled]);
-
-    // Handle resend email function
-    const handleResendEmail = async () => {
-      if (!userEmail || resendLoading) return;
-
-      setResendLoading(true);
-      setResendError(null);
-
-      try {
-        await resendVerificationEmail(userEmail);
-        setResendSuccess(true);
-        // Reset the countdown for next resend
-        setResendEnabled(false);
-        setResendCountdown(60);
-      } catch (error: any) {
-        console.error("Error resending verification email:", error);
-        setResendError(
-          error.response?.data?.message ||
-          "Failed to resend verification email. Please try again."
-        );
-      } finally {
-        setResendLoading(false);
-      }
-    };
-
     return (
       <Box sx={{
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         textAlign: 'center',
-        py: 4,
-        height: '100%',
+        py: 2,
         justifyContent: 'center'
       }}>
         <Box sx={{ position: 'relative', mb: 4 }}>
@@ -341,16 +288,18 @@ export default function RegistrationPage() {
     );
   };
 
-  // Add this verification snackbar outside of the CountdownDialog component
+  // Verification Snackbar component
   const VerificationSnackbar = () => {
     const [resendCountdown, setResendCountdown] = useState(60);
     const [resendEnabled, setResendEnabled] = useState(false);
     const [resendLoading, setResendLoading] = useState(false);
-    const [resendSuccess, setResendSuccess] = useState(false);
-    const [resendError, setResendError] = useState<string | null>(null);
-    const userEmail = watch("email");
+    const [resendStatus, setResendStatus] = useState<{
+      success: boolean;
+      error: string | null;
+    }>({ success: false, error: null });
+    const userEmail = registeredEmail;
 
-    // Handle resend countdown
+    // resend countdown
     useEffect(() => {
       if (showVerificationSnackbar && !resendEnabled) {
         const timer = setInterval(() => {
@@ -368,25 +317,26 @@ export default function RegistrationPage() {
       }
     }, [showVerificationSnackbar, resendEnabled]);
 
-    // Handle resend email function
+    // Handle resend email
     const handleResendEmail = async () => {
       if (!userEmail || resendLoading) return;
 
       setResendLoading(true);
-      setResendError(null);
+      setResendStatus({ success: false, error: null });
 
       try {
-        await resendVerificationEmail(userEmail);
-        setResendSuccess(true);
-        // Reset the countdown for next resend
+        const response = await resendVerificationEmail(userEmail);
+
+        setResendStatus({ success: true, error: null });
         setResendEnabled(false);
         setResendCountdown(60);
       } catch (error: any) {
         console.error("Error resending verification email:", error);
-        setResendError(
-          error.response?.data?.message ||
-          "Failed to resend verification email. Please try again."
-        );
+        const errorMessage = error.response?.data?.message ||
+          error.message ||
+          "Failed to resend verification email. Please try again.";
+
+        setResendStatus({ success: false, error: errorMessage });
       } finally {
         setResendLoading(false);
       }
@@ -397,82 +347,194 @@ export default function RegistrationPage() {
         open={showVerificationSnackbar}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         sx={{
+          mt: 2,
           '& .MuiPaper-root': {
             maxWidth: 500,
-            width: '100%'
+            width: '100%',
+            overflow: 'visible'
           }
         }}
       >
         <Alert
           severity="success"
           variant="filled"
+          icon={<CheckCircle fontSize="medium" />}
           sx={{
             width: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'flex-start'
+            borderRadius: 2,
+            boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+            py: 1.5,
+            px: 2,
+            alignItems: 'flex-start',
+            '& .MuiAlert-icon': {
+              display: 'flex',
+              alignItems: 'flex-start',
+              justifyContent: 'center',
+              mr: 2,
+              fontSize: '1.5rem',
+              opacity: 0.9
+            },
+            '& .MuiAlert-message': {
+              padding: 0
+            }
           }}
           action={
-            <Box sx={{ mt: 1, display: 'flex', alignItems: 'center', width: '100%' }}>
+            <IconButton
+              size="small"
+              color="inherit"
+              onClick={() => setShowVerificationSnackbar(false)}
+              sx={{
+                opacity: 0.8,
+                '&:hover': {
+                  opacity: 1,
+                  backgroundColor: 'rgba(255,255,255,0.15)'
+                }
+              }}
+            >
+              <Close fontSize="small" />
+            </IconButton>
+          }
+        >
+          <Box sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            width: '100%'
+          }}>
+            <Box sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              width: '100%',
+              mb: 0.5
+            }}>
+              <Typography variant="body1" sx={{
+                fontWeight: 600,
+                fontSize: '0.95rem',
+                letterSpacing: '0.01em'
+              }}>
+                Verification Email Sent
+              </Typography>
+            </Box>
+
+            <Typography variant="body2" sx={{
+              opacity: 0.9,
+              fontSize: '0.85rem',
+              mb: 1
+            }}>
+              Please check your inbox at <strong>{userEmail}</strong> to complete your registration
+            </Typography>
+
+            {resendStatus.success && (
+              <Box sx={{
+                mt: 0.5,
+                mb: 1,
+                py: 0.5,
+                px: 1,
+                borderRadius: 1,
+                backgroundColor: 'rgba(255,255,255,0.15)',
+                display: 'flex',
+                alignItems: 'center'
+              }}>
+                <Check fontSize="small" sx={{ mr: 0.5 }} />
+                <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.8rem' }}>
+                  A new verification email has been sent!
+                </Typography>
+              </Box>
+            )}
+
+            {resendStatus.error && (
+              <Box sx={{
+                mt: 0.5,
+                mb: 1,
+                py: 0.5,
+                px: 1,
+                borderRadius: 1,
+                backgroundColor: 'rgba(255,255,255,0.15)',
+                display: 'flex',
+                alignItems: 'center'
+              }}>
+                <ErrorOutline fontSize="small" sx={{ mr: 0.5 }} />
+                <Typography variant="body2" sx={{ fontSize: '0.8rem' }}>
+                  {resendStatus.error}
+                </Typography>
+              </Box>
+            )}
+
+            <Box sx={{
+              mt: 0.5,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}>
               <Button
                 size="small"
-                color="inherit" 
+                color="inherit"
                 onClick={handleResendEmail}
                 disabled={!resendEnabled || resendLoading}
                 sx={{
                   textTransform: 'none',
-                  fontWeight: 'bold',
-                  opacity: resendEnabled ? 1 : 0.7,
-                  color:"#fff"
+                  fontWeight: 500,
+                  fontSize: '0.8rem',
+                  py: 0.5,
+                  px: 1.5,
+                  color: '#fff',
+                  borderRadius: 1.5,
+                  backgroundColor: resendEnabled && !resendLoading
+                    ? 'rgba(255,255,255,0.1)'
+                    : 'rgba(255,255,255,0.05)',
+                  cursor: resendEnabled && !resendLoading ? 'pointer' : 'not-allowed',
+                  opacity: resendEnabled ? 1 : 0.6,
+                  '&:hover': {
+                    backgroundColor:
+                      resendEnabled && !resendLoading
+                        ? 'rgba(255,255,255,0.2)'
+                        : 'rgba(255,255,255,0.05)',
+                  },
+                  transition: 'all 0.2s ease-in-out',
                 }}
-                startIcon={resendLoading ? <CircularProgress size={16} color="inherit" /> : null}
+                startIcon={
+                  resendLoading ? <CircularProgress size={14} color="inherit" /> : null
+                }
               >
                 {resendLoading
-                  ? "Sending..."
+                  ? 'Sending...'
                   : resendEnabled
-                    ? "Resend Verification Email"
-                    : `Resend available in ${resendCountdown}s`
-                }
+                    ? 'Resend Verification Email'
+                    : `Resend available in ${resendCountdown}s`}
               </Button>
-              <Box sx={{ flexGrow: 1 }} />
-              <IconButton
+
+              {/* Add a "Got it" button to dismiss the snackbar */}
+              <Button
                 size="small"
                 color="inherit"
                 onClick={() => setShowVerificationSnackbar(false)}
+                sx={{
+                  textTransform: 'none',
+                  fontWeight: 500,
+                  fontSize: '0.8rem',
+                  py: 0.5,
+                  px: 1.5,
+                  ml: 1,
+                  color: '#fff',
+                  borderRadius: 1.5,
+                  backgroundColor: 'rgba(255,255,255,0.1)',
+                  '&:hover': {
+                    backgroundColor: 'rgba(255,255,255,0.2)',
+                  },
+                }}
               >
-                <Close fontSize="small" />
-              </IconButton>
+                Got it
+              </Button>
             </Box>
-          }
-        >
-          <Box>
-            <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 0.5 }}>
-              Verification Email Sent, Please check your inbox
-            </Typography>
-
-            {resendSuccess && (
-              <Typography variant="body2" sx={{ mt: 1, fontWeight: 'bold' ,  }}>
-                A new verification email has been sent!
-              </Typography>
-            )}
-
-            {resendError && (
-              <Typography variant="body2" sx={{ mt: 1, color: '#ffccbc' }}>
-                {resendError}
-              </Typography>
-            )}
           </Box>
         </Alert>
       </Snackbar>
     );
   };
 
-
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ minHeight: "100vh", display: "flex" }}>
-
-        {/* Success Dialog with Animation */}
         <Dialog
           open={showSuccess}
           TransitionComponent={Grow}
@@ -492,7 +554,6 @@ export default function RegistrationPage() {
           </DialogContent>
         </Dialog>
 
-        {/* Add the verification snackbar here */}
         <VerificationSnackbar />
         <Snackbar
           open={showErrorDialog}
@@ -717,7 +778,7 @@ export default function RegistrationPage() {
                         control={<Checkbox {...field} checked={field.value} />}
                         label={
                           <Typography variant="body2" color="black">
-                            I agree to the{" "}
+                            I agree to the
                             <Link href="/terms" color="primary" underline="hover">
                               Terms of Services
                             </Link>
