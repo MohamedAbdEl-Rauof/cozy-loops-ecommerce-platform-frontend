@@ -208,7 +208,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         } else {
           router.push('/');
         }
-      }, 0);
+      }, 20000);
 
       return {
         accessToken: response.accessToken,

@@ -26,6 +26,8 @@ import SocialAuth from "@/components/shared/SocialAuth"
 import ForgotPasswordDialog from "@/components/auth/ForgetPasswordDialog"
 import { useAuth } from "@/context/AuthContext"
 import { CountdownRedirect } from "@/components/auth/CountdownRedirect"
+import { SuccessAnimation } from "@/components/shared/SuccessAnimation"
+import { useRouter } from "next/navigation"
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -44,6 +46,8 @@ export default function LoginPage() {
   });
   const { login, isAuthenticated, loading, isUserAuthenticated } = useAuth();
   const [showAuthenticatedMessage, setShowAuthenticatedMessage] = useState(false);
+  const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
+  const router = useRouter();
 
   const {
     control,
@@ -88,11 +92,7 @@ export default function LoginPage() {
 
     try {
       await login(data.email, data.password);
-      setSnackbar({
-        open: true,
-        message: 'Login successful!',
-        severity: 'success'
-      });
+      setShowSuccessAnimation(true);
     } catch (error: any) {
       console.error("Login error:", error);
 
@@ -117,14 +117,22 @@ export default function LoginPage() {
     }
   };
 
+  if (showSuccessAnimation) {
+    return <SuccessAnimation onComplete={() => router.push('/')} message="Login successful!" count={20} />;
+  }
+
   if (showAuthenticatedMessage || (!loading && isUserAuthenticated())) {
     return (
       <CountdownRedirect
         message="You are already authenticated!"
         redirectPath="/"
-        seconds={5}
+        seconds={20}
       />
     );
+  }
+
+  if (showSuccessAnimation) {
+    return <SuccessAnimation onComplete={() => router.push('/')} message="Login successful!" count={20} />;
   }
 
   return (
