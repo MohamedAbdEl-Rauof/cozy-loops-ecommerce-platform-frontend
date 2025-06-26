@@ -41,11 +41,11 @@ const registrationSchema = z
     email: z.string().email({ message: "Please enter a valid email address" }),
     firstName: z
       .string()
-      .min(1, { message: "First name is required" })
+      .min(2, { message: "First name is required" })
       .max(10, { message: "First name must be less than 10 characters" }),
     lastName: z
       .string()
-      .min(1, { message: "Last name is required" })
+      .min(2, { message: "Last name is required" })
       .max(10, { message: "Last name must be less than 10 characters" }),
     password: z
       .string()

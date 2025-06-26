@@ -23,7 +23,6 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { Visibility, VisibilityOff, Check } from "@mui/icons-material"
 import { verifyOtp, forgotPassword, resetPassword } from "@/services/authService"
 
-// Validation schemas
 const otpSchema = z.object({
   otp: z.string().length(6, { message: "OTP must be 6 digits" }).regex(/^\d+$/, { message: "OTP must contain only numbers" }),
 });
@@ -43,7 +42,6 @@ const passwordSchema = z.object({
 type OtpFormData = z.infer<typeof otpSchema>;
 type PasswordFormData = z.infer<typeof passwordSchema>;
 
-// Password requirement component
 const PasswordRequirement = ({ met, text }: { met: boolean; text: string }) => (
   <Box sx={{
     display: "flex",
@@ -85,8 +83,6 @@ export default function ResetPassword() {
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-
-  // State management
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']);
   const [otpVerified, setOtpVerified] = useState(false);
@@ -109,7 +105,6 @@ export default function ResetPassword() {
   const [severity, setSeverity] = useState<"success" | "error">("success");
   const [resetToken, setResetToken] = useState<string | null>(null);
 
-  // Form handling
   const {
     handleSubmit: handleOtpSubmit,
     formState: { isValid: isOtpValid },
@@ -133,9 +128,7 @@ export default function ResetPassword() {
 
   const password = watch("password");
 
-  // Effects
   useEffect(() => {
-    // Send initial OTP if email exists
     if (email) {
       setResendDisabled(true);
 
@@ -153,7 +146,6 @@ export default function ResetPassword() {
     }
   }, [email]);
 
-  // Check password requirements
   useEffect(() => {
     if (password) {
       setHasStartedTypingPassword(true);
@@ -167,12 +159,10 @@ export default function ResetPassword() {
     }
   }, [password]);
 
-  // Initialize refs array
   useEffect(() => {
     inputRefs.current = inputRefs.current.slice(0, 6);
   }, []);
 
-  // Countdown timer for resend OTP
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (resendDisabled && countdown > 0) {
@@ -184,7 +174,6 @@ export default function ResetPassword() {
     return () => clearTimeout(timer);
   }, [resendDisabled, countdown]);
 
-  // Redirect countdown timer
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (showRedirectMessage && redirectCountdown > 0) {
@@ -195,7 +184,6 @@ export default function ResetPassword() {
     return () => timer && clearTimeout(timer);
   }, [showRedirectMessage, redirectCountdown, router]);
 
-  // Update OTP form value when OTP values change
   useEffect(() => {
     const otpString = otpValues.join('');
     if (otpString.length === 6) {
@@ -204,7 +192,6 @@ export default function ResetPassword() {
     }
   }, [otpValues, setOtpValue, triggerOtp]);
 
-  // Helper functions
   const showNotification = (message: string, type: "success" | "error") => {
     setSuccessMessage(message);
     setShowSuccessAlert(true);
@@ -212,25 +199,21 @@ export default function ResetPassword() {
   };
 
   const handleOtpChange = (index: number, value: string) => {
-    // Only allow digits
     if (value && !/^\d+$/.test(value)) return;
 
-    // Update the OTP values array
     const newOtpValues = [...otpValues];
     newOtpValues[index] = value.slice(0, 1);
     setOtpValues(newOtpValues);
 
-    // Update the form value
     setOtpValue('otp', newOtpValues.join(''));
     setTimeout(() => triggerOtp('otp'), 0);
 
-    // Auto-focus next input if current input is filled
     if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
   };
 
-  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLDivElement | HTMLInputElement>) => {
     if (e.key === 'Backspace' && !otpValues[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
@@ -252,7 +235,6 @@ export default function ResetPassword() {
       setOtpValue('otp', newOtpValues.join(''), { shouldValidate: true });
       triggerOtp('otp');
 
-      // Focus the next empty field or the last field
       const nextEmptyIndex = newOtpValues.findIndex(val => !val);
       if (nextEmptyIndex !== -1) {
         inputRefs.current[nextEmptyIndex]?.focus();
@@ -284,9 +266,8 @@ export default function ResetPassword() {
 
     try {
       if (!email) throw new Error("Email is missing");
-
       const response = await verifyOtp(email, data.otp);
-      setResetToken(response.resetToken);
+      setResetToken(response.resetToken as string);
       setOtpVerified(true);
       showNotification("OTP verified successfully", "success");
     } catch (error) {
@@ -297,19 +278,26 @@ export default function ResetPassword() {
     }
   };
 
+
   const onPasswordSubmit = async (data: PasswordFormData) => {
     setIsSubmitting(true);
 
     try {
       if (!resetToken) throw new Error("Reset token is missing");
 
-      await resetPassword(resetToken, data.password);
+      const response = await resetPassword(resetToken, data.password);
       showNotification("Password reset successful! You will be redirected to login.", "success");
 
       setTimeout(() => router.push('/auth/login'), 2000);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error resetting password:", error);
-      showNotification("Failed to reset password. Please try again.", "error");
+
+      // Check for specific error message about same password
+      if (error.response?.data?.message === "New password cannot be the same as your current password") {
+        showNotification("New password cannot be the same as your current password.", "error");
+      } else {
+        showNotification("Failed to reset password. Please try again.", "error");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -372,7 +360,6 @@ export default function ResetPassword() {
             )}
 
             {!otpVerified ? (
-              // OTP Verification Form
               <>
                 <Typography
                   variant="h4"
@@ -399,7 +386,6 @@ export default function ResetPassword() {
                 </Typography>
 
                 <Box component="form" onSubmit={handleOtpSubmit(onOtpSubmit)} sx={{ mt: 3 }}>
-                  {/* OTP Input */}
                   <Box sx={{ mb: 3 }}>
                     <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 500 }}>
                       OTP Code
@@ -428,7 +414,6 @@ export default function ResetPassword() {
                     </Stack>
                   </Box>
 
-                  {/* Resend OTP Link */}
                   <Box sx={{ textAlign: "left", mb: 3 }}>
                     <MuiLink
                       sx={{
@@ -445,7 +430,6 @@ export default function ResetPassword() {
                     </MuiLink>
                   </Box>
 
-                  {/* Submit Button */}
                   <Button
                     type="submit"
                     fullWidth
@@ -471,7 +455,6 @@ export default function ResetPassword() {
                 </Box>
               </>
             ) : (
-              // Password Reset Form
               <>
                 <Typography
                   variant="h4"
@@ -498,19 +481,18 @@ export default function ResetPassword() {
                 </Typography>
 
                 <Box component="form" onSubmit={handlePasswordSubmit(onPasswordSubmit)} sx={{ mt: 3 }}>
-                  {/* Password Field */}
+
                   <Box sx={{ mb: 3 }}>
-                    <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 500 }}>
-                      New Password
-                    </Typography>
                     <Controller
                       name="password"
                       control={control}
                       render={({ field, fieldState }) => (
                         <TextField
                           {...field}
-                          type={showPassword ? "text" : "password"}
                           fullWidth
+                          label="Password"
+                          type={showPassword ? "text" : "password"}
+                          placeholder="••••••••"
                           error={!!fieldState.error}
                           helperText={fieldState.error?.message}
                           InputProps={{
@@ -526,9 +508,10 @@ export default function ResetPassword() {
                             ),
                           }}
                           sx={{
+                            mb: hasStartedTypingPassword ? 1 : 3,
                             '& .MuiOutlinedInput-root': {
-                              borderRadius: 'var(--input-border-radius)',
-                              height: 'var(--input-height)'
+                              height: 'var(--input-height)',
+                              borderRadius: 'var(--input-border-radius)'
                             }
                           }}
                         />
@@ -536,32 +519,42 @@ export default function ResetPassword() {
                     />
                   </Box>
 
-                  {/* Password Requirements */}
-                  <Collapse in={hasStartedTypingPassword}>
-                    <Box sx={{ mb: 3, p: 2, bgcolor: "#f9f9f9", borderRadius: 1 }}>
-                      <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 500 }}>
-                        Password Requirements:
+                  <Collapse in={hasStartedTypingPassword} timeout={600}>
+                    <Box sx={{
+                      mb: 3,
+                      p: 2,
+                      backgroundColor: "#f9f9f9",
+                      borderRadius: 1,
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+                      transition: 'all 0.3s ease-in-out'
+                    }}>
+                      <Typography variant="body2" sx={{ mb: 1, color: "#666", fontWeight: 500 }}>
+                        Your password must include:
                       </Typography>
-                      <PasswordRequirement met={passwordChecks.length} text="At least 8 characters" />
-                      <PasswordRequirement met={passwordChecks.uppercase} text="At least one uppercase letter" />
-                      <PasswordRequirement met={passwordChecks.lowercase} text="At least one lowercase letter" />
-                      <PasswordRequirement met={passwordChecks.numbers} text="At least one number" />
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                        <Box sx={{ width: '50%' }}>
+                          <PasswordRequirement met={passwordChecks.lowercase} text="Lower case letters" />
+                          <PasswordRequirement met={passwordChecks.uppercase} text="Capital letters" />
+                        </Box>
+                        <Box sx={{ width: '50%' }}>
+                          <PasswordRequirement met={passwordChecks.numbers} text="Numbers" />
+                          <PasswordRequirement met={passwordChecks.length} text="At least 8 characters" />
+                        </Box>
+                      </Box>
                     </Box>
                   </Collapse>
 
-                  {/* Confirm Password Field */}
                   <Box sx={{ mb: 3 }}>
-                    <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 500 }}>
-                      Confirm Password
-                    </Typography>
                     <Controller
                       name="confirmPassword"
                       control={control}
                       render={({ field, fieldState }) => (
                         <TextField
                           {...field}
-                          type={showConfirmPassword ? "text" : "password"}
                           fullWidth
+                          label="Confirm password"
+                          type={showConfirmPassword ? "text" : "password"}
+                          placeholder="••••••••"
                           error={!!fieldState.error}
                           helperText={fieldState.error?.message}
                           InputProps={{
@@ -578,8 +571,8 @@ export default function ResetPassword() {
                           }}
                           sx={{
                             '& .MuiOutlinedInput-root': {
-                              borderRadius: 'var(--input-border-radius)',
-                              height: 'var(--input-height)'
+                              height: 'var(--input-height)',
+                              borderRadius: 'var(--input-border-radius)'
                             }
                           }}
                         />
@@ -587,7 +580,6 @@ export default function ResetPassword() {
                     />
                   </Box>
 
-                  {/* Submit Button */}
                   <Button
                     type="submit"
                     fullWidth
@@ -617,7 +609,6 @@ export default function ResetPassword() {
         </Container>
       </Box>
 
-      {/* Success/Error Alert */}
       <Snackbar
         open={showSuccessAlert}
         autoHideDuration={6000}

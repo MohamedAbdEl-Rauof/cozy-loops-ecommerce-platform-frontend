@@ -75,37 +75,38 @@ export default function LoginPage() {
     },
   })
 
-  const onSubmit = (data: FormData) => {
+
+  const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
 
-    login(data.email, data.password)
-      .then(() => {
+    try {
+      await login(data.email, data.password);
+      setSnackbar({
+        open: true,
+        message: 'Login successful!',
+        severity: 'success'
+      });
+    } catch (error: any) {
+      console.error("Login error:", error);
+
+      if (error.response && error.response.status === 403 &&
+        error.response.data && error.response.data.emailVerified === false) {
         setSnackbar({
           open: true,
-          message: 'Login successful!',
-          severity: 'success'
+          message: 'Email not verified. Please check your inbox for verification email.',
+          severity: 'warning'
         });
-      })
-      .catch((error) => {
-        if (error.response && error.response.status === 403 &&
-          error.response.data && error.response.data.emailVerified === false) {
-          setSnackbar({
-            open: true,
-            message: 'Email not verified. Please check your inbox for verification email.',
-            severity: 'warning'
-          });
-        } else {
-          setSnackbar({
-            open: true,
-            message: error.message || 'Login failed. Please try again.',
-            severity: 'error'
-          });
-        }
-      })
-      .finally(() => {
-        setIsSubmitting(false);
-      });
-  }
+      } else {
+        setSnackbar({
+          open: true,
+          message: error.response?.data?.message || error.message || 'Login failed. Please try again.',
+          severity: 'error'
+        });
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <Box sx={{ minHeight: "100vh", display: "flex" }}>
@@ -153,7 +154,15 @@ export default function LoginPage() {
               Sign in
             </Typography>
 
-            <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 3 }}>
+            <Box
+              component="form"
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSubmit(onSubmit)(e);
+              }}
+              sx={{ mt: 3 }}
+              noValidate
+            >
               {/* Email */}
               <Controller
                 name="email"

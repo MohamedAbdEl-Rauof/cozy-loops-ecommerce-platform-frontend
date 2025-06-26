@@ -122,6 +122,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     checkAuthStatus();
   }, []);
 
+
   const handleLogin = async (email: string, password: string): Promise<AuthResponse> => {
     try {
       setLoading(true);
@@ -158,11 +159,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser(userData);
       setIsAuthenticated(true);
 
-      if (userData.role === 'admin') {
-        router.push('/admin/dashboard');
-      } else {
-        router.push('/');
-      }
+      // Move navigation after all potential error points
+      setTimeout(() => {
+        if (userData.role === 'admin') {
+          router.push('/admin/dashboard');
+        } else {
+          router.push('/');
+        }
+      }, 0);
 
       return {
         accessToken: response.accessToken,
@@ -186,14 +190,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       Cookies.set('accessToken', token, {
         secure: true,
         sameSite: 'strict',
-        expires: 1 
+        expires: 1
       });
 
       if (refreshTokenValue) {
         Cookies.set('refreshToken', refreshTokenValue, {
           secure: true,
           sameSite: 'strict',
-          expires: 7 
+          expires: 7
         });
       }
 

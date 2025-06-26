@@ -86,8 +86,6 @@ export default function ForgotPasswordDialog({ open, onClose }: ForgotPasswordDi
         }
     };
 
-
-
     const handleClose = () => {
         if (!isSubmitting) {
             reset();

@@ -26,10 +26,19 @@ interface ForgotPasswordResponse {
 interface ResetPasswordResponse {
   message: string;
 }
+interface VerifyOtpResponse {
+  message: string;
+  resetToken?: string;
+}
 
 export const login = async (email: string, password: string): Promise<LoginResponse> => {
-  const response = await api.post('/api/auth/login', { email, password });
-  return response.data;
+  try {
+    const response = await api.post('/api/auth/login', { email, password });
+    return response.data;
+  } catch (error) {
+    console.error('Login service error:', error);
+    throw error;
+  }
 };
 
 export const register = async (userData: RegisterData): Promise<LoginResponse> => {
@@ -73,12 +82,11 @@ export const verifyEmail = async (token: string) => {
   }
 };
 
-export const verifyOtp = async (email: string, otp: string): Promise<{
-  resetToken(resetToken: any): unknown; message: string 
-}> => {
+export const verifyOtp = async (email: string, otp: string): Promise<VerifyOtpResponse> => {
+
   const response = await api.post('/api/auth/verify-otp', { email, otp });
   return response.data;
-};  
+};
 
 export const resendVerificationEmail = async (email: string): Promise<{ message: string }> => {
   const response = await api.post('/api/auth/resend-verification', { email });
