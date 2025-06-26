@@ -42,6 +42,7 @@ interface AuthContextType {
   clearError: () => void;
   checkAuthStatus: () => Promise<boolean>;
   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
+  isUserAuthenticated: () => boolean;
 }
 
 interface AuthProviderProps {
@@ -60,7 +61,8 @@ export const AuthContext = createContext<AuthContextType>({
   updateUserData: () => { },
   clearError: () => { },
   checkAuthStatus: async () => false,
-  setIsAuthenticated: () => {},
+  setIsAuthenticated: () => { },
+  isUserAuthenticated: () => false,
 });
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
@@ -69,15 +71,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [error, setError] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const router = useRouter();
+  const isUserAuthenticated = useCallback((): boolean => {
+    const accessToken = Cookies.get('accessToken');
+    const refreshToken = Cookies.get('refreshToken');
+
+    return Boolean((accessToken || refreshToken || isAuthenticated) && !loading);
+  }, [isAuthenticated, loading]);
 
   const clearError = useCallback(() => {
     setError(null);
   }, []);
 
+
   const updateUserData = useCallback((userData: Partial<User>) => {
     setUser(prevUser => {
       if (!prevUser && userData.id) {
-        // If we're setting user data for the first time, ensure we mark as authenticated
         setIsAuthenticated(true);
         return userData as User;
       }
@@ -100,7 +108,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Try with access token first
     if (accessToken) {
       try {
-        const userData = await getUser(accessToken);
+        const userData = await getUser();
         setUser(userData);
         setIsAuthenticated(true);
         return true;
@@ -114,7 +122,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (refreshTokenValue) {
       try {
         const response = await refreshToken(refreshTokenValue);
-        
+
         // Store the new access token
         Cookies.set('accessToken', response.accessToken, {
           secure: true,
@@ -124,7 +132,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         try {
           // Get full user data with new token
-          const userData = await getUser(response.accessToken);
+          const userData = await getUser();
           setUser(userData);
           setIsAuthenticated(true);
           return true;
@@ -169,8 +177,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, [checkAuthStatus]);
 
   const handleLogin = async (email: string, password: string): Promise<AuthResponse> => {
+    setLoading(true);
+
     try {
-      setLoading(true);
       clearError();
 
       const response = await login(email, password);
@@ -179,20 +188,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       Cookies.set('accessToken', response.accessToken, {
         secure: true,
         sameSite: 'strict',
-        expires: 1 // 1 day
+        expires: 1 
       });
 
       Cookies.set('refreshToken', response.refreshToken, {
         secure: true,
         sameSite: 'strict',
-        expires: 7 // 7 days
+        expires: 7 
       });
 
       let userData = response.user;
 
       try {
         // Get complete user profile
-        const fullUserData = await getUser(response.accessToken);
+        const fullUserData = await getUser();
         userData = {
           ...userData,
           ...fullUserData,
@@ -207,7 +216,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setUser(userData);
       setIsAuthenticated(true);
 
-      // Navigate based on user role
+      // Navigate based on user role - use setTimeout to ensure this happens after the component has processed the response
       setTimeout(() => {
         if (userData.role === 'admin') {
           router.push('/admin/dashboard');
@@ -224,6 +233,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } catch (error: any) {
       const errorMessage = error.response?.data?.message || 'Login failed';
       setError(errorMessage);
+
+      // Important: Throw the error but don't navigate or refresh
       throw error;
     } finally {
       setLoading(false);
@@ -251,7 +262,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       // Verify token by getting user data
-      const userData = await getUser(token);
+      const userData = await getUser();
 
       // Update auth state
       setUser(userData);
@@ -263,7 +274,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Clean up invalid tokens
       Cookies.remove('accessToken');
       if (refreshTokenValue) Cookies.remove('refreshToken');
-      
+
       setError(error.message || 'Failed to authenticate with token');
       throw error;
     } finally {
@@ -323,6 +334,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     clearError,
     checkAuthStatus,
     setIsAuthenticated,
+    isUserAuthenticated,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

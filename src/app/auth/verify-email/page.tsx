@@ -50,7 +50,7 @@ interface SnackbarState {
 export default function VerifyEmailPage() {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const { loginWithToken, isAuthenticated } = useAuth();
+    const { loginWithToken, isAuthenticated, isUserAuthenticated, loading: authLoading } = useAuth();
     const email = searchParams.get('email') || "example@email.com";
     const token = searchParams.get('token');
     const [verificationStatus, setVerificationStatus] = useState<VerificationStatus>(token ? 'pending' : 'success');
@@ -67,20 +67,11 @@ export default function VerifyEmailPage() {
     });
 
     useEffect(() => {
-        if (isAuthenticated) {
+        if (isUserAuthenticated()) {
+            console.log('User is authenticated, showing redirect message');
             setShowAuthenticatedMessage(true);
         }
-    }, [isAuthenticated]);
-
-    if (showAuthenticatedMessage) {
-        return (
-            <CountdownRedirect
-                message="You are already authenticated!"
-                redirectPath="/"
-                seconds={5}
-            />
-        );
-    }
+    }, [isAuthenticated, authLoading, isUserAuthenticated]);
 
     useEffect(() => {
         if (verificationStatus === 'success' && redirectCountdown > 0) {
@@ -221,6 +212,16 @@ export default function VerifyEmailPage() {
     const handleCloseSnackbar = () => {
         setSnackbar(prev => ({ ...prev, open: false }));
     };
+
+    if (showAuthenticatedMessage || (!authLoading && isUserAuthenticated())) {
+        return (
+            <CountdownRedirect
+                message="You are already authenticated!"
+                redirectPath="/"
+                seconds={5}
+            />
+        );
+    }
 
     return (
         <>

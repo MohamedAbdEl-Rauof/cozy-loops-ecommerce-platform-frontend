@@ -25,8 +25,6 @@ import {
   VisibilityOff,
   Check,
   CheckCircle,
-  ErrorOutline,
-  Close
 } from "@mui/icons-material"
 import { Dialog, DialogContent, Fade, Grow } from "@mui/material";
 import { useAuth } from "@/context/AuthContext"
@@ -75,27 +73,18 @@ export default function RegistrationPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
-  const { register,isAuthenticated } = useAuth();
+  const { register, isAuthenticated, isUserAuthenticated, loading } = useAuth();
   const [showVerificationSnackbar, setShowVerificationSnackbar] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState<string>("");
   const router = useRouter();
-   const [showAuthenticatedMessage, setShowAuthenticatedMessage] = useState(false);
-  
-    useEffect(() => {
-      if (isAuthenticated) {
-        setShowAuthenticatedMessage(true);
-      }
-    }, [isAuthenticated]);
-  
-    if (showAuthenticatedMessage) {
-      return (
-        <CountdownRedirect
-          message="You are already authenticated!"
-          redirectPath="/"
-          seconds={5}
-        />
-      );
+  const [showAuthenticatedMessage, setShowAuthenticatedMessage] = useState(false);
+
+  useEffect(() => {
+    if (isUserAuthenticated()) {
+      console.log('User is authenticated, showing redirect message');
+      setShowAuthenticatedMessage(true);
     }
+  }, [isAuthenticated, loading, isUserAuthenticated]);
 
   const {
     control,
@@ -270,6 +259,16 @@ export default function RegistrationPage() {
       </Box>
     );
   };
+
+  if (showAuthenticatedMessage || (!loading && isUserAuthenticated())) {
+    return (
+      <CountdownRedirect
+        message="You are already authenticated!"
+        redirectPath="/"
+        seconds={5}
+      />
+    );
+  }
 
   return (
     <Box sx={{ minHeight: "100vh", display: "flex" }}>

@@ -26,7 +26,6 @@ import SocialAuth from "@/components/shared/SocialAuth"
 import ForgotPasswordDialog from "@/components/auth/ForgetPasswordDialog"
 import { useAuth } from "@/context/AuthContext"
 import { CountdownRedirect } from "@/components/auth/CountdownRedirect"
-import Cookies from "js-cookie"
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -43,7 +42,7 @@ export default function LoginPage() {
   const [snackbar, setSnackbar] = useState({
     open: false, message: '', severity: 'error' as 'error' | 'warning' | 'info' | 'success'
   });
-  const { login, isAuthenticated, loading } = useAuth();
+  const { login, isAuthenticated, loading, isUserAuthenticated } = useAuth();
   const [showAuthenticatedMessage, setShowAuthenticatedMessage] = useState(false);
 
   const {
@@ -60,15 +59,11 @@ export default function LoginPage() {
   })
 
   useEffect(() => {
-    const accessToken = Cookies.get('accessToken');
-    const refreshToken = Cookies.get('refreshToken');
-
-    // If we have tokens or the auth context says we're authenticated
-    if ((accessToken || refreshToken || isAuthenticated) && !loading) {
+    if (isUserAuthenticated()) {
       console.log('User is authenticated, showing redirect message');
       setShowAuthenticatedMessage(true);
     }
-  }, [isAuthenticated, loading]);
+  }, [isAuthenticated, loading, isUserAuthenticated]);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -89,7 +84,7 @@ export default function LoginPage() {
     setSnackbar(prev => ({ ...prev, open: false }));
   };
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (data: FormData): Promise<void> => {
     setIsSubmitting(true);
 
     try {
@@ -102,6 +97,7 @@ export default function LoginPage() {
     } catch (error: any) {
       console.error("Login error:", error);
 
+      // Handle specific error cases
       if (error.response && error.response.status === 403 &&
         error.response.data && error.response.data.emailVerified === false) {
         setSnackbar({
@@ -116,12 +112,13 @@ export default function LoginPage() {
           severity: 'error'
         });
       }
+      return;
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  if (showAuthenticatedMessage || (!loading && (isAuthenticated || Cookies.get('accessToken')))) {
+  if (showAuthenticatedMessage || (!loading && isUserAuthenticated())) {
     return (
       <CountdownRedirect
         message="You are already authenticated!"

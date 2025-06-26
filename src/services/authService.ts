@@ -1,4 +1,6 @@
-import api from '@/app/api/auth/[...nextauth]/route';
+
+import apiClient from '@/lib/apiClient';
+import apiWithAuth from '@/lib/apiWithAuth';
 
 interface LoginResponse {
   accessToken: string;
@@ -26,6 +28,7 @@ interface ForgotPasswordResponse {
 interface ResetPasswordResponse {
   message: string;
 }
+
 interface VerifyOtpResponse {
   message: string;
   resetToken?: string;
@@ -33,48 +36,68 @@ interface VerifyOtpResponse {
 
 export const login = async (email: string, password: string): Promise<LoginResponse> => {
   try {
-    const response = await api.post('/api/auth/login', { email, password });
+    const response = await apiClient.post('/api/auth/login', { email, password });
     return response.data;
   } catch (error) {
-    console.error('Login service error:', error);
+    console.error('Login error in service:', error);
     throw error;
   }
 };
 
 export const register = async (userData: RegisterData): Promise<LoginResponse> => {
-  const response = await api.post('/api/auth/register', userData);
-  return response.data;
+  try {
+    const response = await apiClient.post('/api/auth/register', userData);
+    return response.data;
+  } catch (error) {
+    console.error('Register error in service:', error);
+    throw error;
+  }
 };
 
 export const logout = async (refreshTokenValue: string): Promise<void> => {
   try {
-    await api.post('/api/auth/logout', { refreshToken: refreshTokenValue });
+    await apiClient.post('/api/auth/logout', { refreshToken: refreshTokenValue });
   } catch (error) {
     console.error('Error during logout:', error);
   }
 };
 
 export const refreshToken = async (refreshTokenValue: string): Promise<LoginResponse> => {
-  const response = await api.post('/api/auth/refresh-token', { refreshToken: refreshTokenValue });
-  return response.data;
+  try {
+    const response = await apiClient.post('/api/auth/refresh-token', { refreshToken: refreshTokenValue });
+    return response.data;
+  } catch (error) {
+    console.error('Error refreshing token:', error);
+    throw error;
+  }
 };
 
 export const forgotPassword = async (email: string): Promise<ForgotPasswordResponse> => {
-  const response = await api.post('/api/auth/forgot-password', { email });
-  return response.data;
+  try {
+    const response = await apiClient.post('/api/auth/forgot-password', { email });
+    return response.data;
+  } catch (error) {
+    console.error('Error in forgot password:', error);
+    throw error;
+  }
 };
 
 export const resetPassword = async (
   token: string,
   password: string
 ): Promise<ResetPasswordResponse> => {
-  const response = await api.post(`/api/auth/reset-password/${token}`, { password });
-  return response.data;
+  try {
+    const response = await apiClient.post(`/api/auth/reset-password/${token}`, { password });
+    return response.data;
+  } catch (error) {
+    console.error('Error resetting password:', error);
+    throw error;
+  }
 };
 
 export const verifyEmail = async (token: string) => {
   try {
-    const response = await api.get(`/api/auth/verify-email/${token}`);
+    const response = await apiClient.get(`/api/auth/verify-email/${token}`);
     return response.data;
   } catch (error) {
     console.error('Error verifying email:', error);
@@ -83,21 +106,32 @@ export const verifyEmail = async (token: string) => {
 };
 
 export const verifyOtp = async (email: string, otp: string): Promise<VerifyOtpResponse> => {
-
-  const response = await api.post('/api/auth/verify-otp', { email, otp });
-  return response.data;
+  try {
+    const response = await apiClient.post('/api/auth/verify-otp', { email, otp });
+    return response.data;
+  } catch (error) {
+    console.error('Error verifying OTP:', error);
+    throw error;
+  }
 };
 
 export const resendVerificationEmail = async (email: string): Promise<{ message: string }> => {
-  const response = await api.post('/api/auth/resend-verification', { email });
-  return response.data;
+  try {
+    const response = await apiClient.post('/api/auth/resend-verification', { email });
+    return response.data;
+  } catch (error) {
+    console.error('Error resending verification email:', error);
+    throw error;
+  }
 };
 
-export const getUser = async (token: string) => {
-  const response = await api.get('/api/users/me', {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  });
-  return response.data.user;
+export const getUser = async () => {
+  try {
+    // Use apiWithAuth for authenticated endpoints
+    const response = await apiWithAuth.get('/api/users/me');
+    return response.data.user;
+  } catch (error) {
+    console.error('Error getting user:', error);
+    throw error;
+  }
 };

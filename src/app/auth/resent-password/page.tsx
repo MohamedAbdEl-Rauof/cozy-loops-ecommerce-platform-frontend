@@ -106,24 +106,15 @@ export default function ResetPassword() {
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [severity, setSeverity] = useState<"success" | "error">("success");
   const [resetToken, setResetToken] = useState<string | null>(null);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isUserAuthenticated, loading } = useAuth();
   const [showAuthenticatedMessage, setShowAuthenticatedMessage] = useState(false);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isUserAuthenticated()) {
+      console.log('User is authenticated, showing redirect message');
       setShowAuthenticatedMessage(true);
     }
-  }, [isAuthenticated]);
-
-  if (showAuthenticatedMessage) {
-    return (
-      <CountdownRedirect
-        message="You are already authenticated!"
-        redirectPath="/"
-        seconds={5}
-      />
-    );
-  }
+  }, [isAuthenticated, loading, isUserAuthenticated]);
 
   const {
     handleSubmit: handleOtpSubmit,
@@ -322,6 +313,16 @@ export default function ResetPassword() {
       setIsSubmitting(false);
     }
   };
+
+  if (showAuthenticatedMessage || (!loading && isUserAuthenticated())) {
+    return (
+      <CountdownRedirect
+        message="You are already authenticated!"
+        redirectPath="/"
+        seconds={5}
+      />
+    );
+  }
 
   return (
     <Box sx={{ minHeight: "100vh", display: "flex" }}>
