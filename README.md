@@ -118,3 +118,14 @@ frontend/
         └─────────│  Token Refresh  │◀──────────────────┘
                   │                 │
                   └─────────────────┘
+
+
+
+
+ TypeScript Check: Run npm run ts:check to have TypeScript check for unused variables and parameters.
+2.
+ESLint Strict Mode: Run npm run lint:strict to run ESLint with zero tolerance for warnings.
+3.
+Strict Build: Run npm run build:strict to ensure your build fails if there are any ESLint errors.
+4.
+Find Unused Dependencies: Run npm run find:unused to detect unused dependencies in your project.                 

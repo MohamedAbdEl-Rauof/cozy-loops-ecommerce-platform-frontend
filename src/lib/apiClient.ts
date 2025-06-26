@@ -17,7 +17,6 @@ const apiClient: AxiosInstance = axios.create({
   },
 });
 
-// Request interceptor to add the auth token
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
     const token = Cookies.get('accessToken');
@@ -31,7 +30,6 @@ apiClient.interceptors.request.use(
   }
 );
 
-// Simple response interceptor without token refresh logic
 apiClient.interceptors.response.use(
   (response: AxiosResponse): AxiosResponse => {
     return response;

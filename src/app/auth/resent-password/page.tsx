@@ -111,14 +111,13 @@ export default function ResetPassword() {
 
   useEffect(() => {
     if (isUserAuthenticated()) {
-      console.log('User is authenticated, showing redirect message');
       setShowAuthenticatedMessage(true);
     }
   }, [isAuthenticated, loading, isUserAuthenticated]);
 
   const {
     handleSubmit: handleOtpSubmit,
-    formState: { isValid: isOtpValid },
+    formState: { },
     setValue: setOtpValue,
     trigger: triggerOtp,
   } = useForm<OtpFormData>({
@@ -129,7 +128,7 @@ export default function ResetPassword() {
 
   const {
     handleSubmit: handlePasswordSubmit,
-    formState: { errors: passwordErrors, isValid: isPasswordValid },
+    formState: { isValid: isPasswordValid },
     control,
     watch,
   } = useForm<PasswordFormData>({
@@ -289,14 +288,13 @@ export default function ResetPassword() {
     }
   };
 
-
   const onPasswordSubmit = async (data: PasswordFormData) => {
     setIsSubmitting(true);
 
     try {
       if (!resetToken) throw new Error("Reset token is missing");
 
-      const response = await resetPassword(resetToken, data.password);
+      await resetPassword(resetToken, data.password);
       showNotification("Password reset successful! You will be redirected to login.", "success");
 
       setTimeout(() => router.push('/auth/login'), 2000);
@@ -502,7 +500,6 @@ export default function ResetPassword() {
                 </Typography>
 
                 <Box component="form" onSubmit={handlePasswordSubmit(onPasswordSubmit)} sx={{ mt: 3 }}>
-
                   <Box sx={{ mb: 3 }}>
                     <Controller
                       name="password"

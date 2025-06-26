@@ -74,14 +74,12 @@ export default function RegistrationPage() {
   const [error, setError] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const { register, isAuthenticated, isUserAuthenticated, loading } = useAuth();
-  const [showVerificationSnackbar, setShowVerificationSnackbar] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState<string>("");
   const router = useRouter();
   const [showAuthenticatedMessage, setShowAuthenticatedMessage] = useState(false);
 
   useEffect(() => {
     if (isUserAuthenticated()) {
-      console.log('User is authenticated, showing redirect message');
       setShowAuthenticatedMessage(true);
     }
   }, [isAuthenticated, loading, isUserAuthenticated]);
@@ -125,7 +123,7 @@ export default function RegistrationPage() {
     setError(null);
 
     try {
-      const response = await register({
+      await register({
         firstName: data.firstName,
         lastName: data.lastName,
         email: data.email,
@@ -195,7 +193,6 @@ export default function RegistrationPage() {
   const CountdownDialog = () => {
     const [countdown, setCountdown] = useState(5);
 
-    // Handle dialog countdown and close
     useEffect(() => {
       let timer: NodeJS.Timeout;
 
@@ -205,7 +202,6 @@ export default function RegistrationPage() {
         }, 1000);
       } else if (countdown === 0) {
         setShowSuccess(false);
-        setShowVerificationSnackbar(true);
         router.push("/auth/verify-email?email=" + encodeURIComponent(registeredEmail));
       }
 

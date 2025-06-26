@@ -68,7 +68,6 @@ export default function VerifyEmailPage() {
 
     useEffect(() => {
         if (isUserAuthenticated()) {
-            console.log('User is authenticated, showing redirect message');
             setShowAuthenticatedMessage(true);
         }
     }, [isAuthenticated, authLoading, isUserAuthenticated]);
@@ -99,7 +98,6 @@ export default function VerifyEmailPage() {
         });
     }, []);
 
-
     const handleVerificationSuccess = useCallback(async (authToken?: string) => {
         setVerificationStatus('success');
         setVerificationMessage('Your email has been successfully verified!');
@@ -116,7 +114,7 @@ export default function VerifyEmailPage() {
                         refreshTokenValue = tokenData.refreshToken;
                     }
                 } catch (e) {
-                    console.log('Token is not in JSON format, using as access token only');
+                    console.error('Error parsing token data:', e);
                 }
 
                 await loginWithToken(accessToken, refreshTokenValue);

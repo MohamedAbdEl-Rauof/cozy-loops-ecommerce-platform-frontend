@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "lint:strict": "eslint --max-warnings=0 .",
+    "build:strict": "npm run ts:check && npm run lint:strict && next build",
+    "find:unused": "npx depcheck",
+    "ts:check": "tsc --noEmit"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -29,8 +33,10 @@
     "@types/node": "^20.19.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "depcheck": "^1.4.7",
     "eslint": "^9",
     "eslint-config-next": "15.3.3",
+    "eslint-plugin-import": "^2.32.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   },

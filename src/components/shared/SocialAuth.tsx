@@ -6,7 +6,6 @@ import { Google, Apple, Instagram, Pinterest } from '@mui/icons-material';
 const SocialAuth = () => {
     return (
         <Box sx={{ textAlign: 'center', mb: 4 }}>
-            {/* Social Login */}
             <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mb: 3 }}>
                 {[
                     { icon: <Google />, color: "#4285F4", name: "Google" },

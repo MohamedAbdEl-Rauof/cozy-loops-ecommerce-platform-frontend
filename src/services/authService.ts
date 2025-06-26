@@ -127,7 +127,6 @@ export const resendVerificationEmail = async (email: string): Promise<{ message:
 
 export const getUser = async () => {
   try {
-    // Use apiWithAuth for authenticated endpoints
     const response = await apiWithAuth.get('/api/users/me');
     return response.data.user;
   } catch (error) {

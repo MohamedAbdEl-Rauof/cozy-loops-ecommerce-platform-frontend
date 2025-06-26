@@ -18,7 +18,6 @@ import { CheckCircle } from "@mui/icons-material";
 import { forgotPassword } from "@/services/authService";
 import { useRouter } from "next/navigation";
 
-// Zod validation schema
 const forgotPasswordSchema = z.object({
     email: z.string().email({ message: "Please enter a valid email address" }),
 });
@@ -37,7 +36,6 @@ export default function ForgotPasswordDialog({ open, onClose }: ForgotPasswordDi
     const [countdown, setCountdown] = useState(5);
     const router = useRouter();
     const [submittedEmail, setSubmittedEmail] = useState<string>("");
-
 
     useEffect(() => {
         let time: NodeJS.Timeout;

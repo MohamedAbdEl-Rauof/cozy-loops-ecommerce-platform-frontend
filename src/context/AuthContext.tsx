@@ -93,19 +93,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     });
   }, []);
 
-  // Improved checkAuthStatus function that can be called anywhere
   const checkAuthStatus = useCallback(async (): Promise<boolean> => {
     const accessToken = Cookies.get('accessToken');
     const refreshTokenValue = Cookies.get('refreshToken');
 
-    // If no tokens at all, we're definitely not authenticated
     if (!accessToken && !refreshTokenValue) {
       setIsAuthenticated(false);
       setUser(null);
       return false;
     }
 
-    // Try with access token first
     if (accessToken) {
       try {
         const userData = await getUser();
@@ -113,17 +110,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setIsAuthenticated(true);
         return true;
       } catch (error) {
-        console.log('Access token invalid, trying refresh token');
-        // Access token failed, try refresh token if available
+        console.error('Failed to get user data with access token:', error);
       }
     }
 
-    // Try with refresh token if access token failed or doesn't exist
     if (refreshTokenValue) {
       try {
         const response = await refreshToken(refreshTokenValue);
 
-        // Store the new access token
         Cookies.set('accessToken', response.accessToken, {
           secure: true,
           sameSite: 'strict',
@@ -131,13 +125,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         });
 
         try {
-          // Get full user data with new token
           const userData = await getUser();
           setUser(userData);
           setIsAuthenticated(true);
           return true;
         } catch (userDataError) {
-          // If we can't get full user data, use what we have from refresh response
           if (response.user) {
             setUser(response.user);
             setIsAuthenticated(true);
@@ -147,7 +139,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
       } catch (refreshError) {
         console.error('Token refresh failed:', refreshError);
-        // Both tokens failed, clear everything
         setIsAuthenticated(false);
         setUser(null);
         Cookies.remove('accessToken');
@@ -156,14 +147,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
     }
 
-    // If we got here with an access token but no refresh token and the access token failed
     setIsAuthenticated(false);
     setUser(null);
     Cookies.remove('accessToken');
     return false;
   }, []);
 
-  // Initial auth check on mount
   useEffect(() => {
     const initialAuthCheck = async () => {
       try {
@@ -184,23 +173,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       const response = await login(email, password);
 
-      // Store tokens in cookies with proper security settings
       Cookies.set('accessToken', response.accessToken, {
         secure: true,
         sameSite: 'strict',
-        expires: 1 
+        expires: 1
       });
 
       Cookies.set('refreshToken', response.refreshToken, {
         secure: true,
         sameSite: 'strict',
-        expires: 7 
+        expires: 7
       });
 
       let userData = response.user;
 
       try {
-        // Get complete user profile
         const fullUserData = await getUser();
         userData = {
           ...userData,
@@ -212,11 +199,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.warn('Could not fetch complete profile, using basic user data', profileError);
       }
 
-      // Update auth state
       setUser(userData);
       setIsAuthenticated(true);
 
-      // Navigate based on user role - use setTimeout to ensure this happens after the component has processed the response
       setTimeout(() => {
         if (userData.role === 'admin') {
           router.push('/admin/dashboard');
@@ -234,7 +219,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const errorMessage = error.response?.data?.message || 'Login failed';
       setError(errorMessage);
 
-      // Important: Throw the error but don't navigate or refresh
       throw error;
     } finally {
       setLoading(false);
@@ -246,7 +230,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setLoading(true);
       clearError();
 
-      // Store the provided token
       Cookies.set('accessToken', token, {
         secure: true,
         sameSite: 'strict',
@@ -261,17 +244,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         });
       }
 
-      // Verify token by getting user data
       const userData = await getUser();
 
-      // Update auth state
       setUser(userData);
       setIsAuthenticated(true);
 
       return userData;
     } catch (error: any) {
       console.error('Login with token failed:', error);
-      // Clean up invalid tokens
       Cookies.remove('accessToken');
       if (refreshTokenValue) Cookies.remove('refreshToken');
 
@@ -299,16 +279,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const handleLogout = async (redirect: boolean = true): Promise<void> => {
     try {
-      // Attempt to notify the server about logout
       const refreshTokenValue = Cookies.get('refreshToken');
       if (refreshTokenValue) {
         await logout(refreshTokenValue).catch(err => {
-          // Just log the error but continue with client-side logout
           console.warn('Server logout failed, continuing with client logout:', err);
         });
       }
     } finally {
-      // Always clear tokens and state regardless of server response
       Cookies.remove('accessToken');
       Cookies.remove('refreshToken');
 
@@ -348,19 +325,13 @@ export const useAuth = () => {
 
   const { isAuthenticated, loading, checkAuthStatus } = context;
 
-  // Enhanced authentication check that runs when the hook is used
   useEffect(() => {
     const hasAccessToken = !!Cookies.get('accessToken');
     const hasRefreshToken = !!Cookies.get('refreshToken');
 
-    // If we have tokens but the context doesn't think we're authenticated,
-    // this could be a state inconsistency that needs fixing
     if ((hasAccessToken || hasRefreshToken) && !isAuthenticated && !loading) {
-      console.log('Token detected but not authenticated, refreshing auth state');
       checkAuthStatus();
     } else if (!hasAccessToken && !hasRefreshToken && isAuthenticated && !loading) {
-      // If we don't have tokens but think we're authenticated, fix the state
-      console.log('No tokens found but marked as authenticated, fixing state');
       context.setIsAuthenticated(false);
     }
   }, [context, isAuthenticated, loading, checkAuthStatus]);

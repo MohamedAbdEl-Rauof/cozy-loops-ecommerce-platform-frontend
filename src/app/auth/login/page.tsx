@@ -60,7 +60,6 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (isUserAuthenticated()) {
-      console.log('User is authenticated, showing redirect message');
       setShowAuthenticatedMessage(true);
     }
   }, [isAuthenticated, loading, isUserAuthenticated]);
