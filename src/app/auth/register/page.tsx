@@ -34,6 +34,7 @@ import Image from "next/image"
 import axios from "axios"
 import SocialAuth from "@/components/shared/SocialAuth"
 import { useRouter } from "next/navigation"
+import { CountdownRedirect } from "@/components/auth/CountdownRedirect"
 
 // Zod validation schema
 const registrationSchema = z
@@ -74,10 +75,27 @@ export default function RegistrationPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
-  const { register } = useAuth();
+  const { register,isAuthenticated } = useAuth();
   const [showVerificationSnackbar, setShowVerificationSnackbar] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState<string>("");
   const router = useRouter();
+   const [showAuthenticatedMessage, setShowAuthenticatedMessage] = useState(false);
+  
+    useEffect(() => {
+      if (isAuthenticated) {
+        setShowAuthenticatedMessage(true);
+      }
+    }, [isAuthenticated]);
+  
+    if (showAuthenticatedMessage) {
+      return (
+        <CountdownRedirect
+          message="You are already authenticated!"
+          redirectPath="/"
+          seconds={5}
+        />
+      );
+    }
 
   const {
     control,

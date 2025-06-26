@@ -1,7 +1,8 @@
+
 import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, searchParams } = request.nextUrl;
 
   // Get tokens from cookies
   const accessToken = request.cookies.get('accessToken')?.value;
@@ -14,6 +15,7 @@ export function middleware(request: NextRequest) {
     '/orders',
     '/account',
     '/wishlist',
+    '/admin',
   ];
 
   // Define auth routes that should redirect if user is already logged in
@@ -26,7 +28,6 @@ export function middleware(request: NextRequest) {
 
   // Define public routes that should always be accessible
   const publicRoutes = [
-    '/auth/verify-email',
     '/products',
     '/categories',
     '/search',
@@ -34,6 +35,34 @@ export function middleware(request: NextRequest) {
     '/contact',
     '/faq',
   ];
+
+  // Special case: Email verification route
+  if (pathname.startsWith('/auth/verify-email')) {
+    // Check if email parameter exists
+    const email = searchParams.get('email');
+    if (!email) {
+      // No email parameter, redirect to login
+      return NextResponse.redirect(new URL('/auth/login', request.url));
+    }
+    
+    // If user is already authenticated, let the client component handle the redirect
+    return NextResponse.next();
+  }
+
+  // Special case: Reset password route
+  if (pathname.startsWith('/auth/reset-password')) {
+    // Check if email parameter exists
+    const email = searchParams.get('email');
+    const token = searchParams.get('token');
+    
+    if (!email || !token) {
+      // Missing required parameters, redirect to forgot password
+      return NextResponse.redirect(new URL('/auth/forgot-password', request.url));
+    }
+    
+    // If user is already authenticated, let the client component handle the redirect
+    return NextResponse.next();
+  }
 
   // Check if the current path is a protected route
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
@@ -43,14 +72,6 @@ export function middleware(request: NextRequest) {
   
   // Check if the current path is a public route
   const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route)) || pathname === '/';
-  
-  // Check if the current path is for email verification
-  const isEmailVerification = pathname.startsWith('/auth/verify-email/');
-
-  // Allow email verification routes to be accessed without authentication
-  if (isEmailVerification) {
-    return NextResponse.next();
-  }
 
   // For protected routes, check if user is authenticated
   if (isProtectedRoute) {

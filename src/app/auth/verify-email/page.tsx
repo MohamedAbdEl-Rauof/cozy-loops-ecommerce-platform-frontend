@@ -36,6 +36,7 @@ import ListItemText from '@mui/material/ListItemText';
 import CheckIcon from '@mui/icons-material/Check';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
+import { CountdownRedirect } from '@/components/auth/CountdownRedirect';
 
 type VerificationStatus = 'pending' | 'success' | 'error';
 type SnackbarSeverity = 'success' | 'error' | 'info' | 'warning';
@@ -49,7 +50,7 @@ interface SnackbarState {
 export default function VerifyEmailPage() {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const { loginWithToken } = useAuth();
+    const { loginWithToken, isAuthenticated } = useAuth();
     const email = searchParams.get('email') || "example@email.com";
     const token = searchParams.get('token');
     const [verificationStatus, setVerificationStatus] = useState<VerificationStatus>(token ? 'pending' : 'success');
@@ -58,11 +59,28 @@ export default function VerifyEmailPage() {
     const [resendCountdown, setResendCountdown] = useState(60);
     const [isResendDisabled, setIsResendDisabled] = useState(true);
     const [loading, setLoading] = useState(false);
+    const [showAuthenticatedMessage, setShowAuthenticatedMessage] = useState(false);
     const [snackbar, setSnackbar] = useState<SnackbarState>({
         open: false,
         message: '',
         severity: 'success'
     });
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            setShowAuthenticatedMessage(true);
+        }
+    }, [isAuthenticated]);
+
+    if (showAuthenticatedMessage) {
+        return (
+            <CountdownRedirect
+                message="You are already authenticated!"
+                redirectPath="/"
+                seconds={5}
+            />
+        );
+    }
 
     useEffect(() => {
         if (verificationStatus === 'success' && redirectCountdown > 0) {

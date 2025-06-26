@@ -25,6 +25,8 @@ import Link from "next/link"
 import SocialAuth from "@/components/shared/SocialAuth"
 import ForgotPasswordDialog from "@/components/auth/ForgetPasswordDialog"
 import { useAuth } from "@/context/AuthContext"
+import { CountdownRedirect } from "@/components/auth/CountdownRedirect"
+import Cookies from "js-cookie"
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -41,11 +43,32 @@ export default function LoginPage() {
   const [snackbar, setSnackbar] = useState({
     open: false, message: '', severity: 'error' as 'error' | 'warning' | 'info' | 'success'
   });
-  const { login } = useAuth();
+  const { login, isAuthenticated, loading } = useAuth();
+  const [showAuthenticatedMessage, setShowAuthenticatedMessage] = useState(false);
 
-  const handleCloseSnackbar = () => {
-    setSnackbar(prev => ({ ...prev, open: false }));
-  };
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isValid, isDirty },
+  } = useForm<FormData>({
+    resolver: zodResolver(loginSchema),
+    mode: "onChange",
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  })
+
+  useEffect(() => {
+    const accessToken = Cookies.get('accessToken');
+    const refreshToken = Cookies.get('refreshToken');
+
+    // If we have tokens or the auth context says we're authenticated
+    if ((accessToken || refreshToken || isAuthenticated) && !loading) {
+      console.log('User is authenticated, showing redirect message');
+      setShowAuthenticatedMessage(true);
+    }
+  }, [isAuthenticated, loading]);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -62,19 +85,9 @@ export default function LoginPage() {
     }
   }, []);
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors, isValid, isDirty },
-  } = useForm<FormData>({
-    resolver: zodResolver(loginSchema),
-    mode: "onChange",
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  })
-
+  const handleCloseSnackbar = () => {
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
@@ -107,6 +120,16 @@ export default function LoginPage() {
       setIsSubmitting(false);
     }
   };
+
+  if (showAuthenticatedMessage || (!loading && (isAuthenticated || Cookies.get('accessToken')))) {
+    return (
+      <CountdownRedirect
+        message="You are already authenticated!"
+        redirectPath="/"
+        seconds={5}
+      />
+    );
+  }
 
   return (
     <Box sx={{ minHeight: "100vh", display: "flex" }}>

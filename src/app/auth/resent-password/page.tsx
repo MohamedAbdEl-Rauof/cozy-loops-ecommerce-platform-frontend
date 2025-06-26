@@ -22,6 +22,8 @@ import Image from "next/image"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Visibility, VisibilityOff, Check } from "@mui/icons-material"
 import { verifyOtp, forgotPassword, resetPassword } from "@/services/authService"
+import { useAuth } from "@/context/AuthContext"
+import { CountdownRedirect } from "@/components/auth/CountdownRedirect"
 
 const otpSchema = z.object({
   otp: z.string().length(6, { message: "OTP must be 6 digits" }).regex(/^\d+$/, { message: "OTP must contain only numbers" }),
@@ -104,6 +106,24 @@ export default function ResetPassword() {
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [severity, setSeverity] = useState<"success" | "error">("success");
   const [resetToken, setResetToken] = useState<string | null>(null);
+  const { isAuthenticated } = useAuth();
+  const [showAuthenticatedMessage, setShowAuthenticatedMessage] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      setShowAuthenticatedMessage(true);
+    }
+  }, [isAuthenticated]);
+
+  if (showAuthenticatedMessage) {
+    return (
+      <CountdownRedirect
+        message="You are already authenticated!"
+        redirectPath="/"
+        seconds={5}
+      />
+    );
+  }
 
   const {
     handleSubmit: handleOtpSubmit,
