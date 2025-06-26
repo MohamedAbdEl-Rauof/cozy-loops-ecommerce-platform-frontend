@@ -13,6 +13,8 @@ import {
   Link as MuiLink,
   Container,
   CircularProgress,
+  Snackbar,
+  Alert,
 } from "@mui/material"
 import {
   Visibility,
@@ -22,8 +24,8 @@ import Image from "next/image"
 import Link from "next/link"
 import SocialAuth from "@/components/shared/SocialAuth"
 import ForgotPasswordDialog from "@/components/auth/ForgetPasswordDialog"
+import { useAuth } from "@/context/AuthContext"
 
-// Zod validation schema
 const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
   password: z.string().min(8, { message: "Password must be at least 8 characters" }),
@@ -36,23 +38,25 @@ export default function LoginPage() {
   const [hasStartedTypingPassword, setHasStartedTypingPassword] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [forgetPasswordOpen, setForgetPasswordOpen] = useState(false)
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: '' });
+  const [snackbar, setSnackbar] = useState({
+    open: false, message: '', severity: 'error' as 'error' | 'warning' | 'info' | 'success'
+  });
+  const { login } = useAuth();
 
+  const handleCloseSnackbar = () => {
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
 
-  // Add this to your login page component
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     const verified = searchParams.get('verified');
 
     if (verified === 'true') {
-      // Show success message for email verification
       setSnackbar({
         open: true,
         message: 'Email verified successfully! You can now log in.',
         severity: 'success'
       });
-
-      // Remove the verified parameter from the URL to prevent showing the message again on refresh
       const newUrl = window.location.pathname;
       window.history.replaceState({}, document.title, newUrl);
     }
@@ -72,14 +76,35 @@ export default function LoginPage() {
   })
 
   const onSubmit = (data: FormData) => {
-    // This is just for UI demonstration - no actual functionality
-    setIsSubmitting(true)
-    console.log("Form submitted with:", data)
+    setIsSubmitting(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false)
-    }, 2000)
+    login(data.email, data.password)
+      .then(() => {
+        setSnackbar({
+          open: true,
+          message: 'Login successful!',
+          severity: 'success'
+        });
+      })
+      .catch((error) => {
+        if (error.response && error.response.status === 403 &&
+          error.response.data && error.response.data.emailVerified === false) {
+          setSnackbar({
+            open: true,
+            message: 'Email not verified. Please check your inbox for verification email.',
+            severity: 'warning'
+          });
+        } else {
+          setSnackbar({
+            open: true,
+            message: error.message || 'Login failed. Please try again.',
+            severity: 'error'
+          });
+        }
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
   }
 
   return (
@@ -245,6 +270,21 @@ export default function LoginPage() {
           </Box>
         </Container>
       </Box>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   )
 }

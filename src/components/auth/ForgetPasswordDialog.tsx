@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -9,14 +9,14 @@ import {
     DialogActions,
     TextField,
     Button,
-    IconButton,
     Typography,
     Box,
     CircularProgress,
     Alert,
 } from "@mui/material";
-import { Close, CheckCircle } from "@mui/icons-material";
-import Link from "next/link";
+import { CheckCircle } from "@mui/icons-material";
+import { forgotPassword } from "@/services/authService";
+import { useRouter } from "next/navigation";
 
 // Zod validation schema
 const forgotPasswordSchema = z.object({
@@ -34,6 +34,25 @@ export default function ForgotPasswordDialog({ open, onClose }: ForgotPasswordDi
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [countdown, setCountdown] = useState(5);
+    const router = useRouter();
+    const [submittedEmail, setSubmittedEmail] = useState<string>("");
+
+
+    useEffect(() => {
+        let time: NodeJS.Timeout;
+        if (success && countdown > 0) {
+            time = setTimeout(() => {
+                setCountdown((prev) => prev - 1);
+            }, 1000);
+        } else if (success && countdown === 0) {
+            handleClose();
+            router.push("/auth/resent-password?email=" + encodeURIComponent(submittedEmail));
+        }
+        return () => {
+            if (time) clearTimeout(time);
+        };
+    }, [success, countdown]);
 
     const {
         control,
@@ -53,24 +72,28 @@ export default function ForgotPasswordDialog({ open, onClose }: ForgotPasswordDi
         setError(null);
 
         try {
-            // Simulate API call
-            await new Promise((resolve) => setTimeout(resolve, 1500));
-
-            // For demo purposes, always succeed
+            await forgotPassword(data.email);
+            setSubmittedEmail(data.email);
             setSuccess(true);
             reset();
-        } catch (error) {
-            setError("Failed to send reset email. Please try again.");
-        } finally {
-            setIsSubmitting(false);
+        } catch (err) {
+            if (err instanceof Error && "response" in err) {
+                const errorWithResponse = err as { response?: { data?: { message?: string } } };
+                setError(errorWithResponse.response?.data?.message || "An error occurred while sending the reset password email.");
+            } else {
+                setError("An unexpected error occurred.");
+            }
         }
     };
+
+
 
     const handleClose = () => {
         if (!isSubmitting) {
             reset();
             setSuccess(false);
             setError(null);
+            setCountdown(5);
             onClose();
         }
     };
@@ -118,23 +141,8 @@ export default function ForgotPasswordDialog({ open, onClose }: ForgotPasswordDi
                             Email Sent Successfully
                         </Typography>
                         <Typography variant="body1" sx={{ mb: 3, color: "#666" }}>
-                            No worries! Enter your email address below and we will send you a reset password email with instructions                        </Typography>
-                        <Button
-                            variant="contained"
-                            onClick={handleClose}
-                            sx={{
-                                backgroundColor: "var(--primary-color)",
-                                color: "white",
-                                "&:hover": {
-                                    backgroundColor: "var(--primary-hover)",
-                                },
-                                height: "var(--input-height)",
-                                borderRadius: "var(--button-border-radius)",
-                                px: 4
-                            }}
-                        >
-                            Got it
-                        </Button>
+                            Will Redirect to Resend OTP page in {countdown} {countdown === 1 ? 'second' : 'seconds'}
+                        </Typography>
                     </Box>
                 ) : (
                     <Box

@@ -57,9 +57,9 @@ export const forgotPassword = async (email: string): Promise<ForgotPasswordRespo
 
 export const resetPassword = async (
   token: string,
-  newPassword: string
+  password: string
 ): Promise<ResetPasswordResponse> => {
-  const response = await api.post('/api/auth/reset-password', { token, newPassword });
+  const response = await api.post(`/api/auth/reset-password/${token}`, { password });
   return response.data;
 };
 
@@ -72,6 +72,13 @@ export const verifyEmail = async (token: string) => {
     throw error;
   }
 };
+
+export const verifyOtp = async (email: string, otp: string): Promise<{
+  resetToken(resetToken: any): unknown; message: string 
+}> => {
+  const response = await api.post('/api/auth/verify-otp', { email, otp });
+  return response.data;
+};  
 
 export const resendVerificationEmail = async (email: string): Promise<{ message: string }> => {
   const response = await api.post('/api/auth/resend-verification', { email });
