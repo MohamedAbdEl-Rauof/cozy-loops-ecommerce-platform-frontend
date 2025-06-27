@@ -1,15 +1,32 @@
 @import "tailwindcss";
 
 :root {
+  /* Base colors */
   --background: #ffffff;
   --foreground: #171717;
+  
+  /* Brand colors */
+  --primary-color: #ff7043;
+  --primary-hover: #ff5722;
+  --primary-disabled: #cccccc;
+  
+  /* Form elements */
+  --input-height: 48px;
+  --input-border-radius: 8px;
+  --button-border-radius: 8px;
+  --button-font-weight: 600;
+  --button-letter-spacing: 0.5px;
+  
+  /* Typography */
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -24,3 +41,30 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Material UI overrides using CSS variables */
+.MuiButton-root {
+  border-radius: var(--button-border-radius) !important;
+  text-transform: uppercase !important;
+  font-weight: var(--button-font-weight) !important;
+  letter-spacing: var(--button-letter-spacing) !important;
+}
+
+.MuiButton-containedPrimary {
+  background-color: var(--primary-color) !important;
+}
+
+.MuiButton-containedPrimary:hover {
+  background-color: var(--primary-hover) !important;
+}
+
+.MuiButton-containedPrimary:disabled {
+  background-color: var(--primary-disabled) !important;
+  color: #666 !important;
+}
+
+.MuiOutlinedInput-root {
+  height: var(--input-height) !important;
+  border-radius: var(--input-border-radius) !important;
+}
+
