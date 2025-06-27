@@ -211,7 +211,7 @@ export default function VerifyEmailPage() {
         setSnackbar(prev => ({ ...prev, open: false }));
     };
 
-    if (showAuthenticatedMessage || (!authLoading && isUserAuthenticated())) {
+    if ((showAuthenticatedMessage || (!authLoading && isUserAuthenticated())) && !token) {
         return (
             <CountdownRedirect
                 message="You are already authenticated!"

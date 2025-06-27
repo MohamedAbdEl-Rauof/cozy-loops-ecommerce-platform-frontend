@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Box, Typography, Paper, CircularProgress, Button } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
-import HomeIcon from '@mui/icons-material/Home';
 
 interface CountdownRedirectProps {
   message: string;
@@ -28,10 +27,6 @@ export function CountdownRedirect({ message, redirectPath, seconds }: CountdownR
 
     return () => clearTimeout(timer);
   }, [countdown, redirectPath, router]);
-
-  const handleRedirectNow = () => {
-    router.push(redirectPath);
-  };
 
   return (
     <Box sx={{
@@ -113,26 +108,6 @@ export function CountdownRedirect({ message, redirectPath, seconds }: CountdownR
         <Typography variant="body1" sx={{ mb: 3, color: '#666' }}>
           Redirecting to Home page {countdown === 1 ? 'in a second' : `in ${countdown} seconds`}...
         </Typography>
-
-        <Button
-          variant="contained"
-          startIcon={<HomeIcon />}
-          onClick={handleRedirectNow}
-          sx={{
-            bgcolor: 'var(--primary-color)',
-            '&:hover': {
-              bgcolor: 'var(--primary-hover)',
-            },
-            borderRadius: '8px',
-            py: 1.5,
-            px: 4,
-            textTransform: 'none',
-            fontWeight: 500,
-            fontSize: '1.1rem'
-          }}
-        >
-          Go to Home Now
-        </Button>
       </Paper>
     </Box>
   );
