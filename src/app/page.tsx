@@ -1,24 +1,25 @@
 'use client';
 
-import { useAuth } from '@/context/AuthContext';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import HeroSection from '@/components/home/HeroSection';
+// import { useAuth } from '@/context/AuthContext';
+// import Image from 'next/image';
+// import { useRouter } from 'next/navigation';
 
 export default function Home() {
-  const { user, logout } = useAuth();
-  const router = useRouter();
+  // const { user, logout } = useAuth();
+  // const router = useRouter();
 
-  const handleLogout = async () => {
-    await logout();
-  };
+  // const handleLogout = async () => {
+  //   await logout();
+  // };
   
-  const handleredirect = async () => {
-    router.push('/auth/login');
-  }
+  // const handleredirect = async () => {
+  //   router.push('/auth/login');
+  // }
 
   return (
     <div>
-      <h1 className="text-4xl font-bold text-center my-8">
+      {/* <h1 className="text-4xl font-bold text-center my-8">
         Welcome to Our E-commerce Platform
       </h1>
 
@@ -55,7 +56,10 @@ export default function Home() {
         >
           Login
         </button>
-      </div>
+      </div> */}
+
+      <HeroSection />
+
     </div>
   );
 }

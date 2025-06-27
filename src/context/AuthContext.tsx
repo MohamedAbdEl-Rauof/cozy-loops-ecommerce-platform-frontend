@@ -280,7 +280,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsAuthenticated(false);
 
       if (redirect) {
-        router.push('/auth/login');
+        router.push('/');
       }
     }
   };
