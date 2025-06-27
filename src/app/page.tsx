@@ -1,12 +1,27 @@
-"use client";
+'use client';
+
 import { useAuth } from '@/context/AuthContext';
-import Image from "next/image";
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    await logout();
+  };
+  
+  const handleredirect = async () => {
+    router.push('/auth/login');
+  }
+
   return (
     <div>
-      <h1 className="text-4xl font-bold text-center my-8">Welcome to Our E-commerce Platform</h1>
+      <h1 className="text-4xl font-bold text-center my-8">
+        Welcome to Our E-commerce Platform
+      </h1>
+
       <div className="flex justify-center">
         {user ? (
           <div className="text-center">
@@ -22,6 +37,24 @@ export default function Home() {
         ) : (
           <p className="text-lg">Please log in to access your account.</p>
         )}
+      </div>
+
+      <div className="flex justify-center mt-8">
+        <button
+          onClick={handleLogout}
+          disabled={!user}
+          className="bg-red-500 hover:bg-red-400 text-white font-bold py-2 px-4 rounded"
+        >
+          Logout
+        </button>
+      </div>
+      <div className="flex justify-center mt-8">
+        <button
+          onClick={handleredirect}
+          className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 rounded"
+        >
+          Login
+        </button>
       </div>
     </div>
   );

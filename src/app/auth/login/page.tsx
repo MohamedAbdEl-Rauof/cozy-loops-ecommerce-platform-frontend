@@ -15,6 +15,10 @@ import {
   CircularProgress,
   Snackbar,
   Alert,
+  LinearProgress,
+  DialogContent,
+  Dialog,
+  Fade,
 } from "@mui/material"
 import {
   Visibility,
@@ -26,8 +30,8 @@ import SocialAuth from "@/components/shared/SocialAuth"
 import ForgotPasswordDialog from "@/components/auth/ForgetPasswordDialog"
 import { useAuth } from "@/context/AuthContext"
 import { CountdownRedirect } from "@/components/auth/CountdownRedirect"
-import { SuccessAnimation } from "@/components/shared/SuccessAnimation"
 import { useRouter } from "next/navigation"
+import CheckCircleIcon from "@mui/icons-material/CheckCircle"
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -48,6 +52,28 @@ export default function LoginPage() {
   const [showAuthenticatedMessage, setShowAuthenticatedMessage] = useState(false);
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
   const router = useRouter();
+  const [progressValue, setProgressValue] = useState(0);
+
+  useEffect(() => {
+    if (showSuccessAnimation) {
+      const totalTime = 3000;
+      const interval = 50;
+      const steps = totalTime / interval;
+      let currentStep = 0;
+
+      const timer = setInterval(() => {
+        currentStep += 1;
+        setProgressValue((currentStep / steps) * 100);
+
+        if (currentStep >= steps) {
+          clearInterval(timer);
+          router.push('/');
+        }
+      }, interval);
+
+      return () => clearInterval(timer);
+    }
+  }, [showSuccessAnimation, router]);
 
   const {
     control,
@@ -63,10 +89,10 @@ export default function LoginPage() {
   })
 
   useEffect(() => {
-    if (isUserAuthenticated()) {
+    if (isUserAuthenticated() && !showSuccessAnimation) {
       setShowAuthenticatedMessage(true);
     }
-  }, [isAuthenticated, loading, isUserAuthenticated]);
+  }, [isAuthenticated, loading, isUserAuthenticated, showSuccessAnimation]);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -117,22 +143,14 @@ export default function LoginPage() {
     }
   };
 
-  if (showSuccessAnimation) {
-    return <SuccessAnimation onComplete={() => router.push('/')} message="Login successful!" count={20} />;
-  }
-
-  if (showAuthenticatedMessage || (!loading && isUserAuthenticated())) {
+  if (showAuthenticatedMessage && !showSuccessAnimation) {
     return (
       <CountdownRedirect
         message="You are already authenticated!"
         redirectPath="/"
-        seconds={20}
+        seconds={5}
       />
     );
-  }
-
-  if (showSuccessAnimation) {
-    return <SuccessAnimation onComplete={() => router.push('/')} message="Login successful!" count={20} />;
   }
 
   return (
@@ -306,6 +324,103 @@ export default function LoginPage() {
           </Box>
         </Container>
       </Box>
+
+      {
+        showSuccessAnimation && (
+          <Dialog
+            open={showSuccessAnimation}
+            maxWidth="md"
+            fullWidth
+            PaperProps={{
+              elevation: 8,
+              sx: {
+                borderRadius: '16px',
+                overflow: 'hidden',
+                backgroundColor: 'white',
+                height: 'auto',
+                minHeight: '400px',
+                maxHeight: '80vh',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center'
+              }
+            }}
+            TransitionComponent={Fade}
+            TransitionProps={{ timeout: 500 }}
+          >
+            <DialogContent
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '3rem 2rem',
+                position: 'relative',
+                height: '100%',
+              }}
+            >
+              <Box
+                sx={{
+                  backgroundColor: 'rgba(var(--primary-color-rgb), 0.1)',
+                  borderRadius: '50%',
+                  padding: '1.5rem',
+                  animation: 'ripple 1.5s infinite ease-in-out',
+                  '@keyframes ripple': {
+                    '0%': { boxShadow: '0 0 0 0 rgba(var(--primary-color-rgb), 0.3)' },
+                    '70%': { boxShadow: '0 0 0 15px rgba(var(--primary-color-rgb), 0)' },
+                    '100%': { boxShadow: '0 0 0 0 rgba(var(--primary-color-rgb), 0)' }
+                  }
+                }}
+              >
+                <CheckCircleIcon
+                  sx={{
+                    fontSize: 180,
+                    color: 'var(--primary-color)',
+                    animation: 'pulse 1.5s infinite',
+                    '@keyframes pulse': {
+                      '0%': { transform: 'scale(0.95)' },
+                      '70%': { transform: 'scale(1)' },
+                      '100%': { transform: 'scale(0.95)' }
+                    }
+                  }}
+                />
+              </Box>
+              <Typography
+                variant="h5"
+                sx={{
+                  fontWeight: 600,
+                  color: '#333',
+                  textAlign: 'center',
+                  marginBottom: '0.75rem',
+                  animation: 'fadeInDown 0.6s ease-out',
+                  '@keyframes fadeInDown': {
+                    '0%': { opacity: 0, transform: 'translateY(-10px)' },
+                    '100%': { opacity: 1, transform: 'translateY(0)' }
+                  }
+                }}
+              >
+                Login successful! , Welcome
+              </Typography>
+            
+              <Box sx={{ width: '100%', mt: 1 }}>
+                <LinearProgress
+                  variant="determinate"
+                  value={progressValue} 
+                  sx={{
+                    height: 6,
+                    borderRadius: 3,
+                    backgroundColor: 'rgba(var(--primary-color-rgb), 0.1)',
+                    '& .MuiLinearProgress-bar': {
+                      borderRadius: 3,
+                      backgroundColor: 'var(--primary-color)',
+                    }
+                  }}
+                />
+              </Box>
+            </DialogContent>
+          </Dialog>
+        )
+      }
 
       <Snackbar
         open={snackbar.open}
