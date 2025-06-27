@@ -45,7 +45,7 @@ export default function ForgotPasswordDialog({ open, onClose }: ForgotPasswordDi
             }, 1000);
         } else if (success && countdown === 0) {
             handleClose();
-            router.push("/auth/resent-password?email=" + encodeURIComponent(submittedEmail));
+            router.push("/auth/resent-password?email=" + encodeURIComponent(submittedEmail) + "&fromDialog=true");
         }
         return () => {
             if (time) clearTimeout(time);
@@ -81,6 +81,8 @@ export default function ForgotPasswordDialog({ open, onClose }: ForgotPasswordDi
             } else {
                 setError("An unexpected error occurred.");
             }
+        } finally {
+            setIsSubmitting(false);
         }
     };
 

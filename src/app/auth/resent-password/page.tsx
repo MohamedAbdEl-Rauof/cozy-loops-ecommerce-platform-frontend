@@ -138,23 +138,30 @@ export default function ResetPassword() {
 
   const password = watch("password");
 
+
   useEffect(() => {
     if (email) {
-      setResendDisabled(true);
+      const fromDialog = searchParams.get("fromDialog") === "true";
 
-      const sendInitialOtp = async () => {
-        try {
-          await forgotPassword(email);
-          showNotification("OTP has been sent to your email", "success");
-        } catch (error) {
-          console.error("Error sending initial OTP:", error);
-          showNotification("Failed to send OTP. Please try again.", "error");
-        }
-      };
+      if (!fromDialog) {
+        setResendDisabled(true);
 
-      sendInitialOtp();
+        const sendInitialOtp = async () => {
+          try {
+            await forgotPassword(email);
+            showNotification("OTP has been sent to your email", "success");
+          } catch (error) {
+            console.error("Error sending initial OTP:", error);
+            showNotification("Failed to send OTP. Please try again.", "error");
+          }
+        };
+
+        sendInitialOtp();
+      } else {
+        setResendDisabled(true);
+      }
     }
-  }, [email]);
+  }, [email, searchParams]);
 
   useEffect(() => {
     if (password) {
@@ -262,9 +269,15 @@ export default function ResetPassword() {
         showNotification("OTP has been sent to your email", "success");
         setResendDisabled(true);
         setCountdown(60);
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error resending OTP:", error);
-        setShowRedirectMessage(true);
+
+        if (error.response?.data?.message === "User not found with this email") {
+          showNotification("User not found with this email", "error");
+        } else {
+          showNotification("Failed to send OTP. Please try again.", "error");
+          setShowRedirectMessage(true);
+        }
       } finally {
         setIsSubmitting(false);
       }
