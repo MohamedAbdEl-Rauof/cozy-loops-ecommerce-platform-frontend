@@ -138,6 +138,11 @@ export default function ResetPassword() {
 
   const password = watch("password");
 
+  useEffect(() => {
+    if (!email && !searchParams.get("fromDialog")) {
+      router.push("/")
+    }
+  })
 
   useEffect(() => {
     if (email) {

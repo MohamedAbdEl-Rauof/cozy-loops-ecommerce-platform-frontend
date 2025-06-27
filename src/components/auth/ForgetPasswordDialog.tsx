@@ -45,7 +45,7 @@ export default function ForgotPasswordDialog({ open, onClose }: ForgotPasswordDi
             }, 1000);
         } else if (success && countdown === 0) {
             handleClose();
-            router.push("/auth/resent-password?email=" + encodeURIComponent(submittedEmail) + "&fromDialog=true");
+            router.push("/auth/reset-password?email=" + encodeURIComponent(submittedEmail) + "&fromDialog=true");
         }
         return () => {
             if (time) clearTimeout(time);
