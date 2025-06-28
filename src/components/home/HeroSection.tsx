@@ -1,210 +1,347 @@
-"use client"
-
-import type React from "react"
-import { Box, Typography, Button, Container, Grid, Card, CardMedia, useTheme, useMediaQuery } from "@mui/material"
+import React from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import {
+  Box,
+  Container,
+  Typography,
+  Stack,
+} from '@mui/material';
+import { Link as MuiLink } from '@mui/material';
 
 const HeroSection: React.FC = () => {
-  const theme = useTheme()
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"))
-  const isTablet = useMediaQuery(theme.breakpoints.down("lg"))
 
-  const craftImages = [
+  const productImages = [
     {
-      src: "/placeholder.svg?height=200&width=200",
-      alt: "Knitting crafts",
+      src: "/images/home/sec-1/rethaferguson.png",
+      alt: "Knitting craft with colorful yarn"
     },
     {
-      src: "/placeholder.svg?height=200&width=200",
-      alt: "Pottery and ceramics",
+      src: "/images/home/sec-1/karolina.png",
+      alt: "White ceramic sculpture"
     },
     {
-      src: "/placeholder.svg?height=200&width=200",
-      alt: "Woven baskets",
+      src: "/images/home/sec-1/hiteshchoudhary.png",
+      alt: "Handwoven fabric pattern"
     },
     {
-      src: "/placeholder.svg?height=200&width=200",
-      alt: "Colorful textiles",
+      src: "/images/home/sec-1/enginakyurt.png",
+      alt: "Colorful embroidery work"
     },
     {
-      src: "/placeholder.svg?height=200&width=200",
-      alt: "Wooden crafts",
+      src: "/images/home/sec-1/unsplash.png",
+      alt: "Wooden loom weaving"
     },
     {
-      src: "/placeholder.svg?height=200&width=200",
-      alt: "Clay pottery",
-    },
-  ]
+      src: "/images/home/sec-1/toochinda.png",
+      alt: "Hands making pottery"
+    }
+  ];
 
   return (
     <Box
+      component="section"
       sx={{
-        background: "linear-gradient(135deg, #f5e6d3 0%, #e8d5c4 100%)",
-        minHeight: { xs: "70vh", md: "80vh" },
-        display: "flex",
-        alignItems: "center",
-        py: { xs: 4, md: 8 },
+        position: 'relative',
+        width: '100%',
+        overflow: 'hidden',
+        bgcolor: '#FBE8CC'
       }}
     >
-      <Container maxWidth="lg">
+      <Container
+        sx={{
+          position: 'relative',
+          zIndex: 10,
+          pt: 8,
+          pb: 12
+        }}
+      >
+        {/* Text content */}
         <Box
           sx={{
-            textAlign: "center",
-            mb: { xs: 4, md: 6 },
+            textAlign: 'center',
+            maxWidth: '1000px',
+            mx: 'auto',
+            mb: 8
           }}
         >
-          {/* Main Heading */}
           <Typography
             variant="h1"
             component="h1"
             sx={{
-              fontSize: {
-                xs: "2rem",
-                sm: "2.5rem",
-                md: "3.5rem",
-                lg: "4rem",
-              },
-              fontWeight: "bold",
-              color: "#2c3e50",
+              fontFamily: '"DM Sans", sans-serif',
+              fontSize: { xs: '2.75rem', md: '3.5rem', lg: '4.5rem' },
+              fontWeight: 700,
+              lineHeight: 1,
+              letterSpacing: '-0.1875rem',
+              color: '#1A2E35',
               mb: 3,
-              lineHeight: 1.2,
-              maxWidth: "900px",
-              mx: "auto",
+              maxWidth: '100%',
+              mx: 'auto',
+              position: 'relative',
             }}
           >
             Discover Handmade Treasures That Tell a Story
           </Typography>
-
-          {/* Subtitle */}
           <Typography
-            variant="h6"
+            variant="h5"
             component="p"
             sx={{
-              fontSize: {
-                xs: "1rem",
-                sm: "1.1rem",
-                md: "1.25rem",
-              },
-              color: "#5d6d7e",
-              mb: 4,
-              maxWidth: "600px",
-              mx: "auto",
-              lineHeight: 1.6,
+              fontSize: { xs: '1.125rem', md: '1.25rem' },
+              color: '#1A2E35',
+              mb: 4
             }}
           >
             Support local artisans. Shop one-of-a-kind creations made with heart.
           </Typography>
-
-          {/* Action Buttons */}
-          <Box
-            sx={{
-              display: "flex",
-              gap: 2,
-              justifyContent: "center",
-              flexDirection: { xs: "column", sm: "row" },
-              alignItems: "center",
-              mb: { xs: 4, md: 6 },
-            }}
+          <Stack
+            direction={{ xs: 'column', sm: 'row' }}
+            spacing={{ xs: 3, sm: 4 }}
+            justifyContent="center"
+            alignItems="center"
+            sx={{ mt: 2 }}
           >
-            <Button
-              variant="contained"
-              size="large"
+            <MuiLink
+              component={Link}
+              href="/collection"
               sx={{
-                backgroundColor: "#e67e22",
-                color: "white",
-                px: 4,
-                py: 1.5,
-                borderRadius: "25px",
-                textTransform: "none",
-                fontSize: "1.1rem",
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                bgcolor: 'var(--primary-color)', // orange-400
+                color: 'white',
+                borderRadius: '30px',
+                py: { xs: 1.5, sm: 2 },
+                px: { xs: 5, sm: 6 },
+                minWidth: { xs: '200px', sm: '220px' },
+                height: { xs: '48px', sm: '54px' },
+                fontSize: { xs: '0.95rem', sm: '1rem' },
                 fontWeight: 600,
-                boxShadow: "0 4px 15px rgba(230, 126, 34, 0.3)",
-                "&:hover": {
-                  backgroundColor: "#d35400",
-                  boxShadow: "0 6px 20px rgba(230, 126, 34, 0.4)",
+                letterSpacing: '0.5px',
+                boxShadow: '0 10px 15px -3px rgba(249, 115, 22, 0.25), 0 4px 6px -2px rgba(249, 115, 22, 0.1)',
+                textDecoration: 'none',
+                textTransform: 'none',
+                position: 'relative',
+                overflow: 'hidden',
+                transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+                '&::before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  background: 'linear-gradient(45deg, rgba(255,255,255,0.1), rgba(255,255,255,0))',
+                  opacity: 0,
+                  transition: 'opacity 300ms ease',
                 },
-                minWidth: { xs: "200px", sm: "auto" },
+                '&:hover': {
+                  bgcolor: 'var(--primary-hover)',
+                  transform: 'translateY(-2px)',
+                  boxShadow: '0 20px 25px -5px rgba(249, 115, 22, 0.3), 0 10px 10px -5px rgba(249, 115, 22, 0.2)',
+                  textDecoration: 'none',
+                  '&::before': {
+                    opacity: 1,
+                  }
+                },
+                '&:active': {
+                  transform: 'translateY(1px)',
+                  boxShadow: '0 5px 10px -3px rgba(249, 115, 22, 0.3), 0 2px 3px -2px rgba(249, 115, 22, 0.1)',
+                }
               }}
             >
               Shop the Collection
-            </Button>
-            <Button
-              variant="text"
-              size="large"
+            </MuiLink>
+            <MuiLink
+              component={Link}
+              href="/about"
               sx={{
-                color: "#2c3e50",
-                textTransform: "none",
-                fontSize: "1.1rem",
-                fontWeight: 500,
-                textDecoration: "underline",
-                "&:hover": {
-                  backgroundColor: "transparent",
-                  color: "#e67e22",
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                bgcolor: 'transparent',
+                color: '#334155',
+                borderRadius: '30px',
+                py: { xs: 1.5, sm: 2 },
+                px: { xs: 5, sm: 6 },
+                minWidth: { xs: '200px', sm: '220px' },
+                height: { xs: '48px', sm: '54px' },
+                fontSize: { xs: '0.95rem', sm: '1rem' },
+                fontWeight: 600,
+                letterSpacing: '0.5px',
+                textDecoration: 'none',
+                textTransform: 'none',
+                position: 'relative',
+                transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+                '&::after': {
+                  content: '""',
+                  position: 'absolute',
+                  bottom: '10px',
+                  left: '50%',
+                  width: '0',
+                  height: '2px',
+                  backgroundColor: '#334155',
+                  transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+                  transform: 'translateX(-50%)',
                 },
+                '&:hover': {
+                  color: '#1E293B', // slate-800
+                  borderColor: '#94A3B8', // slate-400
+                  bgcolor: 'rgba(203, 213, 225, 0.1)', // very light slate background
+                  '&::after': {
+                    width: '60%',
+                  }
+                },
+                '&:active': {
+                  transform: 'translateY(1px)',
+                }
               }}
             >
               Learn More
-            </Button>
-          </Box>
-        </Box>
-
-        {/* Product Images Gallery */}
-        <Box
-          sx={{
-            mt: { xs: 4, md: 6 },
-            overflow: "hidden",
-          }}
-        >
-          <Grid
-            container
-            spacing={{ xs: 2, md: 3 }}
-            justifyContent="center"
-            sx={{
-              transform: { md: "perspective(1000px) rotateX(5deg)" },
-            }}
-          >
-            {craftImages.slice(0, isMobile ? 4 : isTablet ? 5 : 6).map((image, index) => (
-              <Grid
-                item
-                xs={6}
-                sm={4}
-                md={2}
-                key={index}
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                }}
-              >
-                <Card
-                  sx={{
-                    borderRadius: "15px",
-                    overflow: "hidden",
-                    boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
-                    transition: "all 0.3s ease",
-                    "&:hover": {
-                      transform: "translateY(-5px)",
-                      boxShadow: "0 12px 35px rgba(0,0,0,0.15)",
-                    },
-                    width: "100%",
-                    maxWidth: { xs: "140px", sm: "160px", md: "180px" },
-                  }}
-                >
-                  <CardMedia
-                    component="img"
-                    image={image.src}
-                    alt={image.alt}
-                    sx={{
-                      height: { xs: "120px", sm: "140px", md: "160px" },
-                      objectFit: "cover",
-                    }}
-                  />
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+            </MuiLink>
+          </Stack>
         </Box>
       </Container>
-    </Box>
-  )
-}
 
-export default HeroSection
+      {/* Wave transition to white */}
+      <Box sx={{ position: 'relative' }}>
+        {/* Wave SVG */}
+        <Box sx={{ width: '100%' }}>
+          <svg
+            style={{ width: '100%', height: 'auto' }}
+            viewBox="0 0 1440 200"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="none"
+          >
+            <path
+              d="M0,0 C480,150 960,150 1440,0 L1440,200 L0,200 Z"
+              fill="white"
+            />
+          </svg>
+        </Box>
+
+        {/* Product images */}
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            transform: 'translateY(-50%)',
+            width: '100%',
+            overflow: 'hidden',
+            mt: 3
+          }}
+        >
+          <Box sx={{ width: '100%', px: { xs: 2, md: 0 } }}>
+            {/* Desktop U-shaped arrangement */}
+            <Box
+              sx={{
+                display: { xs: 'none', md: 'flex' },
+                width: '100%',
+                gap: 5,
+                alignItems: 'center',
+                maxWidth: '100vw',
+                transform: 'translateX(-5%)',
+                ml: '-5%',
+                mr: '-5%',
+                flexDirection: 'row-reverse', // Make items start from right
+                justifyContent: 'flex-start' // Align to the right
+              }}
+            >
+              {productImages.map((image, index, arr) => {
+                // Calculate position along the U-shaped curve
+                const totalImages = arr.length;
+
+                // Since we're starting from right, we don't need to reverse the position calculation
+                const position = index / (totalImages - 1); // 0 to 1 (right to left)
+
+                // Create U-shaped curve using a parabola: y = a(x-h)² + k
+                // Where (h,k) is the vertex of the parabola (0.5, -60)
+                const verticalOffset = 60 * Math.pow(position - 0.5, 2) - 60;
+
+                return (
+                  <Box
+                    key={`desktop-${index}`}
+                    sx={{
+                      position: 'relative',
+                      minWidth: { md: '180px', lg: '200px' },
+                      height: { md: '200px', lg: '250px' },
+                      overflow: 'hidden',
+                      border: '4px solid white',
+                      borderRadius: '16px',
+                      boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                      transform: `translateY(${verticalOffset}px)`,
+                      zIndex: Math.abs(index - Math.floor(totalImages / 2)),
+                      transition: 'transform 0.3s ease',
+                      '&:hover': {
+                        transform: `translateY(${verticalOffset}px) scale(1.05)`,
+                      }
+                    }}
+                  >
+                    <Image
+                      src={image.src}
+                      alt={image.alt}
+                      fill
+                      sizes="(max-width: 768px) 130px, (max-width: 1200px) 180px, 200px"
+                      style={{
+                        objectFit: 'cover',
+                        width: '100%',
+                        height: '100%',
+                        borderRadius: '12px' // Slightly smaller than container to avoid edge issues
+                      }}
+                      priority={index < 3} // Load first 3 images with priority
+                    />
+                  </Box>
+                );
+              })}
+            </Box>
+
+            {/* Mobile centered arrangement */}
+            <Box
+              sx={{
+                display: { xs: 'flex', md: 'none' },
+                flexWrap: 'nowrap',
+                gap: 1.5,
+                overflowX: 'auto',
+                pb: 2,
+                flexDirection: 'row-reverse', // Make items start from right
+                justifyContent: 'flex-start',
+                width: '100%'
+              }}
+            >
+              {productImages.map((image, index) => (
+                <Box
+                  key={`mobile-${index}`}
+                  sx={{
+                    position: 'relative',
+                    minWidth: { xs: '130px', sm: '150px' },
+                    height: { xs: '130px', sm: '150px' },
+                    overflow: 'hidden',
+                    border: '4px solid white',
+                    borderRadius: '16px',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                    transition: 'transform 0.3s ease',
+                    '&:hover': {
+                      transform: 'scale(1.05)',
+                    }
+                  }}
+                >
+                  <Image
+                    src={image.src}
+                    alt={image.alt}
+                    fill
+                    style={{ objectFit: 'cover' }}
+                  />
+                </Box>
+              ))}
+            </Box>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
+  );
+};
+
+export default HeroSection;

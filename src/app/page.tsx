@@ -12,10 +12,12 @@ export default function Home() {
   // const handleLogout = async () => {
   //   await logout();
   // };
-  
+
   // const handleredirect = async () => {
   //   router.push('/auth/login');
   // }
+
+  // Sample product images for the hero section
 
   return (
     <div>
@@ -58,8 +60,10 @@ export default function Home() {
         </button>
       </div> */}
 
-      <HeroSection />
+      <HeroSection
+      />
 
+      {/* Add more sections of your homepage below */}
     </div>
   );
 }
