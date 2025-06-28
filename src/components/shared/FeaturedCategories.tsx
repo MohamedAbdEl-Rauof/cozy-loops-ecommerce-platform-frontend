@@ -82,7 +82,7 @@ const FeaturedCategories = ({
                     }}
                 >
                     <Image
-                        src="/images/shared/featuredCategory/Subtract.png"
+                        src="/images/shared/featuredCategory.png"
                         alt={title}
                         fill
                         priority
@@ -206,7 +206,7 @@ const FeaturedCategories = ({
                             justifyContent: 'center',
                             bgcolor: theme.palette.warning.main,
                             color: theme.palette.warning.contrastText,
-                            borderRadius: { xs: '20px 0 0 0', sm: '25px 0 0 0', md: '30px 0 0 0' }, 
+                            borderRadius: { xs: '20px 0 0 0', sm: '25px 0 0 0', md: '30 px 0 0 0' }, 
                             height: { xs: '28px', sm: '36px', md: '44px' },
                             width: '100%', 
                             maxWidth: { xs: '120px', sm: '160px', md: '200px' }, 

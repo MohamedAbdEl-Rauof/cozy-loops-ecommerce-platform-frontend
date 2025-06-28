@@ -2,6 +2,8 @@
 
 import HeroSection from '@/components/home/HeroSection';
 import FeaturedCategories from '@/components/shared/FeaturedCategories';
+import StoryFeature from '@/components/shared/StoryFeature';
+
 // import { useAuth } from '@/context/AuthContext';
 // import Image from 'next/image';
 // import { useRouter } from 'next/navigation';
@@ -68,15 +70,24 @@ export default function Home() {
 
 
 
-      <FeaturedCategories
+      {/* <FeaturedCategories
         title="Need a gift? Make it personal."
         isTitleCenter={false}
         description="Custom handmade gifts that speak louder than words."
         ctaText=""
         buttonText="Explore Custom Picks"
         onButtonClick="/category"
-      />
+      /> */}
 
+
+      <StoryFeature
+        title="Our Story"
+        description="At Cozy Loops, we believe in the beauty of handmade craftsmanship. Each bag is knitted with care, blending comfort and style to create pieces that are as unique as you are."
+        buttonText="Meet the Maker"
+        imageSrc="/images/shared/storyFeature.jpg"
+        imageAlt="Hands crafting a knitted bag"
+        onButtonClick="/" 
+      />
 
 
 
