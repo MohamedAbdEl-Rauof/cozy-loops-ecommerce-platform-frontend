@@ -1,6 +1,7 @@
 'use client';
 
 import HeroSection from '@/components/home/HeroSection';
+import ShopByCraft from '@/components/home/ShopByCraft';
 import FeaturedCategories from '@/components/shared/FeaturedCategories';
 import StoryFeature from '@/components/shared/StoryFeature';
 
@@ -80,14 +81,16 @@ export default function Home() {
       /> */}
 
 
-      <StoryFeature
+      {/* <StoryFeature
         title="Our Story"
         description="At Cozy Loops, we believe in the beauty of handmade craftsmanship. Each bag is knitted with care, blending comfort and style to create pieces that are as unique as you are."
         buttonText="Meet the Maker"
         imageSrc="/images/shared/storyFeature.jpg"
         imageAlt="Hands crafting a knitted bag"
         onButtonClick="/" 
-      />
+      /> */}
+
+      <ShopByCraft />
 
 
 

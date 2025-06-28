@@ -15,32 +15,32 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 const productImages = [
   {
-    src: "/images/home/sec-1/rethaferguson.png",
+    src: "/images/home/heroSec/rethaferguson.png",
     alt: "Knitting craft with colorful yarn",
     category: "Fiber Arts"
   },
   {
-    src: "/images/home/sec-1/karolina.png",
+    src: "/images/home/heroSec/karolina.png",
     alt: "White ceramic sculpture",
     category: "Ceramics"
   },
   {
-    src: "/images/home/sec-1/hiteshchoudhary.png",
+    src: "/images/home/heroSec/hiteshchoudhary.png",
     alt: "Handwoven fabric pattern",
     category: "Textiles"
   },
   {
-    src: "/images/home/sec-1/enginakyurt.png",
+    src: "/images/home/heroSec/enginakyurt.png",
     alt: "Colorful embroidery work",
     category: "Embroidery"
   },
   {
-    src: "/images/home/sec-1/unsplash.png",
+    src: "/images/home/heroSec/unsplash.png",
     alt: "Wooden loom weaving",
     category: "Weaving"
   },
   {
-    src: "/images/home/sec-1/toochinda.png",
+    src: "/images/home/heroSec/toochinda.png",
     alt: "Hands making pottery",
     category: "Pottery"
   }
