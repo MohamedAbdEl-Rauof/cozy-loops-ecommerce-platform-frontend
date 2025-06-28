@@ -1,9 +1,11 @@
 'use client';
 
 import HeroSection from '@/components/home/HeroSection';
+import FeaturedCategories from '@/components/shared/FeaturedCategories';
 // import { useAuth } from '@/context/AuthContext';
 // import Image from 'next/image';
 // import { useRouter } from 'next/navigation';
+
 
 export default function Home() {
   // const { user, logout } = useAuth();
@@ -60,8 +62,15 @@ export default function Home() {
         </button>
       </div> */}
 
-      <HeroSection
+      {/* <HeroSection
+      /> */}
+
+
+
+
+      <FeaturedCategories
       />
+
 
       {/* Add more sections of your homepage below */}
     </div>
