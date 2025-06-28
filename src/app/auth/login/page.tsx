@@ -399,7 +399,7 @@ export default function LoginPage() {
                   }
                 }}
               >
-                Login successful! , Welcome
+                Login Successful!
               </Typography>
             
               <Box sx={{ width: '100%', mt: 1 }}>

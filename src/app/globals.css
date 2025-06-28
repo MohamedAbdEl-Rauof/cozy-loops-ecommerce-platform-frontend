@@ -4,19 +4,31 @@
   /* Base colors */
   --background: #ffffff;
   --foreground: #171717;
-  
+
   /* Brand colors */
   --primary-color: #ff7043;
   --primary-hover: #ff5722;
   --primary-disabled: #cccccc;
-  
+
+  /* Text colors */
+  --text-primary: #2c3e50;
+  --text-secondary: #757575;
+  --text-muted: #666666;
+  --danger-color: #d32f2f;
+
+
+  /* UI colors */
+  --border-light: #e0e0e0;
+  --background-light: rgba(0, 0, 0, 0.05);
+  --background-light-hover: rgba(0, 0, 0, 0.08);
+
   /* Form elements */
   --input-height: 48px;
   --input-border-radius: 8px;
   --button-border-radius: 8px;
   --button-font-weight: 600;
   --button-letter-spacing: 0.5px;
-  
+
   /* Typography */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -35,6 +47,7 @@
     --foreground: #ededed;
   }
 }
+
 
 body {
   background: var(--background);
@@ -67,4 +80,3 @@ body {
   height: var(--input-height) !important;
   border-radius: var(--input-border-radius) !important;
 }
-
