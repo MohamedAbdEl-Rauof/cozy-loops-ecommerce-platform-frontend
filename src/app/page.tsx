@@ -69,7 +69,15 @@ export default function Home() {
 
 
       <FeaturedCategories
+        title="Need a gift? Make it personal."
+        isTitleCenter={false}
+        description="Custom handmade gifts that speak louder than words."
+        ctaText=""
+        buttonText="Explore Custom Picks"
+        onButtonClick="/category"
       />
+
+
 
 
       {/* Add more sections of your homepage below */}

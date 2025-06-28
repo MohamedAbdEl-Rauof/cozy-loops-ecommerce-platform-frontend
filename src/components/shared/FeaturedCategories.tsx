@@ -3,37 +3,38 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import {
-    Button,
     Typography,
     Box,
     useTheme,
-    Paper
+    Paper,
+    useMediaQuery
 } from '@mui/material';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { useRouter } from 'next/navigation';
 
-// Define the props interface
 interface FeaturedCategoryProps {
     title: string;
+    isTitleCenter?: boolean;
     description: string;
-    ctaText: string;
+    ctaText?: string;
     buttonText: string;
-    imageSrc: string;
-    onButtonClick?: () => void;
+    onButtonClick?: string;
 }
 
 const FeaturedCategories = ({
-    title = "The Art of Punch Needle",
-    description = "Punch needle embroidery is a modern twist on a centuries-old technique. Using a simple tool and loads of imagination, artisans loop yarn through fabric to create lush, raised textures full of life. Each piece is stitched by hand, making every design truly one-of-a-kind.",
-    ctaText = "Want to learn more?",
-    buttonText = "Explore",
-    imageSrc = "/images/shared/featuredCategory/Subtract.png",
-    onButtonClick = () => console.log("Button clicked")
+    title,
+    isTitleCenter = true,
+    description,
+    ctaText,
+    buttonText,
+    onButtonClick,
 }: FeaturedCategoryProps) => {
     const theme = useTheme();
     const [isVisible, setIsVisible] = useState(false);
+    const router = useRouter();
+    const isXs = useMediaQuery(theme.breakpoints.down('sm'));
+    const isSm = useMediaQuery(theme.breakpoints.between('sm', 'md'));
 
     useEffect(() => {
-        // Set visible after component mounts for animations to trigger
         setIsVisible(true);
     }, []);
 
@@ -44,48 +45,56 @@ const FeaturedCategories = ({
                 justifyContent: 'center',
                 alignItems: 'center',
                 bgcolor: 'background.paper',
-                p: 3,
-                overflow: 'hidden'
+                p: { xs: 1, sm: 2, md: 3 }, 
+                overflow: 'hidden',
+                width: '100%'
             }}
         >
             <Paper
-                elevation={3}
+                elevation={0}
                 className={`featured-container ${isVisible ? 'visible' : ''}`}
                 sx={{
                     position: 'relative',
-                    width: '1200px',
-                    height: '290px',
-                    aspectRatio: '1/1',
-                    borderRadius: 2,
+                    width: '100%',
+                    maxWidth: { xs: '100%', sm: '600px', md: '800px' },
+                    height: { xs: '200px', sm: '300px', md: '330px' },
                     overflow: 'hidden',
+                    borderRadius: { xs: 2, sm: 3 },
                     transition: 'transform 0.6s ease-out, opacity 0.6s ease-out',
-                    opacity: 0,
                     transform: 'translateY(20px)',
+                    opacity: 0,
                     '&.visible': {
                         opacity: 1,
                         transform: 'translateY(0)'
                     }
                 }}
             >
-                {/* Background image with zoom effect */}
                 <Box
                     className={`image-container ${isVisible ? 'visible' : ''}`}
                     sx={{
                         position: 'relative',
                         width: '100%',
                         height: '100%',
-                        
+                        overflow: 'hidden',
+                        '&.visible img': {
+                            transform: 'scale(1.05)',
+                        }
                     }}
                 >
                     <Image
-                        src={imageSrc}
+                        src="/images/shared/featuredCategory/Subtract.png"
                         alt={title}
                         fill
                         priority
+                        sizes="(max-width: 600px) 100vw, (max-width: 960px) 600px, 800px"
+                        style={{
+                            objectFit: 'cover',
+                            transition: 'transform 1.5s ease-out',
+                            transform: 'scale(1)'
+                        }}
                     />
                 </Box>
 
-                {/* Content overlay with fade-in effect */}
                 <Box
                     className={`content-overlay ${isVisible ? 'visible' : ''}`}
                     sx={{
@@ -93,158 +102,150 @@ const FeaturedCategories = ({
                         inset: 0,
                         display: 'flex',
                         flexDirection: 'column',
-                        alignItems: 'center',
+                        alignItems: isTitleCenter ? 'center' : 'flex-start',
                         justifyContent: 'center',
-                        padding: 3,
-                        background: 'rgba(255, 255, 255, 0.7)',
-                        backdropFilter: 'blur(2px)',
+                        padding: { xs: 2, sm: 3, md: 4 },
                         opacity: 0,
                         transition: 'opacity 0.8s ease-out',
                         transitionDelay: '0.3s',
                         '&.visible': {
                             opacity: 1
+                        },
+                        '&::before': {
+                            content: '""',
+                            position: 'absolute',
+                            inset: 0,
+                            background: 'linear-gradient(to right, rgba(255,255,255,0.1), rgba(255,255,255,0.05))',
+                            zIndex: -1
                         }
                     }}
                 >
                     <Typography
-                        variant="h4"
+                        variant={isXs ? "h6" : isSm ? "h5" : "h4"} 
                         component="h2"
                         sx={{
                             fontWeight: 'bold',
-                            mb: 2,
-                            textShadow: '0 1px 2px rgba(0,0,0,0.1)',
-                            color: theme.palette.text.primary
+                            mb: { xs: 0.5, sm: 1, md: 2 }, 
+                            textAlign: isTitleCenter ? 'center' : 'left',
+                            width: isTitleCenter ? 'auto' : '100%',
+                            color: theme.palette.text.primary,
+                            px: { xs: 0.5, sm: 1, md: 2 } 
                         }}
                     >
                         {title}
                     </Typography>
 
                     <Typography
-                        variant="body2"
+                        variant={isXs ? "caption" : isSm ? "body2" : "body1"} 
                         sx={{
-                            textAlign: 'center',
-                            maxWidth: '90%',
-                            mb: 4,
+                            textAlign: isTitleCenter ? 'center' : 'left',
+                            maxWidth: { xs: '95%', sm: '90%', md: '85%' },
+                            mb: { xs: 1, sm: 2, md: 3 }, 
+                            px: { xs: 0.5, sm: 1, md: 2 }, 
                             textShadow: '0 1px 1px rgba(0,0,0,0.05)',
-                            color: theme.palette.text.secondary
+                            color: theme.palette.text.secondary,
+                            display: '-webkit-box',
+                            WebkitLineClamp: { xs: 2, sm: 3, md: 4 }, 
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                            lineHeight: { xs: 1.2, sm: 1.4, md: 1.6 } 
                         }}
                     >
                         {description}
                     </Typography>
 
-                    <Box
-                        className="cta-text"
-                        sx={{
-                            fontWeight: 'medium',
-                            textShadow: '0 1px 1px rgba(0,0,0,0.1)',
-                            color: theme.palette.primary.main,
-                            transition: 'transform 0.3s ease',
-                            '&:hover': {
-                                transform: 'scale(1.05)'
-                            }
-                        }}
-                    >
-                        <Typography variant="body1">{ctaText}</Typography>
-                    </Box>
+                    {ctaText && (
+                        <Box
+                            className="cta-text"
+                            sx={{
+                                fontWeight: 'medium',
+                                textShadow: '0 1px 1px rgba(0,0,0,0.1)',
+                                transition: 'transform 0.3s ease',
+                                alignSelf: isTitleCenter ? 'center' : 'flex-start',
+                                px: { xs: 0.5, sm: 1, md: 2 }, 
+                                '&:hover': {
+                                    transform: 'scale(1.05)'
+                                }
+                            }}
+                        >
+                            <Typography
+                                variant={isXs ? "caption" : isSm ? "body2" : "body1"} 
+                                color="primary"
+                            >
+                                {ctaText}
+                            </Typography>
+                        </Box>
+                    )}
                 </Box>
 
-                {/* Bottom-right button with bounce effect */}
                 <Box
                     className={`bottom-right-button ${isVisible ? 'visible' : ''}`}
                     sx={{
                         position: 'absolute',
-                        bottom: -24,
-                        right: -24,
-                        bgcolor: 'background.paper',
-                        borderRadius: '50%',
-                        width: 130,
-                        height: 80,
+                        bottom: 0,
+                        right: 0,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        boxShadow: 2,
                         opacity: 0,
-                        transform: 'translate(100px, 100px)',
+                        transform: 'translateY(20px)',
                         transition: 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease',
                         transitionDelay: '0.6s',
+                        zIndex: 10,
                         '&.visible': {
                             opacity: 1,
-                            transform: 'translate(0, 0)'
+                            transform: 'translateY(0)'
                         }
                     }}
                 >
-                    <Button
-                        variant="contained"
-                        color="warning"
-                        size="small"
-                        onClick={onButtonClick}
-                        endIcon={<ArrowForwardIcon />}
-                        className="bounce-button"
+                    <Box
+                        onClick={() => router.push(onButtonClick!)}
                         sx={{
-                            borderRadius: 28,
-                            px: 2,
-                            py: 1,
-                            textTransform: 'none',
-                            fontWeight: 'medium',
-                            boxShadow: 1,
-                            transition: 'transform 0.3s ease, background-color 0.3s ease',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            bgcolor: theme.palette.warning.main,
+                            color: theme.palette.warning.contrastText,
+                            borderRadius: { xs: '20px 0 0 0', sm: '25px 0 0 0', md: '30px 0 0 0' }, 
+                            height: { xs: '28px', sm: '36px', md: '44px' },
+                            width: '100%', 
+                            maxWidth: { xs: '120px', sm: '160px', md: '200px' }, 
+                            padding: { xs: '0 8px', sm: '0 12px', md: '0 16px' }, 
+                            cursor: 'pointer',
+                            fontWeight: 500,
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                            transition: 'all 0.3s ease',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
                             '&:hover': {
-                                transform: 'scale(1.1)',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                                bgcolor: theme.palette.warning.dark,
                             },
                             '&:active': {
-                                transform: 'scale(0.95)',
-                            }
+                                transform: 'scale(0.98)',
+                            },
                         }}
                     >
-                        {buttonText}
-                    </Button>
-                </Box>
-
-                {/* Top-left decorative element with rotate animation */}
-                <Box
-                    className={`top-left-decoration ${isVisible ? 'visible' : ''}`}
-                    sx={{
-                        position: 'absolute',
-                        top: -24,
-                        left: -24,
-                        bgcolor: 'background.paper',
-                        borderRadius: '50%',
-                        width: 130,
-                        height: 80,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        transform: 'translate(-100px, -100px) rotate(-20deg)',
-                        transition: 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease',
-                        transitionDelay: '0.8s',
-                        '&.visible': {
-                            opacity: 1,
-                            transform: 'translate(0, 0) rotate(0deg)'
-                        }
-                    }}
-                >
+                        <Typography
+                            variant={isXs ? "caption" : "button"}
+                            sx={{
+                                textTransform: 'none',
+                                fontWeight: 500,
+                                fontSize: { xs: '0.5rem', sm: '0.5rem', md: '0.85rem' },
+                                lineHeight: 1.2,
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                                textAlign: 'center',
+                                width: '100%',
+                            }}
+                        >
+                            {buttonText}
+                        </Typography>
+                    </Box>
                 </Box>
             </Paper>
-
-            {/* CSS Keyframes for animations */}
-            <style jsx global>{`
-        @keyframes rotate {
-          0% { transform: rotate(0deg); }
-          25% { transform: rotate(5deg); }
-          50% { transform: rotate(0deg); }
-          75% { transform: rotate(-5deg); }
-          100% { transform: rotate(0deg); }
-        }
-        
-        @keyframes bounce {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-5px); }
-        }
-        
-        .bounce-button:hover {
-          animation: bounce 1s infinite ease-in-out;
-        }
-      `}</style>
         </Box>
     );
 };
