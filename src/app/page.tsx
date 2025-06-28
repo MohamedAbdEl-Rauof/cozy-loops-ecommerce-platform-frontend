@@ -1,24 +1,32 @@
 'use client';
 
-import { useAuth } from '@/context/AuthContext';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import HeroSection from '@/components/home/HeroSection';
+import ShopByCraft from '@/components/home/ShopByCraft';
+import FeaturedCategories from '@/components/shared/FeaturedCategories';
+import StoryFeature from '@/components/shared/StoryFeature';
+
+// import { useAuth } from '@/context/AuthContext';
+// import Image from 'next/image';
+// import { useRouter } from 'next/navigation';
+
 
 export default function Home() {
-  const { user, logout } = useAuth();
-  const router = useRouter();
+  // const { user, logout } = useAuth();
+  // const router = useRouter();
 
-  const handleLogout = async () => {
-    await logout();
-  };
-  
-  const handleredirect = async () => {
-    router.push('/auth/login');
-  }
+  // const handleLogout = async () => {
+  //   await logout();
+  // };
+
+  // const handleredirect = async () => {
+  //   router.push('/auth/login');
+  // }
+
+  // Sample product images for the hero section
 
   return (
     <div>
-      <h1 className="text-4xl font-bold text-center my-8">
+      {/* <h1 className="text-4xl font-bold text-center my-8">
         Welcome to Our E-commerce Platform
       </h1>
 
@@ -55,7 +63,38 @@ export default function Home() {
         >
           Login
         </button>
-      </div>
+      </div> */}
+
+      {/* <HeroSection
+      /> */}
+
+
+
+
+      {/* <FeaturedCategories
+        title="Need a gift? Make it personal."
+        isTitleCenter={false}
+        description="Custom handmade gifts that speak louder than words."
+        ctaText=""
+        buttonText="Explore Custom Picks"
+        onButtonClick="/category"
+      /> */}
+
+
+      {/* <StoryFeature
+        title="Our Story"
+        description="At Cozy Loops, we believe in the beauty of handmade craftsmanship. Each bag is knitted with care, blending comfort and style to create pieces that are as unique as you are."
+        buttonText="Meet the Maker"
+        imageSrc="/images/shared/storyFeature.jpg"
+        imageAlt="Hands crafting a knitted bag"
+        onButtonClick="/" 
+      /> */}
+
+      <ShopByCraft />
+
+
+
+      {/* Add more sections of your homepage below */}
     </div>
   );
 }

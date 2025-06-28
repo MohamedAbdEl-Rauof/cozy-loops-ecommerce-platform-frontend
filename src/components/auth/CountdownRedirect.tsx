@@ -1,10 +1,11 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Box, Typography, Paper, CircularProgress, Button } from '@mui/material';
+import { Box, Typography, Paper, CircularProgress, Divider } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
-import HomeIcon from '@mui/icons-material/Home';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 interface CountdownRedirectProps {
   message: string;
@@ -28,10 +29,6 @@ export function CountdownRedirect({ message, redirectPath, seconds }: CountdownR
 
     return () => clearTimeout(timer);
   }, [countdown, redirectPath, router]);
-
-  const handleRedirectNow = () => {
-    router.push(redirectPath);
-  };
 
   return (
     <Box sx={{
@@ -68,19 +65,43 @@ export function CountdownRedirect({ message, redirectPath, seconds }: CountdownR
           }}
         />
 
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 3 }}>
-          <InfoIcon sx={{ fontSize: 40, color: 'var(--primary-color)', mr: 2 }} />
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', mb: 3 }}>
+          <InfoIcon sx={{ fontSize: 40, color: 'var(--primary-color)', mb: 2 }} />
           <Typography
             variant="h5"
             component="h1"
             sx={{
               fontWeight: 600,
-              color: '#333'
+              color: '#333',
+              mb: 1
             }}
           >
             {message}
           </Typography>
+          
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            bgcolor: 'rgba(255, 0, 0, 0.05)', 
+            p: 2, 
+            borderRadius: 2,
+            mt: 2,
+            border: '1px solid rgba(255, 0, 0, 0.2)'
+          }}>
+            <LogoutIcon sx={{ color: 'error.main', mr: 1 }} />
+            <Typography
+              variant="subtitle1"
+              sx={{
+                fontWeight: 500,
+                color: 'error.main'
+              }}
+            >
+              Please logout to access this page
+            </Typography>
+          </Box>
         </Box>
+
+        <Divider sx={{ my: 3 }} />
 
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', my: 4 }}>
           <Box sx={{ position: 'relative', display: 'inline-flex' }}>
@@ -113,26 +134,6 @@ export function CountdownRedirect({ message, redirectPath, seconds }: CountdownR
         <Typography variant="body1" sx={{ mb: 3, color: '#666' }}>
           Redirecting to Home page {countdown === 1 ? 'in a second' : `in ${countdown} seconds`}...
         </Typography>
-
-        <Button
-          variant="contained"
-          startIcon={<HomeIcon />}
-          onClick={handleRedirectNow}
-          sx={{
-            bgcolor: 'var(--primary-color)',
-            '&:hover': {
-              bgcolor: 'var(--primary-hover)',
-            },
-            borderRadius: '8px',
-            py: 1.5,
-            px: 4,
-            textTransform: 'none',
-            fontWeight: 500,
-            fontSize: '1.1rem'
-          }}
-        >
-          Go to Home Now
-        </Button>
       </Paper>
     </Box>
   );

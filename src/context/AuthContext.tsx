@@ -38,7 +38,6 @@ interface AuthContextType {
   register: (userData: RegisterData) => Promise<any>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
-  updateUserData: (userData: Partial<User>) => void;
   clearError: () => void;
   checkAuthStatus: () => Promise<boolean>;
   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
@@ -58,7 +57,6 @@ export const AuthContext = createContext<AuthContextType>({
   register: async () => ({}),
   logout: async () => { },
   isAuthenticated: false,
-  updateUserData: () => { },
   clearError: () => { },
   checkAuthStatus: async () => false,
   setIsAuthenticated: () => { },
@@ -80,17 +78,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const clearError = useCallback(() => {
     setError(null);
-  }, []);
-
-
-  const updateUserData = useCallback((userData: Partial<User>) => {
-    setUser(prevUser => {
-      if (!prevUser && userData.id) {
-        setIsAuthenticated(true);
-        return userData as User;
-      }
-      return prevUser ? { ...prevUser, ...userData } : null;
-    });
   }, []);
 
   const checkAuthStatus = useCallback(async (): Promise<boolean> => {
@@ -293,7 +280,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsAuthenticated(false);
 
       if (redirect) {
-        router.push('/auth/login');
+        router.push('/');
       }
     }
   };
@@ -307,7 +294,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     register: handleRegister,
     logout: handleLogout,
     isAuthenticated,
-    updateUserData,
     clearError,
     checkAuthStatus,
     setIsAuthenticated,

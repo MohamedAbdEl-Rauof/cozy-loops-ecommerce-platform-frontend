@@ -6,7 +6,6 @@ export function middleware(request: NextRequest) {
 
   // Get tokens from cookies
   const accessToken = request.cookies.get('accessToken')?.value;
-  // const refreshToken = request.cookies.get('refreshToken')?.value;
 
   // Define protected routes that require authentication
   const protectedRoutes = [
@@ -27,50 +26,54 @@ export function middleware(request: NextRequest) {
   ];
 
   // Define public routes that should always be accessible
-  const publicRoutes = [
-    '/products',
-    '/categories',
-    '/search',
-    '/about',
-    '/contact',
-    '/faq',
-  ];
+  // const publicRoutes = [
+  //   '/products',
+  //   '/categories',
+  //   '/search',
+  //   '/about',
+  //   '/contact',
+  //   '/faq',
+  // ];
 
+  // Special case for verify-email
   if (pathname.startsWith('/auth/verify-email')) {
     const email = searchParams.get('email');
     if (!email) {
       return NextResponse.redirect(new URL('/auth/login', request.url));
     }
-    
     return NextResponse.next();
   }
 
-  if (pathname.startsWith('/auth/reset-password')) {
-    const email = searchParams.get('email');
-    const token = searchParams.get('token');
-    
-    if (!email || !token) {
-      return NextResponse.redirect(new URL('/auth/forgot-password', request.url));
+  // Special case for reset-password
+  if (pathname === '/auth/reset-password') {
+    // If user is authenticated, always redirect to home
+    if (accessToken) {
+      return NextResponse.redirect(new URL('/', request.url));
     }
-    
+
+    const email = searchParams.get('email');
+    const fromDialog = searchParams.get('fromDialog');
+
+    // If missing required parameters, redirect to home
+    if (!email || !fromDialog) {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+
     return NextResponse.next();
   }
 
+  // Handle protected routes
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
-  
-  const isAuthRoute = authRoutes.some(route => pathname.startsWith(route));
-  
-  // const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route)) || pathname === '/';
-
   if (isProtectedRoute) {
     if (!accessToken) {
       const returnUrl = encodeURIComponent(request.nextUrl.pathname);
       return NextResponse.redirect(new URL(`/auth/login?returnUrl=${returnUrl}`, request.url));
     }
-    
     return NextResponse.next();
   }
 
+  // Handle auth routes for authenticated users
+  const isAuthRoute = authRoutes.some(route => pathname === route || pathname.startsWith(route + '/'));
   if (isAuthRoute && accessToken) {
     return NextResponse.redirect(new URL('/', request.url));
   }
@@ -86,9 +89,14 @@ export const config = {
     '/orders/:path*',
     '/account/:path*',
     '/wishlist/:path*',
+    '/admin/:path*',
     
-    // Auth routes
-    '/auth/:path*',
+    // Auth routes - use exact matching
+    '/auth/login',
+    '/auth/register',
+    '/auth/forgot-password',
+    '/auth/reset-password',
+    '/auth/verify-email',
     
     // Public routes we want to handle
     '/products/:path*',
