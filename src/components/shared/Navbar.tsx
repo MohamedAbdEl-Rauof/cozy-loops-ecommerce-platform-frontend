@@ -86,10 +86,28 @@ const Navbar = ({
                             fontWeight: 500,
                             textTransform: "none",
                             fontSize: "16px",
+                            position: "relative",
+                            transition: "color 0.3s ease",
                             "&:hover": {
                                 backgroundColor: "transparent",
-                                color: "var(--primary-color)"
+                                color: "var(--primary-color)",
                             },
+                            "&::after": {
+                                content: '""',
+                                position: "absolute",
+                                bottom: 0,
+                                left: "50%",
+                                width: pathname === item.path ? "100%" : "0%",
+                                height: "2px",
+                                backgroundColor: "var(--primary-color)",
+                                transition: "width 0.3s ease, left 0.3s ease",
+                                transform: pathname === item.path ? "translateX(-50%)" : "none",
+                            },
+                            "&:hover::after": {
+                                width: "100%",
+                                left: "0%",
+                                transform: "translateX(0)",
+                            }
                         }}
                     >
                         {item.name}
@@ -409,7 +427,20 @@ const Navbar = ({
     return (
         <>
             <NavbarContainer>
-                <Container maxWidth="xl">
+                <Container
+                    maxWidth={false}
+                    sx={{
+                        maxWidth: {
+                            xs: '100%',
+                            sm: '100%',
+                            md: '1400px',
+                            lg: '1600px',
+                            xl: '1850px'
+                        },
+                        px: { xs: 2, sm: 3, md: 4 },
+                        mx: 'auto'
+                    }}
+                >
                     <AppBar
                         position="static"
                         elevation={0}
@@ -510,7 +541,6 @@ const Navbar = ({
 
                 </Container>
             </NavbarContainer>
-
 
             {/* Mobile Menu */}
             {renderMobileMenu()}

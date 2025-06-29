@@ -63,7 +63,20 @@ export default function Footer() {
     return (
         <FooterContainer>
             <NewsletterSection>
-                <Container maxWidth="xl">
+                <Container
+                    maxWidth={false}
+                    sx={{
+                        maxWidth: {
+                            xs: '100%',
+                            sm: '100%',
+                            md: '1400px',
+                            lg: '1600px',
+                            xl: '1850px'
+                        },
+                        px: { xs: 2, sm: 3, md: 4, lg: 6 },
+                        mx: 'auto',
+                    }}
+                >
                     <Grid container spacing={4} alignItems="center">
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <Typography
@@ -148,8 +161,22 @@ export default function Footer() {
                 </Container>
             </NewsletterSection>
 
-            <Box sx={{ backgroundColor: "#162E3F", py: 1 }}>
-                <Container maxWidth="xl">
+            <Box sx={{ backgroundColor: "#162E3F", width: '100%' }}>
+                <Container
+                    maxWidth={false}
+                    sx={{
+                        maxWidth: {
+                            xs: '100%',
+                            sm: '100%',
+                            md: '1400px',
+                            lg: '1600px',
+                            xl: '1850px'
+                        },
+                        px: { xs: 2, sm: 3, md: 4, lg: 6 },
+                        mx: 'auto',
+                        py: 1,
+                    }}
+                >
                     <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.1)", mb: 4 }} />
                     <Box sx={{ mb: 4 }}>
                         <Grid container spacing={4} alignItems="center">
@@ -185,12 +212,24 @@ export default function Footer() {
                             </Grid>
                         </Grid>
                     </Box>
-
                 </Container>
             </Box>
 
             <BottomSection>
-                <Container maxWidth="xl">
+                <Container
+                    maxWidth={false}
+                    sx={{
+                        maxWidth: {
+                            xs: '100%',
+                            sm: '100%',
+                            md: '1400px',
+                            lg: '1600px',
+                            xl: '1850px'
+                        },
+                        px: { xs: 2, sm: 3, md: 4, lg: 6 },
+                        mx: 'auto',
+                    }}
+                >
                     <Grid container spacing={2} alignItems="center">
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <Typography
