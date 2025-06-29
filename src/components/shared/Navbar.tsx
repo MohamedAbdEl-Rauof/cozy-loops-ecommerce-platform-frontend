@@ -20,6 +20,8 @@ import {
     ListItem,
     ListItemText,
     ListItemIcon,
+    Container,
+    styled,
 } from "@mui/material"
 import {
     Search as SearchIcon,
@@ -36,6 +38,11 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/context/AuthContext"
+
+const NavbarContainer = styled(Box)(() => ({
+    backgroundColor: "var(--foreground)",
+
+}))
 
 const Navbar = ({
 }) => {
@@ -401,103 +408,109 @@ const Navbar = ({
 
     return (
         <>
-            <AppBar
-                position="static"
-                elevation={0}
-                sx={{
-                    backgroundColor: "var(--foreground)",
-                    borderBottom: "1px solid var(--border-light)",
-                    px: { xs: 2, sm: 3, md: 6 }
-                }}
-            >
-                <Toolbar sx={{
-                    justifyContent: "space-between",
-                    padding: "0 !important",
-                    height: { xs: '64px', md: '72px' }
-                }}>
-                    {/* Logo */}
-                    <Box
-                        component="div"
+            <NavbarContainer>
+                <Container maxWidth="xl">
+                    <AppBar
+                        position="static"
+                        elevation={0}
                         sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            transition: 'transform 0.2s ease-in-out',
-                            '&:hover': {
-                                transform: 'scale(1.05)'
-                            }
-                        }}
-                    >
-                        <Link href="/" passHref style={{ textDecoration: 'none' }}>
-                            <Image
-                                src="/images/navbarLogo.png"
-                                alt="Cozy Loops Logo"
-                                width={isMobile ? 80 : 100}
-                                height={isMobile ? 32 : 40}
-                                quality={100}
-                                priority
-                                style={{
-                                    objectFit: 'contain',
-                                }}
-                            />
-                        </Link>
-                    </Box>
-
-                    {/* Desktop Navigation */}
-                    {!isMobile && renderDesktopNav()}
-
-                    {/* Search Bar */}
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
                             backgroundColor: "var(--foreground)",
-                            borderRadius: "24px",
-                            padding: "4px 12px",
-                            width: { xs: '40%', sm: '35%', md: '30%' },
-                            border: "1px solid var(--border-light)",
-                            '&:hover': {
-                                boxShadow: '0 0 0 2px rgba(var(--primary-rgb), 0.1)',
-                            },
-                            transition: 'all 0.2s ease',
+                            borderBottom: "1px solid var(--border-light)",
+                            px: { xs: 2, sm: 3, md: 6 }
                         }}
                     >
-                        <SearchIcon sx={{ color: "var(--text-muted)", mr: 1 }} />
-                        <InputBase
-                            placeholder="What are you looking for?"
-                            sx={{
-                                flex: 1,
-                                fontSize: { xs: '0.875rem', md: '1rem' },
-                                color: "var(--text-primary)",
-                                '& .MuiInputBase-input': {
-                                    padding: { xs: '6px 0', md: '8px 0' },
-                                }
-                            }}
-                        />
-                    </Box>
-
-                    {/* User Section & Mobile Menu Button */}
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, md: 2 } }}>
-                        {renderUserSection()}
-
-                        {/* Mobile Menu Button - Now on the right */}
-                        {isMobile && (
-                            <IconButton
-                                edge="end"
-                                color="inherit"
-                                onClick={handleMobileMenuToggle}
+                        <Toolbar sx={{
+                            justifyContent: "space-between",
+                            padding: "0 !important",
+                            height: { xs: '64px', md: '72px' }
+                        }}>
+                            {/* Logo */}
+                            <Box
+                                component="div"
                                 sx={{
-                                    color: "var(--text-primary)",
-                                    ml: 1,
-                                    border: mobileMenuOpen ? '1px solid var(--primary-color)' : '1px solid transparent',
-                                    backgroundColor: mobileMenuOpen ? 'rgba(var(--primary-rgb), 0.08)' : 'transparent',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    transition: 'transform 0.2s ease-in-out',
+                                    '&:hover': {
+                                        transform: 'scale(1.05)'
+                                    }
                                 }}
                             >
-                                <MenuIcon />
-                            </IconButton>
-                        )}
-                    </Box>
-                </Toolbar>
-            </AppBar>
+                                <Link href="/" passHref style={{ textDecoration: 'none' }}>
+                                    <Image
+                                        src="/images/navbarLogo.svg"
+                                        alt="Cozy Loops Logo"
+                                        width={isMobile ? 80 : 100}
+                                        height={isMobile ? 32 : 40}
+                                        quality={100}
+                                        priority
+                                        style={{
+                                            objectFit: 'contain',
+                                        }}
+                                    />
+                                </Link>
+                            </Box>
+
+                            {/* Desktop Navigation */}
+                            {!isMobile && renderDesktopNav()}
+
+                            {/* Search Bar */}
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    backgroundColor: "var(--foreground)",
+                                    borderRadius: "24px",
+                                    padding: "4px 12px",
+                                    width: { xs: '40%', sm: '35%', md: '30%' },
+                                    border: "1px solid var(--border-light)",
+                                    '&:hover': {
+                                        boxShadow: '0 0 0 2px rgba(var(--primary-rgb), 0.1)',
+                                    },
+                                    transition: 'all 0.2s ease',
+                                }}
+                            >
+                                <SearchIcon sx={{ color: "var(--text-muted)", mr: 1 }} />
+                                <InputBase
+                                    placeholder="What are you looking for?"
+                                    sx={{
+                                        flex: 1,
+                                        fontSize: { xs: '0.875rem', md: '1rem' },
+                                        color: "var(--text-primary)",
+                                        '& .MuiInputBase-input': {
+                                            padding: { xs: '6px 0', md: '8px 0' },
+                                        }
+                                    }}
+                                />
+                            </Box>
+
+                            {/* User Section & Mobile Menu Button */}
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, md: 2 } }}>
+                                {renderUserSection()}
+
+                                {/* Mobile Menu Button - Now on the right */}
+                                {isMobile && (
+                                    <IconButton
+                                        edge="end"
+                                        color="inherit"
+                                        onClick={handleMobileMenuToggle}
+                                        sx={{
+                                            color: "var(--text-primary)",
+                                            ml: 1,
+                                            border: mobileMenuOpen ? '1px solid var(--primary-color)' : '1px solid transparent',
+                                            backgroundColor: mobileMenuOpen ? 'rgba(var(--primary-rgb), 0.08)' : 'transparent',
+                                        }}
+                                    >
+                                        <MenuIcon />
+                                    </IconButton>
+                                )}
+                            </Box>
+                        </Toolbar>
+                    </AppBar>
+
+                </Container>
+            </NavbarContainer>
+
 
             {/* Mobile Menu */}
             {renderMobileMenu()}

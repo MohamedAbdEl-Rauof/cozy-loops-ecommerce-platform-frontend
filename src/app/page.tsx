@@ -3,11 +3,42 @@
 import HeroSection from '@/components/home/HeroSection';
 import ShopByCraft from '@/components/home/ShopByCraft';
 import FeaturedCategories from '@/components/shared/FeaturedCategories';
+import Footer from '@/components/shared/Footer';
 import StoryFeature from '@/components/shared/StoryFeature';
+import Testimonials from '@/components/shared/Testimonials';
 
 // import { useAuth } from '@/context/AuthContext';
 // import Image from 'next/image';
 // import { useRouter } from 'next/navigation';
+
+// Updated testimonials data structure with separate section info
+const testimonialsData = {
+  title: "What Our Shoppers Are Saying",
+  description: "Real words from our beloved Cozy Loops community.",
+  items: [
+    {
+      id: 1,
+      name: "Mariam S.",
+      avatar: "/placeholder.svg?height=60&width=60",
+      text: "Every detail felt personal — I'll definitely order again!",
+      rating: 5,
+    },
+    {
+      id: 2,
+      name: "Ahmed R.",
+      avatar: "/placeholder.svg?height=60&width=60",
+      text: "It's like shopping at a handmade bazaar... from my couch.",
+      rating: 5,
+    },
+    {
+      id: 3,
+      name: "Dalia A.",
+      avatar: "/placeholder.svg?height=60&width=60",
+      text: "Support local talent and get amazing quality? Yes, please.",
+      rating: 5,
+    },
+  ]
+};
 
 
 export default function Home() {
@@ -90,8 +121,13 @@ export default function Home() {
         onButtonClick="/" 
       /> */}
 
-      <ShopByCraft />
+      {/* <ShopByCraft /> */}
 
+
+
+      <Testimonials testimonialsData={testimonialsData} />
+
+      <Footer />
 
 
       {/* Add more sections of your homepage below */}
