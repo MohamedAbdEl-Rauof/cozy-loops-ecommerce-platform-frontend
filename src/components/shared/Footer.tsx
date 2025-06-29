@@ -1,19 +1,23 @@
 "use client"
-import { Box, Container, Typography, Button, Link, Grid, IconButton, Divider, Stack } from "@mui/material"
+import { Box, Container, Typography, Link, Grid, IconButton, Divider, Stack } from "@mui/material"
 import { styled } from "@mui/material/styles"
 import { Twitter, LinkedIn, Facebook, GitHub, Language, Public } from "@mui/icons-material"
 import { usePathname } from "next/navigation"
 import Image from "next/image"
 
-const FooterContainer = styled(Box)(({ theme }) => ({
-    backgroundColor: "#162E3F",
+const FooterContainer = styled(Box)(() => ({
     color: "white",
-    paddingTop: theme.spacing(6),
-    paddingBottom: theme.spacing(3),
+    paddingBottom: 0,
 }))
 
 const NewsletterSection = styled(Box)(({ theme }) => ({
-    marginBottom: theme.spacing(6),
+    backgroundColor: "#162E3F",
+    padding: theme.spacing(6, 0),
+}))
+
+const BottomSection = styled(Box)(({ theme }) => ({
+    backgroundColor: "#0E1F2B",
+    padding: theme.spacing(3, 0),
 }))
 
 const NavLink = styled(Link)(() => ({
@@ -58,9 +62,8 @@ export default function Footer() {
 
     return (
         <FooterContainer>
-            <Container maxWidth="xl">
-                {/* Newsletter Section */}
-                <NewsletterSection>
+            <NewsletterSection>
+                <Container maxWidth="xl">
                     <Grid container spacing={4} alignItems="center">
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <Typography
@@ -142,50 +145,52 @@ export default function Footer() {
                             </Box>
                         </Grid>
                     </Grid>
-                </NewsletterSection>
+                </Container>
+            </NewsletterSection>
 
-                <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.1)", mb: 4 }} />
-
-                {/* Navigation Section */}
-                <Box sx={{ mb: 4 }}>
-                    <Grid container spacing={4} alignItems="center">
-                        <Grid size={{ xs: 12, sm: 3 }}>
-                            <Box sx={{ display: 'flex', justifyContent: { xs: 'center', sm: 'flex-start' } }}>
-                                <Link href="#">
-                                    <Image
-                                        src="/images/navbarLogo.svg"
-                                        alt="Logo"
-                                        width={150}
-                                        height={50}
-                                        style={{ objectFit: 'contain', cursor: 'pointer' }}
-                                    />
-                                </Link>
-                            </Box>
+            <Box sx={{ backgroundColor: "#162E3F", py: 1 }}>
+                <Container maxWidth="xl">
+                    <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.1)", mb: 4 }} />
+                    <Box sx={{ mb: 4 }}>
+                        <Grid container spacing={4} alignItems="center">
+                            <Grid size={{ xs: 12, sm: 3 }}>
+                                <Box sx={{ display: 'flex', justifyContent: { xs: 'center', sm: 'flex-start' } }}>
+                                    <Link href="/">
+                                        <Image
+                                            src="/images/navbarLogo.svg"
+                                            alt="Logo"
+                                            width={150}
+                                            height={50}
+                                            style={{ objectFit: 'contain', cursor: 'pointer' }}
+                                        />
+                                    </Link>
+                                </Box>
+                            </Grid>
+                            <Grid size={{ xs: 12, sm: 9 }}>
+                                <Stack
+                                    direction={{ xs: "column", sm: "row" }}
+                                    spacing={{ xs: 2, sm: 4 }}
+                                    sx={{
+                                        justifyContent: { sm: "flex-end" },
+                                        alignItems: { xs: "center", sm: "center" },
+                                        mt: { xs: 2, sm: 0 }
+                                    }}
+                                >
+                                    {navigationLinks.map(({ label, href }) => (
+                                        <NavLink key={href} href={href}>
+                                            {label}
+                                        </NavLink>
+                                    ))}
+                                </Stack>
+                            </Grid>
                         </Grid>
-                        <Grid size={{ xs: 12, sm: 9 }}>
-                            <Stack
-                                direction={{ xs: "column", sm: "row" }}
-                                spacing={{ xs: 2, sm: 4 }}
-                                sx={{
-                                    justifyContent: { sm: "flex-end" },
-                                    alignItems: { xs: "center", sm: "center" },
-                                    mt: { xs: 2, sm: 0 }
-                                }}
-                            >
-                                {navigationLinks.map(({ label, href }) => (
-                                    <NavLink key={href} href={href}>
-                                        {label}
-                                    </NavLink>
-                                ))}
-                            </Stack>
-                        </Grid>
-                    </Grid>
-                </Box>
+                    </Box>
 
-                <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.1)", mb: 3 }} />
+                </Container>
+            </Box>
 
-                {/* Bottom Section */}
-                <Box sx={{ bgcolor: '#0E1F2B' }}>
+            <BottomSection>
+                <Container maxWidth="xl">
                     <Grid container spacing={2} alignItems="center">
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <Typography
@@ -211,7 +216,6 @@ export default function Footer() {
                                 {socialIcon.map(({ icon, href }) => (
                                     <Link key={href} href={href}>
                                         <SocialIconButton
-                                            key={href}
                                             sx={{
                                                 display: 'flex',
                                                 alignItems: 'center',
@@ -228,8 +232,8 @@ export default function Footer() {
                             </Stack>
                         </Grid>
                     </Grid>
-                </Box>
-            </Container>
+                </Container>
+            </BottomSection>
         </FooterContainer>
     )
 }
