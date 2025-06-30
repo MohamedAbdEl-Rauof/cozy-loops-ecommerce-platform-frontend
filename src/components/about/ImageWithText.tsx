@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Typography, Fade, Slide } from '@mui/material';
+import { Box, Typography, Fade, Slide, Button } from '@mui/material';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 
@@ -24,6 +24,9 @@ interface ImageWithTextProps {
         lg?: string;
         xl?: string;
     };
+    buttonText?: string;
+    buttonLink?: string;
+    onButtonClick?: () => void;
 }
 
 const ImageWithText = ({
@@ -33,7 +36,10 @@ const ImageWithText = ({
     imageAlt,
     flipContent,
     imageWidth,
-    imageHeight
+    imageHeight,
+    buttonText,
+    buttonLink,
+    onButtonClick
 }: ImageWithTextProps) => {
     const [isVisible, setIsVisible] = useState(false);
 
@@ -53,6 +59,14 @@ const ImageWithText = ({
         return () => clearTimeout(timer);
     }, []);
 
+    const handleButtonClick = () => {
+        if (onButtonClick) {
+            onButtonClick();
+        } else if (buttonLink) {
+            window.location.href = buttonLink;
+        }
+    };
+
     return (
         <Box
             sx={{
@@ -64,8 +78,7 @@ const ImageWithText = ({
                 },
                 alignItems: 'center',
                 gap: { xs: 3, sm: 4, md: 12 },
-                mx: 'auto',
-                pb: 10
+                mx: 'auto'
             }}
         >
             {/* Image Section */}
@@ -123,7 +136,7 @@ const ImageWithText = ({
                                 xs: '1.5rem',
                                 sm: '2rem',
                                 md: '2.5rem',
-                                lg: '3rem'
+                                lg: '5rem'
                             },
                             color: 'text.primary',
                             animation: 'fadeInUp 1s ease-out',
@@ -152,6 +165,7 @@ const ImageWithText = ({
                             },
                             lineHeight: { xs: 1.6, sm: 1.7, md: 1.8 },
                             color: '#000000',
+                            mb: buttonText ? { xs: 3, sm: 3.5, md: 4 } : 0,
                             animation: 'fadeInUp 1s ease-out 0.3s both',
                             '@keyframes fadeInUp': {
                                 '0%': {
@@ -167,9 +181,56 @@ const ImageWithText = ({
                     >
                         {description}
                     </Typography>
+
+                    {buttonText && (
+                        <Box
+                            sx={{
+                                animation: 'fadeInUp 1s ease-out 0.6s both',
+                                '@keyframes fadeInUp': {
+                                    '0%': {
+                                        opacity: 0,
+                                        transform: 'translateY(30px)'
+                                    },
+                                    '100%': {
+                                        opacity: 1,
+                                        transform: 'translateY(0)'
+                                    }
+                                }
+                            }}
+                        >
+                            <Button
+                                variant="contained"
+                                onClick={handleButtonClick}
+                                sx={{
+                                    backgroundColor: 'var(--primary-color)',
+                                    color: 'white',
+                                    px: { xs: 3, sm: 4, md: 5 },
+                                    py: { xs: 1.5, sm: 2 },
+                                    fontSize: {
+                                        xs: '0.875rem',
+                                        sm: '1rem',
+                                        md: '1.125rem'
+                                    },
+                                    fontWeight: 600,
+                                    borderRadius: '9999px !important',
+                                    textTransform: 'none',
+                                    transition: 'all 0.3s ease',
+                                    '&:hover': {
+                                        backgroundColor: 'var(--primary-hover)',
+                                        transform: 'translateY(-2px)',
+                                        boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+                                    },
+                                    '&:active': {
+                                        transform: 'translateY(0)',
+                                    }
+                                }}
+                            >
+                                {buttonText}
+                            </Button>
+                        </Box>
+                    )}
                 </Box>
             </Fade>
-
         </Box>
     );
 };
