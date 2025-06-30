@@ -41,9 +41,9 @@ const SocialIconButton = styled(IconButton)(() => ({
 const navigationLinks = [
     { label: "About Cozy Loops", href: "/about" },
     { label: "Categories", href: "/categories" },
-    { label: "Contact Us", href: "#" },
-    { label: "Privacy Policy", href: "#" },
-    { label: "Terms & Conditions", href: "#" },
+    { label: "Contact Us", href: "/contact" },
+    { label: "Privacy Policy", href: "/privacy" },
+    { label: "Terms & Conditions", href: "/terms" },
 ]
 
 const socialIcon = [
@@ -51,8 +51,8 @@ const socialIcon = [
     { icon: <LinkedIn />, href: "https://www.linkedin.com/company/cozy-loops/" },
     { icon: <Facebook />, href: "https://www.facebook.com/cozyloops/" },
     { icon: <GitHub />, href: "https://github.com/cozyloops" },
-    { icon: <Language />, href: "#" },
-    { icon: <Public />, href: "#" },
+    { icon: <Language />, href: "/language" },
+    { icon: <Public />, href: "/public" },
 ]
 
 export default function Footer() {

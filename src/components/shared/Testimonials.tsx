@@ -57,7 +57,6 @@ const TestimonialsSection = ({ testimonialsData }: TestimonialsProps) => {
         <Box
             component="section"
             sx={{
-                py: { xs: 6, md: 10 },
                 backgroundColor: "#fafafa",
             }}
         >

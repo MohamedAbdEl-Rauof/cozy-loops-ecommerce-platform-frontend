@@ -58,7 +58,6 @@ const ShopByCraft = () => {
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
     const [imgError, setImgError] = useState<Record<number, boolean>>({});
 
-    // Handle image error by using fallback
     const handleImageError = (index: number) => {
         setImgError(prev => ({ ...prev, [index]: true }));
     };
@@ -268,9 +267,10 @@ const ShopByCraft = () => {
                                         position: 'absolute',
                                         bottom: -5,
                                         left: 0,
-                                        maxWidth: '50%',
+                                        maxWidth: '40%',
+                                        maxHeight: '40%',
                                         bgcolor: 'rgba(255, 255, 255, 0.95)',
-                                        borderRadius: 3,
+                                        borderRadius: '0 50px 3px 30px',
                                         padding: '17px 20px',
                                         transition: 'all 0.3s ease',
                                         transform: hoveredIndex === index ? 'translateY(-5px)' : 'translateY(0)',

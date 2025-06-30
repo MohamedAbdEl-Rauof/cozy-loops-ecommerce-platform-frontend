@@ -32,13 +32,11 @@ const FeaturedCategories = ({
     const isXs = useMediaQuery(theme.breakpoints.down('sm'));
     const isSm = useMediaQuery(theme.breakpoints.between('sm', 'md'));
     const isMd = useMediaQuery(theme.breakpoints.between('md', 'lg'));
-    const isLg = useMediaQuery(theme.breakpoints.up('lg'));
 
     useEffect(() => {
-        // Reduced delay for component appearance
         const timer = setTimeout(() => {
             setIsVisible(true);
-        }, 100); // Reduced from default to 100ms
+        }, 100); 
 
         return () => clearTimeout(timer);
     }, []);
@@ -50,10 +48,8 @@ const FeaturedCategories = ({
                 justifyContent: 'center',
                 alignItems: 'center',
                 bgcolor: 'background.paper',
-                p: { xs: 1, sm: 2, md: 3 },
                 overflow: 'hidden',
                 width: '100%',
-                my: { xs: 2, sm: 3, md: 4 }
             }}
         >
             <Paper
@@ -226,20 +222,6 @@ const FeaturedCategories = ({
                         </Box>
                     )}
                 </Box>
-
-                {/* Top left corner cut with white background */}
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: { xs: '20px', sm: '30px', md: '40px', lg: '50px' },
-                        height: { xs: '20px', sm: '30px', md: '40px', lg: '50px' },
-                        backgroundColor: 'white',
-                        clipPath: 'polygon(0 0, 100% 0, 0 100%)',
-                        zIndex: 3
-                    }}
-                />
 
                 {/* Bottom right corner with button - Updated design */}
                 <Box
