@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import Navbar from "@/components/shared/Navbar";
+import Footer from "@/components/shared/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,7 +20,7 @@ export const metadata: Metadata = {
   description: "Discover unique handmade crochet products at Cozy Loops. Shop our collection of high-quality, custom-made items crafted with love.",
   icons: {
     icon: [
-      { url: '/images/navbarLogo.png' },
+      { url: '/images/navbarLogo.svg' },
 
     ]
   },
@@ -38,6 +39,7 @@ export default function RootLayout({
         <AuthProvider>
           <Navbar />
           {children}
+          <Footer />
         </AuthProvider>
       </body>
     </html>
