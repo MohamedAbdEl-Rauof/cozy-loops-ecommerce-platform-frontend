@@ -80,3 +80,28 @@ body {
   height: var(--input-height) !important;
   border-radius: var(--input-border-radius) !important;
 }
+
+.custom-input-placeholder::placeholder {
+  color: #666;
+  opacity: 1;
+}
+
+.custom-input-placeholder:-ms-input-placeholder {
+  color: #666;
+}
+
+.custom-input-placeholder::-ms-input-placeholder {
+  color: #666;
+}
+
+.custom-input-placeholder::placeholder {
+  color: #666;
+  opacity: 1;
+}
+
+@media (max-width: 480px) {
+  .custom-input-placeholder {
+    font-size: 0.85rem;
+    padding: 10px 15px;
+  }
+}

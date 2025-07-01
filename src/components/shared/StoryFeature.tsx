@@ -115,7 +115,7 @@ const StoryFeature = ({
                         variant={isXs ? "body2" : "body1"}
                         sx={{
                             mb: { xs: 2, sm: 3, md: 4 },
-                            color: 'text.secondary',
+                            color: '#000000',
                             lineHeight: { xs: 1.6, md: 1.8 },
                             maxWidth: '95%',
                             display: '-webkit-box',
