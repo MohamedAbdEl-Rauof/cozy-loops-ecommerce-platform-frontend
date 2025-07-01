@@ -1,8 +1,9 @@
 'use client';
 
-import { Box, Typography, Card, CardMedia, CardContent, Button, Grid, IconButton } from '@mui/material';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { Box, Typography, Card, Button, Grid, IconButton } from '@mui/material';
 import Image from 'next/image';
+import CallMadeIcon from '@mui/icons-material/CallMade';
+
 
 interface Category {
   id: string;
@@ -29,7 +30,7 @@ const CategoriesGrid = ({ title, description, categories }: CategoriesGridProps)
   };
 
   return (
-    <Box sx={{ py: { xs: 4, sm: 6, md: 8 } }}>
+    <Box >
       {/* Title and Description Section */}
       <Box sx={{ textAlign: 'center', mb: { xs: 4, sm: 6, md: 8 } }}>
         <Typography
@@ -58,7 +59,6 @@ const CategoriesGrid = ({ title, description, categories }: CategoriesGridProps)
               md: '1.25rem'
             },
             color: 'text.secondary',
-            maxWidth: '600px',
             mx: 'auto',
             lineHeight: 1.6
           }}
@@ -68,34 +68,52 @@ const CategoriesGrid = ({ title, description, categories }: CategoriesGridProps)
       </Box>
 
       {/* Categories Grid */}
-      <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
+      <Grid container spacing={{ xs: 1.5, sm: 2, md: 2.5, lg: 3 }}>
         {categories.map((category) => (
-          <Grid item xs={12} sm={6} md={4} key={category.id}>
-            <Card
+          <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={category.id}>
+            <Box
               sx={{
                 height: '100%',
                 display: 'flex',
-                flexDirection: 'column',
-                borderRadius: '16px',
-                overflow: 'hidden',
-                transition: 'all 0.3s ease',
-                cursor: 'pointer',
-                '&:hover': {
-                  transform: 'translateY(-8px)',
-                  boxShadow: '0 12px 40px rgba(0,0,0,0.15)',
+                width: '100%',
+                maxWidth: {
+                  xs: '280px',
+                  sm: '300px',
+                  md: '320px',
+                  lg: '380px'
                 },
+                mx: 'auto',
+                flexDirection: 'column',
+                transition: 'all 0.3s ease',
               }}
               onClick={() => handleCategoryClick(category.buttonLink)}
             >
-              {/* Image Section with Arrow */}
-              <Box sx={{ position: 'relative', height: 250 }}>
+              {/* Image Card */}
+              <Box
+                sx={{
+                  position: 'relative',
+                  width: '100%',
+                  height: {
+                    xs: 300,
+                    sm: 340,
+                    md: 370,
+                    lg: 400
+                  },
+                  mb: { xs: 2, sm: 2.5, md: 3 },
+                  borderRadius: '20px !important',
+                  overflow: 'hidden',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    transform: 'scale(1.03)',
+                  },
+                }}
+              >
                 <Image
                   src={category.image}
                   alt={category.title}
                   fill
-                  style={{
-                    objectFit: 'cover',
-                  }}
+                 
                 />
                 <IconButton
                   onClick={(e) => {
@@ -104,12 +122,12 @@ const CategoriesGrid = ({ title, description, categories }: CategoriesGridProps)
                   }}
                   sx={{
                     position: 'absolute',
-                    top: 16,
-                    right: 16,
+                    top: { xs: 12, sm: 16 },
+                    right: { xs: 12, sm: 16 },
                     backgroundColor: 'rgba(255, 255, 255, 0.9)',
                     color: 'text.primary',
-                    width: 40,
-                    height: 40,
+                    width: { xs: 36, sm: 40 },
+                    height: { xs: 36, sm: 40 },
                     transition: 'all 0.3s ease',
                     '&:hover': {
                       backgroundColor: 'white',
@@ -117,17 +135,17 @@ const CategoriesGrid = ({ title, description, categories }: CategoriesGridProps)
                     },
                   }}
                 >
-                  <ArrowForwardIcon fontSize="small" />
+                  <CallMadeIcon fontSize="small" />
                 </IconButton>
               </Box>
 
-              {/* Content Section */}
-              <CardContent
+              {/* Content Section - Outside the image card */}
+              <Box
                 sx={{
                   flexGrow: 1,
                   display: 'flex',
                   flexDirection: 'column',
-                  p: { xs: 2, sm: 3 },
+                  px: { xs: 0.5, sm: 1 },
                 }}
               >
                 <Typography
@@ -135,27 +153,30 @@ const CategoriesGrid = ({ title, description, categories }: CategoriesGridProps)
                   component="h3"
                   sx={{
                     fontWeight: 600,
-                    mb: 1.5,
+                    mb: { xs: 1, sm: 1.5 },
                     fontSize: {
-                      xs: '1.125rem',
-                      sm: '1.25rem'
+                      xs: '1rem',
+                      sm: '1.125rem',
+                      md: '1.25rem'
                     },
                     color: 'text.primary',
+                    lineHeight: 1.3,
                   }}
                 >
                   {category.title}
                 </Typography>
-                
+
                 <Typography
                   variant="body2"
                   sx={{
                     color: 'text.secondary',
-                    mb: 3,
+                    mb: { xs: 2, sm: 2.5, md: 3 },
                     flexGrow: 1,
                     lineHeight: 1.6,
                     fontSize: {
                       xs: '0.875rem',
-                      sm: '1rem'
+                      sm: '0.9rem',
+                      md: '1rem'
                     }
                   }}
                 >
@@ -171,12 +192,15 @@ const CategoriesGrid = ({ title, description, categories }: CategoriesGridProps)
                   sx={{
                     backgroundColor: 'var(--primary-color)',
                     color: 'white',
-                    py: 1.5,
-                    px: 3,
-                    borderRadius: '9999px',
+                    py: { xs: 1.2, sm: 1.5 },
+                    px: { xs: 2.5, sm: 3 },
+                    borderRadius: '9999px !important',
                     textTransform: 'none',
                     fontWeight: 600,
-                    fontSize: '0.875rem',
+                    fontSize: {
+                      xs: '0.8rem',
+                      sm: '0.875rem'
+                    },
                     transition: 'all 0.3s ease',
                     alignSelf: 'flex-start',
                     '&:hover': {
@@ -187,8 +211,8 @@ const CategoriesGrid = ({ title, description, categories }: CategoriesGridProps)
                 >
                   {category.buttonText}
                 </Button>
-              </CardContent>
-            </Card>
+              </Box>
+            </Box>
           </Grid>
         ))}
       </Grid>

@@ -22,7 +22,7 @@ const categoriesData = {
       id: "1",
       title: "Handmade Jewelry",
       description: "Beautiful, unique jewelry pieces crafted with love and attention to detail.",
-      image: "/images/categories/jewelry.jpg",
+      image: "/images/categories.png",
       buttonText: "Shop Jewelry",
       buttonLink: "/categories/jewelry"
     },
@@ -30,7 +30,7 @@ const categoriesData = {
       id: "2",
       title: "Home Decor",
       description: "Transform your space with our carefully curated home decoration items.",
-      image: "/images/categories/home-decor.jpg",
+      image: "/images/categories.png",
       buttonText: "Shop Decor",
       buttonLink: "/categories/home-decor"
     },
@@ -38,7 +38,7 @@ const categoriesData = {
       id: "3",
       title: "Textiles & Fabrics",
       description: "Premium quality textiles and fabrics for all your creative projects.",
-      image: "/images/categories/textiles.jpg",
+      image: "/images/categories.png",
       buttonText: "Shop Textiles",
       buttonLink: "/categories/textiles"
     },
@@ -46,7 +46,7 @@ const categoriesData = {
       id: "4",
       title: "Pottery & Ceramics",
       description: "Handcrafted pottery and ceramic pieces that bring warmth to any space.",
-      image: "/images/categories/pottery.jpg",
+      image: "/images/categories.png",
       buttonText: "Shop Pottery",
       buttonLink: "/categories/pottery"
     },
@@ -54,7 +54,7 @@ const categoriesData = {
       id: "5",
       title: "Art & Paintings",
       description: "Original artwork and paintings from talented local artists.",
-      image: "/images/categories/art.jpg",
+      image: "/images/categories.png",
       buttonText: "Shop Art",
       buttonLink: "/categories/art"
     },
@@ -62,7 +62,7 @@ const categoriesData = {
       id: "6",
       title: "Accessories",
       description: "Stylish accessories to complement your unique style and personality.",
-      image: "/images/categories/accessories.jpg",
+      image: "/images/categories.png",
       buttonText: "Shop Accessories",
       buttonLink: "/categories/accessories"
     }
