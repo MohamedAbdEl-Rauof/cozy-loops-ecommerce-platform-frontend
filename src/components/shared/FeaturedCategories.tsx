@@ -16,6 +16,7 @@ interface FeaturedCategoriesProps {
         title: string;
         isTitleCenter: boolean;
         description: string;
+        image: string;
         ctaText: string;
         buttonText: string;
         buttonLink: string;
@@ -25,7 +26,7 @@ interface FeaturedCategoriesProps {
 const FeaturedCategories = ({
     featuredCategories
 }: FeaturedCategoriesProps) => {
-    const { title, isTitleCenter, description, ctaText, buttonText, buttonLink } = featuredCategories;
+    const { title, isTitleCenter, description, ctaText, buttonText, buttonLink,image } = featuredCategories;
     const theme = useTheme();
     const [isVisible, setIsVisible] = useState(false);
     const router = useRouter();
@@ -91,7 +92,7 @@ const FeaturedCategories = ({
                     }}
                  >
                     <Image
-                        src="/images/shared/featuredCategory.jpg"
+                        src={image}
                         alt={title}
                         fill
                         priority

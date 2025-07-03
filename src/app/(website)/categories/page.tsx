@@ -2,7 +2,7 @@
 
 import ImageWithText from "@/components/about/ImageWithText";
 import FeaturedCategories from "@/components/shared/FeaturedCategories";
-import CategoriesGrid from "@/components/categories/CategoriesGrid";
+import CategoriesGrid from "@/components/shared/CategoriesGrid";
 import { Box, Container } from "@mui/material";
 
 const featuredCategories = {
@@ -10,6 +10,7 @@ const featuredCategories = {
   isTitleCenter: false,
   description: "We love hearing from our community.",
   ctaText: "",
+  image: "/images/shared/featuredCategory.jpg",
   buttonText: "View Profile",
   buttonLink: "View Profile ",
 }
@@ -24,6 +25,7 @@ const categoriesData = {
       description: "Beautiful, unique jewelry pieces crafted with love and attention to detail.",
       image: "/images/categories.png",
       buttonText: "Shop Jewelry",
+      isMaker: false,
       buttonLink: "/categories/jewelry",
       slug: "handmade-jewelry"
     },
@@ -32,6 +34,7 @@ const categoriesData = {
       title: "Home Decor",
       description: "Transform your space with our carefully curated home decoration items.",
       image: "/images/categories.png",
+      isMaker: false,
       buttonText: "Shop Decor",
       buttonLink: "/categories/home-decor",
       slug: "home-decor"
@@ -41,6 +44,7 @@ const categoriesData = {
       title: "Textiles & Fabrics",
       description: "Premium quality textiles and fabrics for all your creative projects.",
       image: "/images/categories.png",
+      isMaker: false,
       buttonText: "Shop Textiles",
       buttonLink: "/categories/textiles",
       slug: "textiles-and-fabrics"
@@ -50,6 +54,7 @@ const categoriesData = {
       title: "Pottery & Ceramics",
       description: "Handcrafted pottery and ceramic pieces that bring warmth to any space.",
       image: "/images/categories.png",
+      isMaker: false,
       buttonText: "Shop Pottery",
       buttonLink: "/categories/pottery",
       slug: "pottery-and-ceramics"
@@ -59,6 +64,7 @@ const categoriesData = {
       title: "Art & Paintings",
       description: "Original artwork and paintings from talented local artists.",
       image: "/images/categories.png",
+      isMaker: false,
       buttonText: "Shop Art",
       buttonLink: "/categories/art",
       slug: "art-and-paintings"
@@ -68,6 +74,7 @@ const categoriesData = {
       title: "Accessories",
       description: "Stylish accessories to complement your unique style and personality.",
       image: "/images/categories.png",
+      isMaker: false,
       buttonText: "Shop Accessories",
       buttonLink: "/categories/accessories",
       slug: "accessories"
@@ -107,10 +114,8 @@ export default function Categories() {
         </Box>
 
         <Box sx={{ mb: { xs: 8, sm: 10, md: 12, lg: 16 } }}>
-          <CategoriesGrid 
-            title={categoriesData.title}
-            description={categoriesData.description}
-            categories={categoriesData.categories}
+          <CategoriesGrid
+            categoriesData={categoriesData}
           />
         </Box>
 

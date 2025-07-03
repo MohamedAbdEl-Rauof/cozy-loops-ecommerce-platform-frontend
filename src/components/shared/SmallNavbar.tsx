@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import Link from 'next/link';
 
@@ -25,48 +25,64 @@ const SmallNavbar: React.FC<SmallNavbarProps> = ({
             role="navigation"
             aria-label="Breadcrumb navigation"
         >
-            <Box
+            <Container
+                maxWidth={false}
                 sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1,
-                    margin: '0 auto',
+                    maxWidth: {
+                        xs: '100%',
+                        sm: '100%',
+                        md: '1400px',
+                        lg: '1600px',
+                        xl: '1850px'
+                    },
+                    px: { xs: 2, sm: 3, md: 4 },
+                    mx: 'auto'
                 }}
             >
-                <Link href="/categories" >
+                <Box
+                    sx={{
+                        px: { xs: 2, sm: 3, md: 6 },
+                        display: 'flex',
+                        flexDirection : 'flex-grow',
+                        gap: 1
+                    }}
+                    
+                >
+                    <Link href="/categories" >
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                color: 'white',
+                                fontWeight: 500,
+                                fontSize: '0.875rem',
+                            }}
+                        >
+                            {category}
+                        </Typography>
+                    </Link>
+
+
+                    <PlayArrowIcon
+                        sx={{
+                            color: 'white',
+                            fontSize: '1rem',
+                        }}
+                        aria-hidden="true"
+                    />
+
                     <Typography
                         variant="body2"
                         sx={{
-                            color: 'white',
-                            fontWeight: 500,
+                            color: 'var(--primary-color)',
+                            fontWeight: 600,
                             fontSize: '0.875rem',
                         }}
                     >
-                        {category}
+                        {currentPage}
                     </Typography>
-                </Link>
-
-
-                <PlayArrowIcon
-                    sx={{
-                        color: 'white',
-                        fontSize: '1rem',
-                    }}
-                    aria-hidden="true"
-                />
-
-                <Typography
-                    variant="body2"
-                    sx={{
-                        color: 'var(--primary-color)',
-                        fontWeight: 600,
-                        fontSize: '0.875rem',
-                    }}
-                >
-                    {currentPage}
-                </Typography>
-            </Box>
-        </Box>
+                </Box>
+            </Container>
+        </Box >
     );
 };
 

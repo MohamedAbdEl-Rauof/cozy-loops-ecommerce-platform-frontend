@@ -4,23 +4,28 @@ import { Box, Typography, Card, Button, Grid, IconButton } from '@mui/material';
 import Image from 'next/image';
 import CallMadeIcon from '@mui/icons-material/CallMade';
 
-
 interface Category {
   id: string;
   title: string;
   description: string;
   image: string;
+  isMaker?: boolean;
   buttonText: string;
   buttonLink: string;
 }
 
-interface CategoriesGridProps {
+interface CategoriesData {
   title: string;
   description: string;
   categories: Category[];
 }
 
-const CategoriesGrid = ({ title, description, categories }: CategoriesGridProps) => {
+interface CategoriesGridProps {
+  categoriesData: CategoriesData;
+}
+
+const CategoriesGrid: React.FC<CategoriesGridProps> = ({ categoriesData }) => {
+  const { title, description, categories } = categoriesData;
   const handleCategoryClick = (link: string) => {
     window.location.href = link;
   };
@@ -113,7 +118,7 @@ const CategoriesGrid = ({ title, description, categories }: CategoriesGridProps)
                   src={category.image}
                   alt={category.title}
                   fill
-                 
+
                 />
                 <IconButton
                   onClick={(e) => {
@@ -184,29 +189,58 @@ const CategoriesGrid = ({ title, description, categories }: CategoriesGridProps)
                 </Typography>
 
                 <Button
-                  variant="contained"
+                  variant={category.isMaker ? "text" : "contained"}
                   onClick={(e) => {
                     e.stopPropagation();
                     handleCategoryClick(category.buttonLink);
                   }}
                   sx={{
-                    backgroundColor: 'var(--primary-color)',
-                    color: 'white',
-                    py: { xs: 1.2, sm: 1.5 },
-                    px: { xs: 2.5, sm: 3 },
-                    borderRadius: '9999px !important',
-                    textTransform: 'none',
-                    fontWeight: 600,
-                    fontSize: {
-                      xs: '0.8rem',
-                      sm: '0.875rem'
-                    },
-                    transition: 'all 0.3s ease',
-                    alignSelf: 'flex-start',
-                    '&:hover': {
-                      backgroundColor: 'var(--primary-hover)',
-                      transform: 'translateY(-2px)',
-                    },
+                    ...(category.isMaker ? {
+                      // Maker style
+                      color: 'var(--primary-color)',
+                      backgroundColor: 'transparent',
+                      py: { xs: 0.5, sm: 0.75 },
+                      px: 0,
+                      textDecoration: 'underline',
+                      textUnderlineOffset: '4px',
+                      textDecorationThickness: '2px',
+                      borderRadius: '0 !important',
+                      textTransform: 'none',
+                      fontWeight: 500,
+                      fontSize: {
+                        xs: '0.875rem',
+                        sm: '0.9rem'
+                      },
+                      transition: 'all 0.3s ease',
+                      alignSelf: 'flex-start',
+                      '&:hover': {
+                        backgroundColor: 'transparent',
+                        color: 'var(--primary-hover)',
+                        textDecorationThickness: '3px',
+                        transform: 'translateX(4px)',
+                        textDecoration: 'underline',
+                        textUnderlineOffset: '5px',
+                      },
+                    } : {
+                      // Regular category style
+                      backgroundColor: 'var(--primary-color)',
+                      color: 'white',
+                      py: { xs: 1.2, sm: 1.5 },
+                      px: { xs: 2.5, sm: 3 },
+                      borderRadius: '9999px !important',
+                      textTransform: 'none',
+                      fontWeight: 600,
+                      fontSize: {
+                        xs: '0.8rem',
+                        sm: '0.875rem'
+                      },
+                      transition: 'all 0.3s ease',
+                      alignSelf: 'flex-start',
+                      '&:hover': {
+                        backgroundColor: 'var(--primary-hover)',
+                        transform: 'translateY(-2px)',
+                      },
+                    })
                   }}
                 >
                   {category.buttonText}
