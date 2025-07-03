@@ -24,7 +24,8 @@ const categoriesData = {
       description: "Beautiful, unique jewelry pieces crafted with love and attention to detail.",
       image: "/images/categories.png",
       buttonText: "Shop Jewelry",
-      buttonLink: "/categories/jewelry"
+      buttonLink: "/categories/jewelry",
+      slug: "handmade-jewelry"
     },
     {
       id: "2",
@@ -32,7 +33,8 @@ const categoriesData = {
       description: "Transform your space with our carefully curated home decoration items.",
       image: "/images/categories.png",
       buttonText: "Shop Decor",
-      buttonLink: "/categories/home-decor"
+      buttonLink: "/categories/home-decor",
+      slug: "home-decor"
     },
     {
       id: "3",
@@ -40,7 +42,8 @@ const categoriesData = {
       description: "Premium quality textiles and fabrics for all your creative projects.",
       image: "/images/categories.png",
       buttonText: "Shop Textiles",
-      buttonLink: "/categories/textiles"
+      buttonLink: "/categories/textiles",
+      slug: "textiles-and-fabrics"
     },
     {
       id: "4",
@@ -48,7 +51,8 @@ const categoriesData = {
       description: "Handcrafted pottery and ceramic pieces that bring warmth to any space.",
       image: "/images/categories.png",
       buttonText: "Shop Pottery",
-      buttonLink: "/categories/pottery"
+      buttonLink: "/categories/pottery",
+      slug: "pottery-and-ceramics"
     },
     {
       id: "5",
@@ -56,7 +60,8 @@ const categoriesData = {
       description: "Original artwork and paintings from talented local artists.",
       image: "/images/categories.png",
       buttonText: "Shop Art",
-      buttonLink: "/categories/art"
+      buttonLink: "/categories/art",
+      slug: "art-and-paintings"
     },
     {
       id: "6",
@@ -64,7 +69,8 @@ const categoriesData = {
       description: "Stylish accessories to complement your unique style and personality.",
       image: "/images/categories.png",
       buttonText: "Shop Accessories",
-      buttonLink: "/categories/accessories"
+      buttonLink: "/categories/accessories",
+      slug: "accessories"
     }
   ]
 };
@@ -86,7 +92,6 @@ export default function Categories() {
           mx: 'auto',
         }}
       >
-
         <Box sx={{ mb: { xs: 8, sm: 10, md: 12, lg: 16 }, pt: { xs: 4, sm: 6, md: 8, lg: 10 } }}>
           <ImageWithText
             title="Find Your Favorite Craft"
@@ -112,7 +117,6 @@ export default function Categories() {
         <Box sx={{ pb: { xs: 6, sm: 8, md: 10, lg: 12 } }}>
           <FeaturedCategories featuredCategories={featuredCategories} />
         </Box>
-
       </Container>
     </Box>
   );
