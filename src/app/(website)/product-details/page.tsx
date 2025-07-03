@@ -6,6 +6,7 @@ import ProductsOfCategory from "@/components/shared/ProductsOfCategory";
 import CategoriesGrid from "@/components/shared/CategoriesGrid";
 import FeaturedCategories from "@/components/shared/FeaturedCategories";
 import Testimonials from "@/components/shared/Testimonials";
+import ProductDetails from "@/components/shared/PrdouctDetails";
 
 const Products = {
   title: "Handcrafted Punch Needle Collection",
@@ -143,6 +144,69 @@ const testimonialsData = {
   ]
 };
 
+
+// Add this mock data before the Page component
+const productData = {
+  id: "prod-001",
+  name: "Whimsical Punch Needle Art Kit - Rainbow Dreams",
+  images: [
+    {
+      id: "img-1",
+      url: "/images/shared/prdouct.jpg",
+      alt: "Main product image - Rainbow Dreams punch needle kit"
+    },
+    {
+      id: "img-2",
+      url: "/images/categories.png",
+      alt: "Product detail view 1"
+    },
+    {
+      id: "img-3",
+      url: "/images/shared/productImage.jpg",
+      alt: "Product detail view 2"
+    },
+    {
+      id: "img-4",
+      url: "/images/shared/makers/makerNoura.png",
+      alt: "Product in use demonstration"
+    }
+  ],
+  rating: 4.8,
+  reviewCount: 127,
+  inStock: true,
+  stockCount: 15,
+  price: 89.99,
+  originalPrice: 119.99,
+  colors: [
+    {
+      name: "Rainbow Mix",
+      value: "#ff6b6b",
+      available: true
+    },
+    {
+      name: "Ocean Breeze",
+      value: "#4ecdc4",
+      available: true
+    },
+    {
+      name: "Sunset Glow",
+      value: "#45b7d1",
+      available: true
+    },
+    {
+      name: "Forest Green",
+      value: "#96ceb4",
+      available: false
+    },
+    {
+      name: "Golden Hour",
+      value: "#feca57",
+      available: true
+    }
+  ],
+  description: "Create stunning punch needle art with our comprehensive",
+};
+
 const Page = () => {
   return (
     <Box component="main" sx={{ bgcolor: '#fafafa', minHeight: '100vh' }}>
@@ -166,17 +230,42 @@ const Page = () => {
           mx: 'auto',
         }}
       >
-        <StoryFeature
-          title="Whimsical Punch Needle Art"
-          description="Discover colorful textures and joyful stitches—each piece is a cozy statement that brings warmth and creativity to your space."
-          buttonText="Shop All Punch Needle"
-          imageSrc="/images/shared/prdouct.jpg"
-          imageAlt="Beautiful punch needle artwork showcasing vibrant textures and patterns"
-          onButtonClick="/products/all"
-        />
+
 
         <Box sx={{ py: { xs: 4, sm: 6, md: 8 }, bgcolor: 'white' }}>
-          <ProductsOfCategory Products={Products} onAddToCart={() => { }} />
+          <ProductDetails
+            id={productData.id}
+            name={productData.name}
+            images={productData.images}
+            rating={productData.rating}
+            reviewCount={productData.reviewCount}
+            inStock={productData.inStock}
+            stockCount={productData.stockCount}
+            price={productData.price}
+            originalPrice={productData.originalPrice}
+            colors={productData.colors}
+            description={productData.description}
+            onAddToCart={(quantity, color) => {
+              console.log(`Adding ${quantity} items in ${color} to cart`);
+              // Handle add to cart logic here
+            }}
+            onToggleFavorite={() => {
+              console.log('Toggling favorite status');
+              // Handle favorite toggle logic here
+            }}
+            onShare={() => {
+              console.log('Sharing product');
+              // Handle share logic here
+              if (navigator.share) {
+                navigator.share({
+                  title: productData.name,
+                  text: productData.description,
+                  url: window.location.href,
+                });
+              }
+            }}
+            isFavorite={false}
+          />
         </Box>
 
         <Box sx={{

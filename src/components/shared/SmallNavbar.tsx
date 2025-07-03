@@ -5,20 +5,20 @@ import Link from 'next/link';
 
 interface SmallNavbarProps {
     category?: string;
-    currentPage?: string;
-    backgroundColor?: string;
+    page1?: string;
+    page2?: string;
 }
 
 const SmallNavbar: React.FC<SmallNavbarProps> = ({
-    category = "Category",
-    currentPage = "Punch Needle",
-    backgroundColor = "#162E3F"
+    category,
+    page1,
+    page2
 }) => {
     return (
         <Box
             component="nav"
             sx={{
-                bgcolor: backgroundColor,
+                bgcolor: '#162E3F',
                 py: 3,
                 borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
             }}
@@ -43,46 +43,75 @@ const SmallNavbar: React.FC<SmallNavbarProps> = ({
                     sx={{
                         px: { xs: 2, sm: 3, md: 6 },
                         display: 'flex',
-                        flexDirection : 'flex-grow',
+                        alignItems: 'center',
                         gap: 1
                     }}
-                    
                 >
-                    <Link href="/categories" >
+                    <Link href="/categories">
                         <Typography
                             variant="body2"
                             sx={{
                                 color: 'white',
                                 fontWeight: 500,
                                 fontSize: '0.875rem',
+                                cursor: 'pointer',
+                                '&:hover': {
+                                    color: 'var(--primary-color)',
+                                }
                             }}
                         >
                             {category}
                         </Typography>
                     </Link>
 
+                    {page1 && (
+                        <>
+                            <PlayArrowIcon
+                                sx={{
+                                    color: 'white',
+                                    fontSize: '1rem',
+                                }}
+                                aria-hidden="true"
+                            />
 
-                    <PlayArrowIcon
-                        sx={{
-                            color: 'white',
-                            fontSize: '1rem',
-                        }}
-                        aria-hidden="true"
-                    />
+                            <Typography
+                                variant="body2"
+                                sx={{
+                                    color: page2 ? 'white' : 'var(--primary-color)',
+                                    fontWeight: page2 ? 500 : 600,
+                                    fontSize: '0.875rem',
+                                }}
+                            >
+                                {page1}
+                            </Typography>
+                        </>
+                    )}
 
-                    <Typography
-                        variant="body2"
-                        sx={{
-                            color: 'var(--primary-color)',
-                            fontWeight: 600,
-                            fontSize: '0.875rem',
-                        }}
-                    >
-                        {currentPage}
-                    </Typography>
+                    {page2 && (
+                        <>
+                            <PlayArrowIcon
+                                sx={{
+                                    color: 'white',
+                                    fontSize: '1rem',
+                                }}
+                                aria-hidden="true"
+                            />
+
+                            <Typography
+                                variant="body2"
+                                sx={{
+                                    color: 'var(--primary-color)',
+                                    fontWeight: 600,
+                                    fontSize: '0.875rem',
+                                }}
+                            >
+                                {page2}
+                            </Typography>
+                        </>
+                    )}
                 </Box>
             </Container>
-        </Box >
+        </Box>
     );
 };
 

@@ -13,14 +13,12 @@ import AddIcon from '@mui/icons-material/Add';
 interface Product {
     id: string;
     title: string;
-    description: string;
     image: string;
     price: number;
 }
 
 interface ProductsData {
     title: string;
-    description: string;
     productsData: Product[];
 }
 
@@ -50,7 +48,7 @@ const ProductsOfCategory: React.FC<ProductsOfCategoryProps> = ({
     return (
         <Box sx={{ py: 6, bgcolor: '#f8f9fa' }}>
             <Container maxWidth="lg">
-                {/* Title and Description Section */}
+                {/* Title Section */}
                 <Box
                     sx={{
                         textAlign: 'center',
@@ -70,18 +68,6 @@ const ProductsOfCategory: React.FC<ProductsOfCategoryProps> = ({
                         }}
                     >
                         {Products.title}
-                    </Typography>
-
-                    <Typography
-                        variant="h6"
-                        component="p"
-                        sx={{
-                            color: '#6c757d',
-                            lineHeight: 1.6,
-                            fontSize: { xs: '1rem', md: '1.125rem' }
-                        }}
-                    >
-                        {Products.description}
                     </Typography>
                 </Box>
 
@@ -183,24 +169,6 @@ const ProductsOfCategory: React.FC<ProductsOfCategoryProps> = ({
                                                 }}
                                             >
                                                 {product.title}
-                                            </Typography>
-
-                                            <Typography
-                                                variant="body2"
-                                                sx={{
-                                                    mb: 2,
-                                                    fontWeight: 400,
-                                                    color: '#6c757d',
-                                                    fontSize: '0.95rem',
-                                                    lineHeight: 1.5,
-                                                    display: '-webkit-box',
-                                                    WebkitLineClamp: 3,
-                                                    WebkitBoxOrient: 'vertical',
-                                                    overflow: 'hidden',
-                                                    textOverflow: 'ellipsis',
-                                                }}
-                                            >
-                                                {product.description}
                                             </Typography>
 
                                             <Typography
