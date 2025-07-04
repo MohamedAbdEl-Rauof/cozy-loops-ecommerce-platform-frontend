@@ -5,6 +5,8 @@ import Testimonials from "@/components/shared/Testimonials";
 import ProductDetails from "@/components/shared/PrdouctDetails";
 import FeatureCardsSection from "@/components/shared/FeatureCardsSection";
 import AbountMaker from "@/components/product-details/AbountMaker";
+import SimilarProducts from "@/components/product-details/SimilarProducts";
+import Comments from "@/components/product-details/Comments";
 
 const testimonialsData = {
   title: "What Buyers Are Saying",
@@ -143,6 +145,73 @@ const FeatureCardsSectionData2 = {
     }
   ]
 };
+
+const similarProductsData = {
+  title: "Similar Products",
+  productsData: [
+    {
+      id: "1",
+      title: "Wireless Bluetooth Headphones",
+      image: "/images/shared/featuredCategory.jpg",
+      price: 99.99
+    },
+    {
+      id: "2",
+      title: "Smart Watch Series 5",
+      image: "/images/shared/featuredCategory.jpg",
+      price: 299.99
+    },
+    {
+      id: "3",
+      title: "Portable Bluetooth Speaker",
+      image: "/images/shared/featuredCategory.jpg",
+      price: 79.99
+    },
+    {
+      id: "4",
+      title: "USB-C Fast Charger",
+      image: "/images/shared/featuredCategory.jpg",
+      price: 29.99
+    },
+    {
+      id: "5",
+      title: "Wireless Mouse",
+      image: "/images/shared/featuredCategory.jpg",
+      price: 49.99
+    },
+    {
+      id: "6",
+      title: "Wireless Mouse",
+      image: "/images/shared/featuredCategory.jpg",
+      price: 49.99
+    },
+    {
+      id: "7",
+      title: "Wireless Mouse",
+      image: "/images/shared/featuredCategory.jpg",
+      price: 49.99
+    },
+    {
+      id: "8",
+      title: "Wireless Mouse",
+      image: "/images/shared/featuredCategory.jpg",
+      price: 49.99
+    },
+    {
+      id: "9",
+      title: "Wireless Mouse",
+      image: "/images/shared/featuredCategory.jpg",
+      price: 49.99
+    },
+    {
+      id: "5",
+      title: "Wireless Mouse",
+      image: "/images/shared/featuredCategory.jpg",
+      price: 49.99
+    }
+  ]
+};
+
 
 const Page = () => {
   return (
@@ -311,16 +380,11 @@ const Page = () => {
 
         </Box>
 
-        {/* Featured Category Section */}
-        <Box
-          component="section"
-          sx={{
-            mb: { xs: 6, sm: 8, md: 10 },
-            px: { xs: 2, sm: 3, md: 4 }
-          }}
-        >
 
-        </Box>
+
+
+        <SimilarProducts Products={similarProductsData} onAddToCart={() => console.log("Product added to cart")} />
+
 
         {/* Testimonials Section */}
         <Box
@@ -337,6 +401,8 @@ const Page = () => {
         >
           <Testimonials testimonialsData={testimonialsData} />
         </Box>
+
+        <Comments />
 
         <Box
           component="section"
