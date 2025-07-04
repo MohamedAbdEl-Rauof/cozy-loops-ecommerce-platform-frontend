@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Box, Container, Typography, Grid, Card, CardContent, useTheme } from '@mui/material';
+import { Box, Container, Typography, Grid, Card, CardContent } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Image from 'next/image';
 
@@ -72,6 +72,26 @@ const FeatureCardsSection: React.FC<FeatureCardsSectionProps> = ({
   const [visibleCards, setVisibleCards] = useState<boolean[]>([]);
   const sectionRef = useRef<HTMLDivElement>(null);
 
+  const getGridSize = (cardCount: number) => {
+    switch (cardCount) {
+      case 1:
+        return { xs: 12, sm: 8, md: 6, lg: 4 };
+      case 2:
+        return { xs: 12, sm: 6, md: 6, lg: 4 }; 
+      case 3:
+        return { xs: 12, sm: 6, md: 4, lg: 4 }; 
+      default:
+        return { xs: 12, sm: 6, md: 4, lg: 3 }; 
+    }
+  };
+
+  const getJustifyContent = (cardCount: number) => {
+    if (cardCount < 4) {
+      return 'center';
+    }
+    return 'flex-start';
+  };
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -105,6 +125,8 @@ const FeatureCardsSection: React.FC<FeatureCardsSectionProps> = ({
       }
     };
   }, [cards.length]);
+
+  const gridSize = getGridSize(cards.length);
 
   return (
     <Box
@@ -164,64 +186,83 @@ const FeatureCardsSection: React.FC<FeatureCardsSectionProps> = ({
           </Typography>
         </AnimatedSection>
 
-        <Grid container spacing={{ xs: 3, sm: 4, md: 6 }}>
-          {cards.map((card, index) => (
-            <Grid key={index} size={{ xs: 12, sm: 6, md: 4, lg: 3 }}>
-              <AnimatedCard
-                className={visibleCards[index] ? 'animate-in' : ''}
-                sx={{
-                  transitionDelay: `${index * 0.1}s`,
-                }}
-              >
-                <CardContent
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: getJustifyContent(cards.length),
+            width: '100%',
+          }}
+        >
+          <Grid 
+            container 
+            spacing={{ xs: 3, sm: 4, md: 6 }}
+            sx={{
+              justifyContent: cards.length < 4 ? 'center' : 'flex-start',
+              maxWidth: cards.length === 1 ? '400px' : 
+                       cards.length === 2 ? '800px' : 
+                       cards.length === 3 ? '1200px' : '100%',
+            }}
+          >
+            {cards.map((card, index) => (
+              <Grid key={index} size={gridSize}>
+                <AnimatedCard
+                  className={visibleCards[index] ? 'animate-in' : ''}
                   sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    textAlign: 'center',
-                    p: 0,
-                    '&:last-child': { pb: 0 },
+                    transitionDelay: `${index * 0.1}s`,
+                    maxWidth: cards.length === 1 ? '350px' : 'none',
+                    mx: cards.length === 1 ? 'auto' : 'initial',
                   }}
                 >
-                  <ImageContainer>
-                    <Image
-                      src={card.imageUrl}
-                      alt={card.title}
-                      fill
-                      style={{
-                        objectFit: 'contain',
+                  <CardContent
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      textAlign: 'center',
+                      p: 0,
+                      '&:last-child': { pb: 0 },
+                    }}
+                  >
+                    <ImageContainer>
+                      <Image
+                        src={card.imageUrl}
+                        alt={card.title}
+                        fill
+                        style={{
+                          objectFit: 'contain',
+                        }}
+                      />
+                    </ImageContainer>
+                    
+                    <Typography
+                      variant="h5"
+                      component="h3"
+                      sx={{
+                        fontWeight: 600,
+                        mb: 2,
+                        fontSize: { xs: '1.25rem', md: '1.5rem' },
+                        color: '#1a1a1a',
                       }}
-                    />
-                  </ImageContainer>
-                  
-                  <Typography
-                    variant="h5"
-                    component="h3"
-                    sx={{
-                      fontWeight: 600,
-                      mb: 2,
-                      fontSize: { xs: '1.25rem', md: '1.5rem' },
-                      color: '#1a1a1a',
-                    }}
-                  >
-                    {card.title}
-                  </Typography>
-                  
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      color: '#666',
-                      fontSize: { xs: '0.875rem', md: '1rem' },
-                      lineHeight: 1.5,
-                    }}
-                  >
-                    {card.description}
-                  </Typography>
-                </CardContent>
-              </AnimatedCard>
-            </Grid>
-          ))}
-        </Grid>
+                    >
+                      {card.title}
+                    </Typography>
+                    
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: '#666',
+                        fontSize: { xs: '0.875rem', md: '1rem' },
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      {card.description}
+                    </Typography>
+                  </CardContent>
+                </AnimatedCard>
+              </Grid>
+            ))}
+          </Grid>
+        </Box>
       </Container>
     </Box>
   );

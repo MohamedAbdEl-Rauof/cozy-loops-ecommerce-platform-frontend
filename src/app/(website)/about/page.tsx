@@ -37,6 +37,7 @@ const FeatureCardsSectionData = {
 const featuredCategories = {
     title: "Have a Question or Want to Collaborate?",
     isTitleCenter: false,
+    image: "/images/shared/featuredCategory.jpg",
     description: "We love hearing from our community.",
     ctaText: "",
     buttonText: "Contact Us",

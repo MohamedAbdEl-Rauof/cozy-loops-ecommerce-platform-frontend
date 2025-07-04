@@ -1,124 +1,14 @@
 "use client"
 import { Box, Container } from "@mui/material";
 import SmallNavbar from "@/components/shared/SmallNavbar";
-import StoryFeature from "@/components/shared/StoryFeature";
-import ProductsOfCategory from "@/components/shared/ProductsOfCategory";
-import CategoriesGrid from "@/components/shared/CategoriesGrid";
-import FeaturedCategories from "@/components/shared/FeaturedCategories";
 import Testimonials from "@/components/shared/Testimonials";
 import ProductDetails from "@/components/shared/PrdouctDetails";
-
-const Products = {
-  title: "Handcrafted Punch Needle Collection",
-  description: "Discover our curated selection of premium punch needle supplies and artisan-made pieces, perfect for every skill level.",
-  productsData: [
-    {
-      id: '1',
-      title: 'Beginner Punch Needle Kit',
-      image: '/images/categories.png',
-      price: 29.99
-    },
-    {
-      id: '2',
-      title: 'Premium Wool Yarn Set',
-      image: '/images/categories.png',
-      price: 45.99
-    },
-    {
-      id: '3',
-      title: 'Adjustable Punch Needle',
-      image: '/images/categories.png',
-      price: 24.99
-    },
-    {
-      id: '4',
-      title: 'Embroidery Hoop Set',
-      image: '/images/categories.png',
-      price: 18.99
-    },
-    {
-      id: '5',
-      title: 'Pattern Collection Book',
-      image: '/images/categories.png',
-      price: 32.99
-    },
-    {
-      id: '6',
-      title: 'Monk\'s Cloth Fabric',
-      image: '/images/categories.png',
-      price: 15.99
-    },
-    {
-      id: '7',
-      title: 'Deluxe Starter Bundle',
-      image: '/images/categories.png',
-      price: 89.99
-    },
-    {
-      id: '8',
-      title: 'Metallic Thread Collection',
-      image: '/images/categories.png',
-      price: 28.99
-    },
-    {
-      id: '9',
-      title: 'Advanced Pattern Set',
-      image: '/images/categories.png',
-      price: 42.99
-    }
-  ]
-}
-
-const categoriesData = {
-  title: "Makers Behind the Loops",
-  description: "Meet the talented artisans who bring creativity and passion to every stitch, each with their own unique story and artistic vision.",
-  categories: [
-    {
-      id: "1",
-      title: "Nour from Mansoura",
-      description: "“I see color as emotion—and every loop tells a feeling.”",
-      image: "/images/shared/makers/makerNoura.png",
-      isMaker: true,
-      buttonText: "View Profile",
-      buttonLink: "/makers/nour",
-      slug: "nour-mansoura"
-    },
-    {
-      id: "2",
-      title: "Khaled from Alexandria",
-      description: "“Punch needle gave me a new voice—each design is a rhythm in thread.”",
-      image: "/images/shared/makers/makerKhaled.png",
-      isMaker: true,
-      buttonText: "View Profile",
-      buttonLink: "/makers/khaled",
-      slug: "khaled-alexandria"
-    },
-    {
-      id: "3",
-      title: "Rania from Giza",
-      description: "“Inspired by nature and folk tales, I punch joy into every stitch.”",
-      image: "/images/shared/makers/makerRania.png",
-      isMaker: true,
-      buttonText: "View Profile",
-      buttonLink: "/makers/rania",
-      slug: "rania-giza"
-    },
-  ]
-};
-
-const featuredCategories = {
-  title: "Meet Fatma from Cairo – Creating jewelry inspired by tradition",
-  isTitleCenter: false,
-  description: "",
-  image: "/images/shared/productImage.jpg",
-  ctaText: "",
-  buttonText: "View Profile",
-  buttonLink: "#"
-}
+import FeatureCardsSection from "@/components/shared/FeatureCardsSection";
+import AbountMaker from "@/components/product-details/AbountMaker";
 
 const testimonialsData = {
-  title: "Why Shoppers Love Our Loops",
-  description: "From thoughtful gifts to home highlights, our customers can’t get enough of the charm and quality behind each handmade loop.",
+  title: "What Buyers Are Saying",
+  description: "",
   items: [
     {
       id: 1,
@@ -144,8 +34,6 @@ const testimonialsData = {
   ]
 };
 
-
-// Add this mock data before the Page component
 const productData = {
   id: "prod-001",
   name: "Whimsical Punch Needle Art Kit - Rainbow Dreams",
@@ -207,9 +95,59 @@ const productData = {
   description: "Create stunning punch needle art with our comprehensive",
 };
 
+const FeatureCardsSectionData = {
+  sectionTitle: "Details & Inspiration",
+  sectionDescription: "Inspired by spring blooms and woven with care, this piece brings warmth to minimalist or boho spaces alike.",
+  cards: [
+    {
+      imageUrl: "/images/shared/textile 1.png",
+      title: "Materials",
+      description: "Cotton yarn, Monk’s cloth, Wooden hoop frame",
+    },
+    {
+      imageUrl: "/images/shared/measuring-tape.png",
+      title: "Size/Dimensions",
+      description: "25cm diameter (custom sizes available on request)",
+    },
+    {
+      imageUrl: "/images/shared/color-palette.png",
+      title: "Color Palette",
+      description: "Coral, blush, sage, ivory",
+    },
+    {
+      imageUrl: "/images/shared/user-guide.png",
+      title: "Care Instructions",
+      description: "Gently dust or spot clean with a damp cloth. Keep out of direct sunlight.",
+    }
+  ]
+};
+
+const FeatureCardsSectionData2 = {
+  sectionTitle: "Shipping & Policies",
+  sectionDescription: "",
+  cards: [
+    {
+      imageUrl: "/images/shared/fast-delivery.png",
+      title: "Ships within 2–4 business days from Cairo",
+      description: "",
+    },
+    {
+      imageUrl: "/images/shared/delivery.png",
+      title: "Delivery across Egypt & the Middle East",
+      description: "",
+    },
+    {
+      imageUrl: "/images/shared/return 1.png",
+      title: "Free returns within 7 days",
+      description: "(conditions apply)",
+    }
+  ]
+};
+
 const Page = () => {
   return (
-    <Box component="main" sx={{ bgcolor: '#fafafa', minHeight: '100vh' }}>
+    <Box component="main" sx={{ bgcolor: '#fafafa' }}>
+      {/* Navigation */}
       <SmallNavbar
         category="Category"
         page1="Punch Needle"
@@ -226,13 +164,19 @@ const Page = () => {
             lg: '1600px',
             xl: '1850px'
           },
-          px: 0,
           mx: 'auto',
         }}
       >
-
-
-        <Box sx={{ py: { xs: 4, sm: 6, md: 8 }, bgcolor: 'white' }}>
+        {/* Product Details Section */}
+        <Box
+          component="section"
+          sx={{
+            py: { xs: 4, sm: 6, md: 8 },
+            bgcolor: 'white',
+            borderRadius: { xs: 0, md: '16px 16px 0 0' },
+            boxShadow: { xs: 'none', md: '0 4px 20px rgba(0,0,0,0.08)' }
+          }}
+        >
           <ProductDetails
             id={productData.id}
             name={productData.name}
@@ -268,28 +212,150 @@ const Page = () => {
           />
         </Box>
 
-        <Box sx={{
-          py: { xs: 6, sm: 8, md: 10 },
-          px: { xs: 2, sm: 3, md: 4 },
-          bgcolor: '#f8f9fa'
-        }}>
-          <CategoriesGrid categoriesData={categoriesData} />
+        {/* Feature Cards Section */}
+        <Box
+          component="section"
+          sx={{
+            mb: { xs: 6, sm: 8, md: 10, lg: 12 },
+            mt: { xs: 4, sm: 6, md: 8 },
+            px: { xs: 2, sm: 3, md: 4 }
+          }}
+        >
+          <FeatureCardsSection
+            sectionTitle={FeatureCardsSectionData.sectionTitle}
+            sectionDescription={FeatureCardsSectionData.sectionDescription}
+            cards={FeatureCardsSectionData.cards}
+          />
         </Box>
 
-        <Box sx={{
-          py: { xs: 6, sm: 8, md: 10 },
-          bgcolor: 'white',
-          borderTop: '1px solid #e0e0e0'
-        }}>
-          <FeaturedCategories featuredCategories={featuredCategories} />
+        {/* About The Maker Section */}
+        <Box
+          component="section"
+          sx={{
+            py: { xs: 6, sm: 8, md: 10 },
+            mb: { xs: 4, sm: 6, md: 8 },
+            bgcolor: 'white',
+            borderRadius: '16px',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.06)',
+            border: '1px solid rgba(0,0,0,0.04)',
+            mx: { xs: 1, sm: 2, md: 3 },
+            overflow: 'hidden',
+            position: 'relative',
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '4px',
+              background: 'linear-gradient(90deg, #1976d2, #42a5f5, #1976d2)',
+              backgroundSize: '200% 100%',
+              animation: 'shimmer 3s ease-in-out infinite',
+            },
+            '@keyframes shimmer': {
+              '0%': { backgroundPosition: '-200% 0' },
+              '100%': { backgroundPosition: '200% 0' }
+            }
+          }}
+        >
+          <AbountMaker
+            title="About The Maker"
+            makerInfo={{
+              name: "Nour Hassan",
+              location: "Mansoura, Egypt",
+              miniBio: "Hi! I'm Nour from Mansoura. Punch needle art lets me bring joy to people's spaces—one loop at a time. I'm inspired by the colors of Egyptian nature and love turning simple threads into soft, happy designs.",
+              avatar: "/images/makers/nour-hassan.jpg",
+              joinedDate: "March 2020",
+              rating: 4.8,
+              totalReviews: 127,
+              specialties: ["Punch Needle", "Embroidery", "Wall Art", "Home Decor"],
+              yearsOfExperience: 6,
+              isVerified: true,
+              totalProducts: 45,
+              completedOrders: 320
+            }}
+            buttonText1="Visit Artisan Shop"
+            buttonText2="View More by Nour"
+            imageSrc="/images/shared/storyFeature.jpg"
+            imageAlt="Nour crafting a beautiful punch needle wall hanging"
+            onButton1Click={() => {
+              console.log('Navigate to Nour\'s artisan shop');
+              // router.push('/artisan/nour-hassan');
+            }}
+            onButton2Click={() => {
+              console.log('View more products by Nour');
+              // router.push('/products?maker=nour-hassan');
+            }}
+          />
         </Box>
 
-        <Box component="section" sx={{ py: { xs: 6, md: 8 } }}>
+        {/* Related Products Section */}
+        <Box
+          component="section"
+          sx={{
+            mb: { xs: 6, sm: 8, md: 10 },
+            px: { xs: 2, sm: 3, md: 4 }
+          }}
+        >
+
+        </Box>
+
+        {/* Makers Section */}
+        <Box
+          component="section"
+          sx={{
+            mb: { xs: 6, sm: 8, md: 10 },
+            px: { xs: 2, sm: 3, md: 4 }
+          }}
+        >
+
+        </Box>
+
+        {/* Featured Category Section */}
+        <Box
+          component="section"
+          sx={{
+            mb: { xs: 6, sm: 8, md: 10 },
+            px: { xs: 2, sm: 3, md: 4 }
+          }}
+        >
+
+        </Box>
+
+        {/* Testimonials Section */}
+        <Box
+          component="section"
+          sx={{
+            py: { xs: 6, sm: 8, md: 10 },
+            mb: { xs: 4, sm: 6, md: 8 },
+            bgcolor: 'white',
+            borderRadius: '16px',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+            mx: { xs: 1, sm: 2, md: 3 },
+            overflow: 'hidden'
+          }}
+        >
           <Testimonials testimonialsData={testimonialsData} />
         </Box>
+
+        <Box
+          component="section"
+          sx={{
+            mb: { xs: 6, sm: 8, md: 10, lg: 12 },
+            mt: { xs: 4, sm: 6, md: 8 },
+            px: { xs: 2, sm: 3, md: 4 }
+          }}
+        >
+          <FeatureCardsSection
+            sectionTitle={FeatureCardsSectionData2.sectionTitle}
+            sectionDescription={FeatureCardsSectionData2.sectionDescription}
+            cards={FeatureCardsSectionData2.cards}
+          />
+        </Box>
+
       </Container>
     </Box>
   );
 };
 
-export default Page;
+export default Page; 

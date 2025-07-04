@@ -8,7 +8,6 @@ import {
     Chip,
     Card,
     CardContent,
-    useTheme,
     Tooltip
 } from '@mui/material';
 import {
@@ -71,9 +70,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     onShare,
     isFavorite = false
 }) => {
-
-    const theme = useTheme();
-
     const [selectedImage, setSelectedImage] = useState(images[0]?.url || '');
     const [selectedColor, setSelectedColor] = useState(colors[0]?.value || '');
     const [quantity, setQuantity] = useState(1);
@@ -99,7 +95,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 display: 'flex',
                 flexDirection: { xs: 'column', md: 'row' },
                 gap: { xs: 3, md: 6 },
-                maxWidth: '1400px',
                 mx: 'auto',
                 p: { xs: 2, md: 4 }
             }}
@@ -110,7 +105,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                     flex: 1,
                     display: 'flex',
                     flexDirection: { xs: 'column', md: 'row' },
-                    gap: 2
+                    gap: 5
                 }}
             >
                 {/* Thumbnail Images */}
@@ -118,18 +113,19 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                     sx={{
                         display: 'flex',
                         flexDirection: { xs: 'row', md: 'column' },
-                        gap: 1,
+                        gap: 1.5,
                         order: { xs: 2, md: 1 },
                         overflowX: { xs: 'auto', md: 'visible' },
                         overflowY: { xs: 'visible', md: 'auto' },
-                        maxHeight: { md: '500px' },
+                        maxHeight: { md: '1000px' },
+                        minWidth: { md: '140px' },
                         '&::-webkit-scrollbar': {
-                            width: '4px',
-                            height: '4px'
+                            width: '6px',
+                            height: '6px'
                         },
                         '&::-webkit-scrollbar-thumb': {
                             backgroundColor: 'var(--primary-color)',
-                            borderRadius: '2px'
+                            borderRadius: '3px'
                         }
                     }}
                 >
@@ -137,10 +133,11 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                         <Box
                             key={image.id}
                             sx={{
-                                minWidth: { xs: '80px', md: '100px' },
-                                height: { xs: '80px', md: '120px' },
+                                minWidth: { xs: '100px', md: '130px' },
+                                width: { xs: '100px', md: '130px' },
+                                height: { xs: '100px', md: '150px' },
                                 border: selectedImage === image.url
-                                    ? '2px solid var(--primary-color)'
+                                    ? '3px solid var(--primary-color)'
                                     : '2px solid transparent',
                                 borderRadius: '12px',
                                 overflow: 'hidden',
@@ -156,8 +153,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                             <Image
                                 src={image.url}
                                 alt={image.alt}
-                                width={100}
-                                height={120}
+                                width={130}
+                                height={150}
                                 style={{
                                     width: '100%',
                                     height: '100%',
@@ -177,7 +174,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                         overflow: 'hidden',
                         boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
                         position: 'relative',
-                        minHeight: { xs: '300px', md: '500px' }
+                        minHeight: { xs: '300px', md: '400px' }
                     }}
                 >
                     <Image
@@ -275,19 +272,25 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                                 mb: 1
                             }}
                         >
-                           Short Description :  {description}
+                            Short Description :  {description}
                         </Typography>
                     </Box>
                 )}
 
                 {/* Colors */}
-                <Box sx={{display:'flex',flexWrap:'wrap',gap:1,mb:2}}>
-                    <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600, color: 'text.secondary' }}>
-                        Colors : 
+                <Box sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 2,
+                    mb: 2,
+                    flexWrap: 'wrap'
+                }}>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'text.secondary' }}>
+                        Colors :
                     </Typography>
-                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                    <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
                         {colors.map((color) => (
-                                <Tooltip key={color.value} title={color.name}>
+                            <Tooltip key={color.value} title={color.name}>
                                 <Box
                                     sx={{
                                         width: 20,
@@ -374,7 +377,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                             color: 'white',
                             fontWeight: 600,
                             fontSize: '1rem',
-                            borderRadius: '12px',
+                            borderRadius: '9999px !important',
                             textTransform: 'none',
                             boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
                             '&:hover': {
@@ -388,7 +391,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                             }
                         }}
                     >
-                        {inStock ? 'Add to Cart' : 'Out of Stock'}
+                        Add to Cart
                     </Button>
 
                     <Box sx={{ display: 'flex', gap: 1 }}>
@@ -442,57 +445,62 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                             }
                         }}
                     >
-                        <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <CardContent sx={{ p: 3, '&:last-child': { pb: 3 } }}>
+                            {/* Free Delivery Section */}
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
                                 <Box
                                     sx={{
-                                        p: 1,
-                                        borderRadius: '8px',
+                                        p: 1.5,
+                                        borderRadius: '10px',
                                         bgcolor: 'rgba(76, 175, 80, 0.1)',
-                                        color: '#4CAF50'
+                                        color: '#4CAF50',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
                                     }}
                                 >
-                                    <LocalShipping />
+                                    <LocalShipping sx={{ fontSize: '1.5rem' }} />
                                 </Box>
-                                <Box>
-                                    <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>
+                                <Box sx={{ flex: 1 }}>
+                                    <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 0.5, color: 'text.primary' }}>
                                         Free Delivery
                                     </Typography>
-                                    <Typography variant="body2" color="text.secondary">
+                                    <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.5 }}>
                                         Free shipping on orders over $50. Delivered in 2-3 business days.
                                     </Typography>
                                 </Box>
                             </Box>
-                        </CardContent>
-                    </Card>
 
-                    <Card
-                        sx={{
-                            border: '1px solid #e0e0e0',
-                            borderRadius: '12px',
-                            boxShadow: 'none',
-                            '&:hover': {
-                                boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-                            }
-                        }}
-                    >
-                        <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
+                            {/* Divider */}
+                            <Box
+                                sx={{
+                                    height: '1px',
+                                    bgcolor: '#e0e0e0',
+                                    mx: -1,
+                                    mb: 3
+                                }}
+                            />
+
+                            {/* Easy Returns Section */}
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                                 <Box
                                     sx={{
-                                        p: 1,
-                                        borderRadius: '8px',
+                                        p: 1.5,
+                                        borderRadius: '10px',
                                         bgcolor: 'rgba(33, 150, 243, 0.1)',
-                                        color: '#2196F3'
+                                        color: '#2196F3',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
                                     }}
                                 >
-                                    <AssignmentReturn />
+                                    <AssignmentReturn sx={{ fontSize: '1.5rem' }} />
                                 </Box>
-                                <Box>
-                                    <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>
+                                <Box sx={{ flex: 1 }}>
+                                    <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 0.5, color: 'text.primary' }}>
                                         Easy Returns
                                     </Typography>
-                                    <Typography variant="body2" color="text.secondary">
+                                    <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.5 }}>
                                         30-day return policy. Return items in original condition for full refund.
                                     </Typography>
                                 </Box>
