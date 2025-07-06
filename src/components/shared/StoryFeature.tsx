@@ -32,7 +32,7 @@ const StoryFeature = ({
     imageSrc,
     imageAlt,
     onButtonClick,
-    badge = "Our Story",
+    badge,
     reverse = false,
 }: StoryFeatureProps) => {
     const theme = useTheme();
@@ -43,7 +43,6 @@ const StoryFeature = ({
     const isSm = useMediaQuery(theme.breakpoints.between('sm', 'md'));
     const isMd = useMediaQuery(theme.breakpoints.between('md', 'lg'));
 
-    // Brand colors for consistency
     const brandColors = {
         primary: '#FF7043',
         primaryHover: '#FF5722',
@@ -100,7 +99,6 @@ const StoryFeature = ({
                         : `0 10px 40px rgba(255, 112, 67, 0.08), 0 4px 20px rgba(255, 229, 184, 0.1)`,
                 }}
             >
-                {/* Content Section */}
                 <Box
                     className={`content-section ${isVisible ? 'visible' : ''}`}
                     sx={{
@@ -137,7 +135,6 @@ const StoryFeature = ({
                         }
                     }}
                 >
-                    {/* Story Badge */}
                     <Chip
                         icon={<AutoStories sx={{ fontSize: { xs: 16, sm: 18 } }} />}
                         label={badge}
@@ -161,7 +158,6 @@ const StoryFeature = ({
                         }}
                     />
 
-                    {/* Title */}
                     <Typography
                         variant={isXs ? "h4" : isSm ? "h3" : isMd ? "h2" : "h1"}
                         component="h2"
@@ -190,7 +186,6 @@ const StoryFeature = ({
                         {title}
                     </Typography>
 
-                    {/* Description */}
                     <Typography
                         variant={isXs ? "body1" : "h6"}
                         sx={{
@@ -212,7 +207,6 @@ const StoryFeature = ({
                         {description}
                     </Typography>
 
-                    {/* Enhanced Button */}
                     <Button
                         variant="contained"
                         endIcon={<ArrowForward />}
@@ -263,7 +257,6 @@ const StoryFeature = ({
                     </Button>
                 </Box>
 
-                {/* Image Section */}
                 <Box
                     className={`image-section ${isVisible ? 'visible' : ''}`}
                     sx={{
@@ -299,7 +292,6 @@ const StoryFeature = ({
                         }
                     }}
                 >
-                    {/* Image Container with Enhanced Styling */}
                     <Box
                         sx={{
                             position: 'relative',
@@ -368,7 +360,6 @@ const StoryFeature = ({
                         )}
                     </Box>
 
-                    {/* Floating Decorative Elements */}
                     <Box
                         sx={{
                             position: 'absolute',
@@ -400,7 +391,6 @@ const StoryFeature = ({
                         }}
                     />
 
-                    {/* Secondary Decorative Element */}
                     <Box
                         sx={{
                             position: 'absolute',
@@ -433,7 +423,6 @@ const StoryFeature = ({
                     />
                 </Box>
 
-                {/* Enhanced Gradient Overlay */}
                 <Box
                     sx={{
                         position: 'absolute',

@@ -36,15 +36,6 @@ const FeaturedCategories = ({
     const [isHovered, setIsHovered] = useState(false);
     const router = useRouter();
 
-    // Brand colors
-    const brandColors = {
-        primary: '#ff7043',
-        primaryHover: '#ff5722',
-        primaryDisabled: '#cccccc',
-        overlay: '#FFE5B8' // Warm cozy overlay color
-    };
-
-    // Enhanced responsive breakpoints
     const isXs = useMediaQuery(theme.breakpoints.down('sm'));
     const isSm = useMediaQuery(theme.breakpoints.between('sm', 'md'));
     const isMd = useMediaQuery(theme.breakpoints.between('md', 'lg'));
@@ -53,7 +44,7 @@ const FeaturedCategories = ({
     useEffect(() => {
         const timer = setTimeout(() => {
             setIsVisible(true);
-        }, 200);
+        }, 20);
 
         return () => clearTimeout(timer);
     }, []);
@@ -98,7 +89,7 @@ const FeaturedCategories = ({
                         },
                         overflow: 'hidden',
                         borderRadius: { xs: 3, sm: 4, md: 5, lg: 6 },
-                        transition: 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                        transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                         transform: isVisible
                             ? (isHovered ? 'translateY(-8px) scale(1.02)' : 'translateY(0) scale(1)')
                             : 'translateY(40px) scale(0.95)',
@@ -110,10 +101,9 @@ const FeaturedCategories = ({
                             : '0 4px 8px rgba(0,0,0,0.02)',
                         background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.95) 100%)',
                         backdropFilter: 'blur(10px)',
-                        border: `1px solid ${brandColors.primary}20`,
+                        border: `1px solid 'var(--primary-color)20`,
                     }}
                 >
-                    {/* Modern Image container with overlay effects */}
                     <Box
                         className={`image-container ${isVisible ? 'visible' : ''}`}
                         sx={{
@@ -145,13 +135,12 @@ const FeaturedCategories = ({
                             sizes="(max-width: 640px) 100vw, (max-width: 960px) 600px, (max-width: 1200px) 900px, 1300px"
                             style={{
                                 objectFit: 'cover',
-                                transition: 'transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                                transition: 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                                 transform: isHovered ? 'scale(1.1)' : 'scale(1.05)',
                                 filter: isHovered ? 'brightness(1.1) contrast(1.05)' : 'brightness(1) contrast(1)',
                             }}
                         />
 
-                        {/* Warm cozy overlay for better text readability */}
                         <Box
                             sx={{
                                 position: 'absolute',
@@ -177,7 +166,6 @@ const FeaturedCategories = ({
                         />
                     </Box>
 
-                    {/* Enhanced Content overlay with modern styling */}
                     <Box
                         className={`content-overlay ${isVisible ? 'visible' : ''}`}
                         sx={{
@@ -195,12 +183,11 @@ const FeaturedCategories = ({
                                 xl: 7
                             },
                             opacity: isVisible ? 1 : 0,
-                            transition: 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                            transitionDelay: '0.3s',
+                            transition: 'all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                            transitionDelay: '0.05s',
                             zIndex: 3,
                         }}
                     >
-                        {/* Trending badge with warm styling */}
                         {ctaText && (
                             <Chip
                                 icon={<TrendingUp sx={{ fontSize: { xs: 14, sm: 16, md: 18 } }} />}
@@ -210,15 +197,15 @@ const FeaturedCategories = ({
                                     mb: { xs: 2, sm: 2.5, md: 3 },
                                     alignSelf: isTitleCenter ? 'center' : 'flex-start',
                                     bgcolor: `rgba(255, 229, 184, 0.95)`,
-                                    color: brandColors.primary,
+                                    color: 'var(--primary-color)',
                                     fontWeight: 600,
                                     fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' },
                                     backdropFilter: 'blur(10px)',
-                                    border: `1px solid ${brandColors.overlay}80`,
-                                    transition: 'all 0.3s ease',
+                                    border: `1px solid var(--primary-overlay)80`,
+                                    transition: 'all 0.2s ease',
                                     transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
                                     '&:hover': {
-                                        bgcolor: brandColors.primary,
+                                        bgcolor:'var(--primary-color)',
                                         color: 'white',
                                         transform: 'translateY(-2px) scale(1.05)',
                                     }
@@ -233,7 +220,7 @@ const FeaturedCategories = ({
                                 fontWeight: 800,
                                 mb: { xs: 1.5, sm: 2, md: 2.5, lg: 3 },
                                 textAlign: isTitleCenter ? 'center' : 'left',
-                                color: '#2c1810', // Dark brown for better contrast on warm overlay
+                                color: '#2c1810', 
                                 textShadow: `0 2px 8px rgba(255, 229, 184, 0.8), 0 4px 16px rgba(255, 112, 67, 0.3)`,
                                 fontSize: {
                                     xs: '1.75rem',
@@ -246,8 +233,8 @@ const FeaturedCategories = ({
                                 letterSpacing: '-0.03em',
                                 maxWidth: isTitleCenter ? '95%' : '80%',
                                 transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
-                                transition: 'transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                                transitionDelay: '0.4s',
+                                transition: 'transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                                transitionDelay: '0.02s',
                             }}
                         >
                             {title}
@@ -259,7 +246,7 @@ const FeaturedCategories = ({
                                 textAlign: isTitleCenter ? 'center' : 'left',
                                 maxWidth: { xs: '95%', sm: '90%', md: '85%', lg: '80%' },
                                 mb: { xs: 2, sm: 2.5, md: 3, lg: 3.5 },
-                                color: '#3d2914', // Darker brown for description text
+                                color: '#3d2914', 
                                 textShadow: `0 2px 8px rgba(255, 229, 184, 0.6)`,
                                 fontSize: {
                                     xs: '0.95rem',
@@ -271,8 +258,8 @@ const FeaturedCategories = ({
                                 lineHeight: { xs: 1.4, sm: 1.5, md: 1.6 },
                                 fontWeight: 500,
                                 transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
-                                transition: 'transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                                transitionDelay: '0.5s',
+                                transition: 'transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                                transitionDelay: '0.02s',
                             }}
                         >
                             {description}
@@ -284,7 +271,7 @@ const FeaturedCategories = ({
                             onClick={() => router.push(buttonLink)}
                             sx={{
                                 alignSelf: isTitleCenter ? 'center' : 'flex-start',
-                                bgcolor: brandColors.primary,
+                                bgcolor: 'var(--primary-color)',
                                 color: 'white',
                                 fontWeight: 600,
                                 fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' },
@@ -296,10 +283,10 @@ const FeaturedCategories = ({
                                 backdropFilter: 'blur(10px)',
                                 border: `1px solid rgba(255, 229, 184, 0.3)`,
                                 transform: isVisible ? 'translateY(0) scale(1)' : 'translateY(30px) scale(0.9)',
-                                transition: 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                                transitionDelay: '0.6s',
+                                transition: 'all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                                transitionDelay: '0.02s',
                                 '&:hover': {
-                                    bgcolor: brandColors.primaryHover,
+                                    bgcolor: 'var(--primary-hover)',
                                     transform: 'translateY(-3px) scale(1.05)',
                                     boxShadow: `0 12px 32px rgba(255, 112, 67, 0.4), 0 6px 16px rgba(255, 229, 184, 0.3)`,
                                 },

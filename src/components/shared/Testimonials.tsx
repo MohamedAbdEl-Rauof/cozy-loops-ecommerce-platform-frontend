@@ -4,18 +4,6 @@ import { styled, keyframes } from "@mui/material/styles"
 import { useState, useEffect } from "react"
 import { FormatQuote, Star, Verified, LocationOn } from "@mui/icons-material"
 
-// Enhanced animations with more sophisticated effects
-const fadeInUp = keyframes`
-    from {
-        opacity: 0;
-        transform: translateY(50px) scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-`
-
 const float = keyframes`
     0%, 100% {
         transform: translateY(0px) rotate(0deg);
@@ -62,7 +50,6 @@ const glow = keyframes`
     }
 `
 
-// Enhanced styled components with modern design
 const StyledCard = styled(Card)(({ theme }) => ({
     height: "100%",
     padding: theme.spacing(4),
@@ -259,7 +246,6 @@ const TestimonialsSection = ({ testimonialsData }: TestimonialsProps) => {
             }}
         >
             <Container maxWidth="xl">
-                {/* Enhanced Header Section */}
                 <HeaderContainer
                     sx={{
                         opacity: isVisible ? 1 : 0,
@@ -303,7 +289,6 @@ const TestimonialsSection = ({ testimonialsData }: TestimonialsProps) => {
                     </Typography>
                 </HeaderContainer>
 
-                {/* Enhanced Testimonials Grid */}
                 <Box
                     sx={{
                         display: 'grid',
@@ -494,7 +479,6 @@ const TestimonialsSection = ({ testimonialsData }: TestimonialsProps) => {
                                     </Box>
                                 </CardContent>
 
-                                {/* Enhanced Decorative Elements */}
                                 <Box
                                     sx={{
                                         position: "absolute",
@@ -529,7 +513,6 @@ const TestimonialsSection = ({ testimonialsData }: TestimonialsProps) => {
                                     }}
                                 />
 
-                                {/* Gradient overlay on hover */}
                                 <Box
                                     sx={{
                                         position: "absolute",
@@ -549,7 +532,6 @@ const TestimonialsSection = ({ testimonialsData }: TestimonialsProps) => {
                     ))}
                 </Box>
 
-                {/* Enhanced Bottom Decoration */}
                 <Box
                     sx={{
                         mt: 10,
@@ -588,7 +570,6 @@ const TestimonialsSection = ({ testimonialsData }: TestimonialsProps) => {
                     ))}
                 </Box>
 
-                {/* Enhanced Statistics Section */}
                 <Box
                     sx={{
                         mt: 12,
@@ -657,7 +638,6 @@ const TestimonialsSection = ({ testimonialsData }: TestimonialsProps) => {
                     ))}
                 </Box>
 
-                {/* Enhanced Background Decorative Elements */}
                 <Box
                     sx={{
                         position: "absolute",
@@ -705,7 +685,6 @@ const TestimonialsSection = ({ testimonialsData }: TestimonialsProps) => {
                     }}
                 />
 
-                {/* Floating Stars */}
                 {[...Array(6)].map((_, index) => (
                     <Star
                         key={index}

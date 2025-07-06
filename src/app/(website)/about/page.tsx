@@ -97,6 +97,7 @@ export default function About() {
                         imageSrc="/images/shared/storyFeatureAbout.png"
                         imageAlt="Meet the Makers"
                         onButtonClick="/"
+                        badge="Meet Maker"
                     />
                 </Box>
 

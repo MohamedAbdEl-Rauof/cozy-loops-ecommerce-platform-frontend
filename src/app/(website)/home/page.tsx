@@ -98,6 +98,7 @@ export default function Home() {
             imageSrc="/images/shared/storyFeature.jpg"
             imageAlt="Hands crafting a knitted bag"
             onButtonClick="/"
+            badge="Our Story"
           />
         </Box>
 
