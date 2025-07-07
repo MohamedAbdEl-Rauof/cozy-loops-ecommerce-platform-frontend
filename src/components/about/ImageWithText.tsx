@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 
-interface ImageWithTextProps {
+interface ImageWithTextData {
     title: string;
     description: string;
     imageSrc: string;
@@ -32,18 +32,14 @@ interface ImageWithTextProps {
     className?: string;
 }
 
+interface ImageWithTextProps {
+    dataContent: ImageWithTextData;
+}
+
 const ImageWithText = ({
-    title,
-    description,
-    imageSrc,
-    imageAlt,
-    flipContent = false,
-    imageWidth,
-    imageHeight,
-    buttonText,
-    buttonLink,
-    onButtonClick,
+    dataContent
 }: ImageWithTextProps) => {
+    const { title, description, imageSrc, imageAlt, flipContent, imageWidth, imageHeight, buttonText, buttonLink, onButtonClick, } = dataContent
     const [isVisible, setIsVisible] = useState(false);
     const [imageLoaded, setImageLoaded] = useState(false);
     const [isInView, setIsInView] = useState(false);
@@ -113,7 +109,7 @@ const ImageWithText = ({
                 flexDirection: {
                     xs: 'column',
                     sm: 'column',
-                    md: flipContent ? 'row-reverse' : 'row'
+                    md: flipContent ? 'row' : 'row-reverse'
                 },
                 alignItems: 'center',
                 justifyContent: 'center',
