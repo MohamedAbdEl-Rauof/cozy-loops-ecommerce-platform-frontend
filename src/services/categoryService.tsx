@@ -11,6 +11,6 @@ export const categoryService = {
     // Get single category by slug
     getCategoryBySlug: async (slug: string): Promise<Category> => {
         const response = await apiClient.get(`/api/categories/${slug}`);
-        return response.data.data;
+        return response.data.data.category;
     },
 };

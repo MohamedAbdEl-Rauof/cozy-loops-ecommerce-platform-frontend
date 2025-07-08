@@ -20,7 +20,7 @@ interface StoryFeatureProps {
     buttonText: string;
     imageSrc: string;
     imageAlt: string;
-    onButtonClick?: string;
+    onButtonClick?: () => void;
     badge?: string;
     reverse?: boolean;
 }
@@ -210,7 +210,7 @@ const StoryFeature = ({
                     <Button
                         variant="contained"
                         endIcon={<ArrowForward />}
-                        onClick={() => onButtonClick && router.push(onButtonClick)}
+                        onClick={onButtonClick}
                         sx={{
                             alignSelf: 'flex-start',
                             bgcolor: brandColors.primary,
