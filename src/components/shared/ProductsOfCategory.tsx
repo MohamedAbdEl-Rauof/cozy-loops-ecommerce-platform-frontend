@@ -10,15 +10,18 @@ import {
     Fade
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import { useRouter } from 'next/navigation';
 interface Product {
     id: string;
     title: string;
     image: string;
     price: number;
+    slug: string;
 }
 
 interface ProductsData {
     title: string;
+    mainSlug : string;
     productsData: Product[];
 }
 
@@ -32,15 +35,20 @@ const ProductsOfCategory: React.FC<ProductsOfCategoryProps> = ({
     onAddToCart
 }) => {
     const [showAll, setShowAll] = React.useState(false);
+    const router = useRouter();
+    
 
     const handleAddToCart = (productId: string) => {
         if (onAddToCart) {
             onAddToCart(productId);
         } else {
-            // Placeholder for future implementation
             console.log(`Adding product ${productId} to cart`);
         }
     };
+
+    const handleOnClick = (productSlug: string) => {
+        router.push(`/categories/${Products.mainSlug}/products/${productSlug}`);
+        }
 
     const displayedProducts = showAll ? Products.productsData : Products.productsData.slice(0, 6);
     const hasMoreProducts = Products.productsData.length > 6;
@@ -173,9 +181,7 @@ const ProductsOfCategory: React.FC<ProductsOfCategoryProps> = ({
 
                                             <Typography
                                                 variant="body2"
-                                                onClick={() => {
-                                                    console.log('clicked');
-                                                }}
+                                                onClick={() => handleOnClick(product.slug)}
                                                 sx={{
                                                     fontWeight: 500,
                                                     color: 'var(--primary-color, #e74c3c)',
