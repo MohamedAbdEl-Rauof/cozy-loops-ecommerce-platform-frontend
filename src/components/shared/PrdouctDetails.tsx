@@ -51,10 +51,10 @@ interface ProductDetailsProps {
     onToggleFavorite?: () => void;
     onShare?: () => void;
     isFavorite?: boolean;
+    discountPercentage?: number;
 }
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({
-    id,
     name,
     images,
     rating,
@@ -68,6 +68,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     onAddToCart,
     onToggleFavorite,
     onShare,
+    discountPercentage = 0,
     isFavorite = false
 }) => {
     const [selectedImage, setSelectedImage] = useState(images[0]?.url || '');
@@ -84,10 +85,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     const handleAddToCart = () => {
         onAddToCart?.(quantity, selectedColor);
     };
-
-    const discountPercentage = originalPrice
-        ? Math.round(((originalPrice - price) / originalPrice) * 100)
-        : 0;
 
     return (
         <Box

@@ -25,8 +25,6 @@ export default function CategoryPage() {
         }
     }, [slug, fetchProductsByCategorySlug]);
 
-    console.log('ProductsProductsProductsProducts:', categoryProducts);
-
     const scrollToCategoriesGrid = () => {
         if (productsGridRef.current) {
             productsGridRef.current.scrollIntoView({
