@@ -67,6 +67,10 @@ export interface Product {
   createdAt: string;
   updatedAt: string;
   variants: any[];
+  rating: number;
+  reviewCount: number;
+  inStock: boolean;
+  stockCount: number;
 }
 
 export interface ProductsResponse {

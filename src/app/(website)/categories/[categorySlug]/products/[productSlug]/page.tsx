@@ -1,7 +1,6 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useState } from 'react';
 import { Box, Container, CircularProgress, Alert } from '@mui/material';
 import { useProductFromCategory } from '@/hooks/useProducts';
 import { ProductImage, ProductColor } from '@/types/product';
@@ -12,6 +11,7 @@ import FeatureCardsSection from "@/components/shared/FeatureCardsSection";
 import AbountMaker from "@/components/product-details/AbountMaker";
 import SimilarProducts from "@/components/product-details/SimilarProducts";
 import Comments from "@/components/product-details/Comments";
+import { useMakersBySlug } from "@/hooks/useMakers";
 
 const testimonialsData = {
   title: "What Buyers Are Saying",
@@ -221,7 +221,10 @@ const ProductPage = () => {
     isLoading,
     error,
   } = useProductFromCategory(categorySlug, productSlug);
-  const [isFavorite, setIsFavorite] = useState(false);
+
+  const { data: makerData, isLoading: makerLoading, error: makerError } = useMakersBySlug(product?.maker?.slug || '');
+
+  console.log('Productproductproductproduct:', product);
 
   if (isLoading) {
     return (
@@ -265,26 +268,6 @@ const ProductPage = () => {
     );
   }
 
-  // Move productData creation here, after null checks
-  const productData = {
-    id: product._id,
-    name: product.name,
-    images: product.images,
-    rating: product.averageRating || 0,
-    reviewCount: product.numReviews || 0,
-    inStock: product.stock > 0,
-    stockCount: product.stock,
-    price: product.price,
-    originalPrice: product.priceBeforeDiscount,
-    colors: product.attributes
-      ?.filter(attr => attr.name.toLowerCase().includes('color'))
-      ?.map(attr => attr.value)
-      ?.join(', ')
-      ?.split(', ')
-      ?.filter(color => color.trim() !== '') || ['Default'],
-    description: product.description,
-    discountPercentage: product.discountPercentage || 0,
-  };
 
   // Transform the API data to match component expectations
   const transformedImages = transformImages(product.images, product.name);
@@ -304,6 +287,8 @@ const ProductPage = () => {
     console.log('Share product:', product._id);
     // Implement your share logic here
   };
+
+
 
   return (
     <Box component="main" sx={{ bgcolor: '#fafafa' }}>
@@ -353,7 +338,7 @@ const ProductPage = () => {
             onAddToCart={handleAddToCart}
             onToggleFavorite={handleToggleFavorite}
             onShare={handleShare}
-            isFavorite={false} // You can implement favorite state management
+            isFavorite={false}
           />
         </Box>
 
@@ -403,7 +388,7 @@ const ProductPage = () => {
             }
           }}
         >
-          <AbountMaker
+          {/* <AbountMaker
             title="About The Maker"
             makerInfo={{
               name: "Nour Hassan",
@@ -411,7 +396,7 @@ const ProductPage = () => {
               miniBio: "Hi! I'm Nour from Mansoura. Punch needle art lets me bring joy to people's spaces—one loop at a time. I'm inspired by the colors of Egyptian nature and love turning simple threads into soft, happy designs.",
               avatar: "/images/makers/nour-hassan.jpg",
               joinedDate: "March 2020",
-              rating: 4.8,
+              rating: 4,
               totalReviews: 127,
               specialties: ["Punch Needle", "Embroidery", "Wall Art", "Home Decor"],
               yearsOfExperience: 6,
@@ -431,7 +416,44 @@ const ProductPage = () => {
               console.log('View more products by Nour');
               // router.push('/products?maker=nour-hassan');
             }}
+          /> */}
+
+          <AbountMaker
+            title="About The Maker"
+            makerInfo={{
+              name: makerData?.name || product?.maker?.name || "Unknown Maker",
+              location: makerData?.location || product?.maker?.location || "Unknown Location",
+              miniBio: makerData?.aboutMe || product?.maker?.message || "Passionate artisan creating beautiful handcrafted pieces.",
+              avatar: makerData?.image || product?.maker?.image || "/images/makers/default-maker.jpg",
+              joinedDate: makerData?.joinDate
+                ? new Date(makerData.joinDate).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long'
+                })
+                : "Unknown",   // problem here 
+              rating: makerData?.rating || 4.5,
+              totalReviews: 127,
+              specialties: makerData?.specialties || ["Handcrafted", "Artisan"],
+              yearsOfExperience: makerData?.joinDate ? new Date().getFullYear() - new Date(makerData.joinDate).getFullYear() : 0,  // problem here
+              isVerified: true,
+              totalProducts: 45,
+              completedOrders: 320
+            }}
+            buttonText1="Visit Artisan Shop"
+            buttonText2={`View More by ${makerData?.name || 'Maker'}`} // problem here
+            imageSrc={makerData?.image || product?.maker?.image || "/images/shared/storyFeature.jpg"}
+            imageAlt={`${makerData?.name || 'Maker'} crafting beautiful handmade pieces`} // problem here 
+            onButton1Click={() => {
+              console.log(`Navigate to ${makerData?.name}'s artisan shop`);
+              // router.push(`/makers/${makerData?.slug}`);
+            }}
+            onButton2Click={() => {
+              console.log(`View more products by ${makerData?.name}`);
+              // router.push(`/products?maker=${makerData?.slug}`);
+            }}
           />
+
+
         </Box>
 
         {/* Related Products Section */}

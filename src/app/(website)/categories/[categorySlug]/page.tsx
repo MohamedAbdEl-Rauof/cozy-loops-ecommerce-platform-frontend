@@ -16,7 +16,7 @@ export default function CategoryPage() {
     const params = useParams();
     const slug = params.categorySlug as string;
     const productsGridRef = useRef<HTMLDivElement>(null);
-     // React Query for category data
+    // React Query for category data
     const {
         data: selectedCategory,
         isLoading: categoryLoading,
@@ -59,11 +59,11 @@ export default function CategoryPage() {
 
     // Show error if either category or products have errors
     if (categoryError || productsError) {
-        const errorMessage = categoryError instanceof Error 
-            ? categoryError.message 
-            : productsError instanceof Error 
-            ? productsError.message 
-            : 'Failed to fetch data';
+        const errorMessage = categoryError instanceof Error
+            ? categoryError.message
+            : productsError instanceof Error
+                ? productsError.message
+                : 'Failed to fetch data';
 
         return (
             <Box component="main" sx={{ bgcolor: 'white', p: 4 }}>
@@ -88,7 +88,7 @@ export default function CategoryPage() {
         );
     }
 
-     if (!selectedCategory) {
+    if (!selectedCategory) {
         return (
             <Box component="main" sx={{ bgcolor: 'white', p: 4 }}>
                 <Container maxWidth="md">
@@ -103,38 +103,25 @@ export default function CategoryPage() {
     const categoriesData = {
         title: `Meet the ${selectedCategory.name} Artisans`,
         description: "Meet the talented artisans who bring creativity and passion to every stitch, each with their own unique story and artistic vision.",
-        categories: [
-            {
-                id: "1",
-                title: "Nour from Mansoura",
-                description: "I see color as emotion—and every loop tells a feeling.",
-                image: "/images/shared/makers/makerNoura.png",
-                isMaker: true,
-                buttonText: "View Profile",
-                buttonLink: "/makers/nour",
-                slug: "nour-mansoura"
-            },
-            {
-                id: "2",
-                title: "Khaled from Alexandria",
-                description: `"${selectedCategory.name} gave me a new voice—each design is a rhythm in thread."`,
-                image: "/images/shared/makers/makerKhaled.png",
-                isMaker: true,
-                buttonText: "View Profile",
-                buttonLink: "/makers/khaled",
-                slug: "khaled-alexandria"
-            },
-            {
-                id: "3",
-                title: "Rania from Giza",
-                description: "Inspired by nature and folk tales, I create joy in every stitch.",
-                image: "/images/shared/makers/makerRania.png",
-                isMaker: true,
-                buttonText: "View Profile",
-                buttonLink: "/makers/rania",
-                slug: "rania-giza"
-            },
-        ]
+        categories: productsData?.products?.reduce((uniqueMakers: any[], product: any) => {
+            // Check if maker already exists in the array
+            const existingMaker = uniqueMakers.find(maker => maker.id === product.maker._id);
+
+            if (!existingMaker) {
+                uniqueMakers.push({
+                    id: product.maker._id,
+                    title: `${product.maker.name} from ${product.maker.location}`,
+                    description: product.maker.message || "Creating beautiful handcrafted pieces with passion and dedication.",
+                    image: product.maker.image || "/images/shared/makers/defaultMaker.png",
+                    isMaker: true,
+                    buttonText: "View Profile",
+                    buttonLink: `/makers/${product.maker.slug}`,
+                    slug: product.maker.slug
+                });
+            }
+
+            return uniqueMakers;
+        }, []) || []
     };
 
     const featuredCategories = {
