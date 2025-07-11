@@ -34,20 +34,63 @@ export interface Product {
   description: string;
   shortDescription: string;
   price: number;
+  priceBeforeDiscount?: number;
   discountPercentage: number;
-  category: Category;
-  maker: Maker;
+  category: {
+    _id: string;
+    name: string;
+    slug: string;
+    description: string;
+  };
+  maker: {
+    _id: string;
+    name: string;
+    slug: string;
+    location: string;
+    image: string;
+  };
   tags: string[];
-  images: string[];
+  images?: string[];
+  colors?: string[];
   mainImage: string;
   sku: string;
   stock: number;
-  attributes: ProductAttribute[];
+  attributes: Array<{
+    _id: string;
+    name: string;
+    value: string;
+  }>;
   featured: boolean;
   isActive: boolean;
   averageRating: number;
   numReviews: number;
-  variants: ProductVariant[];
   createdAt: string;
   updatedAt: string;
+  variants: any[];
+}
+
+export interface ProductsResponse {
+  success: boolean;
+  data: {
+    products: Product[];
+    pagination: {
+      currentPage: number;
+      totalPages: number;
+      totalItems: number;
+      hasNext: boolean;
+      hasPrev: boolean;
+    };
+  };
+}
+
+export interface ProductImage {
+  id: string;
+  url: string;
+  alt: string;
+}
+
+export interface ProductColor {
+  name: string;
+  value: string;
+  available: boolean;
 }

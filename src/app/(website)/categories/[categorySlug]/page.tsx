@@ -1,29 +1,34 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { Box, Container, CircularProgress, Alert } from '@mui/material';
-import { useCategoryStore } from '@/store/categoryStore';
+import { useCategoryBySlug } from '@/hooks/useCategories';
+import { useProductsByCategorySlug } from '@/hooks/useProducts';
 import SmallNavbar from "@/components/shared/SmallNavbar";
 import StoryFeature from "@/components/shared/StoryFeature";
 import ProductsOfCategory from "@/components/shared/ProductsOfCategory";
 import CategoriesGrid from "@/components/shared/CategoriesGrid";
 import FeaturedCategories from "@/components/shared/FeaturedCategories";
 import Testimonials from "@/components/shared/Testimonials";
-import { useProductStore } from '@/store/productStore';
 
 export default function CategoryPage() {
     const params = useParams();
     const slug = params.categorySlug as string;
     const productsGridRef = useRef<HTMLDivElement>(null);
-    const { categoryProducts, fetchProductsByCategorySlug } = useProductStore();
+     // React Query for category data
+    const {
+        data: selectedCategory,
+        isLoading: categoryLoading,
+        error: categoryError,
+    } = useCategoryBySlug(slug);
 
-    useEffect(() => {
-        console.log('Fetching products for category slug:', slug);
-        if (slug) {
-            fetchProductsByCategorySlug(slug);
-        }
-    }, [slug, fetchProductsByCategorySlug]);
+    // React Query for products data
+    const {
+        data: productsData,
+        isLoading: productsLoading,
+        error: productsError,
+    } = useProductsByCategorySlug(slug);
 
     const scrollToCategoriesGrid = () => {
         if (productsGridRef.current) {
@@ -34,21 +39,8 @@ export default function CategoryPage() {
         }
     };
 
-    const {
-        selectedCategory,
-        loading,
-        error,
-        fetchCategoryBySlug
-    } = useCategoryStore();
-
-    useEffect(() => {
-        console.log('Effect running with slug:', slug);
-        if (slug) {
-            fetchCategoryBySlug(slug);
-        }
-    }, [slug, fetchCategoryBySlug]);
-
-    if (loading) {
+    // Show loading if either category or products are loading
+    if (categoryLoading || productsLoading) {
         return (
             <Box
                 component="main"
@@ -65,12 +57,19 @@ export default function CategoryPage() {
         );
     }
 
-    if (error) {
+    // Show error if either category or products have errors
+    if (categoryError || productsError) {
+        const errorMessage = categoryError instanceof Error 
+            ? categoryError.message 
+            : productsError instanceof Error 
+            ? productsError.message 
+            : 'Failed to fetch data';
+
         return (
             <Box component="main" sx={{ bgcolor: 'white', p: 4 }}>
                 <Container maxWidth="md">
                     <Alert severity="error" sx={{ mb: 4 }}>
-                        {error}
+                        {errorMessage}
                     </Alert>
                 </Container>
             </Box>
@@ -82,7 +81,19 @@ export default function CategoryPage() {
             <Box component="main" sx={{ bgcolor: 'white', p: 4 }}>
                 <Container maxWidth="md">
                     <Alert severity="warning" sx={{ mb: 4 }}>
-                        Category not found - Debug info: loading={String(loading)}, error={error || 'null'}, selectedCategory={selectedCategory ? 'exists' : 'null'}
+                        Category not found
+                    </Alert>
+                </Container>
+            </Box>
+        );
+    }
+
+     if (!selectedCategory) {
+        return (
+            <Box component="main" sx={{ bgcolor: 'white', p: 4 }}>
+                <Container maxWidth="md">
+                    <Alert severity="warning" sx={{ mb: 4 }}>
+                        Category not found
                     </Alert>
                 </Container>
             </Box>
@@ -199,8 +210,8 @@ export default function CategoryPage() {
                     <ProductsOfCategory
                         Products={{
                             title: `Best in ${selectedCategory.name}`,
-                            mainSlug:slug,
-                            productsData: categoryProducts?.map(product => ({
+                            mainSlug: slug,
+                            productsData: productsData?.products?.map(product => ({
                                 id: product._id,
                                 title: product.name,
                                 image: product.mainImage || product.images?.[0] || '/images/categories.png',

@@ -1,9 +1,10 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { Box, Container, CircularProgress, Typography } from '@mui/material';
-import { useProductStore } from '@/store/productStore';
+import { useState } from 'react';
+import { Box, Container, CircularProgress, Alert } from '@mui/material';
+import { useProductFromCategory } from '@/hooks/useProducts';
+import { ProductImage, ProductColor } from '@/types/product';
 import SmallNavbar from "@/components/shared/SmallNavbar";
 import Testimonials from "@/components/shared/Testimonials";
 import ProductDetails from "@/components/shared/PrdouctDetails";
@@ -11,7 +12,6 @@ import FeatureCardsSection from "@/components/shared/FeatureCardsSection";
 import AbountMaker from "@/components/product-details/AbountMaker";
 import SimilarProducts from "@/components/product-details/SimilarProducts";
 import Comments from "@/components/product-details/Comments";
-import { makerService } from '@/services/makerService';
 
 const testimonialsData = {
   title: "What Buyers Are Saying",
@@ -156,158 +156,154 @@ const similarProductsData = {
   ]
 };
 
+// Helper function to transform API images to component format
+const transformImages = (images: string[] = [], productName: string): ProductImage[] => {
+  if (!images || images.length === 0) {
+    // Fallback to placeholder images if no images provided
+    return [
+      {
+        id: '1',
+        url: '/placeholder-product.jpg', // Make sure you have this placeholder image
+        alt: productName
+      }
+    ];
+  }
+
+  return images.map((url, index) => ({
+    id: (index + 1).toString(),
+    url,
+    alt: `${productName} - Image ${index + 1}`
+  }));
+};
+
+// Helper function to transform API colors to component format
+const transformColors = (colors: string[] = []): ProductColor[] => {
+  if (!colors || colors.length === 0) {
+    // Default colors if none provided by API
+    return [
+      {
+        name: "Default",
+        value: "#000000",
+        available: true
+      }
+    ];
+  }
+
+  // Color name mapping (you can expand this based on your needs)
+  const colorNames: { [key: string]: string } = {
+    '#ff6b6b': 'Red',
+    '#4ecdc4': 'Teal',
+    '#45b7d1': 'Blue',
+    '#96ceb4': 'Green',
+    '#feca57': 'Yellow',
+    '#000000': 'Black',
+    '#ffffff': 'White',
+    '#8b4513': 'Brown',
+    '#800080': 'Purple',
+    '#ffc0cb': 'Pink'
+  };
+
+  return colors.map((color, index) => ({
+    name: colorNames[color.toLowerCase()] || `Color ${index + 1}`,
+    value: color,
+    available: true
+  }));
+};
+
 const ProductPage = () => {
   const params = useParams();
 
   const categorySlug = params.categorySlug as string;
   const productSlug = params.productSlug as string;
 
-  const { categoryProducts, fetchProductsByCategorySlug } = useProductStore();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    data: product,
+    isLoading,
+    error,
+  } = useProductFromCategory(categorySlug, productSlug);
   const [isFavorite, setIsFavorite] = useState(false);
 
-  // Find the product in the store by matching the slug
-  const product = categoryProducts?.find(p => p.slug === productSlug) || null;
+  if (isLoading) {
+    return (
+      <Box
+        component="main"
+        sx={{
+          bgcolor: 'white',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '50vh'
+        }}
+      >
+        <CircularProgress size={60} />
+      </Box>
+    );
+  }
 
-  useEffect(() => {
-    const loadProduct = async () => {
-      try {
-        setLoading(true);
+  if (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Failed to fetch product';
+    return (
+      <Box component="main" sx={{ bgcolor: 'white', p: 4 }}>
+        <Container maxWidth="md">
+          <Alert severity="error" sx={{ mb: 4 }}>
+            {errorMessage}
+          </Alert>
+        </Container>
+      </Box>
+    );
+  }
 
-        // If we don't have the products for this category yet, fetch them
-        if (!categoryProducts || categoryProducts.length === 0) {
-          await fetchProductsByCategorySlug(categorySlug);
-        }
+  if (!product) {
+    return (
+      <Box component="main" sx={{ bgcolor: 'white', p: 4 }}>
+        <Container maxWidth="md">
+          <Alert severity="warning" sx={{ mb: 4 }}>
+            Product not found
+          </Alert>
+        </Container>
+      </Box>
+    );
+  }
 
-        // After fetching, if we still don't have the product, show an error
-        const foundProduct = categoryProducts?.find(p => p.slug === productSlug);
-        if (!foundProduct) {
-          console.error('Product not found after fetching category products');
-          setError('Product not found in this category');
-        } else {
-          console.log('Found product:', foundProduct);
-        }
-      } catch (err) {
-        console.error('Error loading product:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load product');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadProduct();
-  }, [categorySlug, productSlug, fetchProductsByCategorySlug, categoryProducts]);
-
-  const transformProductData = () => {
-    if (!product) return null;
-
-    // Map product images to the format expected by ProductDetails
-    const productImages = product.images?.map((url, index) => ({
-      id: `img-${index + 1}`,
-      url: url,
-      alt: `${product.name} - image ${index + 1}`,
-      main: false // Default all images to not be main
-    })) || [];
-
-    // If there's a main image, make sure it's first in the array and marked as main
-    if (product.mainImage) {
-      // Check if main image is already in the array
-      const mainImageIndex = productImages.findIndex(img => img.url === product.mainImage);
-
-      if (mainImageIndex !== -1) {
-        // If main image exists in array, mark it as main and move to front
-        productImages[mainImageIndex].main = true;
-        const mainImageObj = productImages.splice(mainImageIndex, 1)[0];
-        productImages.unshift(mainImageObj);
-      } else {
-        // If main image is not in the array, add it to the front
-        productImages.unshift({
-          id: 'img-main',
-          url: product.mainImage,
-          alt: `${product.name} - main image`,
-          main: true
-        });
-      }
-    } else if (productImages.length > 0) {
-      // If no main image is specified but we have images, mark the first one as main
-      productImages[0].main = true;
-    }
-
-    // Define product colors - use variants if available, otherwise use default colors
-    const colors = [
-      {
-        name: "Rainbow Mix",
-        value: "#ff6b6b",
-        available: true
-      },
-      {
-        name: "Ocean Breeze",
-        value: "#4ecdc4",
-        available: true
-      },
-      {
-        name: "Sunset Glow",
-        value: "#45b7d1",
-        available: true
-      },
-      {
-        name: "Forest Green",
-        value: "#96ceb4",
-        available: false
-      },
-      {
-        name: "Golden Hour",
-        value: "#feca57",
-        available: true
-      }
-    ];
-
-    return {
-      id: product._id,
-      name: product.name,
-      images: productImages,
-      rating: product.averageRating || 4.5,
-      reviewCount: product.numReviews || 0,
-      inStock: (product.stock || 0) > 0,
-      stockCount: product.stock || 0,
-      price: product.price,
-      originalPrice: product.priceBeforeDiscount,
-      colors: colors,
-      description: product.description || product.shortDescription,
-      discountPercentage: product.discountPercentage
-    };
+  // Move productData creation here, after null checks
+  const productData = {
+    id: product._id,
+    name: product.name,
+    images: product.images,
+    rating: product.averageRating || 0,
+    reviewCount: product.numReviews || 0,
+    inStock: product.stock > 0,
+    stockCount: product.stock,
+    price: product.price,
+    originalPrice: product.priceBeforeDiscount,
+    colors: product.attributes
+      ?.filter(attr => attr.name.toLowerCase().includes('color'))
+      ?.map(attr => attr.value)
+      ?.join(', ')
+      ?.split(', ')
+      ?.filter(color => color.trim() !== '') || ['Default'],
+    description: product.description,
+    discountPercentage: product.discountPercentage || 0,
   };
 
-  const productData = transformProductData();
+  // Transform the API data to match component expectations
+  const transformedImages = transformImages(product.images, product.name);
+  const transformedColors = transformColors(product.colors);
 
+  const handleAddToCart = (quantity: number, color: string) => {
+    console.log('Adding to cart:', { productId: product._id, quantity, color });
+    // Implement your add to cart logic here
+  };
 
-  if (loading && !product) {
-    return (
-      <Container maxWidth="lg" sx={{ py: 8, textAlign: 'center' }}>
-        <CircularProgress />
-        <Typography variant="h6" sx={{ mt: 2 }}>
-          Loading product...
-        </Typography>
-      </Container>
-    );
-  }
+  const handleToggleFavorite = () => {
+    console.log('Toggle favorite for product:', product._id);
+    // Implement your favorite toggle logic here
+  };
 
-  if (error || !product || !productData) {
-    return (
-      <Container maxWidth="lg" sx={{ py: 8, textAlign: 'center' }}>
-        <Typography variant="h4" color="error" sx={{ mb: 2 }}>
-          Product Not Found
-        </Typography>
-        <Typography variant="body1">
-          {error || 'The product you are looking for does not exist.'}
-        </Typography>
-        <Typography variant="body2" sx={{ mt: 2 }}>
-          Debug info: Category: {categorySlug}, Product: {productSlug}
-        </Typography>
-      </Container>
-    );
-  }
+  const handleShare = () => {
+    console.log('Share product:', product._id);
+    // Implement your share logic here
+  };
 
   return (
     <Box component="main" sx={{ bgcolor: '#fafafa' }}>
@@ -342,39 +338,22 @@ const ProductPage = () => {
           }}
         >
           <ProductDetails
-            id={productData.id}
-            name={productData.name}
-            images={productData.images}
-            rating={productData.rating}
-            reviewCount={productData.reviewCount}
-            inStock={productData.inStock}
-            stockCount={productData.stockCount}
-            price={productData.price}
-            originalPrice={productData.originalPrice}
-            colors={productData.colors}
-            description={productData.description}
-            discountPercentage={productData.discountPercentage}
-            onAddToCart={(quantity, color) => {
-              console.log(`Adding ${quantity} items in ${color} to cart`);
-              // Handle add to cart logic here
-            }}
-            onToggleFavorite={() => {
-              console.log('Toggling favorite status');
-              setIsFavorite(!isFavorite);
-              // Handle favorite toggle logic here
-            }}
-            onShare={() => {
-              console.log('Sharing product');
-              // Handle share logic here
-              if (navigator.share) {
-                navigator.share({
-                  title: productData.name,
-                  text: productData.description,
-                  url: window.location.href,
-                });
-              }
-            }}
-            isFavorite={isFavorite}
+            id={product._id}
+            name={product.name}
+            images={transformedImages}
+            rating={product.rating || 4.5}
+            reviewCount={product.reviewCount || 0}
+            inStock={product.inStock !== false}
+            stockCount={product.stockCount || 10}
+            price={product.price}
+            originalPrice={product.priceBeforeDiscount}
+            colors={transformedColors}
+            description={product.shortDescription || product.description}
+            discountPercentage={product.discountPercentage || 0}
+            onAddToCart={handleAddToCart}
+            onToggleFavorite={handleToggleFavorite}
+            onShare={handleShare}
+            isFavorite={false} // You can implement favorite state management
           />
         </Box>
 

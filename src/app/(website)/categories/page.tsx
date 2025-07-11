@@ -4,22 +4,17 @@ import ImageWithText from "@/components/about/ImageWithText";
 import FeaturedCategories from "@/components/shared/FeaturedCategories";
 import CategoriesGrid from "@/components/shared/CategoriesGrid";
 import { Alert, Box, CircularProgress, Container } from "@mui/material";
-import { useCategoryStore } from "@/store/categoryStore";
-import { useEffect, useRef } from "react";
+import { useCategories } from "@/hooks/useCategories";
+import { useRef } from "react";
 
 export default function Categories() {
   const categoriesGridRef = useRef<HTMLDivElement>(null);
   
-  const {
-    categories,
-    loading,
+   const {
+    data: categories = [],
+    isLoading: loading,
     error,
-    fetchCategories
-  } = useCategoryStore();
-
-  useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
+  } = useCategories();
 
   const scrollToCategoriesGrid = () => {
     if (categoriesGridRef.current) {
@@ -89,7 +84,7 @@ export default function Categories() {
       <Box component="main" sx={{ bgcolor: 'white', p: 4 }}>
         <Container maxWidth="md">
           <Alert severity="error" sx={{ mb: 4 }}>
-            {error}
+            {error instanceof Error ? error.message : 'Failed to fetch categories'}
           </Alert>
         </Container>
       </Box>
