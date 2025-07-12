@@ -13,12 +13,16 @@ import {
     CircularProgress,
     Chip,
     useTheme,
+    Snackbar,
 } from '@mui/material';
 import {
     Send as SendIcon,
     Star as StarIcon,
 } from '@mui/icons-material';
 import { styled, keyframes } from '@mui/material/styles';
+import { testimonialsService } from '@/services/testimonialsService';
+import { CreateTestimonialData } from '@/types/Testimonial';
+import { useParams } from 'next/navigation';
 
 const slideInUp = keyframes`
   from {
@@ -150,13 +154,21 @@ const Comments = () => {
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
-    const [hoveredRating, setHoveredRating] = useState<number | null>(null);
+    const [error, setError] = useState<string | null>(null);
+    const [showError, setShowError] = useState(false);
+    const [hoveredRating, setHoveredRating] = useState(null);
+    const params = useParams();
+
+    const productSlug = params.productSlug as string;
+
+
 
     const handleCommentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         setFormData(prev => ({
             ...prev,
             comment: event.target.value
         }));
+        if (error) setError(null);
     };
 
     const handleRatingChange = (event: React.SyntheticEvent, newValue: number | null) => {
@@ -164,6 +176,7 @@ const Comments = () => {
             ...prev,
             rating: newValue
         }));
+        if (error) setError(null);
     };
 
     const handleSubmit = async (event: React.FormEvent) => {
@@ -174,22 +187,38 @@ const Comments = () => {
         }
 
         setIsSubmitting(true);
+        setError(null);
 
-        // Simulate API call
+        const testimonialData: CreateTestimonialData = {
+            productSlug,
+            comment: formData.comment,
+            rating: formData.rating,
+        };
+
         try {
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            await testimonialsService.createTestimonial(testimonialData);
 
             setShowSuccess(true);
             setFormData({ comment: '', rating: null });
+            setHoveredRating(null);
 
+            // Hide success message after 5 seconds
             setTimeout(() => {
                 setShowSuccess(false);
             }, 5000);
         } catch (error) {
             console.error('Error submitting comment:', error);
+            const errorMessage = error?.response?.message || error.message || 'Failed to submit review. Please try again.';
+            setError(errorMessage);
+            setShowError(true);
         } finally {
             setIsSubmitting(false);
         }
+    };
+
+    const handleCloseError = () => {
+        setShowError(false);
+        setError(null);
     };
 
     const isFormValid = formData.comment.trim().length > 0 && formData.rating !== null;
@@ -220,6 +249,30 @@ const Comments = () => {
                 py: { xs: 4, md: 6 },
             }}
         >
+            <Snackbar
+                open={showError}
+                autoHideDuration={6000}
+                onClose={handleCloseError}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert
+                    onClose={handleCloseError}
+                    severity="error"
+                    sx={{
+                        width: '100%',
+                        borderRadius: '12px',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        border: '1px solid rgba(239, 68, 68, 0.2)',
+                        color: '#dc2626',
+                        '& .MuiAlert-icon': {
+                            color: '#ef4444',
+                        },
+                    }}
+                >
+                    {error}
+                </Alert>
+            </Snackbar>
+
             <Box
                 sx={{
                     background: 'white',
@@ -322,6 +375,7 @@ const Comments = () => {
                                 <Rating
                                     name="product-rating"
                                     value={formData.rating}
+                                    onChange={handleRatingChange}
                                     onChangeActive={(event, newHover) => {
                                         setHoveredRating(newHover);
                                     }}

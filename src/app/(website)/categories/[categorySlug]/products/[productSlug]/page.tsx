@@ -12,6 +12,7 @@ import SimilarProducts from "@/components/product-details/SimilarProducts";
 import Comments from "@/components/product-details/Comments";
 import { useMakersBySlug } from "@/hooks/useMakers";
 import ExisitingComments from '@/components/about/ExisitingComments';
+import { useProductsTestimonialsBySlug } from '@/hooks/useTestimonials';
 
 
 const FeatureCardsSectionData = {
@@ -183,79 +184,6 @@ const transformColors = (colors: string[] = []): ProductColor[] => {
   }));
 };
 
-// Mock data for existing comments
-const mockComments = [
-  {
-    id: 1,
-    user: {
-      name: "Sarah Johnson",
-      avatar: "/api/placeholder/40/40",
-      verified: true
-    },
-    rating: 5,
-    comment: "Absolutely love this product! The quality exceeded my expectations and the delivery was super fast. Highly recommend to anyone looking for premium quality.",
-    date: "2024-01-15",
-    likes: 12,
-    dislikes: 0,
-    replies: 2
-  },
-  {
-    id: 2,
-    user: {
-      name: "Mike Chen",
-      avatar: "/api/placeholder/40/40",
-      verified: false
-    },
-    rating: 4,
-    comment: "Great product overall. The design is sleek and modern. Only minor issue was the packaging could be better, but the product itself is fantastic.",
-    date: "2024-01-10",
-    likes: 8,
-    dislikes: 1,
-    replies: 0
-  },
-  {
-    id: 3,
-    user: {
-      name: "Emma Wilson",
-      avatar: "/api/placeholder/40/40",
-      verified: true
-    },
-    rating: 5,
-    comment: "Perfect! Exactly what I was looking for. The customer service was also excellent when I had questions before purchasing.",
-    date: "2024-01-08",
-    likes: 15,
-    dislikes: 0,
-    replies: 1
-  },
-  {
-    id: 4,
-    user: {
-      name: "Emma Wilson",
-      avatar: "/api/placeholder/40/40",
-      verified: true
-    },
-    rating: 5,
-    comment: "Perfect! Exactly what I was looking for. The customer service was also excellent when I had questions before purchasing.",
-    date: "2024-01-08",
-    likes: 15,
-    dislikes: 0,
-    replies: 1
-  },
-  {
-    id: 5,
-    user: {
-      name: "Emma Wilson",
-      avatar: "/api/placeholder/40/40",
-      verified: true
-    },
-    rating: 5,
-    comment: "Perfect! Exactly what I was looking for. The customer service was also excellent when I had questions before purchasing.",
-    date: "2024-01-08",
-    likes: 15,
-    dislikes: 0,
-    replies: 1
-  }
-];
 
 const ProductPage = () => {
   const params = useParams();
@@ -268,6 +196,12 @@ const ProductPage = () => {
     isLoading,
     error,
   } = useProductFromCategory(categorySlug, productSlug);
+
+  const {
+    data: testimonials,
+    isLoading: testimonialsLoading,
+    error: testimonialsError
+  } = useProductsTestimonialsBySlug(productSlug);
 
   const { data: makerData, isLoading: makerLoading, error: makerError } = useMakersBySlug(product?.maker?.slug || '');
 
@@ -534,7 +468,7 @@ const ProductPage = () => {
 
         <Comments />
 
-        <ExisitingComments mockComments={mockComments} />
+        <ExisitingComments mockComments={testimonials || []} />
 
         <Box
           component="section"
