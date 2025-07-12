@@ -125,6 +125,7 @@ const testimonialsData = {
       avatar: "/images/navbarLogo.svg?height=60&width=60",
       text: "Every detail felt personal — I'll definitely order again!",
       rating: 5,
+      createdAt: new Date('2023-09-20T10:30:00Z'),
     },
     {
       id: 2,
@@ -132,6 +133,7 @@ const testimonialsData = {
       avatar: "/images/navbarLogo.svg?height=60&width=60",
       text: "It's like shopping at a handmade bazaar... from my couch.",
       rating: 5,
+      createdAt: new Date('2023-09-20T10:30:00Z'),
     },
     {
       id: 3,
@@ -139,9 +141,11 @@ const testimonialsData = {
       avatar: "/images/navbarLogo.svg?height=60&width=60",
       text: "Support local talent and get amazing quality? Yes, please.",
       rating: 5,
+      createdAt: new Date('2023-09-20T10:30:00Z'),
     },
   ]
 };
+
 
 const Page = () => {
   return (

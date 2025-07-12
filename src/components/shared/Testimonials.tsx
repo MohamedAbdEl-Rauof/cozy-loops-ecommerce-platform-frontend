@@ -2,7 +2,8 @@
 import { Box, Typography, Card, CardContent, Avatar, Rating, Container, Chip } from "@mui/material"
 import { styled, keyframes } from "@mui/material/styles"
 import { useState, useEffect } from "react"
-import { FormatQuote, Star, Verified, LocationOn } from "@mui/icons-material"
+import { FormatQuote, Star } from "@mui/icons-material"
+import { TestimonialsData } from '@/types/Testimonial'
 
 const float = keyframes`
     0%, 100% {
@@ -208,28 +209,15 @@ const HeaderContainer = styled(Box)(({ theme }) => ({
     }
 }))
 
-interface Testimonial {
-    id: number
-    name: string
-    avatar: string
-    text: string
-    rating: number
-    verified?: boolean
-    location?: string
-}
-
 interface TestimonialsProps {
-    testimonialsData: {
-        title: string
-        description: string
-        items: Testimonial[]
-    }
+    testimonialsData: TestimonialsData
 }
 
 const TestimonialsSection = ({ testimonialsData }: TestimonialsProps) => {
     const { title, description, items } = testimonialsData;
     const [isVisible, setIsVisible] = useState(false);
-    const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+    const [hoveredCard, setHoveredCard] = useState<string | number | null>(null);
+    const [showAll, setShowAll] = useState(false);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -237,6 +225,8 @@ const TestimonialsSection = ({ testimonialsData }: TestimonialsProps) => {
         }, 300);
         return () => clearTimeout(timer);
     }, []);
+
+    const displayedItems = showAll ? items : items.slice(0, 3);
 
     return (
         <SectionContainer
@@ -304,7 +294,7 @@ const TestimonialsSection = ({ testimonialsData }: TestimonialsProps) => {
                         transitionDelay: "0.4s",
                     }}
                 >
-                    {items.map((testimonial, index) => (
+                    {displayedItems.map((testimonial, index) => (
                         <Box
                             key={testimonial.id}
                             sx={{
@@ -356,29 +346,6 @@ const TestimonialsSection = ({ testimonialsData }: TestimonialsProps) => {
                                                     }
                                                 }}
                                             />
-                                            {testimonial.verified && (
-                                                <Box
-                                                    sx={{
-                                                        position: "absolute",
-                                                        bottom: -4,
-                                                        right: -4,
-                                                        width: 28,
-                                                        height: 28,
-                                                        borderRadius: "50%",
-                                                        backgroundColor: "#4CAF50",
-                                                        display: "flex",
-                                                        alignItems: "center",
-                                                        justifyContent: "center",
-                                                        border: "3px solid white",
-                                                        boxShadow: "0 4px 12px rgba(76, 175, 80, 0.4)",
-                                                        animation: hoveredCard === testimonial.id
-                                                            ? `${pulse} 1.5s ease-in-out infinite`
-                                                            : "none",
-                                                    }}
-                                                >
-                                                    <Verified sx={{ fontSize: 16, color: "white" }} />
-                                                </Box>
-                                            )}
                                         </Box>
 
                                         <Box sx={{ flex: 1 }}>
@@ -399,21 +366,19 @@ const TestimonialsSection = ({ testimonialsData }: TestimonialsProps) => {
                                             >
                                                 {testimonial.name}
                                             </Typography>
-                                            {testimonial.location && (
-                                                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                                                    <LocationOn sx={{ fontSize: 16, color: "#8D6E63" }} />
-                                                    <Typography
-                                                        variant="body2"
-                                                        sx={{
-                                                            color: "#8D6E63",
-                                                            fontSize: "0.875rem",
-                                                            fontWeight: 500,
-                                                        }}
-                                                    >
-                                                        {testimonial.location}
-                                                    </Typography>
-                                                </Box>
-                                            )}
+                                            <Typography
+                                                variant="body2"
+                                                sx={{
+                                                    fontWeight: 400,
+                                                    color: "gray",
+                                                    fontSize: { xs: "0.875rem", md: "0.9rem" },
+                                                    mb: 0.5,
+                                                    fontFamily: '"Roboto", sans-serif',
+                                                    transition: "color 0.3s ease",
+                                                }}
+                                            >
+                                                {testimonial.createdAt ? new Date(testimonial.createdAt).toLocaleDateString() : ''}
+                                            </Typography>
                                         </Box>
                                     </CustomerInfo>
 
@@ -531,6 +496,47 @@ const TestimonialsSection = ({ testimonialsData }: TestimonialsProps) => {
                         </Box>
                     ))}
                 </Box>
+
+                {items.length > 3 && (
+                    <Box
+                        sx={{
+                            mt: 6,
+                            display: "flex",
+                            justifyContent: "center",
+                            opacity: isVisible ? 1 : 0,
+                            transform: isVisible ? "translateY(0)" : "translateY(30px)",
+                            transition: "all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+                            transitionDelay: "0.8s",
+                        }}
+                    >
+                        <Box
+                            component="button"
+                            onClick={() => setShowAll(!showAll)}
+                            sx={{
+                                px: 4,
+                                py: 2,
+                                borderRadius: 3,
+                                border: "2px solid #FF7043",
+                                background: showAll
+                                    ? "linear-gradient(135deg, #FF7043, #FFE5B8)"
+                                    : "transparent",
+                                color: showAll ? "#fff" : "#FF7043",
+                                fontSize: "1rem",
+                                fontWeight: 600,
+                                cursor: "pointer",
+                                transition: "all 0.3s ease",
+                                "&:hover": {
+                                    background: "linear-gradient(135deg, #FF7043, #FFE5B8)",
+                                    color: "#fff",
+                                    transform: "translateY(-2px)",
+                                    boxShadow: "0 8px 20px rgba(255, 112, 67, 0.3)",
+                                }
+                            }}
+                        >
+                            {showAll ? `Show Less` : `Show More (${items.length - 3} more)`}
+                        </Box>
+                    </Box>
+                )}
 
                 <Box
                     sx={{

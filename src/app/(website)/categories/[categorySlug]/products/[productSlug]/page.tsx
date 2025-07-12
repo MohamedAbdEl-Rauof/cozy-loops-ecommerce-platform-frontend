@@ -5,7 +5,6 @@ import { Box, Container, CircularProgress, Alert } from '@mui/material';
 import { useProductFromCategory } from '@/hooks/useProducts';
 import { ProductImage, ProductColor } from '@/types/product';
 import SmallNavbar from "@/components/shared/SmallNavbar";
-import Testimonials from "@/components/shared/Testimonials";
 import ProductDetails from "@/components/shared/PrdouctDetails";
 import FeatureCardsSection from "@/components/shared/FeatureCardsSection";
 import AbountMaker from "@/components/product-details/AbountMaker";
@@ -14,33 +13,6 @@ import Comments from "@/components/product-details/Comments";
 import { useMakersBySlug } from "@/hooks/useMakers";
 import ExisitingComments from '@/components/about/ExisitingComments';
 
-const testimonialsData = {
-  title: "What Buyers Are Saying",
-  description: "",
-  items: [
-    {
-      id: 1,
-      name: "Mariam S.",
-      avatar: "/images/navbarLogo.svg?height=60&width=60",
-      text: "Every detail felt personal — I'll definitely order again!",
-      rating: 5,
-    },
-    {
-      id: 2,
-      name: "Ahmed R.",
-      avatar: "/images/navbarLogo.svg?height=60&width=60",
-      text: "It's like shopping at a handmade bazaar... from my couch.",
-      rating: 5,
-    },
-    {
-      id: 3,
-      name: "Dalia A.",
-      avatar: "/images/navbarLogo.svg?height=60&width=60",
-      text: "Support local talent and get amazing quality? Yes, please.",
-      rating: 5,
-    },
-  ]
-};
 
 const FeatureCardsSectionData = {
   sectionTitle: "Details & Inspiration",
@@ -210,6 +182,80 @@ const transformColors = (colors: string[] = []): ProductColor[] => {
     available: true
   }));
 };
+
+// Mock data for existing comments
+const mockComments = [
+  {
+    id: 1,
+    user: {
+      name: "Sarah Johnson",
+      avatar: "/api/placeholder/40/40",
+      verified: true
+    },
+    rating: 5,
+    comment: "Absolutely love this product! The quality exceeded my expectations and the delivery was super fast. Highly recommend to anyone looking for premium quality.",
+    date: "2024-01-15",
+    likes: 12,
+    dislikes: 0,
+    replies: 2
+  },
+  {
+    id: 2,
+    user: {
+      name: "Mike Chen",
+      avatar: "/api/placeholder/40/40",
+      verified: false
+    },
+    rating: 4,
+    comment: "Great product overall. The design is sleek and modern. Only minor issue was the packaging could be better, but the product itself is fantastic.",
+    date: "2024-01-10",
+    likes: 8,
+    dislikes: 1,
+    replies: 0
+  },
+  {
+    id: 3,
+    user: {
+      name: "Emma Wilson",
+      avatar: "/api/placeholder/40/40",
+      verified: true
+    },
+    rating: 5,
+    comment: "Perfect! Exactly what I was looking for. The customer service was also excellent when I had questions before purchasing.",
+    date: "2024-01-08",
+    likes: 15,
+    dislikes: 0,
+    replies: 1
+  },
+  {
+    id: 4,
+    user: {
+      name: "Emma Wilson",
+      avatar: "/api/placeholder/40/40",
+      verified: true
+    },
+    rating: 5,
+    comment: "Perfect! Exactly what I was looking for. The customer service was also excellent when I had questions before purchasing.",
+    date: "2024-01-08",
+    likes: 15,
+    dislikes: 0,
+    replies: 1
+  },
+  {
+    id: 5,
+    user: {
+      name: "Emma Wilson",
+      avatar: "/api/placeholder/40/40",
+      verified: true
+    },
+    rating: 5,
+    comment: "Perfect! Exactly what I was looking for. The customer service was also excellent when I had questions before purchasing.",
+    date: "2024-01-08",
+    likes: 15,
+    dislikes: 0,
+    replies: 1
+  }
+];
 
 const ProductPage = () => {
   const params = useParams();
@@ -488,7 +534,7 @@ const ProductPage = () => {
 
         <Comments />
 
-        <ExisitingComments />
+        <ExisitingComments mockComments={mockComments} />
 
         <Box
           component="section"

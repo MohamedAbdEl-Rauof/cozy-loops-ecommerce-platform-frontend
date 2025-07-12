@@ -20,51 +20,7 @@ import {
 } from '@mui/icons-material';
 import { styled, keyframes } from '@mui/material/styles';
 
-// Mock data for existing comments
-const mockComments = [
-    {
-        id: 1,
-        user: {
-            name: "Sarah Johnson",
-            avatar: "/api/placeholder/40/40",
-            verified: true
-        },
-        rating: 5,
-        comment: "Absolutely love this product! The quality exceeded my expectations and the delivery was super fast. Highly recommend to anyone looking for premium quality.",
-        date: "2024-01-15",
-        likes: 12,
-        dislikes: 0,
-        replies: 2
-    },
-    {
-        id: 2,
-        user: {
-            name: "Mike Chen",
-            avatar: "/api/placeholder/40/40",
-            verified: false
-        },
-        rating: 4,
-        comment: "Great product overall. The design is sleek and modern. Only minor issue was the packaging could be better, but the product itself is fantastic.",
-        date: "2024-01-10",
-        likes: 8,
-        dislikes: 1,
-        replies: 0
-    },
-    {
-        id: 3,
-        user: {
-            name: "Emma Wilson",
-            avatar: "/api/placeholder/40/40",
-            verified: true
-        },
-        rating: 5,
-        comment: "Perfect! Exactly what I was looking for. The customer service was also excellent when I had questions before purchasing.",
-        date: "2024-01-08",
-        likes: 15,
-        dislikes: 0,
-        replies: 1
-    }
-];
+
 
 const CommentCard = styled(Paper)(({ theme }) => ({
     padding: theme.spacing(3),
@@ -82,7 +38,7 @@ const CommentCard = styled(Paper)(({ theme }) => ({
     }
 }));
 
-const ExisitingComments = () => {
+const ExisitingComments = ({mockComments}:ExisitingCommentsProps) => {
     return (
         <Box sx={{ position: 'relative', zIndex: 2 }}>
             <Typography

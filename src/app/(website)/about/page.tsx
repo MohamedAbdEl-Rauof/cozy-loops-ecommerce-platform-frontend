@@ -67,25 +67,29 @@ export default function About() {
 
                 <Box sx={{ mb: { xs: 8, sm: 10, md: 12, lg: 16 } }}>
                     <ImageWithText
-                        title="Our Mission"
-                        description="To celebrate the art of handmade creation by supporting independent makers and bringing soulful, meaningful products into everyday life."
-                        imageSrc="/images/shared/ImageWithText1.png"
-                        imageAlt="Our Mission"
-                        flipContent={false}
-                        imageWidth={{ xs: '100%', sm: '80%', md: '90%', lg: '100%' }}
-                        imageHeight={{ xs: '400px', sm: '700px', md: '1000px', lg: '1100px' }}
+                        dataContent={{
+                            title: "Our Mission",
+                            description: "To celebrate the art of handmade creation by supporting independent makers and bringing soulful, meaningful products into everyday life.",
+                            imageSrc: "/images/shared/ImageWithText1.png",
+                            imageAlt: "Our Mission",
+                            flipContent: true,
+                            imageWidth: { xs: '100%', sm: '80%', md: '90%', lg: '100%' },
+                            imageHeight: { xs: '400px', sm: '700px', md: '1000px', lg: '1100px' }
+                        }}
                     />
                 </Box>
 
                 <Box sx={{ mb: { xs: 8, sm: 10, md: 12, lg: 16 } }}>
                     <ImageWithText
-                        title="Made in Egypt (and Beyond)"
-                        description="Every Cozy Loops piece is handmade with care and cultural roots—supporting a vibrant community of local makers and storytellers with every purchase."
-                        imageSrc="/images/shared/ImageWithText2.png"
-                        imageAlt="Made in Egypt"
-                        flipContent={true}
-                        imageWidth={{ xs: '100%', sm: '80%', md: '65%', lg: '70%' }}
-                        imageHeight={{ xs: '350px', sm: '380px', md: '500px', lg: '700px' }}
+                        dataContent={{
+                            title: "Made in Egypt (and Beyond)",
+                            description: "Every Cozy Loops piece is handmade with care and cultural roots—supporting a vibrant community of local makers and storytellers with every purchase.",
+                            imageSrc: "/images/shared/ImageWithText2.png",
+                            imageAlt: "Made in Egypt",
+                            flipContent: true,
+                            imageWidth: { xs: '100%', sm: '80%', md: '65%', lg: '70%' },
+                            imageHeight: { xs: '350px', sm: '380px', md: '500px', lg: '700px' }
+                        }}
                     />
                 </Box>
 

@@ -53,6 +53,11 @@ const StoryFeature = ({
         background: '#FFFBF7',
     };
 
+    const handleButtonClick = () => {
+        if (onButtonClick) {
+            router.push(onButtonClick);
+        }
+    };
     useEffect(() => {
         const timer = setTimeout(() => {
             setIsVisible(true);
@@ -210,7 +215,7 @@ const StoryFeature = ({
                     <Button
                         variant="contained"
                         endIcon={<ArrowForward />}
-                        onClick={onButtonClick}
+                        onClick={handleButtonClick}
                         sx={{
                             alignSelf: 'flex-start',
                             bgcolor: brandColors.primary,

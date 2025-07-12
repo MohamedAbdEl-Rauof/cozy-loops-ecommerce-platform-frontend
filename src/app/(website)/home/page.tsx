@@ -7,7 +7,7 @@ import FeaturedCategories from '@/components/shared/FeaturedCategories';
 import StoryFeature from '@/components/shared/StoryFeature';
 import Testimonials from '@/components/shared/Testimonials';
 import { useCategories } from "@/hooks/useCategories";
-import Categories from '../categories/page';
+import { useTestimonials } from '@/hooks/useTestimonials';
 
 const featuredCategories = {
   title: "Need a gift? Make it personal.",
@@ -29,6 +29,7 @@ const testimonialsData = {
       avatar: "/images/navbarLogo.svg?height=60&width=60",
       text: "Every detail felt personal — I'll definitely order again!",
       rating: 5,
+      createdAt: new Date('2023-09-20T10:30:00Z'),
     },
     {
       id: 2,
@@ -36,6 +37,7 @@ const testimonialsData = {
       avatar: "/images/navbarLogo.svg?height=60&width=60",
       text: "It's like shopping at a handmade bazaar... from my couch.",
       rating: 5,
+      createdAt: new Date('2023-09-20T10:30:00Z'),
     },
     {
       id: 3,
@@ -43,6 +45,7 @@ const testimonialsData = {
       avatar: "/images/navbarLogo.svg?height=60&width=60",
       text: "Support local talent and get amazing quality? Yes, please.",
       rating: 5,
+      createdAt: new Date('2023-09-20T10:30:00Z'),
     },
   ]
 };
@@ -54,6 +57,19 @@ export default function Home() {
     isLoading: loading,
     error,
   } = useCategories();
+
+  const {
+    data: testimonialsItems = [],
+    isLoading: testimonialsLoading,
+    error: testimonialsError,
+  } = useTestimonials();
+
+
+  const testimonialsData = {
+    title: "What Our Shoppers Are Saying",
+    description: "Real words from our beloved Cozy Loops community.",
+    items: testimonialsItems
+  };
 
   const craftCategories = categories.map(category => ({
     id: category._id,
@@ -119,14 +135,24 @@ export default function Home() {
             onButtonClick="/test"
             badge="Our Story"
           />
-        </Box>  
+        </Box>
 
         <Box component="section" sx={{ py: { xs: 6, md: 8 } }}>
           <ShopByCraft craftCategories={craftCategories} />
         </Box>
 
         <Box component="section" sx={{ py: { xs: 6, md: 8 } }}>
-          <Testimonials testimonialsData={testimonialsData} />
+            {testimonialsLoading ? (
+            <Box sx={{ textAlign: 'center', py: 4 }}>
+              <p>Loading testimonials...</p>
+            </Box>
+          ) : testimonialsError ? (
+            <Box sx={{ textAlign: 'center', py: 4 }}>
+              <p>Unable to load testimonials at the moment.</p>
+            </Box>
+          ) : (
+            <Testimonials testimonialsData={testimonialsData} />
+          )}
         </Box>
       </Container>
     </Box>
