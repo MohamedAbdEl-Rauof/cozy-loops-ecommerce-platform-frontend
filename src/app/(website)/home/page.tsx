@@ -6,6 +6,8 @@ import ShopByCraft from '@/components/home/ShopByCraft';
 import FeaturedCategories from '@/components/shared/FeaturedCategories';
 import StoryFeature from '@/components/shared/StoryFeature';
 import Testimonials from '@/components/shared/Testimonials';
+import { useCategories } from "@/hooks/useCategories";
+import Categories from '../categories/page';
 
 const featuredCategories = {
   title: "Need a gift? Make it personal.",
@@ -45,7 +47,24 @@ const testimonialsData = {
   ]
 };
 
+
 export default function Home() {
+  const {
+    data: categories = [],
+    isLoading: loading,
+    error,
+  } = useCategories();
+
+  const craftCategories = categories.map(category => ({
+    id: category._id,
+    name: category.name,
+    image: category.image || "/images/categories.png",
+    fallbackImage: '/images/placeholder.jpg',
+    link: `/categories/${category.slug}`,
+    description: category.description || '',
+  }))
+
+
   return (
     <Box component="main" sx={{ bgcolor: 'white' }}>
       <Box
@@ -97,13 +116,13 @@ export default function Home() {
             buttonText="Meet the Maker"
             imageSrc="/images/shared/storyFeature.jpg"
             imageAlt="Hands crafting a knitted bag"
-            onButtonClick="/"
+            onButtonClick="/test"
             badge="Our Story"
           />
-        </Box>
+        </Box>  
 
         <Box component="section" sx={{ py: { xs: 6, md: 8 } }}>
-          <ShopByCraft />
+          <ShopByCraft craftCategories={craftCategories} />
         </Box>
 
         <Box component="section" sx={{ py: { xs: 6, md: 8 } }}>

@@ -12,6 +12,7 @@ import AbountMaker from "@/components/product-details/AbountMaker";
 import SimilarProducts from "@/components/product-details/SimilarProducts";
 import Comments from "@/components/product-details/Comments";
 import { useMakersBySlug } from "@/hooks/useMakers";
+import ExisitingComments from '@/components/about/ExisitingComments';
 
 const testimonialsData = {
   title: "What Buyers Are Saying",
@@ -484,23 +485,10 @@ const ProductPage = () => {
         <SimilarProducts Products={similarProductsData} onAddToCart={() => console.log("Product added to cart")} />
 
 
-        {/* Testimonials Section */}
-        <Box
-          component="section"
-          sx={{
-            py: { xs: 6, sm: 8, md: 10 },
-            mb: { xs: 4, sm: 6, md: 8 },
-            bgcolor: 'white',
-            borderRadius: '16px',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
-            mx: { xs: 1, sm: 2, md: 3 },
-            overflow: 'hidden'
-          }}
-        >
-          <Testimonials testimonialsData={testimonialsData} />
-        </Box>
 
         <Comments />
+
+        <ExisitingComments />
 
         <Box
           component="section"

@@ -52,33 +52,19 @@ const shimmer = keyframes`
   }
 `;
 
-// Styled Components
+// Styled Components with Cozy Loops Branding
 const StyledPaper = styled(Paper)(({ theme }) => ({
     padding: theme.spacing(4),
     borderRadius: '20px',
-    background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%)',
+    // background: 'linear-gradient(135deg, rgba(255,248,235,0.95) 0%, rgba(254,243,224,0.9) 100%)',
     backdropFilter: 'blur(20px)',
-    border: '1px solid rgba(255, 255, 255, 0.3)',
-    boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
+    border: '1px solid rgba(217, 119, 6, 0.1)',
+    boxShadow: '0 8px 32px rgba(217, 119, 6, 0.08)',
     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
     '&:hover': {
-        boxShadow: '0 12px 40px rgba(0,0,0,0.15)',
+        boxShadow: '0 12px 40px rgba(217, 119, 6, 0.12)',
         transform: 'translateY(-2px)',
-    }
-}));
-
-const CommentCard = styled(Paper)(({ theme }) => ({
-    padding: theme.spacing(3),
-    marginBottom: theme.spacing(2),
-    borderRadius: '16px',
-    background: 'rgba(255, 255, 255, 0.8)',
-    backdropFilter: 'blur(10px)',
-    border: '1px solid rgba(255, 255, 255, 0.2)',
-    transition: 'all 0.3s ease',
-    '&:hover': {
-        background: 'rgba(255, 255, 255, 0.95)',
-        transform: 'translateX(4px)',
-        boxShadow: '0 8px 25px rgba(0,0,0,0.1)',
+        border: '1px solid rgba(217, 119, 6, 0.15)',
     }
 }));
 
@@ -88,17 +74,18 @@ const SubmitButton = styled(Button)(({ theme }) => ({
     fontWeight: 600,
     fontSize: '1rem',
     textTransform: 'none',
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    boxShadow: '0 8px 25px rgba(102, 126, 234, 0.4)',
+    background: 'linear-gradient(135deg, #D97706 0%, #B45309 100%)',
+    boxShadow: '0 8px 25px rgba(217, 119, 6, 0.3)',
     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    color: 'white',
     '&:hover': {
-        background: 'linear-gradient(135deg, #5a67d8 0%, #667eea 100%)',
+        background: 'linear-gradient(135deg, #B45309 0%, #92400E 100%)',
         transform: 'translateY(-2px)',
-        boxShadow: '0 12px 35px rgba(102, 126, 234, 0.6)',
+        boxShadow: '0 12px 35px rgba(217, 119, 6, 0.4)',
     },
     '&:disabled': {
-        background: 'linear-gradient(135deg, #e0e0e0 0%, #bdbdbd 100%)',
-        color: '#9e9e9e',
+        background: 'linear-gradient(135deg, #FED7AA 0%, #FDBA74 100%)',
+        color: '#92400E',
         transform: 'none',
         boxShadow: 'none',
     }
@@ -107,90 +94,47 @@ const SubmitButton = styled(Button)(({ theme }) => ({
 const StyledTextField = styled(TextField)(({ theme }) => ({
     '& .MuiOutlinedInput-root': {
         borderRadius: '16px',
-        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        // backgroundColor: 'rgba(255, 248, 235, 0.8)',
         backdropFilter: 'blur(10px)',
         transition: 'all 0.3s ease',
         '& fieldset': {
-            borderColor: 'rgba(102, 126, 234, 0.2)',
+            borderColor: 'rgba(217, 119, 6, 0.2)',
             borderWidth: '2px',
         },
         '&:hover fieldset': {
-            borderColor: 'rgba(102, 126, 234, 0.4)',
+            borderColor: 'rgba(217, 119, 6, 0.4)',
         },
         '&.Mui-focused fieldset': {
-            borderColor: '#667eea',
-            boxShadow: '0 0 0 3px rgba(102, 126, 234, 0.1)',
+            borderColor: '#D97706',
+            boxShadow: '0 0 0 3px rgba(217, 119, 6, 0.1)',
         },
         '&.Mui-focused': {
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            backgroundColor: 'rgba(255, 248, 235, 0.95)',
         }
     },
     '& .MuiInputLabel-root': {
-        color: '#6c757d',
+        color: '#92400E',
         fontWeight: 500,
         '&.Mui-focused': {
-            color: '#667eea',
+            color: '#D97706',
         }
+    },
+    '& .MuiFormHelperText-root': {
+        color: '#B45309',
     }
 }));
 
 const RatingContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(2),
     borderRadius: '12px',
-    background: 'rgba(255, 255, 255, 0.6)',
-    border: '1px solid rgba(102, 126, 234, 0.1)',
+    // background: 'rgba(255, 248, 235, 0.6)',
+    border: '1px solid rgba(217, 119, 6, 0.1)',
     transition: 'all 0.3s ease',
     '&:hover': {
-        background: 'rgba(255, 255, 255, 0.8)',
-        borderColor: 'rgba(102, 126, 234, 0.2)',
+        background: 'rgba(255, 248, 235, 0.8)',
+        borderColor: 'rgba(217, 119, 6, 0.2)',
     }
 }));
-
-// Mock data for existing comments
-const mockComments = [
-    {
-        id: 1,
-        user: {
-            name: "Sarah Johnson",
-            avatar: "/api/placeholder/40/40",
-            verified: true
-        },
-        rating: 5,
-        comment: "Absolutely love this product! The quality exceeded my expectations and the delivery was super fast. Highly recommend to anyone looking for premium quality.",
-        date: "2024-01-15",
-        likes: 12,
-        dislikes: 0,
-        replies: 2
-    },
-    {
-        id: 2,
-        user: {
-            name: "Mike Chen",
-            avatar: "/api/placeholder/40/40",
-            verified: false
-        },
-        rating: 4,
-        comment: "Great product overall. The design is sleek and modern. Only minor issue was the packaging could be better, but the product itself is fantastic.",
-        date: "2024-01-10",
-        likes: 8,
-        dislikes: 1,
-        replies: 0
-    },
-    {
-        id: 3,
-        user: {
-            name: "Emma Wilson",
-            avatar: "/api/placeholder/40/40",
-            verified: true
-        },
-        rating: 5,
-        comment: "Perfect! Exactly what I was looking for. The customer service was also excellent when I had questions before purchasing.",
-        date: "2024-01-08",
-        likes: 15,
-        dislikes: 0,
-        replies: 1
-    }
-];
 
 interface CommentFormData {
     comment: string;
@@ -199,7 +143,7 @@ interface CommentFormData {
 
 const Comments = () => {
     const theme = useTheme();
-    
+
     const [formData, setFormData] = useState<CommentFormData>({
         comment: '',
         rating: null
@@ -224,20 +168,20 @@ const Comments = () => {
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        
+
         if (!formData.comment.trim() || !formData.rating) {
             return;
         }
 
         setIsSubmitting(true);
-        
+
         // Simulate API call
         try {
             await new Promise(resolve => setTimeout(resolve, 2000));
-            
+
             setShowSuccess(true);
             setFormData({ comment: '', rating: null });
-            
+
             setTimeout(() => {
                 setShowSuccess(false);
             }, 5000);
@@ -278,32 +222,22 @@ const Comments = () => {
         >
             <Box
                 sx={{
-                    background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+                    background: 'white',
                     borderRadius: '24px',
                     p: { xs: 3, md: 4 },
-                    position: 'relative',
-                    overflow: 'hidden',
-                    '&::before': {
-                        content: '""',
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        background: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
-                        opacity: 0.3,
-                    }
+                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+                    border: '1px solid rgba(217, 119, 6, 0.1)',
                 }}
             >
                 {/* Header Section */}
-                <Box sx={{ textAlign: 'center', mb: 6, position: 'relative', zIndex: 2 }}>
+                <Box sx={{ textAlign: 'center', mb: 6 }}>
                     <Typography
                         variant="h3"
                         component="h2"
                         sx={{
                             fontWeight: 800,
                             fontSize: { xs: '2rem', md: '2.5rem' },
-                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            background: 'linear-gradient(135deg, #D97706 0%, #B45309 100%)',
                             backgroundClip: 'text',
                             WebkitBackgroundClip: 'text',
                             WebkitTextFillColor: 'transparent',
@@ -311,12 +245,12 @@ const Comments = () => {
                             animation: `${slideInUp} 0.8s ease-out`,
                         }}
                     >
-                        Customer Reviews & Comments
+                        Share Your Review
                     </Typography>
                     <Typography
                         variant="h6"
                         sx={{
-                            color: '#6c757d',
+                            color: '#92400E',
                             fontWeight: 500,
                             maxWidth: '600px',
                             mx: 'auto',
@@ -324,7 +258,7 @@ const Comments = () => {
                             animation: `${slideInUp} 0.8s ease-out 0.2s both`,
                         }}
                     >
-                        Share your experience and help others make informed decisions
+                        Help others make informed decisions with your experience
                     </Typography>
                 </Box>
 
@@ -335,10 +269,11 @@ const Comments = () => {
                         sx={{
                             mb: 4,
                             borderRadius: '12px',
-                            backgroundColor: 'rgba(76, 175, 80, 0.1)',
-                            border: '1px solid rgba(76, 175, 80, 0.2)',
+                            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                            border: '1px solid rgba(34, 197, 94, 0.2)',
+                            color: '#15803d',
                             '& .MuiAlert-icon': {
-                                color: '#4caf50',
+                                color: '#22c55e',
                             },
                             animation: `${pulse} 0.6s ease-in-out`,
                         }}
@@ -348,119 +283,120 @@ const Comments = () => {
                 </Fade>
 
                 {/* Comment Form */}
-                <StyledPaper
+                <Box
+                    component="form"
                     onSubmit={handleSubmit}
                     sx={{
-                        mb: 6,
                         animation: `${slideInUp} 0.8s ease-out 0.4s both`,
                     }}
                 >
-                    <Typography
-                        variant="h5"
-                        sx={{
-                            fontWeight: 700,
-                            mb: 3,
-                            color: '#2c3e50',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 1,
-                        }}
-                    >
-                        <StarIcon sx={{ color: '#ffc107' }} />
-                        Write a Review
-                    </Typography>
-
-                    {/* Rating Section */}
-                    <RatingContainer sx={{ mb: 3 }}>
+                    <StyledPaper>
                         <Typography
-                            variant="subtitle1"
+                            variant="h5"
                             sx={{
-                                fontWeight: 600,
-                                mb: 2,
-                                color: '#495057',
+                                fontWeight: 700,
+                                mb: 3,
+                                color: '#92400E',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 1,
                             }}
                         >
-                            Rate this product *
+                            <StarIcon sx={{ color: '#F59E0B' }} />
+                            Write a Review
                         </Typography>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
-                            <Rating
-                                name="product-rating"
-                                value={formData.rating}
-                                onChange={handleRatingChange}
-                                onChangeActive={(event, newHover) => {
-                                    setHoveredRating(newHover);
-                                }}
-                                size="large"
+
+                        {/* Rating Section */}
+                        <RatingContainer sx={{ mb: 3 }}>
+                            <Typography
+                                variant="subtitle1"
                                 sx={{
-                                    fontSize: '2rem',
-                                    '& .MuiRating-iconFilled': {
-                                        color: '#ffc107',
-                                    },
-                                    '& .MuiRating-iconHover': {
-                                        color: '#ffb300',
-                                    },
-                                    '& .MuiRating-iconEmpty': {
-                                        color: 'rgba(0,0,0,0.1)',
-                                    }
+                                    fontWeight: 600,
+                                    mb: 2,
+                                    color: '#92400E',
                                 }}
-                            />
-                            {(hoveredRating !== null || formData.rating !== null) && (
-                                <Chip
-                                    label={getRatingLabel(hoveredRating || formData.rating || 0)}
+                            >
+                                Rate this product *
+                            </Typography>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
+                                <Rating
+                                    name="product-rating"
+                                    value={formData.rating}
+                                    onChangeActive={(event, newHover) => {
+                                        setHoveredRating(newHover);
+                                    }}
+                                    size="large"
                                     sx={{
-                                        background: 'linear-gradient(135deg, #ffc107 0%, #ff8f00 100%)',
-                                        color: 'white',
-                                        fontWeight: 600,
-                                        animation: `${pulse} 0.3s ease-in-out`,
+                                        fontSize: '2rem',
+                                        '& .MuiRating-iconFilled': {
+                                            color: '#F59E0B',
+                                        },
+                                        '& .MuiRating-iconHover': {
+                                            color: '#D97706',
+                                        },
+                                        '& .MuiRating-iconEmpty': {
+                                            color: 'rgba(217, 119, 6, 0.2)',
+                                        }
                                     }}
                                 />
-                            )}
-                        </Box>
-                    </RatingContainer>
+                                {(hoveredRating !== null || formData.rating !== null) && (
+                                    <Chip
+                                        label={getRatingLabel(hoveredRating || formData.rating || 0)}
+                                        sx={{
+                                            background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
+                                            color: 'white',
+                                            fontWeight: 600,
+                                            animation: `${pulse} 0.3s ease-in-out`,
+                                        }}
+                                    />
+                                )}
+                            </Box>
+                        </RatingContainer>
 
-                    {/* Comment Text Area */}
-                    <StyledTextField
-                        fullWidth
-                        multiline
-                        rows={4}
-                        label="Share your thoughts about this product"
-                        placeholder="Tell us about your experience with this product. What did you like? What could be improved?"
-                        value={formData.comment}
-                        onChange={handleCommentChange}
-                        required
-                        sx={{ mb: 3 }}
-                        inputProps={{
-                            maxLength: 1000,
-                        }}
-                        helperText={`${formData.comment.length}/1000 characters`}
-                    />
-
-                    {/* Submit Button */}
-                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-                        <SubmitButton
-                            type="submit"
-                            variant="contained"
-                            disabled={!isFormValid || isSubmitting}
-                            startIcon={
-                                isSubmitting ? (
-                                    <CircularProgress size={20} color="inherit" />
-                                ) : (
-                                    <SendIcon />
-                                )
-                            }
-                            sx={{
-                                minWidth: '160px',
-                                ...(isSubmitting && {
-                                    animation: `${shimmer} 1.5s infinite linear`,
-                                    background: 'linear-gradient(90deg, #e0e0e0 0%, #f0f0f0 50%, #e0e0e0 100%)',
-                                    backgroundSize: '200px 100%',
-                                })
+                        {/* Comment Text Area */}
+                        <StyledTextField
+                            fullWidth
+                            multiline
+                            rows={4}
+                            label="Share your thoughts about this product"
+                            placeholder="Tell us about your experience with this product. What did you like? What could be improved?"
+                            value={formData.comment}
+                            onChange={handleCommentChange}
+                            required
+                            sx={{ mb: 3 }}
+                            inputProps={{
+                                maxLength: 1000,
                             }}
-                        >
-                            {isSubmitting ? 'Submitting...' : 'Submit Review'}
-                        </SubmitButton>
-                    </Box>
-                </StyledPaper>
+                            helperText={`${formData.comment.length}/1000 characters`}
+                        />
+
+                        {/* Submit Button */}
+                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+                            <SubmitButton
+                                type="submit"
+                                variant="contained"
+                                disabled={!isFormValid || isSubmitting}
+                                startIcon={
+                                    isSubmitting ? (
+                                        <CircularProgress size={20} color="inherit" />
+                                    ) : (
+                                        <SendIcon />
+                                    )
+                                }
+                                sx={{
+                                    minWidth: '160px',
+                                    ...(isSubmitting && {
+                                        animation: `${shimmer} 1.5s infinite linear`,
+                                        background: 'linear-gradient(90deg, #FED7AA 0%, #FDBA74 50%, #FED7AA 100%)',
+                                        backgroundSize: '200px 100%',
+                                    })
+                                }}
+                            >
+                                {isSubmitting ? 'Submitting...' : 'Submit Review'}
+                            </SubmitButton>
+                        </Box>
+                    </StyledPaper>
+                </Box>
             </Box>
         </Container>
     );
