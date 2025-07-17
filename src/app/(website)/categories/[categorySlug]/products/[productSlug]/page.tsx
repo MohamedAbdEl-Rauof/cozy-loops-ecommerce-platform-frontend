@@ -200,12 +200,15 @@ const ProductPage = () => {
   const {
     data: testimonials,
     isLoading: testimonialsLoading,
-    error: testimonialsError
+    error: testimonialsError,
+    refetch: refetchTestimonials
   } = useProductsTestimonialsBySlug(productSlug);
 
-  const { data: makerData, isLoading: makerLoading, error: makerError } = useMakersBySlug(product?.maker?.slug || '');
+  const handleCommentSubmitted = () => {
+    refetchTestimonials();
+  };
 
-  console.log('Productproductproductproduct:', product);
+  const { data: makerData, isLoading: makerLoading, error: makerError } = useMakersBySlug(product?.maker?.slug || '');
 
   if (isLoading) {
     return (
@@ -466,7 +469,7 @@ const ProductPage = () => {
 
 
 
-        <Comments />
+        <Comments onCommentSubmitted={handleCommentSubmitted} />
 
         <ExisitingComments mockComments={testimonials || []} />
 

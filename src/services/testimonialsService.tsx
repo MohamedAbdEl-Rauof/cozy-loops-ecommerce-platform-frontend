@@ -44,9 +44,8 @@ export const testimonialsService = {
   },
 
 
-  getProductsTestimonials: async (productSlug: string): Promise<Testimonial[]> => {
+  getProductsTestimonials: async (productSlug: string): Promise<any> => {
     try {
-
       const accessToken = getAccessToken();
 
       const headers: Record<string, string> = {};
@@ -54,26 +53,12 @@ export const testimonialsService = {
         headers.Authorization = `Bearer ${accessToken}`;
       }
 
-      const response = await apiClient.get<ApiResponse>(
+      const response = await apiClient.get<any>(
         `api/reviews/product/${productSlug}`,
         { headers }
       );
-      const reviews: ApiReview[] = response.data.data;
 
-      return reviews.map(review => ({
-        id: review._id,
-        user: {
-          name: `${review.user.firstName} ${review.user.lastName}`,
-          avatar: review.user.Avatar,
-          verified: true
-        },
-        rating: review.rating,
-        comment: review.comment,
-        date: new Date(review.createdAt).toISOString().split('T')[0],
-        likes: review.likesCount,
-        dislikes: review.dislikesCount,
-        replies: 0
-      }));
+      return response.data.data;
     } catch (error) {
       console.error('Error fetching product testimonials:', error);
       throw error;

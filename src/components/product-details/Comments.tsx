@@ -145,8 +145,11 @@ interface CommentFormData {
     rating: number | null;
 }
 
-const Comments = () => {
-    const theme = useTheme();
+interface CommentsProps {
+    onCommentSubmitted?: () => void;
+}
+
+const Comments = ({ onCommentSubmitted }: CommentsProps) => {
 
     const [formData, setFormData] = useState<CommentFormData>({
         comment: '',
@@ -202,13 +205,28 @@ const Comments = () => {
             setFormData({ comment: '', rating: null });
             setHoveredRating(null);
 
+            if(onCommentSubmitted){
+                onCommentSubmitted();
+            }
+
             // Hide success message after 5 seconds
             setTimeout(() => {
                 setShowSuccess(false);
             }, 5000);
         } catch (error) {
             console.error('Error submitting comment:', error);
-            const errorMessage = error?.response?.message || error.message || 'Failed to submit review. Please try again.';
+
+            // Better error message extraction
+            let errorMessage = 'Failed to submit review. Please try again.';
+
+            if (error?.response?.data?.message) {
+                errorMessage = error.response.data.message;
+            } else if (error?.response?.message) {
+                errorMessage = error.response.message;
+            } else if (error?.message) {
+                errorMessage = error.message;
+            }
+
             setError(errorMessage);
             setShowError(true);
         } finally {

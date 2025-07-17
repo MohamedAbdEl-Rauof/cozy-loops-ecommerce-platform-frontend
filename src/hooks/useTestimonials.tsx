@@ -10,10 +10,15 @@ export const useTestimonials = () => {
 };
 
 export const useProductsTestimonialsBySlug = (slug: string) => {
-  return useQuery({
+  const query = useQuery({
     queryKey: ['testimonials', slug],
     queryFn: () => testimonialsService.getProductsTestimonials(slug),
     staleTime: 5 * 60 * 1000,
     enabled: !!slug,
   });
+
+  return {
+    ...query,
+    refetch: query.refetch,
+  };
 };

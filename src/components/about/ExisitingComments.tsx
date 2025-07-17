@@ -3,23 +3,27 @@ import React, { useState } from 'react';
 import {
     Box,
     Typography,
-    TextField,
     Button,
     Rating,
     Paper,
-    Container,
-    Fade,
-    Alert,
-    CircularProgress,
     Chip,
-    useTheme,
+    IconButton,
+    Menu,
+    MenuItem,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    TextField,
 } from '@mui/material';
 import {
     Send as SendIcon,
     Star as StarIcon,
+    MoreVert as MoreVertIcon,
+    Edit as EditIcon,
+    Delete as DeleteIcon,
 } from '@mui/icons-material';
-import { styled, keyframes } from '@mui/material/styles';
-
+import { styled } from '@mui/material/styles';
 
 
 const CommentCard = styled(Paper)(({ theme }) => ({
@@ -38,7 +42,77 @@ const CommentCard = styled(Paper)(({ theme }) => ({
     }
 }));
 
-const ExisitingComments = ({mockComments}:ExisitingCommentsProps) => {
+interface User {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    Avatar: string;
+}
+
+interface Review {
+    _id: string;
+    user: User;
+    product: string;
+    comment: string;
+    rating: number;
+    likesCount: number;
+    dislikesCount: number;
+    likes: any[];
+    createdAt: string;
+    updatedAt: string;
+    isOwner: boolean;
+}
+
+interface ExisitingCommentsProps {
+    mockComments: Review[];
+}
+
+const ExisitingComments = ({ mockComments }: ExisitingCommentsProps) => {
+
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
+    const [editDialogOpen, setEditDialogOpen] = useState(false);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [editComment, setEditComment] = useState('');
+    const [editRating, setEditRating] = useState<number | null>(null);
+
+    const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, reviewId: string) => {
+        setAnchorEl(event.currentTarget);
+        setSelectedReviewId(reviewId);
+    };
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+        setSelectedReviewId(null);
+    };
+
+    const handleEditClick = () => {
+        const review = mockComments.find(r => r._id === selectedReviewId);
+        if (review) {
+            setEditComment(review.comment);
+            setEditRating(review.rating);
+            setEditDialogOpen(true);
+        }
+        handleMenuClose();
+    };
+
+    const handleDeleteClick = () => {
+        setDeleteDialogOpen(true);
+        handleMenuClose();
+    };
+
+    const handleEditSave = () => {
+        // TODO: Implement update functionality
+        console.log('Update review:', { id: selectedReviewId, comment: editComment, rating: editRating });
+        setEditDialogOpen(false);
+    };
+
+    const handleDeleteConfirm = () => {
+        // TODO: Implement delete functionality
+        console.log('Delete review:', selectedReviewId);
+        setDeleteDialogOpen(false);
+    };
+
     return (
         <Box sx={{ position: 'relative', zIndex: 2 }}>
             <Typography
@@ -58,7 +132,7 @@ const ExisitingComments = ({mockComments}:ExisitingCommentsProps) => {
 
             {mockComments.map((comment, index) => (
                 <CommentCard
-                    key={comment.id}
+                    key={comment._id}
                 >
                     <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 2 }}>
                         <Box
@@ -66,7 +140,10 @@ const ExisitingComments = ({mockComments}:ExisitingCommentsProps) => {
                                 width: 48,
                                 height: 48,
                                 borderRadius: '50%',
-                                background: 'linear-gradient(135deg, #D97706 0%, #B45309 100%)',
+                                backgroundImage: comment.user.Avatar ? `url(${comment.user.Avatar})` : 'none',
+                                backgroundColor: !comment.user.Avatar ? '#D97706' : 'transparent',
+                                backgroundSize: 'cover',
+                                backgroundPosition: 'center',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
@@ -75,30 +152,34 @@ const ExisitingComments = ({mockComments}:ExisitingCommentsProps) => {
                                 fontSize: '1.2rem',
                             }}
                         >
-                            {comment.user.name.charAt(0)}
+                            {!comment.user.Avatar && comment.user.firstName && comment.user.lastName &&
+                                `${comment.user.firstName.charAt(0).toUpperCase()}${comment.user.lastName.charAt(0).toUpperCase()}`
+                            }
                         </Box>
                         <Box sx={{ flex: 1 }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                                <Typography
-                                    variant="h6"
-                                    sx={{
-                                        fontWeight: 600,
-                                        color: '#92400E',
-                                    }}
-                                >
-                                    {comment.user.name}
-                                </Typography>
-                                {comment.user.verified && (
-                                    <Chip
-                                        label="Verified"
-                                        size="small"
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    <Typography
+                                        variant="h6"
                                         sx={{
-                                            background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
-                                            color: 'white',
-                                            fontSize: '0.75rem',
-                                            height: '20px',
+                                            fontWeight: 600,
+                                            color: '#92400E',
                                         }}
-                                    />
+                                    >
+                                        {comment.user.firstName && comment.user.lastName
+                                            ? `${comment.user.firstName} ${comment.user.lastName}`
+                                            : 'Anonymous User'
+                                        }
+                                    </Typography>
+                                </Box>
+                                {comment.isOwner && (
+                                    <IconButton
+                                        size="small"
+                                        onClick={(e) => handleMenuOpen(e, comment._id)}
+                                        sx={{ color: '#B45309' }}
+                                    >
+                                        <MoreVertIcon />
+                                    </IconButton>
                                 )}
                             </Box>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
@@ -119,7 +200,7 @@ const ExisitingComments = ({mockComments}:ExisitingCommentsProps) => {
                                         fontWeight: 500,
                                     }}
                                 >
-                                    {new Date(comment.date).toLocaleDateString('en-US', {
+                                    {new Date(comment.createdAt).toLocaleDateString('en-US', {
                                         year: 'numeric',
                                         month: 'long',
                                         day: 'numeric'
@@ -148,7 +229,7 @@ const ExisitingComments = ({mockComments}:ExisitingCommentsProps) => {
                                         }
                                     }}
                                 >
-                                    👍 {comment.likes}
+                                    👍 {comment.likesCount}
                                 </Button>
                                 <Button
                                     size="small"
@@ -161,13 +242,80 @@ const ExisitingComments = ({mockComments}:ExisitingCommentsProps) => {
                                         }
                                     }}
                                 >
-                                    👎 {comment.dislikes}
+                                    👎 {comment.dislikesCount}
                                 </Button>
                             </Box>
                         </Box>
                     </Box>
                 </CommentCard>
             ))}
+
+
+            {/* Menu */}
+            <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+            >
+                <MenuItem onClick={handleEditClick}>
+                    <EditIcon sx={{ mr: 1 }} />
+                    Edit
+                </MenuItem>
+                <MenuItem onClick={handleDeleteClick} sx={{ color: 'error.main' }}>
+                    <DeleteIcon sx={{ mr: 1 }} />
+                    Delete
+                </MenuItem>
+            </Menu>
+
+            {/* Edit Dialog */}
+            <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)} maxWidth="sm" fullWidth>
+                <DialogTitle>Edit Review</DialogTitle>
+                <DialogContent>
+                    <Box sx={{ mb: 2 }}>
+                        <Typography variant="subtitle2" sx={{ mb: 1 }}>Rating</Typography>
+                        <Rating
+                            value={editRating}
+                            onChange={(_, newValue) => setEditRating(newValue)}
+                            sx={{
+                                '& .MuiRating-iconFilled': {
+                                    color: '#F59E0B',
+                                },
+                            }}
+                        />
+                    </Box>
+                    <TextField
+                        fullWidth
+                        multiline
+                        rows={4}
+                        label="Comment"
+                        value={editComment}
+                        onChange={(e) => setEditComment(e.target.value)}
+                        variant="outlined"
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setEditDialogOpen(false)}>Cancel</Button>
+                    <Button onClick={handleEditSave} variant="contained" sx={{ bgcolor: '#D97706' }}>
+                        Save Changes
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Delete Dialog */}
+            <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+                <DialogTitle>Delete Review</DialogTitle>
+                <DialogContent>
+                    <Typography>
+                        Are you sure you want to delete this review? This action cannot be undone.
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+                    <Button onClick={handleDeleteConfirm} color="error" variant="contained">
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     )
 
