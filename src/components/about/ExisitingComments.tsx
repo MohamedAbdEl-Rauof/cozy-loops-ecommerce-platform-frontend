@@ -24,6 +24,9 @@ import {
     Delete as DeleteIcon,
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
+import { testimonialsService } from '@/services/testimonialsService';
+import { useAuth } from '@/context/AuthContext';
+
 
 
 const CommentCard = styled(Paper)(({ theme }) => ({
@@ -65,16 +68,22 @@ interface Review {
 
 interface ExisitingCommentsProps {
     mockComments: Review[];
+    onRefetch: () => void;
 }
 
-const ExisitingComments = ({ mockComments }: ExisitingCommentsProps) => {
-
+const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) => {
+    const { user } = useAuth();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
     const [editDialogOpen, setEditDialogOpen] = useState(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [editComment, setEditComment] = useState('');
     const [editRating, setEditRating] = useState<number | null>(null);
+
+    const reviewsWithOwnership = mockComments.map(review => ({
+        ...review,
+        isOwner: user?.id === review.user._id
+    }));
 
     const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, reviewId: string) => {
         setAnchorEl(event.currentTarget);
@@ -83,7 +92,6 @@ const ExisitingComments = ({ mockComments }: ExisitingCommentsProps) => {
 
     const handleMenuClose = () => {
         setAnchorEl(null);
-        setSelectedReviewId(null);
     };
 
     const handleEditClick = () => {
@@ -93,24 +101,63 @@ const ExisitingComments = ({ mockComments }: ExisitingCommentsProps) => {
             setEditRating(review.rating);
             setEditDialogOpen(true);
         }
-        handleMenuClose();
+        // Don't call handleMenuClose() here - the menu will close automatically
+        setAnchorEl(null); // Just close the menu without clearing selectedReviewId
     };
 
     const handleDeleteClick = () => {
         setDeleteDialogOpen(true);
-        handleMenuClose();
+        // Don't call handleMenuClose() here - the menu will close automatically
+        setAnchorEl(null); // Just close the menu without clearing selectedReviewId
     };
 
-    const handleEditSave = () => {
-        // TODO: Implement update functionality
-        console.log('Update review:', { id: selectedReviewId, comment: editComment, rating: editRating });
+    const handleEditSave = async () => {
+        try {
+            if (selectedReviewId && editComment.trim() && editRating !== null && editRating > 0) {
+                await testimonialsService.updateTestimonial(selectedReviewId, editComment, editRating);
+                setEditDialogOpen(false);
+                setSelectedReviewId(null); // Clear it here after successful save
+                setEditComment('');
+                setEditRating(null);
+                onRefetch();
+            } else {
+                console.error('Missing required fields:', {
+                    selectedReviewId,
+                    editComment: editComment.trim(),
+                    editRating
+                });
+            }
+        } catch (error: any) {
+            console.error('Error updating review:', error);
+            alert(error.message || 'Failed to update review. Please try again.');
+        }
+    };
+
+    const handleDeleteConfirm = async () => {
+        try {
+            if (selectedReviewId) {
+                await testimonialsService.deleteTestimonial(selectedReviewId);
+                setDeleteDialogOpen(false);
+                setSelectedReviewId(null); // Clear it here after successful delete
+                onRefetch();
+            }
+        } catch (error: any) {
+            console.error('Error deleting review:', error);
+            alert(error.message || 'Failed to delete review. Please try again.');
+        }
+    };
+
+
+    const handleEditDialogClose = () => {
         setEditDialogOpen(false);
+        setSelectedReviewId(null);
+        setEditComment('');
+        setEditRating(null);
     };
 
-    const handleDeleteConfirm = () => {
-        // TODO: Implement delete functionality
-        console.log('Delete review:', selectedReviewId);
+    const handleDeleteDialogClose = () => {
         setDeleteDialogOpen(false);
+        setSelectedReviewId(null);
     };
 
     return (
@@ -130,7 +177,7 @@ const ExisitingComments = ({ mockComments }: ExisitingCommentsProps) => {
                 Customer Reviews ({mockComments.length})
             </Typography>
 
-            {mockComments.map((comment, index) => (
+            {reviewsWithOwnership.map((comment, index) => (
                 <CommentCard
                     key={comment._id}
                 >
@@ -173,11 +220,7 @@ const ExisitingComments = ({ mockComments }: ExisitingCommentsProps) => {
                                     </Typography>
                                 </Box>
                                 {comment.isOwner && (
-                                    <IconButton
-                                        size="small"
-                                        onClick={(e) => handleMenuOpen(e, comment._id)}
-                                        sx={{ color: '#B45309' }}
-                                    >
+                                    <IconButton onClick={(e) => handleMenuOpen(e, comment._id)}>
                                         <MoreVertIcon />
                                     </IconButton>
                                 )}
@@ -268,7 +311,7 @@ const ExisitingComments = ({ mockComments }: ExisitingCommentsProps) => {
             </Menu>
 
             {/* Edit Dialog */}
-            <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)} maxWidth="sm" fullWidth>
+            <Dialog open={editDialogOpen} onClose={handleEditDialogClose} maxWidth="sm" fullWidth>
                 <DialogTitle>Edit Review</DialogTitle>
                 <DialogContent>
                     <Box sx={{ mb: 2 }}>
@@ -294,7 +337,7 @@ const ExisitingComments = ({ mockComments }: ExisitingCommentsProps) => {
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setEditDialogOpen(false)}>Cancel</Button>
+                    <Button onClick={handleEditDialogClose}>Cancel</Button>
                     <Button onClick={handleEditSave} variant="contained" sx={{ bgcolor: '#D97706' }}>
                         Save Changes
                     </Button>
@@ -302,7 +345,7 @@ const ExisitingComments = ({ mockComments }: ExisitingCommentsProps) => {
             </Dialog>
 
             {/* Delete Dialog */}
-            <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+            <Dialog open={deleteDialogOpen} onClose={handleDeleteDialogClose}>
                 <DialogTitle>Delete Review</DialogTitle>
                 <DialogContent>
                     <Typography>
@@ -310,7 +353,7 @@ const ExisitingComments = ({ mockComments }: ExisitingCommentsProps) => {
                     </Typography>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+                    <Button onClick={handleDeleteDialogClose}>Cancel</Button>
                     <Button onClick={handleDeleteConfirm} color="error" variant="contained">
                         Delete
                     </Button>

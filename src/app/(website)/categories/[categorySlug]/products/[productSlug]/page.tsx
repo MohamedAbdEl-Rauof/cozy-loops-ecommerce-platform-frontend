@@ -471,7 +471,7 @@ const ProductPage = () => {
 
         <Comments onCommentSubmitted={handleCommentSubmitted} />
 
-        <ExisitingComments mockComments={testimonials || []} />
+        <ExisitingComments mockComments={testimonials || []}  onRefetch={refetchTestimonials} />
 
         <Box
           component="section"
