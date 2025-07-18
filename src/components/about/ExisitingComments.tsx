@@ -6,18 +6,11 @@ import {
     Button,
     Rating,
     Paper,
-    Chip,
     IconButton,
     Menu,
     MenuItem,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    TextField,
 } from '@mui/material';
 import {
-    Send as SendIcon,
     Star as StarIcon,
     MoreVert as MoreVertIcon,
     Edit as EditIcon,
@@ -26,19 +19,17 @@ import {
 import { styled } from '@mui/material/styles';
 import { testimonialsService } from '@/services/testimonialsService';
 import { useAuth } from '@/context/AuthContext';
-
-
+import EditReviewDialog from '@/components/dialogs/EditReviewDialog';
+import DeleteReviewDialog from '@/components/dialogs/DeleteReviewDialog';
 
 const CommentCard = styled(Paper)(({ theme }) => ({
     padding: theme.spacing(3),
     marginBottom: theme.spacing(2),
     borderRadius: '16px',
-    // background: 'rgba(255, 248, 235, 0.8)',
     backdropFilter: 'blur(10px)',
     border: '1px solid rgba(217, 119, 6, 0.1)',
     transition: 'all 0.3s ease',
     '&:hover': {
-        // background: 'rgba(255, 248, 235, 0.95)',
         transform: 'translateX(4px)',
         boxShadow: '0 8px 25px rgba(217, 119, 6, 0.1)',
         border: '1px solid rgba(217, 119, 6, 0.2)',
@@ -80,6 +71,65 @@ const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) 
     const [editComment, setEditComment] = useState('');
     const [editRating, setEditRating] = useState<number | null>(null);
 
+    // Add loading and error states
+    const [isLoading, setIsLoading] = useState(false);
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success' as 'success' | 'error' | 'warning' | 'info'
+    });
+
+    // ... existing functions ...
+
+    const handleEditSave = async () => {
+        if (!selectedReviewId || !editComment.trim() || !editRating) {
+            setSnackbar({
+                open: true,
+                message: 'Please provide both comment and rating',
+                severity: 'warning'
+            });
+            return;
+        }
+
+        setIsLoading(true);
+
+        try {
+            await testimonialsService.updateTestimonial(
+                selectedReviewId,
+                editComment,
+                editRating
+            );
+
+            // Show success message
+            setSnackbar({
+                open: true,
+                message: 'Review updated successfully!',
+                severity: 'success'
+            });
+
+            // Close dialog and reset state
+            setEditDialogOpen(false);
+            setSelectedReviewId(null);
+            setEditComment('');
+            setEditRating(null);
+
+            // Refresh the reviews list
+            onRefetch();
+
+        } catch (error: any) {
+            console.error('Error updating review:', error);
+
+            setSnackbar({
+                open: true,
+                message: error.message || 'Failed to update review',
+                severity: 'error'
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+
     const reviewsWithOwnership = mockComments.map(review => ({
         ...review,
         isOwner: user?.id === review.user._id
@@ -101,52 +151,55 @@ const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) 
             setEditRating(review.rating);
             setEditDialogOpen(true);
         }
-        // Don't call handleMenuClose() here - the menu will close automatically
-        setAnchorEl(null); // Just close the menu without clearing selectedReviewId
+        setAnchorEl(null);
     };
 
     const handleDeleteClick = () => {
         setDeleteDialogOpen(true);
-        // Don't call handleMenuClose() here - the menu will close automatically
-        setAnchorEl(null); // Just close the menu without clearing selectedReviewId
-    };
-
-    const handleEditSave = async () => {
-        try {
-            if (selectedReviewId && editComment.trim() && editRating !== null && editRating > 0) {
-                await testimonialsService.updateTestimonial(selectedReviewId, editComment, editRating);
-                setEditDialogOpen(false);
-                setSelectedReviewId(null); // Clear it here after successful save
-                setEditComment('');
-                setEditRating(null);
-                onRefetch();
-            } else {
-                console.error('Missing required fields:', {
-                    selectedReviewId,
-                    editComment: editComment.trim(),
-                    editRating
-                });
-            }
-        } catch (error: any) {
-            console.error('Error updating review:', error);
-            alert(error.message || 'Failed to update review. Please try again.');
-        }
+        setAnchorEl(null);
     };
 
     const handleDeleteConfirm = async () => {
+        if (!selectedReviewId) {
+            setSnackbar({
+                open: true,
+                message: 'No review selected for deletion',
+                severity: 'warning'
+            });
+            return;
+        }
+
+        setIsLoading(true);
+
         try {
-            if (selectedReviewId) {
-                await testimonialsService.deleteTestimonial(selectedReviewId);
-                setDeleteDialogOpen(false);
-                setSelectedReviewId(null); // Clear it here after successful delete
-                onRefetch();
-            }
+            await testimonialsService.deleteTestimonial(selectedReviewId);
+
+            // Show success message
+            setSnackbar({
+                open: true,
+                message: 'Review deleted successfully!',
+                severity: 'success'
+            });
+
+            // Close dialog and reset state
+            setDeleteDialogOpen(false);
+            setSelectedReviewId(null);
+
+            // Refresh the reviews list
+            onRefetch();
+
         } catch (error: any) {
             console.error('Error deleting review:', error);
-            alert(error.message || 'Failed to delete review. Please try again.');
+
+            setSnackbar({
+                open: true,
+                message: error.message || 'Failed to delete review',
+                severity: 'error'
+            });
+        } finally {
+            setIsLoading(false);
         }
     };
-
 
     const handleEditDialogClose = () => {
         setEditDialogOpen(false);
@@ -158,6 +211,14 @@ const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) 
     const handleDeleteDialogClose = () => {
         setDeleteDialogOpen(false);
         setSelectedReviewId(null);
+    };
+
+    const handleCommentChange = (comment: string) => {
+        setEditComment(comment);
+    };
+
+    const handleRatingChange = (rating: number | null) => {
+        setEditRating(rating);
     };
 
     return (
@@ -178,9 +239,7 @@ const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) 
             </Typography>
 
             {reviewsWithOwnership.map((comment, index) => (
-                <CommentCard
-                    key={comment._id}
-                >
+                <CommentCard key={comment._id}>
                     <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 2 }}>
                         <Box
                             sx={{
@@ -293,7 +352,6 @@ const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) 
                 </CommentCard>
             ))}
 
-
             {/* Menu */}
             <Menu
                 anchorEl={anchorEl}
@@ -310,57 +368,25 @@ const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) 
                 </MenuItem>
             </Menu>
 
-            {/* Edit Dialog */}
-            <Dialog open={editDialogOpen} onClose={handleEditDialogClose} maxWidth="sm" fullWidth>
-                <DialogTitle>Edit Review</DialogTitle>
-                <DialogContent>
-                    <Box sx={{ mb: 2 }}>
-                        <Typography variant="subtitle2" sx={{ mb: 1 }}>Rating</Typography>
-                        <Rating
-                            value={editRating}
-                            onChange={(_, newValue) => setEditRating(newValue)}
-                            sx={{
-                                '& .MuiRating-iconFilled': {
-                                    color: '#F59E0B',
-                                },
-                            }}
-                        />
-                    </Box>
-                    <TextField
-                        fullWidth
-                        multiline
-                        rows={4}
-                        label="Comment"
-                        value={editComment}
-                        onChange={(e) => setEditComment(e.target.value)}
-                        variant="outlined"
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleEditDialogClose}>Cancel</Button>
-                    <Button onClick={handleEditSave} variant="contained" sx={{ bgcolor: '#D97706' }}>
-                        Save Changes
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            {/* Edit Review Dialog */}
+            <EditReviewDialog
+                open={editDialogOpen}
+                onClose={handleEditDialogClose}
+                onSave={handleEditSave}
+                comment={editComment}
+                rating={editRating}
+                onCommentChange={handleCommentChange}
+                onRatingChange={handleRatingChange}
+            />
 
-            {/* Delete Dialog */}
-            <Dialog open={deleteDialogOpen} onClose={handleDeleteDialogClose}>
-                <DialogTitle>Delete Review</DialogTitle>
-                <DialogContent>
-                    <Typography>
-                        Are you sure you want to delete this review? This action cannot be undone.
-                    </Typography>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleDeleteDialogClose}>Cancel</Button>
-                    <Button onClick={handleDeleteConfirm} color="error" variant="contained">
-                        Delete
-                    </Button>
-                </DialogActions>
-            </Dialog>
+            {/* Delete Review Dialog */}
+            <DeleteReviewDialog
+                open={deleteDialogOpen}
+                onClose={handleDeleteDialogClose}
+                onConfirm={handleDeleteConfirm}
+            />
         </Box>
-    )
+    );
+};
 
-}
 export default ExisitingComments;

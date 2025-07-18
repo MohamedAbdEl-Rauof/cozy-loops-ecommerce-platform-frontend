@@ -331,8 +331,8 @@ const TestimonialsSection = ({ testimonialsData }: TestimonialsProps) => {
                                     <CustomerInfo>
                                         <Box sx={{ position: "relative" }}>
                                             <Avatar
-                                                src={testimonial.avatar}
-                                                alt={testimonial.name}
+                                                src={testimonial.user?.avatar || "https://media.istockphoto.com/id/1337144146/vector/default-avatar-profile-icon-vector.jpg?s=612x612&w=0&k=20&c=BIbFwuv7FxTWvh5S3vB6bkT0Qv8Vn8N5Ffseq84ClGI="}
+                                                alt={testimonial.user?.name || "Anonymous User"}
                                                 sx={{
                                                     width: { xs: 70, md: 80 },
                                                     height: { xs: 70, md: 80 },
@@ -364,7 +364,7 @@ const TestimonialsSection = ({ testimonialsData }: TestimonialsProps) => {
                                                     }
                                                 }}
                                             >
-                                                {testimonial.name}
+                                                {testimonial.user?.name || "Anonymous User"}
                                             </Typography>
                                             <Typography
                                                 variant="body2"
@@ -377,7 +377,7 @@ const TestimonialsSection = ({ testimonialsData }: TestimonialsProps) => {
                                                     transition: "color 0.3s ease",
                                                 }}
                                             >
-                                                {testimonial.createdAt ? new Date(testimonial.createdAt).toLocaleDateString() : ''}
+                                                {testimonial.date ? new Date(testimonial.date).toLocaleDateString() : ''}
                                             </Typography>
                                         </Box>
                                     </CustomerInfo>
@@ -394,7 +394,7 @@ const TestimonialsSection = ({ testimonialsData }: TestimonialsProps) => {
                                             transition: "transform 0.3s ease",
                                         }}
                                     >
-                                        {testimonial.text}
+                                        {testimonial.comment}
                                     </TestimonialText>
 
                                     <Box

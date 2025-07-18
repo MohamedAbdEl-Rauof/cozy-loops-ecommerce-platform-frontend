@@ -11,6 +11,7 @@ import ProductsOfCategory from "@/components/shared/ProductsOfCategory";
 import CategoriesGrid from "@/components/shared/CategoriesGrid";
 import FeaturedCategories from "@/components/shared/FeaturedCategories";
 import Testimonials from "@/components/shared/Testimonials";
+import { useTestimonials } from '@/hooks/useTestimonials';
 
 export default function CategoryPage() {
     const params = useParams();
@@ -22,6 +23,12 @@ export default function CategoryPage() {
         isLoading: categoryLoading,
         error: categoryError,
     } = useCategoryBySlug(slug);
+
+      const {
+        data: testimonialsItems = [],
+        isLoading: testimonialsLoading,
+        error: testimonialsError,
+      } = useTestimonials();
 
     // React Query for products data
     const {
@@ -135,32 +142,10 @@ export default function CategoryPage() {
     }
 
     const testimonialsData = {
-        title: "Why Shoppers Love Our Loops",
-        description: "From thoughtful gifts to home highlights, our customers can't get enough of the charm and quality behind each handmade loop.",
-        items: [
-            {
-                id: 1,
-                name: "Mariam S.",
-                avatar: "/images/navbarLogo.svg?height=60&width=60",
-                text: "Every detail felt personal — I'll definitely order again!",
-                rating: 5,
-            },
-            {
-                id: 2,
-                name: "Ahmed R.",
-                avatar: "/images/navbarLogo.svg?height=60&width=60",
-                text: "It's like shopping at a handmade bazaar... from my couch.",
-                rating: 5,
-            },
-            {
-                id: 3,
-                name: "Dalia A.",
-                avatar: "/images/navbarLogo.svg?height=60&width=60",
-                text: "Support local talent and get amazing quality? Yes, please.",
-                rating: 5,
-            },
-        ]
-    };
+    title: "What Our Shoppers Are Saying",
+    description: "Real words from our beloved Cozy Loops community.",
+    items: testimonialsItems
+  };
 
     return (
         <Box component="main" sx={{ bgcolor: '#fafafa', minHeight: '100vh' }}>

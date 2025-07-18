@@ -19,36 +19,6 @@ const featuredCategories = {
   buttonLink: "categories",
 }
 
-const testimonialsData = {
-  title: "What Our Shoppers Are Saying",
-  description: "Real words from our beloved Cozy Loops community.",
-  items: [
-    {
-      id: 1,
-      name: "Mariam S.",
-      avatar: "/images/navbarLogo.svg?height=60&width=60",
-      text: "Every detail felt personal — I'll definitely order again!",
-      rating: 5,
-      createdAt: new Date('2023-09-20T10:30:00Z'),
-    },
-    {
-      id: 2,
-      name: "Ahmed R.",
-      avatar: "/images/navbarLogo.svg?height=60&width=60",
-      text: "It's like shopping at a handmade bazaar... from my couch.",
-      rating: 5,
-      createdAt: new Date('2023-09-20T10:30:00Z'),
-    },
-    {
-      id: 3,
-      name: "Dalia A.",
-      avatar: "/images/navbarLogo.svg?height=60&width=60",
-      text: "Support local talent and get amazing quality? Yes, please.",
-      rating: 5,
-      createdAt: new Date('2023-09-20T10:30:00Z'),
-    },
-  ]
-};
 
 
 export default function Home() {
