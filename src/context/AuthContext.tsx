@@ -2,8 +2,10 @@
 
 import React, { createContext, useState, useEffect, ReactNode, useContext, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { login, register, logout, refreshToken, getUser } from '@/services/authService';
+import { login, register, logout, refreshToken } from '@/services/authService';
+
 import Cookies from 'js-cookie';
+import { getUser } from '@/services/userServices';
 
 interface User {
   id: string;
