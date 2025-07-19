@@ -3,9 +3,9 @@ import { Box } from "@mui/material"
 
 const Page = () => {
     return (
-        <Box>
+        <Box sx={{backgroundColor: '#f5f5f5'}}>
             <AccountPage />
-            </Box>
+        </Box>
     )
 }
 export default Page
