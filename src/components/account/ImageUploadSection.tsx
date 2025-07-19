@@ -5,13 +5,12 @@ import {
     Typography,
     Button,
     Avatar,
-    Alert,
     CircularProgress,
 } from '@mui/material';
 import { PhotoCamera } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import { useAuth } from '@/context/AuthContext';
-import { UpdateProfile } from '@/services/userServices';
+import { UpdateProfile, uploadImageToCloudinary } from '@/services/userServices';
 
 const ProfileAvatar = styled(Avatar)(({ theme }) => ({
     width: 120,
@@ -20,9 +19,10 @@ const ProfileAvatar = styled(Avatar)(({ theme }) => ({
     border: '4px solid #FF7043',
 }));
 
-const UploadButton = styled(Button)(({ theme }) => ({
+const UploadButton = styled(Button)<{ component?: React.ElementType }>(({ theme }) => ({
     marginTop: '10px',
     backgroundColor: '#FF7043',
+    padding: '12px 30px',
     '&:hover': {
         backgroundColor: '#FF5722',
     },
@@ -32,6 +32,7 @@ const SaveButton = styled(Button)(({ theme }) => ({
     backgroundColor: '#FF7043',
     color: 'white',
     padding: '12px 30px',
+    marginTop: '10px',
     '&:hover': {
         backgroundColor: '#FF5722',
     },
@@ -54,21 +55,36 @@ interface ImageUploadSectionProps {
 }
 
 const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({ onSuccess, onError }) => {
-    const { user, updateUser } = useAuth();
-    const [profileImage, setProfileImage] = useState<string | null>(user?.profileImage || null);
+    const { user } = useAuth();
+    const [profileImage, setProfileImage] = useState<string | null>(null);
     const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
     const [loading, setLoading] = useState(false);
+
+    React.useEffect(() => {
+        if (user?.avatar) {
+            setProfileImage(user.avatar);
+        } else {
+            setProfileImage(null);
+        }
+    }, [user?.avatar]);
+
+    const convertToBase64 = (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = (error) => reject(error);
+        });
+    };
 
     const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
-            // Validate file size (max 5MB)
             if (file.size > 5 * 1024 * 1024) {
                 onError('Image size must be less than 5MB');
                 return;
             }
 
-            // Validate file type
             if (!file.type.startsWith('image/')) {
                 onError('Please select a valid image file');
                 return;
@@ -91,17 +107,18 @@ const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({ onSuccess, onEr
 
         setLoading(true);
         try {
-            const formData = new FormData();
-            formData.append('profileImage', selectedImageFile);
+            const base64Image = await convertToBase64(selectedImageFile);
+            const imageUrl = await uploadImageToCloudinary(base64Image);
 
+            const formData = new FormData();
+            formData.append('avatar', imageUrl);
             const response = await UpdateProfile(formData);
-            
-            updateUser({ ...user, profileImage: response.user.profileImage });
-            
+
+            setProfileImage(response.user.avatar);
             setSelectedImageFile(null);
             onSuccess('Profile image updated successfully!');
         } catch (error: any) {
-            onError(error.response?.data?.message || 'Failed to update profile image');
+            onError(error.message || 'Failed to update profile image');
         } finally {
             setLoading(false);
         }
@@ -112,13 +129,13 @@ const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({ onSuccess, onEr
             <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#333' }}>
                 Profile Picture
             </Typography>
-            
+
             <Box sx={{ textAlign: 'center' }}>
                 <ProfileAvatar
                     src={profileImage || undefined}
                     alt="Profile"
                 >
-                    {!profileImage && user?.firstName && user?.lastName && 
+                    {(!profileImage && !user?.avatar) && user?.firstName && user?.lastName &&
                         (user.firstName.charAt(0) + user.lastName.charAt(0)).toUpperCase()
                     }
                 </ProfileAvatar>
@@ -141,9 +158,9 @@ const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({ onSuccess, onEr
                             Choose Photo
                         </UploadButton>
                     </label>
-                    
+
                     {selectedImageFile && (
-                        <SaveButton 
+                        <SaveButton
                             onClick={handleSaveImage}
                             disabled={loading}
                             startIcon={loading ? <CircularProgress size={20} /> : null}

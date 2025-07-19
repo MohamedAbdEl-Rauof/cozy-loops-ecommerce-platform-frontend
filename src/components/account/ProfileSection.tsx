@@ -8,10 +8,12 @@ import {
 import ImageUploadSection from './ImageUploadSection';
 import PersonalInfoSection from './PersonalInfoSection';
 import PasswordChangeSection from './PasswordChangeSection';
+import { useAuth } from '@/context/AuthContext';
 
 const ProfileSection: React.FC = () => {
     const [showSuccess, setShowSuccess] = useState<string | null>(null);
     const [showError, setShowError] = useState<string | null>(null);
+    const { refetchUser } = useAuth();
 
     const showMessage = (type: 'success' | 'error', message: string) => {
         if (type === 'success') {
@@ -25,8 +27,9 @@ const ProfileSection: React.FC = () => {
         }
     };
 
-    const handleSuccess = (message: string) => {
+    const handleSuccess = async (message: string) => {
         showMessage('success', message);
+        await refetchUser();
     };
 
     const handleError = (message: string) => {

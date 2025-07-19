@@ -14,6 +14,8 @@ interface User {
   lastName?: string;
   role?: string;
   emailVerified?: boolean;
+  avatar?: string;
+  phone?: string;
   [key: string]: any;
 }
 
@@ -44,6 +46,7 @@ interface AuthContextType {
   checkAuthStatus: () => Promise<boolean>;
   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
   isUserAuthenticated: () => boolean;
+  refetchUser: () => Promise<void>;
 }
 
 interface AuthProviderProps {
@@ -63,6 +66,7 @@ export const AuthContext = createContext<AuthContextType>({
   checkAuthStatus: async () => false,
   setIsAuthenticated: () => { },
   isUserAuthenticated: () => false,
+  refetchUser: async () => { },
 });
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
@@ -287,6 +291,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const refetchUser = useCallback(async (): Promise<void> => {
+    try {
+      const userData = await getUser();
+      setUser(userData);
+    } catch (error) {
+      console.error('Failed to refetch user data:', error);
+    }
+  }, []);
+
   const value: AuthContextType = {
     user,
     loading,
@@ -300,6 +313,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     checkAuthStatus,
     setIsAuthenticated,
     isUserAuthenticated,
+    refetchUser
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

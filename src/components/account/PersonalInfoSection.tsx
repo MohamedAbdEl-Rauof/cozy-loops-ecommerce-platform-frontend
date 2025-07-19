@@ -14,6 +14,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '@/context/AuthContext';
 import { UpdateProfile } from '@/services/userServices';
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
+import { isValidPhoneNumber } from 'react-phone-number-input';
 
 const profileSchema = z.object({
     firstName: z.string()
@@ -25,9 +28,16 @@ const profileSchema = z.object({
         .max(50, 'Last name must be less than 50 characters')
         .regex(/^[a-zA-Z\s]+$/, 'Last name can only contain letters and spaces'),
     phone: z.string()
-        .regex(/^\+?[1-9]\d{1,14}$/, 'Please enter a valid international phone number (e.g., +1234567890)')
-        .min(10, 'Phone number must be at least 10 digits')
-        .max(15, 'Phone number must be less than 15 digits'),
+        .refine((value) => {
+            if (!value || value.trim() === '') return true; // Allow empty
+            return isValidPhoneNumber(value);
+        }, 'Please enter a valid international phone number')
+        .refine((value) => {
+            if (value && value.trim() !== '' && value.length < 4) {
+                return false;
+            }
+            return true;
+        }, 'Phone number is too short'),
 });
 
 type ProfileFormData = z.infer<typeof profileSchema>;
@@ -62,13 +72,39 @@ const DisabledTextField = styled(TextField)(({ theme }) => ({
     },
 }));
 
+const StyledPhoneInput = styled(PhoneInput)(({ theme }) => ({
+    '& .PhoneInputInput': {
+        border: '1px solid #c4c4c4',
+        borderRadius: '4px',
+        padding: '16.5px 14px',
+        fontSize: '16px',
+        fontFamily: 'inherit',
+        width: '100%',
+        '&:focus': {
+            outline: 'none',
+            borderColor: '#FF7043',
+            borderWidth: '2px',
+        },
+        '&.PhoneInputInput--error': {
+            borderColor: '#d32f2f',
+        },
+    },
+    '& .PhoneInputCountrySelect': {
+        marginRight: '8px',
+        border: 'none',
+        background: 'transparent',
+        fontSize: '16px',
+    },
+}));
+
+
 interface PersonalInfoSectionProps {
     onSuccess: (message: string) => void;
     onError: (message: string) => void;
 }
 
 const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ onSuccess, onError }) => {
-    const { user, updateUser } = useAuth();
+    const { user } = useAuth();
     const [loading, setLoading] = useState(false);
 
     const {
@@ -78,6 +114,8 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ onSuccess, on
         reset
     } = useForm<ProfileFormData>({
         resolver: zodResolver(profileSchema),
+        mode: 'onChange',
+        reValidateMode: 'onChange',
         defaultValues: {
             firstName: user?.firstName || '',
             lastName: user?.lastName || '',
@@ -85,24 +123,27 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ onSuccess, on
         }
     });
 
+    React.useEffect(() => {
+        if (user) {
+            reset({
+                firstName: user.firstName || '',
+                lastName: user.lastName || '',
+                phone: user.phone || user.phoneNumber || '',
+            });
+        }
+    }, [user, reset]);
+
     const handleSaveProfile = async (data: ProfileFormData) => {
         setLoading(true);
         try {
             const formData = new FormData();
             formData.append('firstName', data.firstName);
             formData.append('lastName', data.lastName);
-            formData.append('phone', data.phone);
+            formData.append('phoneNumber', data.phone);
 
             const response = await UpdateProfile(formData);
-            
-            updateUser({ 
-                ...user, 
-                firstName: data.firstName,
-                lastName: data.lastName,
-                phoneNumber: data.phone 
-            });
-            
-            reset(data); // Reset form with new values to clear isDirty
+
+            reset(data);
             onSuccess('Profile updated successfully!');
         } catch (error: any) {
             onError(error.response?.data?.message || 'Failed to update profile');
@@ -116,7 +157,7 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ onSuccess, on
             <Typography variant="h6" sx={{ mb: 3, fontWeight: 600, color: '#333' }}>
                 Personal Information
             </Typography>
-            
+
             <form onSubmit={handleSubmit(handleSaveProfile)}>
                 <Grid container spacing={3}>
                     <Grid size={{ xs: 12, md: 6 }}>
@@ -163,26 +204,48 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ onSuccess, on
                         />
                     </Grid>
                     <Grid size={{ xs: 12, md: 6 }}>
-                        <Controller
-                            name="phone"
-                            control={control}
-                            render={({ field }) => (
-                                <TextField
-                                    {...field}
-                                    fullWidth
-                                    label="Phone Number"
-                                    variant="outlined"
-                                    placeholder="+1234567890"
-                                    error={!!errors.phone}
-                                    helperText={errors.phone?.message || "Include country code (e.g., +1234567890)"}
-                                />
-                            )}
-                        />
+                        <Box>
+                            <Typography variant="body2" sx={{ mb: 1, color: '#666', fontSize: '12px' }}>
+                                Phone Number
+                            </Typography>
+                            <Controller
+                                name="phone"
+                                control={control}
+                                render={({ field: { onChange, value }, fieldState: { error } }) => (
+                                    <Box>
+                                        <StyledPhoneInput
+                                            international
+                                            countryCallingCodeEditable={false}
+                                            defaultCountry="EG"
+                                            value={value}
+                                            onChange={(phone) => onChange(phone || '')}
+                                            placeholder="Enter phone number"
+                                            className={error ? 'PhoneInputInput--error' : ''}
+                                        />
+                                        {error && (
+                                            <Typography variant="caption" sx={{ color: '#d32f2f', mt: 0.5, display: 'block' }}>
+                                                {error.message}
+                                            </Typography>
+                                        )}
+                                        {!error && value && isValidPhoneNumber(value) && (
+                                            <Typography variant="caption" sx={{ color: '#4caf50', mt: 0.5, display: 'block' }}>
+                                                ✓ Valid phone number
+                                            </Typography>
+                                        )}
+                                        {!error && (!value || value.trim() === '') && (
+                                            <Typography variant="caption" sx={{ color: '#666', mt: 0.5, display: 'block' }}>
+                                                Select country and enter your phone number
+                                            </Typography>
+                                        )}
+                                    </Box>
+                                )}
+                            />
+                        </Box>
                     </Grid>
                 </Grid>
 
                 <Box sx={{ mt: 3 }}>
-                    <SaveButton 
+                    <SaveButton
                         type="submit"
                         disabled={loading || !isDirty}
                         startIcon={loading ? <CircularProgress size={20} /> : null}
