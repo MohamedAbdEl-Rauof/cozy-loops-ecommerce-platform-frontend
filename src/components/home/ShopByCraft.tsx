@@ -52,7 +52,11 @@ const craftCategories = [
     },
 ];
 
-const ShopByCraft = () => {
+interface ShopByCraftProps {
+    craftCategories: typeof craftCategories;
+}
+
+const ShopByCraft = ({craftCategories}:ShopByCraftProps) => {
     const theme = useTheme();
     const router = useRouter();
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
