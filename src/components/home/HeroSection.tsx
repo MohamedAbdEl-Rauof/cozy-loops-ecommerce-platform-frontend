@@ -290,7 +290,7 @@ const HeroSection: React.FC = () => {
             >
               <MuiLink
                 component={Link}
-                href="/collection"
+                href="/categories"
                 sx={{
                   display: 'inline-flex',
                   alignItems: 'center',

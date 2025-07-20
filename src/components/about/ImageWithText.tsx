@@ -1,10 +1,11 @@
 'use client';
 
-import { Box, Typography, Fade, Slide, Button } from '@mui/material';
+import { Box, Typography, Fade, Slide, Button, useTheme, useMediaQuery } from '@mui/material';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 
-interface ImageWithTextProps {
+interface ImageWithTextData {
     title: string;
     description: string;
     imageSrc: string;
@@ -27,48 +28,82 @@ interface ImageWithTextProps {
     buttonText?: string;
     buttonLink?: string;
     onButtonClick?: () => void;
+    priority?: boolean;
+    className?: string;
+}
+
+interface ImageWithTextProps {
+    dataContent: ImageWithTextData;
 }
 
 const ImageWithText = ({
-    title,
-    description,
-    imageSrc,
-    imageAlt,
-    flipContent,
-    imageWidth,
-    imageHeight,
-    buttonText,
-    buttonLink,
-    onButtonClick
+    dataContent
 }: ImageWithTextProps) => {
+    const { title, description, imageSrc, imageAlt, flipContent, imageWidth, imageHeight, buttonText, buttonLink, onButtonClick, } = dataContent
     const [isVisible, setIsVisible] = useState(false);
+    const [imageLoaded, setImageLoaded] = useState(false);
+    const [isInView, setIsInView] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const router = useRouter();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-    const defaultWidth = { xs: '100%', sm: '90%', md: '100%' };
+    const defaultWidth = {
+        xs: '100%',
+        sm: '90%',
+        md: '80%',
+        lg: '75%',
+        xl: '70%'
+    };
+
     const defaultHeight = {
-        xs: '250px',
-        sm: '350px',
-        md: '450px',
-        lg: '500px',
-        xl: '600px'
+        xs: '200px',
+        sm: '240px',
+        md: '280px',
+        lg: '320px',
+        xl: '360px'
     };
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            setIsVisible(true);
-        }, 300);
-        return () => clearTimeout(timer);
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setIsInView(true);
+                    setIsVisible(true);
+                }
+            },
+            {
+                threshold: 0.1,
+                rootMargin: '50px 0px -50px 0px'
+            }
+        );
+
+        if (containerRef.current) {
+            observer.observe(containerRef.current);
+        }
+
+        return () => {
+            if (containerRef.current) {
+                observer.unobserve(containerRef.current);
+            }
+        };
     }, []);
 
     const handleButtonClick = () => {
         if (onButtonClick) {
             onButtonClick();
         } else if (buttonLink) {
-            window.location.href = buttonLink;
+            router.push(buttonLink);
         }
+    };
+
+    const handleImageLoad = () => {
+        setImageLoaded(true);
     };
 
     return (
         <Box
+            ref={containerRef}
             sx={{
                 display: 'flex',
                 flexDirection: {
@@ -77,28 +112,70 @@ const ImageWithText = ({
                     md: flipContent ? 'row' : 'row-reverse'
                 },
                 alignItems: 'center',
-                gap: { xs: 3, sm: 4, md: 12 },
-                mx: 'auto'
+                justifyContent: 'center',
+                gap: {
+                    xs: 3,
+                    sm: 4,
+                    md: 6,
+                    lg: 8,
+                    xl: 10
+                },
+                mx: 'auto',
+                maxWidth: {
+                    xs: '100%',
+                    sm: '600px',
+                    md: '100%',
+                    lg: '1200px',
+                    xl: '1400px'
+                },
+                px: { xs: 2, sm: 3, md: 4 },
+                py: { xs: 3, sm: 4, md: 6 },
+                opacity: isVisible ? 1 : 0,
+                transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
+                transition: 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
             }}
         >
-            {/* Image Section */}
             <Slide
-                direction={flipContent ? "right" : "left"}
+                direction={isMobile ? "up" : (flipContent ? "left" : "right")}
                 in={isVisible}
-                timeout={1200}
+                timeout={1000}
+                style={{ transitionDelay: '200ms' }}
             >
                 <Box
                     sx={{
-                        flex: { xs: 'none', md: 1.5 },
+                        flex: { xs: 'none', md: 0.8 },
                         position: 'relative',
                         width: imageWidth || defaultWidth,
                         height: imageHeight || defaultHeight,
-                        borderRadius: { xs: '15px', sm: '18px', md: '20px' },
+                        maxWidth: {
+                            xs: '320px',
+                            sm: '380px',
+                            md: '420px',
+                            lg: '480px',
+                            xl: '520px'
+                        },
+                        borderRadius: {
+                            xs: '16px',
+                            sm: '20px',
+                            md: '24px',
+                            lg: '28px'
+                        },
                         overflow: 'hidden',
-                        transition: 'all 0.3s ease',
+                        transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                         mx: { xs: 'auto', md: 0 },
                         '&:hover': {
-                            transform: { xs: 'none', md: 'translateY(-8px)' },
+                            transform: {
+                                xs: 'scale(1.02)',
+                                md: 'translateY(-8px) scale(1.02)'
+                            }
+                        },
+                        '&::before': {
+                            content: '""',
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
                         }
                     }}
                 >
@@ -106,44 +183,72 @@ const ImageWithText = ({
                         src={imageSrc}
                         alt={imageAlt}
                         fill
+                        priority={false}
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         style={{
                             objectFit: 'cover',
                             objectPosition: 'center',
+                            transition: 'all 0.4s ease',
+                            opacity: imageLoaded ? 1 : 0,
                         }}
+                        onLoad={handleImageLoad}
                     />
                 </Box>
             </Slide>
 
-            {/* Text Content Section */}
-            <Fade in={isVisible} timeout={1000}>
+            <Fade
+                in={isVisible}
+                timeout={1200}
+                style={{ transitionDelay: '400ms' }}
+            >
                 <Box
                     sx={{
                         flex: { xs: 'none', md: 1 },
                         width: { xs: '100%', md: 'auto' },
-                        textAlign: { xs: 'center', sm: 'center', md: 'left' },
-                        pl: { md: flipContent ? 2 : 0 },
-                        pr: { md: flipContent ? 0 : 2 },
-                        px: { xs: 1, sm: 2, md: 0 }
+                        textAlign: {
+                            xs: 'center',
+                            sm: 'center',
+                            md: flipContent ? 'right' : 'left'
+                        },
+                        pl: {
+                            md: flipContent ? 0 : 2,
+                            lg: flipContent ? 0 : 3
+                        },
+                        pr: {
+                            md: flipContent ? 2 : 0,
+                            lg: flipContent ? 3 : 0
+                        },
+                        px: { xs: 1, sm: 2, md: 0 },
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        height: '100%'
                     }}
                 >
                     <Typography
                         variant="h1"
                         component="h1"
                         sx={{
-                            fontWeight: 900,
-                            mb: { xs: 2, sm: 2.5, md: 3 },
+                            fontWeight: { xs: 800, md: 900 },
+                            mb: { xs: 2, sm: 2.5, md: 3, lg: 4 },
                             fontSize: {
-                                xs: '1.5rem',
-                                sm: '2rem',
-                                md: '2.5rem',
-                                lg: '5rem'
+                                xs: '1.75rem',
+                                sm: '2.25rem',
+                                md: '2.75rem',
+                                lg: '3.5rem',
+                                xl: '4rem'
                             },
-                            color: 'text.primary',
-                            animation: 'fadeInUp 1s ease-out',
+                            lineHeight: { xs: 1.2, sm: 1.3, md: 1.2 },
+                            color: 'var(--text-primary)',
+                            background: 'linear-gradient(135deg, var(--text-primary), var(--primary-color))',
+                            backgroundClip: 'text',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            animation: isInView ? 'fadeInUp 1s ease-out' : 'none',
                             '@keyframes fadeInUp': {
                                 '0%': {
                                     opacity: 0,
-                                    transform: 'translateY(30px)'
+                                    transform: 'translateY(40px)'
                                 },
                                 '100%': {
                                     opacity: 1,
@@ -154,23 +259,28 @@ const ImageWithText = ({
                     >
                         {title}
                     </Typography>
+
                     <Typography
                         variant="body1"
                         sx={{
                             fontSize: {
-                                xs: '0.9rem',
-                                sm: '1rem',
-                                md: '1.2rem',
-                                lg: '1.4rem'
+                                xs: '1rem',
+                                sm: '1.125rem',
+                                md: '1.25rem',
+                                lg: '1.375rem',
+                                xl: '1.5rem'
                             },
                             lineHeight: { xs: 1.6, sm: 1.7, md: 1.8 },
-                            color: '#000000',
-                            mb: buttonText ? { xs: 3, sm: 3.5, md: 4 } : 0,
-                            animation: 'fadeInUp 1s ease-out 0.3s both',
+                            color: 'var(--text-secondary)',
+                            mb: buttonText ? { xs: 3, sm: 3.5, md: 4, lg: 5 } : 0,
+                            maxWidth: { xs: '100%', md: '90%', lg: '85%' },
+                            mx: { xs: 'auto', md: flipContent ? 'auto' : 0 },
+                            ml: { md: flipContent ? 'auto' : 0 },
+                            animation: isInView ? 'fadeInUp 1s ease-out 0.2s both' : 'none',
                             '@keyframes fadeInUp': {
                                 '0%': {
                                     opacity: 0,
-                                    transform: 'translateY(30px)'
+                                    transform: 'translateY(40px)'
                                 },
                                 '100%': {
                                     opacity: 1,
@@ -185,11 +295,16 @@ const ImageWithText = ({
                     {buttonText && (
                         <Box
                             sx={{
-                                animation: 'fadeInUp 1s ease-out 0.6s both',
+                                animation: isInView ? 'fadeInUp 1s ease-out 0.4s both' : 'none',
+                                display: 'flex',
+                                justifyContent: {
+                                    xs: 'center',
+                                    md: flipContent ? 'flex-end' : 'flex-start'
+                                },
                                 '@keyframes fadeInUp': {
                                     '0%': {
                                         opacity: 0,
-                                        transform: 'translateY(30px)'
+                                        transform: 'translateY(40px)'
                                     },
                                     '100%': {
                                         opacity: 1,
@@ -204,24 +319,50 @@ const ImageWithText = ({
                                 sx={{
                                     backgroundColor: 'var(--primary-color)',
                                     color: 'white',
-                                    px: { xs: 3, sm: 4, md: 5 },
-                                    py: { xs: 1.5, sm: 2 },
+                                    px: { xs: 4, sm: 5, md: 6, lg: 7 },
+                                    py: { xs: 1.5, sm: 2, md: 2.5 },
                                     fontSize: {
                                         xs: '0.875rem',
                                         sm: '1rem',
-                                        md: '1.125rem'
+                                        md: '1.125rem',
+                                        lg: '1.25rem'
                                     },
                                     fontWeight: 600,
-                                    borderRadius: '9999px !important',
+                                    borderRadius: '50px !important',
                                     textTransform: 'none',
-                                    transition: 'all 0.3s ease',
+                                    minWidth: { xs: '140px', sm: '160px', md: '180px' },
+                                    transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                                    position: 'relative',
+                                    overflow: 'hidden',
+                                    boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+                                    '&::before': {
+                                        content: '""',
+                                        position: 'absolute',
+                                        top: 0,
+                                        left: '-100%',
+                                        width: '100%',
+                                        height: '100%',
+                                        background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+                                        transition: 'left 0.5s ease',
+                                    },
                                     '&:hover': {
                                         backgroundColor: 'var(--primary-hover)',
-                                        transform: 'translateY(-2px)',
-                                        boxShadow: '0 8px 25px rgba(0,0,0,0.15)',
+                                        transform: 'translateY(-3px)',
+                                        boxShadow: '0 8px 30px rgba(0,0,0,0.2)',
+                                        '&::before': {
+                                            left: '100%',
+                                        }
                                     },
                                     '&:active': {
-                                        transform: 'translateY(0)',
+                                        transform: 'translateY(-1px)',
+                                        boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+                                    },
+                                    // Responsive touch targets
+                                    '@media (hover: none)': {
+                                        '&:hover': {
+                                            transform: 'none',
+                                            backgroundColor: 'var(--primary-color)',
+                                        }
                                     }
                                 }}
                             >

@@ -1,6 +1,5 @@
 
 import apiClient from '@/lib/apiClient';
-import apiWithAuth from '@/lib/apiWithAuth';
 
 interface LoginResponse {
   accessToken: string;
@@ -121,16 +120,6 @@ export const resendVerificationEmail = async (email: string): Promise<{ message:
     return response.data;
   } catch (error) {
     console.error('Error resending verification email:', error);
-    throw error;
-  }
-};
-
-export const getUser = async () => {
-  try {
-    const response = await apiWithAuth.get('/api/users/me');
-    return response.data.user;
-  } catch (error) {
-    console.error('Error getting user:', error);
     throw error;
   }
 };

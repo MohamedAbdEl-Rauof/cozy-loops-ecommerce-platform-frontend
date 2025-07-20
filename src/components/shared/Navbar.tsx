@@ -383,7 +383,14 @@ const Navbar = ({
                             }
                         }}
                     >
-                        <MenuItem onClick={handleUserMenuClose}>Profile</MenuItem>
+                        <MenuItem
+                            onClick={() => {
+                                handleUserMenuClose();
+                                router.push("/account");
+                            }}
+                        >
+                            Profile
+                        </MenuItem>
                         <MenuItem onClick={handleUserMenuClose}>My Orders</MenuItem>
                         <MenuItem onClick={handleUserMenuClose}>Settings</MenuItem>
                         <MenuItem
