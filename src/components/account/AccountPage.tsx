@@ -23,6 +23,7 @@ import { styled } from '@mui/material/styles';
 import ProfileSection from './ProfileSection';
 import AddressSection from './AddressSection';
 import PaymentSection from './PaymentSection';
+import {useAuth} from "@/context/AuthContext";
 
 const AccountContainer = styled(Container)(({ theme }) => ({
     paddingTop: '40px',
@@ -63,7 +64,7 @@ const NavItem = styled(ListItem)<{ active?: boolean }>(({ theme, active }) => ({
 
 const AccountPage: React.FC = () => {
     const [activeSection, setActiveSection] = useState('profile');
-
+    const {logout} = useAuth();
     const menuItems = [
         { id: 'profile', label: 'Profile', icon: Person },
         { id: 'addresses', label: 'Addresses', icon: LocationOn },
@@ -72,11 +73,6 @@ const AccountPage: React.FC = () => {
 
     const handleNavigation = (path: string) => {
         window.location.href = path;
-    };
-
-    const handleLogout = () => {
-        // Add logout logic here
-        console.log('Logging out...');
     };
 
     const renderContent = () => {
@@ -132,7 +128,7 @@ const AccountPage: React.FC = () => {
                                     <ListItemText primary="Cart" />
                                 </NavItem>
 
-                                <NavItem onClick={handleLogout} sx={{ mt: 2, color: '#f44336' }}>
+                                <NavItem onClick={logout} sx={{ mt: 2, color: '#f44336' }}>
                                     <ListItemIcon sx={{ color: '#f44336 !important' }}>
                                         <ExitToApp />
                                     </ListItemIcon>
