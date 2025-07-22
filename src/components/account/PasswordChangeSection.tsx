@@ -37,7 +37,7 @@ const passwordSchema = z.object({
 
 type PasswordFormData = z.infer<typeof passwordSchema>;
 
-const SaveButton = styled(Button)(({ theme }) => ({
+const SaveButton = styled(Button)(() => ({
     backgroundColor: '#FF7043',
     color: 'white',
     padding: '12px 30px',
@@ -49,7 +49,7 @@ const SaveButton = styled(Button)(({ theme }) => ({
     },
 }));
 
-const SectionBox = styled(Box)(({ theme }) => ({
+const SectionBox = styled(Box)(() => ({
     backgroundColor: '#f9f9f9',
     padding: '24px',
     borderRadius: '12px',
@@ -250,7 +250,6 @@ const PasswordChangeSection: React.FC<PasswordChangeSectionProps> = ({ onSuccess
                                 )}
                             />
 
-                            {/* Password Requirements Collapse */}
                             <Collapse in={hasStartedTypingPassword} timeout={600}>
                                 <Box sx={{
                                     mt: 2,
@@ -306,7 +305,6 @@ const PasswordChangeSection: React.FC<PasswordChangeSectionProps> = ({ onSuccess
                                 )}
                             />
 
-                            {/* Password Mismatch Indicator */}
                             <Collapse in={passwordsDoNotMatch} timeout={600}>
                                 <Box sx={{
                                     mt: 1,

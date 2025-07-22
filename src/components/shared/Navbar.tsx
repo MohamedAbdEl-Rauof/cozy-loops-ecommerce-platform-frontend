@@ -38,6 +38,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/context/AuthContext"
+import { useCart } from "@/hooks/useCart"
 
 const NavbarContainer = styled(Box)(() => ({
     backgroundColor: "var(--foreground)",
@@ -55,6 +56,7 @@ const Navbar = ({
     const isAuthPage = pathname?.startsWith("/auth");
     const router = useRouter();
     const { user, logout } = useAuth();
+    const { data: cart, isLoading: cartLoading } = useCart();
 
     if (isAuthPage) return null
 
@@ -261,7 +263,7 @@ const Navbar = ({
                                 }}
                             />
                             <Badge
-                                badgeContent={3}
+                                badgeContent={cartLoading ? 0 : cart?.totalItems || 0}
                                 color="error"
                                 sx={{
                                     '& .MuiBadge-badge': {
@@ -358,7 +360,8 @@ const Navbar = ({
                                 </Badge>
                             </IconButton>
                             <IconButton sx={{ color: "var(--text-primary)" }}>
-                                <Badge badgeContent={3} color="error">
+                                <Badge badgeContent={cartLoading ? 0 : cart?.totalItems || 0}
+                                    color="error">
                                     <StorefrontIcon />
                                 </Badge>
                             </IconButton>

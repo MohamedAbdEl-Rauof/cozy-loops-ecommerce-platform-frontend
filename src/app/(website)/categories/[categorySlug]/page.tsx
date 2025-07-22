@@ -191,7 +191,6 @@ export default function CategoryPage() {
                                 slug: product.slug,
                             })) || []
                         }}
-                        onAddToCart={() => { }}
                     />
                 </Box>
 

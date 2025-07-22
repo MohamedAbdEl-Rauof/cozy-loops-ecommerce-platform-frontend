@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useState } from 'react';
 
-export default function RootLayout({
+export default function QueryProvider({
   children,
 }: {
   children: React.ReactNode;
@@ -12,20 +12,20 @@ export default function RootLayout({
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 60 * 1000, 
+        staleTime: 5 * 60 * 1000, // 5 minutes
         refetchOnWindowFocus: false,
+        retry: 1,
+      },
+      mutations: {
+        retry: 1,
       },
     },
   }));
 
   return (
-    <html lang="en">
-      <body>
-        <QueryClientProvider client={queryClient}>
-          {children}
-          <ReactQueryDevtools initialIsOpen={false} />
-        </QueryClientProvider>
-      </body>
-    </html>
+    <QueryClientProvider client={queryClient}>
+      {children}
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 }

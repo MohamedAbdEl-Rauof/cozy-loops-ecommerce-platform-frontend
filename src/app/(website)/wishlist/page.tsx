@@ -1,5 +1,6 @@
 "use client";
 import WishlistCard from "@/components/wishlist/WishlistCard"
+import ProtectedRoute from "@/provider/ProtectedRoute";
 import { Box } from "@mui/material"
 
 const mockWishlistItems = [
@@ -66,16 +67,19 @@ const Page = () => {
     };
 
     return (
-        <Box sx={{ bgcolor: 'white' }}>
-            <WishlistCard
-                items={mockWishlistItems}
-                onDeleteItem={handleDeleteItem}
-                onAddToCart={handleAddToCart}
-                onViewProduct={handleViewProduct}
-                onMoveAllToCart={handleMoveAllToCart}
-                onStartShopping={handleStartShopping}
-            />
-        </Box>
+        <ProtectedRoute>
+            <Box sx={{ bgcolor: 'white' }}>
+                <WishlistCard
+                    items={mockWishlistItems}
+                    onDeleteItem={handleDeleteItem}
+                    onAddToCart={handleAddToCart}
+                    onViewProduct={handleViewProduct}
+                    onMoveAllToCart={handleMoveAllToCart}
+                    onStartShopping={handleStartShopping}
+                />
+            </Box>
+        </ProtectedRoute>
+
     )
 }
 export default Page

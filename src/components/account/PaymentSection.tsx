@@ -24,7 +24,7 @@ import {
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 
-const PaymentCard = styled(Card)(({ theme }) => ({
+const PaymentCard = styled(Card)(() => ({
     marginBottom: '16px',
     border: '2px solid transparent',
     transition: 'all 0.2s ease',
@@ -34,13 +34,13 @@ const PaymentCard = styled(Card)(({ theme }) => ({
     },
 }));
 
-const DefaultChip = styled(Chip)(({ theme }) => ({
+const DefaultChip = styled(Chip)(() => ({
     backgroundColor: '#FF7043',
     color: 'white',
     fontWeight: 600,
 }));
 
-const SaveButton = styled(Button)(({ theme }) => ({
+const SaveButton = styled(Button)(() => ({
     backgroundColor: '#FF7043',
     color: 'white',
     padding: '12px 30px',
@@ -49,7 +49,7 @@ const SaveButton = styled(Button)(({ theme }) => ({
     },
 }));
 
-const CardIcon = styled(Box)(({ theme }) => ({
+const CardIcon = styled(Box)(() => ({
     width: 40,
     height: 25,
     borderRadius: '4px',
@@ -82,7 +82,7 @@ const PaymentSection: React.FC = () => {
         },
         {
             id: '2',
-            type: 'mastercard',
+            type: 'amex',
             cardNumber: '**** **** **** 5678',
             expiryDate: '08/26',
             cardholderName: 'John Doe',
@@ -178,7 +178,6 @@ const PaymentSection: React.FC = () => {
         const cardType = getCardType(formData.cardNumber);
 
         if (editingCard) {
-            // Update existing card
             setPaymentMethods(prev => prev.map(card =>
                 card.id === editingCard.id
                     ? {
@@ -191,7 +190,6 @@ const PaymentSection: React.FC = () => {
                     : card
             ));
         } else {
-            // Add new card
             const newCard: PaymentMethod = {
                 id: Date.now().toString(),
                 type: cardType,
@@ -258,7 +256,6 @@ const PaymentSection: React.FC = () => {
                 </Alert>
             )}
 
-            {/* Payment Form */}
             {showForm && (
                 <Card sx={{ mb: 4, border: '2px solid #FF7043' }}>
                     <CardContent sx={{ p: 3 }}>
@@ -357,7 +354,6 @@ const PaymentSection: React.FC = () => {
                 </Card>
             )}
 
-            {/* Payment Methods List */}
             <Grid container spacing={3}>
                 {paymentMethods.map((card) => (
                     <Grid size={{ xs: 12, md: 6 }} key={card.id}>

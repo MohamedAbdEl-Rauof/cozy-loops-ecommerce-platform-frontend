@@ -141,7 +141,7 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ onSuccess, on
             formData.append('lastName', data.lastName);
             formData.append('phoneNumber', data.phone);
 
-            const response = await UpdateProfile(formData);
+           await UpdateProfile(formData);
 
             reset(data);
             onSuccess('Profile updated successfully!');

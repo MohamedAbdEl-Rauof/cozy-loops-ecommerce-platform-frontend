@@ -1,3 +1,4 @@
+
 'use client';
 
 import ImageWithText from "@/components/about/ImageWithText";
@@ -6,43 +7,13 @@ import MainAboutSection from "@/components/shared/MainAboutSection";
 import StoryFeature from "@/components/shared/StoryFeature";
 import FeaturedCategories from "@/components/shared/FeaturedCategories";
 import { Box, Container } from "@mui/material";
-
-const FeatureCardsSectionData = {
-    sectionTitle: "Why Choose Cozy Loops?",
-    sectionDescription: "Browse pieces picked to match your style and story",
-    cards: [
-        {
-            imageUrl: "/images/shared/hand-made.png",
-            title: "100% Handmade with Heart",
-            description: "",
-        },
-        {
-            imageUrl: "/images/shared/secure-shield.png",
-            title: "Ethically Sourced & Fair to Makers",
-            description: "",
-        },
-        {
-            imageUrl: "/images/shared/gift.png",
-            title: "Customizable & Personal Gifts",
-            description: "",
-        },
-        {
-            imageUrl: "/images/shared/working-woman.png",
-            title: "Community-Driven and Woman-Led",
-            description: "",
-        }
-    ]
-};
-
-const featuredCategories = {
-    title: "Have a Question or Want to Collaborate?",
-    isTitleCenter: false,
-    image: "/images/shared/featuredCategory.jpg",
-    description: "We love hearing from our community.",
-    ctaText: "",
-    buttonText: "Contact Us",
-    buttonLink: "Contact Us",
-}
+import {
+    featureCardsSectionData,
+    missionData,
+    madeInEgyptData,
+    storyFeatureData,
+    featuredCategoriesData
+} from "@/data/pages/about";
 
 export default function About() {
     return (
@@ -66,57 +37,36 @@ export default function About() {
                 </Box>
 
                 <Box sx={{ mb: { xs: 8, sm: 10, md: 12, lg: 16 } }}>
-                    <ImageWithText
-                        dataContent={{
-                            title: "Our Mission",
-                            description: "To celebrate the art of handmade creation by supporting independent makers and bringing soulful, meaningful products into everyday life.",
-                            imageSrc: "/images/shared/ImageWithText1.png",
-                            imageAlt: "Our Mission",
-                            flipContent: true,
-                            imageWidth: { xs: '100%', sm: '80%', md: '90%', lg: '100%' },
-                            imageHeight: { xs: '400px', sm: '700px', md: '1000px', lg: '1100px' }
-                        }}
-                    />
+                    <ImageWithText dataContent={missionData} />
                 </Box>
 
                 <Box sx={{ mb: { xs: 8, sm: 10, md: 12, lg: 16 } }}>
-                    <ImageWithText
-                        dataContent={{
-                            title: "Made in Egypt (and Beyond)",
-                            description: "Every Cozy Loops piece is handmade with care and cultural roots—supporting a vibrant community of local makers and storytellers with every purchase.",
-                            imageSrc: "/images/shared/ImageWithText2.png",
-                            imageAlt: "Made in Egypt",
-                            flipContent: true,
-                            imageWidth: { xs: '100%', sm: '80%', md: '65%', lg: '70%' },
-                            imageHeight: { xs: '350px', sm: '380px', md: '500px', lg: '700px' }
-                        }}
-                    />
+                    <ImageWithText dataContent={madeInEgyptData} />
                 </Box>
 
                 <Box sx={{ mb: { xs: 8, sm: 10, md: 12, lg: 16 } }}>
                     <StoryFeature
-                        title="Meet the Makers"
-                        description="We proudly work with independent artisans—many of them women, small business owners, and traditional crafters—who pour their love into every piece they create."
-                        buttonText="Explore Artisan Stories"
-                        imageSrc="/images/shared/storyFeatureAbout.png"
-                        imageAlt="Meet the Makers"
-                        onButtonClick="/"
-                        badge="Meet Maker"
+                        title={storyFeatureData.title}
+                        description={storyFeatureData.description}
+                        buttonText={storyFeatureData.buttonText}
+                        imageSrc={storyFeatureData.imageSrc}
+                        imageAlt={storyFeatureData.imageAlt}
+                        onButtonClick={storyFeatureData.onButtonClick}
+                        badge={storyFeatureData.badge}
                     />
                 </Box>
 
                 <Box sx={{ mb: { xs: 8, sm: 10, md: 12, lg: 16 } }}>
                     <FeatureCardsSection
-                        sectionTitle={FeatureCardsSectionData.sectionTitle}
-                        sectionDescription={FeatureCardsSectionData.sectionDescription}
-                        cards={FeatureCardsSectionData.cards}
+                        sectionTitle={featureCardsSectionData.sectionTitle}
+                        sectionDescription={featureCardsSectionData.sectionDescription}
+                        cards={featureCardsSectionData.cards}
                     />
                 </Box>
 
                 <Box sx={{ pb: { xs: 6, sm: 8, md: 10, lg: 12 } }}>
-                    <FeaturedCategories featuredCategories={featuredCategories} />
+                    <FeaturedCategories featuredCategories={featuredCategoriesData} />
                 </Box>
-
             </Container>
         </Box>
     );

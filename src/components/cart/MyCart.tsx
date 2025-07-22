@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react';
+import React from 'react';
 import {
     Box,
     Container,
@@ -10,14 +10,11 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    Paper,
     IconButton,
     Button,
     Card,
     CardContent,
     Divider,
-    useTheme,
-    useMediaQuery,
     Avatar
 } from '@mui/material';
 import {
@@ -27,9 +24,9 @@ import {
     ShoppingCart as ShoppingCartIcon
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
+import {TransformedCartItem } from '@/types/cart';
 
-// Styled Components
-const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
+const StyledTableContainer = styled(TableContainer)(() => ({
     borderRadius: '16px',
     overflow: 'hidden',
     boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
@@ -38,7 +35,7 @@ const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
     backdropFilter: 'blur(10px)',
 }));
 
-const StyledTableHead = styled(TableHead)(({ theme }) => ({
+const StyledTableHead = styled(TableHead)(() => ({
     background: 'linear-gradient(135deg, #ff7043 0%, #ff5722 100%)',
     '& .MuiTableCell-head': {
         color: 'white',
@@ -49,7 +46,7 @@ const StyledTableHead = styled(TableHead)(({ theme }) => ({
     }
 }));
 
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
+const StyledTableRow = styled(TableRow)(() => ({
     '&:nth-of-type(odd)': {
         backgroundColor: 'rgba(255, 112, 67, 0.02)',
     },
@@ -64,7 +61,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     }
 }));
 
-const QuantityBox = styled(Box)(({ theme }) => ({
+const QuantityBox = styled(Box)(() => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -76,7 +73,7 @@ const QuantityBox = styled(Box)(({ theme }) => ({
     minWidth: '120px',
 }));
 
-const QuantityButton = styled(IconButton)(({ theme }) => ({
+const QuantityButton = styled(IconButton)(() => ({
     width: '32px',
     height: '32px',
     backgroundColor: '#ff7043',
@@ -92,7 +89,7 @@ const QuantityButton = styled(IconButton)(({ theme }) => ({
     transition: 'all 0.2s ease',
 }));
 
-const CartTotalCard = styled(Card)(({ theme }) => ({
+const CartTotalCard = styled(Card)(() => ({
     borderRadius: '16px',
     background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%)',
     backdropFilter: 'blur(20px)',
@@ -100,7 +97,7 @@ const CartTotalCard = styled(Card)(({ theme }) => ({
     boxShadow: '0 8px 32px rgba(255, 112, 67, 0.15)',
 }));
 
-const CheckoutButton = styled(Button)(({ theme }) => ({
+const CheckoutButton = styled(Button)(() => ({
     borderRadius: '25px',
     padding: '16px 32px',
     fontWeight: 700,
@@ -117,19 +114,10 @@ const CheckoutButton = styled(Button)(({ theme }) => ({
     }
 }));
 
-// Interfaces
-interface CartItem {
-    id: number;
-    name: string;
-    price: number;
-    quantity: number;
-    image: string;
-}
-
 interface MyCartProps {
-    items?: CartItem[];
-    onUpdateQuantity?: (itemId: number, newQuantity: number) => void;
-    onRemoveItem?: (itemId: number) => void;
+    items?: TransformedCartItem[];
+    onUpdateQuantity?: (itemId: string, newQuantity: number) => void; 
+    onRemoveItem?: (itemId: string) => void; 
     onProceedToCheckout?: () => void;
     shippingCost?: number;
 }
@@ -141,36 +129,22 @@ const MyCart: React.FC<MyCartProps> = ({
     onProceedToCheckout,
     shippingCost = 0
 }) => {
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-    
-    const [cartItems, setCartItems] = useState<CartItem[]>(items);
-
-    // Calculate totals
+    const cartItems = items;
     const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const total = subtotal + shippingCost;
 
-    // Handle quantity changes
-    const handleQuantityChange = (itemId: number, change: number) => {
-        setCartItems(prevItems => 
-            prevItems.map(item => {
-                if (item.id === itemId) {
-                    const newQuantity = Math.max(1, item.quantity + change);
-                    onUpdateQuantity?.(itemId, newQuantity);
-                    return { ...item, quantity: newQuantity };
-                }
-                return item;
-            })
-        );
+    const handleQuantityChange = (itemId: string, change: number) => {
+        const currentItem = cartItems.find(item => item.id === itemId);
+        if (currentItem) {
+            const newQuantity = Math.max(1, currentItem.quantity + change);
+            onUpdateQuantity?.(itemId, newQuantity);
+        }
     };
 
-    // Handle item removal
-    const handleRemoveItem = (itemId: number) => {
-        setCartItems(prevItems => prevItems.filter(item => item.id !== itemId));
+    const handleRemoveItem = (itemId: string) => {
         onRemoveItem?.(itemId);
     };
 
-    // Handle checkout
     const handleProceedToCheckout = () => {
         onProceedToCheckout?.();
     };
@@ -222,8 +196,7 @@ const MyCart: React.FC<MyCartProps> = ({
     }
 
     return (
-        <Container maxWidth="lg" sx={{ py: 4 }}>
-            {/* Header */}
+        <Container maxWidth={false}   sx={{ py: 4 , maxWidth: '1350px'  }}>
             <Typography
                 variant="h3"
                 component="h1"
@@ -241,9 +214,8 @@ const MyCart: React.FC<MyCartProps> = ({
             </Typography>
 
             <Box sx={{ display: 'flex', gap: 4, flexDirection: { xs: 'column', lg: 'row' } }}>
-                {/* Cart Items Table */}
                 <Box sx={{ flex: 1 }}>
-                    <StyledTableContainer component={Paper}>
+                    <StyledTableContainer >
                         <Table>
                             <StyledTableHead>
                                 <TableRow>
@@ -257,7 +229,6 @@ const MyCart: React.FC<MyCartProps> = ({
                             <TableBody>
                                 {cartItems.map((item) => (
                                     <StyledTableRow key={item.id}>
-                                        {/* Product */}
                                         <TableCell>
                                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                                                 <Avatar
@@ -283,7 +254,6 @@ const MyCart: React.FC<MyCartProps> = ({
                                             </Box>
                                         </TableCell>
 
-                                        {/* Price */}
                                         <TableCell align="center">
                                             <Typography
                                                 variant="h6"
@@ -296,7 +266,6 @@ const MyCart: React.FC<MyCartProps> = ({
                                             </Typography>
                                         </TableCell>
 
-                                        {/* Quantity */}
                                         <TableCell align="center">
                                             <QuantityBox>
                                                 <QuantityButton
@@ -328,7 +297,6 @@ const MyCart: React.FC<MyCartProps> = ({
                                             </QuantityBox>
                                         </TableCell>
 
-                                        {/* Subtotal */}
                                         <TableCell align="center">
                                             <Typography
                                                 variant="h6"
@@ -342,7 +310,6 @@ const MyCart: React.FC<MyCartProps> = ({
                                             </Typography>
                                         </TableCell>
 
-                                        {/* Action */}
                                         <TableCell align="center">
                                             <IconButton
                                                 onClick={() => handleRemoveItem(item.id)}
@@ -366,7 +333,6 @@ const MyCart: React.FC<MyCartProps> = ({
                     </StyledTableContainer>
                 </Box>
 
-                {/* Cart Totals */}
                 <Box sx={{ width: { xs: '100%', lg: '400px' } }}>
                     <CartTotalCard>
                         <CardContent sx={{ p: 3 }}>
@@ -383,7 +349,6 @@ const MyCart: React.FC<MyCartProps> = ({
                             </Typography>
 
                             <Box sx={{ mb: 3 }}>
-                                {/* Subtotal */}
                                 <Box
                                     sx={{
                                         display: 'flex',
@@ -415,7 +380,6 @@ const MyCart: React.FC<MyCartProps> = ({
 
                                 <Divider sx={{ my: 2, backgroundColor: 'rgba(255, 112, 67, 0.2)' }} />
 
-                                {/* Shipping */}
                                 <Box
                                     sx={{
                                         display: 'flex',
@@ -447,7 +411,6 @@ const MyCart: React.FC<MyCartProps> = ({
 
                                 <Divider sx={{ my: 2, backgroundColor: 'rgba(255, 112, 67, 0.2)' }} />
 
-                                {/* Total */}
                                 <Box
                                     sx={{
                                         display: 'flex',
@@ -481,7 +444,6 @@ const MyCart: React.FC<MyCartProps> = ({
                                 </Box>
                             </Box>
 
-                            {/* Checkout Button */}
                             <CheckoutButton
                                 fullWidth
                                 onClick={handleProceedToCheckout}

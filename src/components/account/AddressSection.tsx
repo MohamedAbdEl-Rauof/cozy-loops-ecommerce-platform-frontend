@@ -22,7 +22,7 @@ import {
 } from '@/services/addressService';
 import { Address } from '@/types/address';
 
-const AddressCard = styled(Card)(({ theme }) => ({
+const AddressCard = styled(Card)(() => ({
   marginBottom: '16px',
   border: '2px solid transparent',
   transition: 'all 0.2s ease',
@@ -32,13 +32,13 @@ const AddressCard = styled(Card)(({ theme }) => ({
   },
 }));
 
-const DefaultChip = styled(Chip)(({ theme }) => ({
+const DefaultChip = styled(Chip)(() => ({
   backgroundColor: '#FF7043',
   color: 'white',
   fontWeight: 600,
 }));
 
-const SaveButton = styled(Button)(({ theme }) => ({
+const SaveButton = styled(Button)(() => ({
   backgroundColor: '#FF7043',
   color: 'white',
   padding: '12px 30px',

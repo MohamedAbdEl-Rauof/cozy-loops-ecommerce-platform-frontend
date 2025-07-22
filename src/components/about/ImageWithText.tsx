@@ -150,9 +150,9 @@ const ImageWithText = ({
                         maxWidth: {
                             xs: '320px',
                             sm: '380px',
-                            md: '420px',
-                            lg: '480px',
-                            xl: '520px'
+                            md: '520px',
+                            lg: '580px',
+                            xl: '640px'
                         },
                         borderRadius: {
                             xs: '16px',
@@ -357,7 +357,6 @@ const ImageWithText = ({
                                         transform: 'translateY(-1px)',
                                         boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
                                     },
-                                    // Responsive touch targets
                                     '@media (hover: none)': {
                                         '&:hover': {
                                             transform: 'none',
