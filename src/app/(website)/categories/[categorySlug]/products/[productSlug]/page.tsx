@@ -13,6 +13,7 @@ import Comments from "@/components/product-details/Comments";
 import { useMakersBySlug } from "@/hooks/useMakers";
 import ExisitingComments from '@/components/about/ExisitingComments';
 import { useProductsTestimonialsBySlug } from '@/hooks/useTestimonials';
+import { useAddToWishlist, useRemoveFromWishlist, useWishlist } from '@/hooks/useWishlist';
 
 
 const FeatureCardsSectionData = {
@@ -187,6 +188,9 @@ const transformColors = (colors: string[] = []): ProductColor[] => {
 
 const ProductPage = () => {
   const params = useParams();
+  const { isInWishlist } = useWishlist();
+  const { addToWishlist } = useAddToWishlist();
+  const { removeFromWishlist } = useRemoveFromWishlist();
 
   const categorySlug = params.categorySlug as string;
   const productSlug = params.productSlug as string;
@@ -262,14 +266,19 @@ const ProductPage = () => {
     // Implement your add to cart logic here
   };
 
+
   const handleToggleFavorite = () => {
-    console.log('Toggle favorite for product:', product._id);
-    // Implement your favorite toggle logic here
+    if (isInWishlist(product._id)) {
+      removeFromWishlist(product._id);
+    } else {
+      addToWishlist(product._id);
+    }
   };
+
+
 
   const handleShare = () => {
     console.log('Share product:', product._id);
-    // Implement your share logic here
   };
 
 
@@ -322,7 +331,7 @@ const ProductPage = () => {
             onAddToCart={handleAddToCart}
             onToggleFavorite={handleToggleFavorite}
             onShare={handleShare}
-            isFavorite={false}
+            isFavorite={isInWishlist(product._id)}
           />
         </Box>
 
@@ -471,7 +480,7 @@ const ProductPage = () => {
 
         <Comments onCommentSubmitted={handleCommentSubmitted} />
 
-        <ExisitingComments mockComments={testimonials || []}  onRefetch={refetchTestimonials} />
+        <ExisitingComments mockComments={testimonials || []} onRefetch={refetchTestimonials} />
 
         <Box
           component="section"
@@ -493,4 +502,8 @@ const ProductPage = () => {
   );
 };
 
-export default ProductPage; 
+export default ProductPage;
+
+function removeFromWishlist(_id: string) {
+  throw new Error('Function not implemented.');
+}

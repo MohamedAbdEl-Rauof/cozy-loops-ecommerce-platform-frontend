@@ -1,5 +1,4 @@
 "use client"
-import React, { useState } from 'react';
 import {
     Box,
     Typography,
@@ -13,8 +12,7 @@ import {
     Chip,
     Tooltip,
     Fade,
-    useTheme,
-    useMediaQuery
+    CircularProgress
 } from '@mui/material';
 import {
     Delete as DeleteIcon,
@@ -23,8 +21,10 @@ import {
     ShoppingBag as ShoppingBagIcon
 } from '@mui/icons-material';
 import { styled, keyframes } from '@mui/material/styles';
+import { useRouter } from 'next/navigation';
+import { useRemoveFromWishlist, useWishlist } from '@/hooks/useWishlist';
+import { useAddToCart } from '@/hooks/useCart';
 
-// Animations
 const slideInUp = keyframes`
   from {
     opacity: 0;
@@ -48,8 +48,7 @@ const pulse = keyframes`
   }
 `;
 
-// Styled Components
-const StyledCard = styled(Card)(({ theme }) => ({
+const StyledCard = styled(Card)(() => ({
     borderRadius: '16px',
     overflow: 'hidden',
     position: 'relative',
@@ -78,7 +77,7 @@ const ProductImage = styled(CardMedia)({
     transition: 'transform 0.3s ease',
 });
 
-const DeleteButton = styled(IconButton)(({ theme }) => ({
+const DeleteButton = styled(IconButton)(() => ({
     position: 'absolute',
     top: 12,
     right: 12,
@@ -94,7 +93,7 @@ const DeleteButton = styled(IconButton)(({ theme }) => ({
     transition: 'all 0.3s ease',
 }));
 
-const CartButton = styled(IconButton)(({ theme }) => ({
+const CartButton = styled(IconButton)(() => ({
     position: 'absolute',
     bottom: 12,
     left: 12,
@@ -119,7 +118,7 @@ const HeaderContainer = styled(Box)(({ theme }) => ({
     borderBottom: '2px solid rgba(255, 112, 67, 0.1)',
 }));
 
-const MoveAllButton = styled(Button)(({ theme }) => ({
+const MoveAllButton = styled(Button)(() => ({
     borderRadius: '25px',
     padding: '12px 24px',
     fontWeight: 600,
@@ -135,7 +134,7 @@ const MoveAllButton = styled(Button)(({ theme }) => ({
     }
 }));
 
-const ViewProductButton = styled(Button)(({ theme }) => ({
+const ViewProductButton = styled(Button)(() => ({
     borderRadius: '20px',
     padding: '8px 16px',
     fontWeight: 500,
@@ -152,56 +151,89 @@ const ViewProductButton = styled(Button)(({ theme }) => ({
     }
 }));
 
-interface WishlistItem {
-    id: number;
-    title: string;
-    price: number;
-    image: string;
-}
 
-interface WishlistCardProps {
-    items?: WishlistItem[];
-    onDeleteItem?: (itemId: number) => void;
-    onAddToCart?: (itemId: number) => void;
-    onViewProduct?: (itemId: number) => void;
-    onMoveAllToCart?: () => void;
-    onStartShopping?: () => void;
-}
+const WishlistCard: React.FC = () => {
+    const router = useRouter();
+    const { wishlistItems, isLoading, error } = useWishlist();
+    const { removeFromWishlist, isPending: isRemoving } = useRemoveFromWishlist();
+    const { addToCart, isPending: isAddingToCart } = useAddToCart();
 
-const WishlistCard: React.FC<WishlistCardProps> = ({
-    items = [],
-    onDeleteItem,
-    onAddToCart,
-    onViewProduct,
-    onMoveAllToCart,
-    onStartShopping
-}) => {
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-    const [wishlistItems, setWishlistItems] = useState<WishlistItem[]>(
-        items.map(item => ({ ...item, inStock: item.inStock ?? true }))
-    );
+    const transformedItems = wishlistItems?.map(item => ({
+        id: item.product._id,
+        title: item.product.name,
+        price: item.product.price,
+        image: item.product.images?.[0],
+        addedAt: item.addedAt,
+        inStock: item.product.stock > 0,
+        originalPrice: item.product.priceBeforeDiscount,
+    })) || [];
 
-    const handleDeleteItem = (itemId: number) => {
-        setWishlistItems(prev => prev.filter(item => item.id !== itemId));
-        onDeleteItem?.(itemId);
+    const handleDeleteItem = (itemId: string) => {
+        if (isRemoving) return;
+        removeFromWishlist(itemId);
     };
 
-    const handleAddToCart = (itemId: number) => {
-        onAddToCart?.(itemId);
+    const handleAddToCart = (itemId: string) => {
+        if (isAddingToCart) return;
+        const product = wishlistItems?.find(item => item.product._id === itemId)?.product;
+        if (product) {
+            addToCart({
+                productId: itemId,
+                quantity: 1,
+            });
+        }
     };
 
-    const handleViewProduct = (itemId: number) => {
-        onViewProduct?.(itemId);
+    const handleViewProduct = (itemId: string) => {
+        const product = wishlistItems?.find(item => item.product._id === itemId)?.product;
+        if (product) {
+            router.push(`/categories/${product.category}/products/${product.slug}`);
+        }
     };
 
     const handleMoveAllToCart = () => {
-        onMoveAllToCart?.();
+        transformedItems.forEach(item => {
+            if (item.inStock) {
+                handleAddToCart(item.id);
+            }
+        });
     };
 
     const handleStartShopping = () => {
-        onStartShopping?.();
+        router.push('/categories');
     };
+
+    if (isLoading) {
+        return (
+            <Box sx={{
+                bgcolor: '#f8f9fa',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                minHeight: '400px'
+            }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
+
+    if (error) {
+        return (
+            <Box sx={{
+                bgcolor: '#f8f9fa',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                minHeight: '400px'
+            }}>
+                <Typography color="error">
+                    Failed to load wishlist. Please try again.
+                </Typography>
+            </Box>
+        );
+    }
+
+    const itemCount = transformedItems.length;
 
     return (
         <Container
@@ -218,7 +250,6 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                 py: { xs: 3, md: 4 },
             }}
         >
-            {/* Header Section */}
             <HeaderContainer>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     <Typography
@@ -236,7 +267,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                         Wishlist
                     </Typography>
                     <Chip
-                        label={wishlistItems.length}
+                        label={itemCount}
                         sx={{
                             backgroundColor: '#ff7043',
                             color: 'white',
@@ -248,7 +279,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                     />
                 </Box>
 
-                {wishlistItems.length > 0 && (
+                {itemCount > 0 && (
                     <MoveAllButton
                         startIcon={<ShoppingBagIcon />}
                         onClick={handleMoveAllToCart}
@@ -262,18 +293,16 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                 )}
             </HeaderContainer>
 
-            {/* Wishlist Items Grid */}
-            {wishlistItems.length > 0 ? (
+            {itemCount > 0 ? (
                 <Grid container spacing={3}>
-                    {wishlistItems.map((item, index) => (
-                        <Grid size={{xs:12, sm:6, md:4, lg:4}} key={item.id}>
+                    {transformedItems.map((item, index) => (
+                        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4 }} key={item.id}>
                             <Fade
                                 in={true}
                                 timeout={800}
                                 style={{ transitionDelay: `${index * 100}ms` }}
                             >
                                 <StyledCard>
-                                    {/* Product Image with Action Buttons */}
                                     <Box sx={{ position: 'relative' }}>
                                         <ProductImage
                                             className="product-image"
@@ -281,8 +310,7 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                                             title={item.title}
                                         />
 
-                                        {/* Delete Button - Top Right */}
-                                            <Tooltip title="Remove from Wishlist">
+                                        <Tooltip title="Remove from Wishlist">
                                             <DeleteButton
                                                 onClick={() => handleDeleteItem(item.id)}
                                                 size="small"
@@ -291,24 +319,21 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                                             </DeleteButton>
                                         </Tooltip>
 
-                                        {/* Add to Cart Button - Bottom Left */}
                                         <Tooltip title="Add to Cart">
                                             <CartButton
                                                 onClick={() => handleAddToCart(item.id)}
                                                 sx={{
-                                                    opacity: 1,
-                                                    cursor: 'pointer',
+                                                    opacity: item.inStock ? 1 : 0.5,
+                                                    cursor: item.inStock ? 'pointer' : 'not-allowed',
                                                 }}
+                                                disabled={!item.inStock}
                                             >
                                                 <ShoppingCartIcon />
                                             </CartButton>
                                         </Tooltip>
-
                                     </Box>
 
-                                    {/* Product Details */}
                                     <CardContent sx={{ p: 3 }}>
-                                        {/* Product Title */}
                                         <Typography
                                             variant="h6"
                                             component="h3"
@@ -329,7 +354,6 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                                             {item.title}
                                         </Typography>
 
-                                        {/* Bottom Section: View Product Button and Price */}
                                         <Box
                                             sx={{
                                                 display: 'flex',
@@ -338,7 +362,6 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                                                 gap: 2,
                                             }}
                                         >
-                                            {/* View Product Button */}
                                             <ViewProductButton
                                                 startIcon={<VisibilityIcon />}
                                                 onClick={() => handleViewProduct(item.id)}
@@ -351,8 +374,19 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                                                 View Product
                                             </ViewProductButton>
 
-                                            {/* Price */}
                                             <Box sx={{ textAlign: 'right' }}>
+                                                {item.originalPrice && item.originalPrice > item.price && (
+                                                    <Typography
+                                                        variant="body2"
+                                                        sx={{
+                                                            textDecoration: 'line-through',
+                                                            color: '#999',
+                                                            fontSize: '0.875rem',
+                                                        }}
+                                                    >
+                                                        {item.originalPrice} EGP
+                                                    </Typography>
+                                                )}
                                                 <Typography
                                                     variant="h6"
                                                     sx={{
@@ -373,7 +407,6 @@ const WishlistCard: React.FC<WishlistCardProps> = ({
                     ))}
                 </Grid>
             ) : (
-                // Empty Wishlist State
                 <Box
                     sx={{
                         textAlign: 'center',

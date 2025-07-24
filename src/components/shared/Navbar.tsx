@@ -39,6 +39,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/context/AuthContext"
 import { useCart } from "@/hooks/useCart"
+import { useWishlist } from "@/hooks/useWishlist"
 
 const NavbarContainer = styled(Box)(() => ({
     backgroundColor: "var(--foreground)",
@@ -57,6 +58,11 @@ const Navbar = ({
     const router = useRouter();
     const { user, logout } = useAuth();
     const { data: cart, isLoading: cartLoading } = useCart();
+
+    const { wishlistItems, isLoading: wishlistLoading } = useWishlist();
+
+    const wishlistCount = wishlistLoading ? 0 : wishlistItems?.length || 0;
+
 
     if (isAuthPage) return null
 
@@ -278,7 +284,7 @@ const Navbar = ({
                         <ListItem
                             onClick={() => {
                                 handleMobileMenuToggle();
-                                router.push("/favorites");
+                                router.push("/wishlist");
                             }}
                             sx={{
                                 py: 1.5,
@@ -301,7 +307,7 @@ const Navbar = ({
                                 }}
                             />
                             <Badge
-                                badgeContent={2}
+                                badgeContent={wishlistCount}
                                 color="error"
                                 sx={{
                                     '& .MuiBadge-badge': {
@@ -354,12 +360,18 @@ const Navbar = ({
                 <>
                     {!isMobile && !isTablet && (
                         <>
-                            <IconButton sx={{ color: "var(--text-primary)" }}>
-                                <Badge badgeContent={2} color="error">
+                            <IconButton
+                                sx={{ color: "var(--text-primary)" }}
+                                onClick={() => router.push("/wishlist")}
+                            >
+                                <Badge badgeContent={wishlistCount} color="error">
                                     <FavoriteBorderIcon />
                                 </Badge>
                             </IconButton>
-                            <IconButton sx={{ color: "var(--text-primary)" }}>
+                            <IconButton
+                                sx={{ color: "var(--text-primary)" }}
+                                onClick={() => router.push("/cart")}
+                            >
                                 <Badge badgeContent={cartLoading ? 0 : cart?.totalItems || 0}
                                     color="error">
                                     <StorefrontIcon />

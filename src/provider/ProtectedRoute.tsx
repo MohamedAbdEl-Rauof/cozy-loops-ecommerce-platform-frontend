@@ -24,8 +24,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       const userAuth = isUserAuthenticated();
       
       if (!userAuth && !isAuthenticated) {
-        const currentPath = window.location.pathname;
-        router.push(`${redirectTo}?returnUrl=${encodeURIComponent(currentPath)}`);
+        router.push(`${redirectTo}`);
       }
     }
   }, [isAuthenticated, loading, isUserAuthenticated, router, redirectTo]);
