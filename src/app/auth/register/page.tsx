@@ -30,7 +30,7 @@ import { Dialog, DialogContent, Fade, Grow } from "@mui/material";
 import { useAuth } from "@/context/AuthContext"
 import Image from "next/image"
 import axios from "axios"
-import SocialAuth from "@/components/shared/SocialAuth"
+import SocialAuthDialog from "@/components/dialogs/SocialAuthDialog"
 import { useRouter } from "next/navigation"
 import { CountdownRedirect } from "@/components/auth/CountdownRedirect"
 
@@ -584,7 +584,7 @@ export default function RegistrationPage() {
               </Button>
 
               {/* Social Login */}
-              <SocialAuth />
+              <SocialAuthDialog />
 
               {/* Sign In Link */}
               <Typography variant="body2" sx={{ textAlign: "center", color: "#666" }}>

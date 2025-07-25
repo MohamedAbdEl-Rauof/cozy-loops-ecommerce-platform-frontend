@@ -26,12 +26,12 @@ import {
 } from "@mui/icons-material"
 import Image from "next/image"
 import Link from "next/link"
-import SocialAuth from "@/components/shared/SocialAuth"
 import ForgotPasswordDialog from "@/components/auth/ForgetPasswordDialog"
 import { useAuth } from "@/context/AuthContext"
 import { CountdownRedirect } from "@/components/auth/CountdownRedirect"
 import { useRouter } from "next/navigation"
 import CheckCircleIcon from "@mui/icons-material/CheckCircle"
+import SocialAuthDialog from "@/components/dialogs/SocialAuthDialog"
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -304,7 +304,7 @@ export default function LoginPage() {
               </Button>
 
               {/* Social Login */}
-              <SocialAuth />
+              <SocialAuthDialog />
 
               {/* Sign Up Link */}
               <Typography variant="body2" sx={{ textAlign: "center", color: "#666" }}>

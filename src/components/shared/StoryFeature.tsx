@@ -20,7 +20,7 @@ interface StoryFeatureProps {
     buttonText: string;
     imageSrc: string;
     imageAlt: string;
-    onButtonClick?: string;
+    onButtonClick?: string | (() => void);
     badge?: string;
     reverse?: boolean;
 }

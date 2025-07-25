@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Box, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography } from '@mui/material';
 import { Google, Apple, Instagram, Pinterest, Info, Close } from '@mui/icons-material';
 
-const SocialAuth = () => {
+const SocialAuthDialog = () => {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [selectedProvider, setSelectedProvider] = useState('');
 
@@ -109,4 +109,4 @@ const SocialAuth = () => {
     );
 }
 
-export default SocialAuth;
+export default SocialAuthDialog;

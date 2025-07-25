@@ -13,7 +13,7 @@ import {
     madeInEgyptData,
     storyFeatureData,
     featuredCategoriesData
-} from "@/data/pages/about";
+} from "@/data/pages/aboutPageData";
 
 export default function About() {
     return (

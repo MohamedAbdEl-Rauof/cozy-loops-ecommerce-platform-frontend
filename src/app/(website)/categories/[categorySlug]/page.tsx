@@ -24,11 +24,11 @@ export default function CategoryPage() {
         error: categoryError,
     } = useCategoryBySlug(slug);
 
-      const {
+    const {
         data: testimonialsItems = [],
         isLoading: testimonialsLoading,
         error: testimonialsError,
-      } = useTestimonials();
+    } = useTestimonials();
 
     // React Query for products data
     const {
@@ -142,10 +142,10 @@ export default function CategoryPage() {
     }
 
     const testimonialsData = {
-    title: "What Our Shoppers Are Saying",
-    description: "Real words from our beloved Cozy Loops community.",
-    items: testimonialsItems
-  };
+        title: "What Our Shoppers Are Saying",
+        description: "Real words from our beloved Cozy Loops community.",
+        items: testimonialsItems
+    };
 
     return (
         <Box component="main" sx={{ bgcolor: '#fafafa', minHeight: '100vh' }}>
@@ -175,7 +175,10 @@ export default function CategoryPage() {
                     imageSrc={selectedCategory.heroImage || selectedCategory.image || '/images/shared/productImage.jpg'}
                     imageAlt={`Beautiful ${selectedCategory.name?.toLowerCase() || 'category'} artwork showcasing vibrant textures and patterns`}
                     onButtonClick={scrollToCategoriesGrid}
+                    badge="Featured Categories"
                 />
+
+                 
 
                 <Box ref={productsGridRef}
                     sx={{ py: { xs: 4, sm: 6, md: 8 }, bgcolor: 'white' }}>
