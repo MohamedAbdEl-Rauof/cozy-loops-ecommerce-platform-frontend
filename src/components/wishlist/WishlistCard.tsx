@@ -23,7 +23,7 @@ import {
 import { styled, keyframes } from '@mui/material/styles';
 import { useRouter } from 'next/navigation';
 import { useRemoveFromWishlist, useWishlist } from '@/hooks/useWishlist';
-import { useAddToCart } from '@/hooks/useCart';
+import { useAddToCart, useCart, useUpdateCart } from '@/hooks/useCart';
 
 const slideInUp = keyframes`
   from {
@@ -157,6 +157,8 @@ const WishlistCard: React.FC = () => {
     const { wishlistItems, isLoading, error } = useWishlist();
     const { removeFromWishlist, isPending: isRemoving } = useRemoveFromWishlist();
     const { addToCart, isPending: isAddingToCart } = useAddToCart();
+    const { updateCart, isPending: isUpdatingCart } = useUpdateCart();
+    const { data: cartData } = useCart();
 
     const transformedItems = wishlistItems?.map(item => ({
         id: item.product._id,
@@ -174,13 +176,22 @@ const WishlistCard: React.FC = () => {
     };
 
     const handleAddToCart = (itemId: string) => {
-        if (isAddingToCart) return;
+        if (isAddingToCart || isUpdatingCart) return;
         const product = wishlistItems?.find(item => item.product._id === itemId)?.product;
         if (product) {
-            addToCart({
-                productId: itemId,
-                quantity: 1,
-            });
+            const existingCartItem = cartData?.items?.find((item: any) => item.product._id === itemId);
+
+            if (existingCartItem) {
+                updateCart({
+                    productId: itemId,
+                    quantity: existingCartItem.quantity + 1,
+                });
+            } else {
+                addToCart({
+                    productId: itemId,
+                    quantity: 1,
+                });
+            }
         }
     };
 

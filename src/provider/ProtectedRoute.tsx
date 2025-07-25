@@ -12,9 +12,9 @@ interface ProtectedRouteProps {
   redirectTo?: string;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
-  children, 
-  redirectTo = '/auth/login' 
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
+  children,
+  redirectTo = '/auth/login'
 }) => {
   const { isAuthenticated, loading, isUserAuthenticated } = useAuth();
   const router = useRouter();
@@ -22,7 +22,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   useEffect(() => {
     if (!loading) {
       const userAuth = isUserAuthenticated();
-      
+
       if (!userAuth && !isAuthenticated) {
         router.push(`${redirectTo}`);
       }
@@ -31,32 +31,34 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   if (loading) {
     return (
-      <Box 
-        display="flex" 
-        justifyContent="center" 
-        alignItems="center" 
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
         minHeight="50vh"
         flexDirection="column"
         gap={2}
+        sx={{ bgcolor: 'white' }}
       >
         <CircularProgress />
-        <Typography>Checking authentication...</Typography>
+        <Typography style={{ color: 'black' }}>Checking authentication...</Typography>
       </Box>
     );
   }
 
   if (!isAuthenticated && !isUserAuthenticated()) {
     return (
-      <Box 
-        display="flex" 
-        justifyContent="center" 
-        alignItems="center" 
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
         minHeight="50vh"
         flexDirection="column"
+        sx={{ bgcolor: 'white' }}
         gap={2}
       >
         <CircularProgress />
-        <Typography>Redirecting to login...</Typography>
+        <Typography sx={{ color: 'black' }}>Redirecting to login...</Typography>
       </Box>
     );
   }

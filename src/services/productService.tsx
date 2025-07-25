@@ -16,7 +16,6 @@ interface ProductsResponse {
 }
 
 export const productService = {
-  // Get products by category slug
   getProductsByCategorySlug: async (slug: string) => {
     const response = await apiClient.get<ProductsResponse>(`/api/products/category/${slug}`);
     return response.data.data;
