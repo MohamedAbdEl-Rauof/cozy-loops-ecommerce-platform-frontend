@@ -1,9 +1,9 @@
 "use client"
-import { Box, Typography, Card, CardContent, Avatar, Rating, Container, Chip } from "@mui/material"
+import { Box, Typography, Card, CardContent, Avatar, Rating, Container } from "@mui/material"
 import { styled, keyframes } from "@mui/material/styles"
 import { useState, useEffect } from "react"
 import { FormatQuote, Star } from "@mui/icons-material"
-import { TestimonialsData } from '@/types/Testimonial'
+import { TestimonialsData } from "@/types/Testimonial"
 
 const float = keyframes`
     0%, 100% {

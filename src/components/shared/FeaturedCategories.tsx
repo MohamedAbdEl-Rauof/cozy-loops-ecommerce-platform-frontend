@@ -14,17 +14,10 @@ import {
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { ArrowForward, TrendingUp } from '@mui/icons-material';
+import { FeaturedCategoriesData } from '@/types/home';
 
 interface FeaturedCategoriesProps {
-    featuredCategories: {
-        title: string;
-        isTitleCenter: boolean;
-        description: string;
-        image: string;
-        ctaText: string;
-        buttonText: string;
-        buttonLink: string;
-    };
+    featuredCategories: FeaturedCategoriesData;
 }
 
 const FeaturedCategories = ({

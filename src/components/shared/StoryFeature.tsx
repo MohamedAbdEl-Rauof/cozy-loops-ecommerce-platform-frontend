@@ -13,17 +13,7 @@ import {
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { ArrowForward, AutoStories } from '@mui/icons-material';
-
-interface StoryFeatureProps {
-    title: string;
-    description: string;
-    buttonText: string;
-    imageSrc: string;
-    imageAlt: string;
-    onButtonClick?: string | (() => void);
-    badge?: string;
-    reverse?: boolean;
-}
+import {StoryFeatureData} from '@/types/home';
 
 const StoryFeature = ({
     title,
@@ -34,7 +24,7 @@ const StoryFeature = ({
     onButtonClick,
     badge,
     reverse = false,
-}: StoryFeatureProps) => {
+}: StoryFeatureData) => {
     const theme = useTheme();
     const [isVisible, setIsVisible] = useState(false);
     const [isHovered, setIsHovered] = useState(false);

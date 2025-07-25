@@ -6,57 +6,9 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import CallMadeIcon from '@mui/icons-material/CallMade';
+import { ShopByCraftProps } from '@/types/home';
 
-const craftCategories = [
-    {
-        name: 'Knitting',
-        image: '/images/home/shopByCraft/accessories.png',
-        fallbackImage: '/images/placeholder.jpg',
-        link: '/category/knitting',
-        description: 'Explore our knitting supplies'
-    },
-    {
-        name: 'Crochet',
-        image: '/images/home/shopByCraft/concrete.jpg',
-        fallbackImage: '/images/placeholder.jpg',
-        link: '/category/crochet',
-        description: 'Discover crochet patterns & tools'
-    },
-    {
-        name: 'Embroidery',
-        image: '/images/home/shopByCraft/punch.jpg',
-        fallbackImage: '/images/placeholder.jpg',
-        link: '/category/embroidery',
-        description: 'Beautiful embroidery supplies'
-    },
-    {
-        name: 'Sewing',
-        image: '/images/home/shopByCraft/tufting.png',
-        fallbackImage: '/images/placeholder.jpg',
-        link: '/category/sewing',
-        description: 'Quality sewing materials'
-    },
-    {
-        name: 'Yarn',
-        image: '/images/home/shopByCraft/wall.png',
-        fallbackImage: '/images/placeholder.jpg',
-        link: '/category/yarn',
-        description: 'Premium yarns for all projects'
-    },
-    {
-        name: 'Accessories',
-        image: '/images/home/shopByCraft/creations.jpg',
-        fallbackImage: '/images/placeholder.jpg',
-        link: '/category/accessories',
-        description: 'Essential crafting accessories'
-    },
-];
-
-interface ShopByCraftProps {
-    craftCategories: typeof craftCategories;
-}
-
-const ShopByCraft = ({craftCategories}:ShopByCraftProps) => {
+const ShopByCraft = ({ craftCategories }: ShopByCraftProps) => {
     const theme = useTheme();
     const router = useRouter();
     const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -271,13 +223,18 @@ const ShopByCraft = ({craftCategories}:ShopByCraftProps) => {
                                         position: 'absolute',
                                         bottom: -5,
                                         left: 0,
-                                        maxWidth: '40%',
-                                        maxHeight: '40%',
+                                        maxWidth: { xs: '70%', sm: '60%', md: '50%', lg: '40%' },
+                                        maxHeight: { xs: '50%', sm: '45%', md: '40%' },
                                         bgcolor: 'rgba(255, 255, 255, 0.95)',
                                         borderRadius: '0 50px 3px 30px',
-                                        padding: '17px 20px',
+                                        padding: {
+                                            xs: '12px 16px',
+                                            sm: '15px 18px',
+                                            md: '17px 20px'
+                                        },
                                         transition: 'all 0.3s ease',
                                         transform: hoveredIndex === index ? 'translateY(-5px)' : 'translateY(0)',
+                                        overflow: 'hidden',
                                     }}
                                 >
                                     <Typography
@@ -285,8 +242,19 @@ const ShopByCraft = ({craftCategories}:ShopByCraftProps) => {
                                         fontWeight="bold"
                                         sx={{
                                             color: 'text.primary',
-                                            mb: 0.5,
-                                            fontSize: { xs: '1rem', sm: '1.1rem', md: '1.25rem' }
+                                            mb: { xs: 0.3, sm: 0.4, md: 0.5 },
+                                            fontSize: {
+                                                xs: '0.875rem',
+                                                sm: '1rem',
+                                                md: '1.1rem',
+                                                lg: '1.25rem'
+                                            },
+                                            lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 },
+                                            display: '-webkit-box',
+                                            WebkitLineClamp: { xs: 1, sm: 2 },
+                                            WebkitBoxOrient: 'vertical',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis'
                                         }}
                                     >
                                         {category.name}
@@ -295,9 +263,15 @@ const ShopByCraft = ({craftCategories}:ShopByCraftProps) => {
                                         variant="body2"
                                         sx={{
                                             color: 'text.secondary',
-                                            fontSize: { xs: '0.75rem', sm: '0.8rem', md: '0.875rem' },
+                                            fontSize: {
+                                                xs: '0.7rem',
+                                                sm: '0.75rem',
+                                                md: '0.8rem',
+                                                lg: '0.875rem'
+                                            },
+                                            lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 },
                                             display: '-webkit-box',
-                                            WebkitLineClamp: 2,
+                                            WebkitLineClamp: { xs: 2, sm: 2, md: 3 },
                                             WebkitBoxOrient: 'vertical',
                                             overflow: 'hidden',
                                             textOverflow: 'ellipsis'
