@@ -407,7 +407,6 @@ const Navbar = ({
                             Profile
                         </MenuItem>
                         <MenuItem onClick={handleUserMenuClose}>My Orders</MenuItem>
-                        <MenuItem onClick={handleUserMenuClose}>Settings</MenuItem>
                         <MenuItem
                             onClick={() => {
                                 handleUserMenuClose()

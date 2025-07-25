@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import {
     Box,
-    Typography,
     Alert,
 } from '@mui/material';
 import ImageUploadSection from './ImageUploadSection';
@@ -38,10 +37,6 @@ const ProfileSection: React.FC = () => {
 
     return (
         <Box>
-            <Typography variant="h5" sx={{ mb: 3, fontWeight: 600, color: '#333' }}>
-                Profile Settings
-            </Typography>
-
             {showSuccess && (
                 <Alert severity="success" sx={{ mb: 3 }}>
                     {showSuccess}

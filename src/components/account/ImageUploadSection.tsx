@@ -12,14 +12,14 @@ import { styled } from '@mui/material/styles';
 import { useAuth } from '@/context/AuthContext';
 import { UpdateProfile, uploadImageToCloudinary } from '@/services/userServices';
 
-const ProfileAvatar = styled(Avatar)(({ theme }) => ({
+const ProfileAvatar = styled(Avatar)(() => ({
     width: 120,
     height: 120,
     margin: '0 auto 20px',
     border: '4px solid #FF7043',
 }));
 
-const UploadButton = styled(Button)<{ component?: React.ElementType }>(({ theme }) => ({
+const UploadButton = styled(Button)<{ component?: React.ElementType }>(() => ({
     marginTop: '10px',
     backgroundColor: '#FF7043',
     padding: '12px 30px',
@@ -28,7 +28,7 @@ const UploadButton = styled(Button)<{ component?: React.ElementType }>(({ theme 
     },
 }));
 
-const SaveButton = styled(Button)(({ theme }) => ({
+const SaveButton = styled(Button)(() => ({
     backgroundColor: '#FF7043',
     color: 'white',
     padding: '12px 30px',
@@ -41,7 +41,7 @@ const SaveButton = styled(Button)(({ theme }) => ({
     },
 }));
 
-const SectionBox = styled(Box)(({ theme }) => ({
+const SectionBox = styled(Box)(() => ({
     backgroundColor: '#f9f9f9',
     padding: '24px',
     borderRadius: '12px',

@@ -29,7 +29,7 @@ const profileSchema = z.object({
         .regex(/^[a-zA-Z\s]+$/, 'Last name can only contain letters and spaces'),
     phone: z.string()
         .refine((value) => {
-            if (!value || value.trim() === '') return true; // Allow empty
+            if (!value || value.trim() === '') return true;
             return isValidPhoneNumber(value);
         }, 'Please enter a valid international phone number')
         .refine((value) => {
@@ -42,7 +42,7 @@ const profileSchema = z.object({
 
 type ProfileFormData = z.infer<typeof profileSchema>;
 
-const SaveButton = styled(Button)(({ theme }) => ({
+const SaveButton = styled(Button)(() => ({
     backgroundColor: '#FF7043',
     color: 'white',
     padding: '12px 30px',
@@ -54,7 +54,7 @@ const SaveButton = styled(Button)(({ theme }) => ({
     },
 }));
 
-const SectionBox = styled(Box)(({ theme }) => ({
+const SectionBox = styled(Box)(() => ({
     backgroundColor: '#f9f9f9',
     padding: '24px',
     borderRadius: '12px',
@@ -62,7 +62,7 @@ const SectionBox = styled(Box)(({ theme }) => ({
     border: '1px solid #e0e0e0',
 }));
 
-const DisabledTextField = styled(TextField)(({ theme }) => ({
+const DisabledTextField = styled(TextField)(() => ({
     '& .MuiInputBase-input': {
         cursor: 'not-allowed',
         backgroundColor: '#f5f5f5',
@@ -72,18 +72,21 @@ const DisabledTextField = styled(TextField)(({ theme }) => ({
     },
 }));
 
-const StyledPhoneInput = styled(PhoneInput)(({ theme }) => ({
+const StyledPhoneInput = styled(PhoneInput)(() => ({
     '& .PhoneInputInput': {
         border: '1px solid #c4c4c4',
         borderRadius: '4px',
-        padding: '16.5px 14px',
+        padding: '8px 14px',
         fontSize: '16px',
         fontFamily: 'inherit',
         width: '100%',
+        height: '40px', 
+        boxSizing: 'border-box',
         '&:focus': {
             outline: 'none',
             borderColor: '#FF7043',
             borderWidth: '2px',
+            padding: '7px 13px', 
         },
         '&.PhoneInputInput--error': {
             borderColor: '#d32f2f',
@@ -94,6 +97,14 @@ const StyledPhoneInput = styled(PhoneInput)(({ theme }) => ({
         border: 'none',
         background: 'transparent',
         fontSize: '16px',
+        height: '40px', 
+        display: 'flex',
+        alignItems: 'center',
+    },
+    '& .PhoneInput': {
+        display: 'flex',
+        alignItems: 'center',
+        height: '40px',
     },
 }));
 
@@ -141,7 +152,7 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ onSuccess, on
             formData.append('lastName', data.lastName);
             formData.append('phoneNumber', data.phone);
 
-           await UpdateProfile(formData);
+            await UpdateProfile(formData);
 
             reset(data);
             onSuccess('Profile updated successfully!');
@@ -205,9 +216,6 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ onSuccess, on
                     </Grid>
                     <Grid size={{ xs: 12, md: 6 }}>
                         <Box>
-                            <Typography variant="body2" sx={{ mb: 1, color: '#666', fontSize: '12px' }}>
-                                Phone Number
-                            </Typography>
                             <Controller
                                 name="phone"
                                 control={control}
@@ -223,17 +231,17 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ onSuccess, on
                                             className={error ? 'PhoneInputInput--error' : ''}
                                         />
                                         {error && (
-                                            <Typography variant="caption" sx={{ color: '#d32f2f', mt: 0.5, display: 'block' }}>
+                                            <Typography variant="caption" sx={{ color: '#d32f2f', mt: 0.2, fontSize: '11px' }}>
                                                 {error.message}
                                             </Typography>
                                         )}
                                         {!error && value && isValidPhoneNumber(value) && (
-                                            <Typography variant="caption" sx={{ color: '#4caf50', mt: 0.5, display: 'block' }}>
+                                            <Typography variant="caption" sx={{ color: '#4caf50', mt: 0.2, fontSize: '11px' }}>
                                                 ✓ Valid phone number
                                             </Typography>
                                         )}
                                         {!error && (!value || value.trim() === '') && (
-                                            <Typography variant="caption" sx={{ color: '#666', mt: 0.5, display: 'block' }}>
+                                            <Typography variant="caption" sx={{ color: '#666', mt: 0.2, fontSize: '11px' }}>
                                                 Select country and enter your phone number
                                             </Typography>
                                         )}
@@ -242,6 +250,7 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ onSuccess, on
                             />
                         </Box>
                     </Grid>
+
                 </Grid>
 
                 <Box sx={{ mt: 3 }}>

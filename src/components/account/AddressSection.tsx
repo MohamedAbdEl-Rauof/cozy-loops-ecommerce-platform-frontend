@@ -208,7 +208,6 @@ const AddressSection: React.FC = () => {
             </Button>
           </Box>
 
-          {/* Address Form */}
           {showForm && (
             <Card sx={{ mb: 4, border: '2px solid #FF7043' }}>
               <CardContent sx={{ p: 3 }}>
@@ -309,53 +308,221 @@ const AddressSection: React.FC = () => {
             </Card>
           )}
 
-          {/* Address List */}
           <Grid container spacing={3}>
             {addresses.map((address) => (
               <Grid size={{ xs: 12, md: 6 }} key={address._id}>
-                <AddressCard>
-                  <CardContent>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-                      <Box sx={{ display: 'flex', gap: 1 }}>
+                <AddressCard
+                  sx={{
+                    background: 'linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%)',
+                    borderRadius: '16px',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    border: '1px solid #e0e0e0',
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: '4px',
+                      background: address.type === 'shipping'
+                        ? 'linear-gradient(90deg, #4CAF50 0%, #66BB6A 100%)'
+                        : 'linear-gradient(90deg, #2196F3 0%, #42A5F5 100%)',
+                    },
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: '0 8px 25px rgba(0,0,0,0.12)',
+                      borderColor: '#FF7043',
+                    },
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+                  }}
+                >
+                  <CardContent sx={{ p: 3, position: 'relative' }}>
+                    <Box sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start',
+                      mb: 3
+                    }}>
+                      <Box sx={{ display: 'flex', gap: 1.5, alignItems: 'center' }}>
                         <Chip
                           label={address.type === 'shipping' ? 'Shipping' : 'Billing'}
                           size="small"
+                          icon={
+                            <Box
+                              sx={{
+                                width: 8,
+                                height: 8,
+                                borderRadius: '50%',
+                                backgroundColor: 'rgba(255,255,255,0.8)',
+                                ml: 0.5
+                              }}
+                            />
+                          }
                           sx={{
-                            backgroundColor: address.type === 'shipping' ? '#4CAF50' : '#2196F3',
+                            background: address.type === 'shipping'
+                              ? 'linear-gradient(45deg, #4CAF50 30%, #66BB6A 90%)'
+                              : 'linear-gradient(45deg, #2196F3 30%, #42A5F5 90%)',
                             color: 'white',
+                            fontWeight: 600,
+                            fontSize: '0.75rem',
+                            height: '28px',
+                            boxShadow: address.type === 'shipping'
+                              ? '0 2px 8px rgba(76, 175, 80, 0.3)'
+                              : '0 2px 8px rgba(33, 150, 243, 0.3)',
+                            '& .MuiChip-label': {
+                              px: 1.5
+                            }
                           }}
                         />
                         {address.isDefault && (
-                          <DefaultChip label="Default" size="small" />
+                          <DefaultChip
+                            label="Default"
+                            size="small"
+                            sx={{
+                              background: 'linear-gradient(45deg, #FF7043 30%, #FF5722 90%)',
+                              fontWeight: 600,
+                              fontSize: '0.75rem',
+                              height: '28px',
+                              boxShadow: '0 2px 8px rgba(255, 112, 67, 0.3)',
+                              '& .MuiChip-label': {
+                                px: 1.5
+                              }
+                            }}
+                          />
                         )}
                       </Box>
-                      <Box>
+                      <Box sx={{
+                        display: 'flex',
+                        gap: 0.5,
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        borderRadius: '12px',
+                        p: 0.5,
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+                      }}>
                         <IconButton
                           size="small"
                           onClick={() => handleEdit(address)}
-                          sx={{ color: '#FF7043' }}
+                          sx={{
+                            color: '#FF7043',
+                            width: 32,
+                            height: 32,
+                            '&:hover': {
+                              backgroundColor: 'rgba(255, 112, 67, 0.1)',
+                              transform: 'scale(1.1)',
+                              color: '#FF5722'
+                            },
+                            transition: 'all 0.2s ease'
+                          }}
                         >
-                          <Edit />
+                          <Edit fontSize="small" />
                         </IconButton>
                         <IconButton
                           size="small"
                           onClick={() => handleDelete(address._id)}
-                          sx={{ color: '#f44336' }}
+                          sx={{
+                            color: '#f44336',
+                            width: 32,
+                            height: 32,
+                            '&:hover': {
+                              backgroundColor: 'rgba(244, 67, 54, 0.1)',
+                              transform: 'scale(1.1)',
+                              color: '#d32f2f'
+                            },
+                            transition: 'all 0.2s ease'
+                          }}
                         >
-                          <Delete />
+                          <Delete fontSize="small" />
                         </IconButton>
                       </Box>
                     </Box>
 
-                    <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                      {address.street}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {address.city}, {address.state} {address.zipCode}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {address.country}
-                    </Typography>
+                    <Box sx={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                      borderRadius: '12px',
+                      p: 2.5,
+                      backdropFilter: 'blur(10px)',
+                      border: '1px solid rgba(255, 255, 255, 0.2)'
+                    }}>
+                      <Box sx={{ mb: 2 }}>
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: '#666',
+                            fontWeight: 500,
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px',
+                            fontSize: '0.7rem'
+                          }}
+                        >
+                          Street Address
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            color: '#2c3e50',
+                            fontWeight: 600,
+                            fontSize: '0.95rem',
+                            lineHeight: 1.4,
+                            mt: 0.5
+                          }}
+                        >
+                          {address.street}
+                        </Typography>
+                      </Box>
+
+                      <Box sx={{ mb: 2 }}>
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: '#666',
+                            fontWeight: 500,
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px',
+                            fontSize: '0.7rem'
+                          }}
+                        >
+                          City, State & ZIP
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            color: '#2c3e50',
+                            fontWeight: 600,
+                            fontSize: '0.95rem',
+                            mt: 0.5
+                          }}
+                        >
+                          {address.city}, {address.state} {address.zipCode}
+                        </Typography>
+                      </Box>
+
+                      <Box>
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: '#666',
+                            fontWeight: 500,
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px',
+                            fontSize: '0.7rem'
+                          }}
+                        >
+                          Country
+                        </Typography>
+                        <Typography
+                          variant="body1"
+                          sx={{
+                            color: '#2c3e50',
+                            fontWeight: 600,
+                            fontSize: '0.95rem',
+                            mt: 0.5
+                          }}
+                        >
+                          {address.country}
+                        </Typography>
+                      </Box>
+                    </Box>
                   </CardContent>
                 </AddressCard>
               </Grid>
