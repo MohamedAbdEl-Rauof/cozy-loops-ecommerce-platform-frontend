@@ -1,38 +1,23 @@
 import React, { useState } from 'react'
 import { PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js'
-import { 
-    Button, 
-    CircularProgress, 
-    Box, 
-    Typography, 
+import {
+    Button,
+    CircularProgress,
+    Box,
+    Typography,
     Paper,
     Alert
 } from '@mui/material'
-import { 
+import {
     CreditCard as CreditCardIcon,
     Security as SecurityIcon,
     CheckCircle as CheckCircleIcon
 } from '@mui/icons-material'
+import { StripeCheckoutFormProps } from '@/types/order';
 
-interface OrderData {
-    orderNumber: string;
-    orderId: string;
-    breakdown: {
-        subtotal: number;
-        shipping: number;
-        tax: number;
-        total: number;
-    };
-}
-
-interface StripeCheckoutFormProps {
-    orderData: OrderData;
-    onPaymentStatusChange: (status: 'processing' | 'completed' | 'failed') => void;
-}
-
-const StripeCheckoutForm: React.FC<StripeCheckoutFormProps> = ({ 
+const StripeCheckoutForm: React.FC<StripeCheckoutFormProps> = ({
     orderData,
-    onPaymentStatusChange, 
+    onPaymentStatusChange,
 }) => {
     const [processing, setIsProcessing] = useState(false)
     const [paymentError, setPaymentError] = useState<string | null>(null)
@@ -77,12 +62,12 @@ const StripeCheckoutForm: React.FC<StripeCheckoutFormProps> = ({
     return (
         <Box sx={{ width: '100%' }}>
             <form onSubmit={handlePaymentSubmission}>
-                <Paper 
-                    elevation={0} 
-                    sx={{ 
-                        p: 2, 
-                        mb: 3, 
-                        bgcolor: '#f8f9fa', 
+                <Paper
+                    elevation={0}
+                    sx={{
+                        p: 2,
+                        mb: 3,
+                        bgcolor: '#f8f9fa',
                         border: '1px solid #e9ecef',
                         borderRadius: 2
                     }}
@@ -105,28 +90,17 @@ const StripeCheckoutForm: React.FC<StripeCheckoutFormProps> = ({
                             Payment Method
                         </Typography>
                     </Box>
-                    
-                    <Box sx={{ 
-                        p: 3, 
-                        border: '1px solid #e5e7eb', 
-                        borderRadius: 2,
-                        bgcolor: '#ffffff'
-                    }}>
-                        <PaymentElement 
-                            options={{
-                                layout: {
-                                    type: 'tabs',
-                                    defaultCollapsed: false,
-                                    radios: false,
-                                    spacedAccordionItems: true
-                                }
-                            }}
-                        />
-                    </Box>
+
+                    <PaymentElement
+                        options={{
+                            layout: 'tabs',
+                            paymentMethodOrder: ['card', 'apple_pay', 'google_pay']
+                        }}
+                    />
                 </Box>
 
                 {paymentError && (
-                    <Alert severity="error" sx={{ mb: 3, borderRadius: 2 }}>
+                    <Alert severity="error" sx={{ mb: 3 }}>
                         {paymentError}
                     </Alert>
                 )}
@@ -134,14 +108,13 @@ const StripeCheckoutForm: React.FC<StripeCheckoutFormProps> = ({
                 <Button
                     type="submit"
                     variant="contained"
-                    size="large"
                     fullWidth
-                    disabled={!stripe || processing}
+                    disabled={!stripe || !elements || processing}
                     sx={{
-                        py: 2,
-                        fontSize: '16px',
-                        fontWeight: 600,
                         bgcolor: '#ff5722',
+                        py: 1.5,
+                        fontSize: '1.1rem',
+                        fontWeight: 600,
                         '&:hover': {
                             bgcolor: '#e64a19'
                         },
@@ -153,19 +126,19 @@ const StripeCheckoutForm: React.FC<StripeCheckoutFormProps> = ({
                     {processing ? (
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                             <CircularProgress size={20} color="inherit" />
-                            Processing...
+                            Processing Payment...
                         </Box>
                     ) : (
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <CheckCircleIcon fontSize="small" />
-                            Pay with Credit Card
+                            <CheckCircleIcon />
+                            Complete Payment
                         </Box>
                     )}
                 </Button>
 
-                <Box sx={{ mt: 3, textAlign: 'center' }}>
-                    <Typography variant="caption" color="text.secondary">
-                        Powered by Stripe • SSL Encrypted • PCI Compliant
+                <Box sx={{ mt: 2, textAlign: 'center' }}>
+                    <Typography variant="body2" color="text.secondary">
+                        By completing this payment, you agree to our terms and conditions.
                     </Typography>
                 </Box>
             </form>

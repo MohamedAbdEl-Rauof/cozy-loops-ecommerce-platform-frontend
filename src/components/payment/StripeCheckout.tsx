@@ -5,30 +5,11 @@ import type { Stripe } from '@stripe/stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
 import { Box, Alert, CircularProgress, Typography } from '@mui/material'
 import StripeCheckoutForm from './StripeCheckoutForm'
-
-interface OrderData {
-    orderNumber: string;
-    orderId: string;
-    breakdown: {
-        subtotal: number;
-        shipping: number;
-        tax: number;
-        total: number;
-    };
-}
-
-interface StripeCheckoutProps {
-    clientSecret: string;
-    publishableKey?: string;
-    amount: number;
-    orderData: OrderData;
-    onPaymentStatusChange: (status: 'processing' | 'completed' | 'failed') => void;
-}
+import { StripeCheckoutProps } from '@/types/order'
 
 const StripeCheckout: React.FC<StripeCheckoutProps> = ({ 
     clientSecret, 
     publishableKey, 
-    amount,
     orderData,
     onPaymentStatusChange,
 }) => {

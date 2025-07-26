@@ -215,9 +215,7 @@ const MyCart: React.FC<MyCartProps> = ({
                 flexDirection: { xs: 'column', lg: 'row' },
                 alignItems: { xs: 'stretch', lg: 'flex-start' }
             }}>
-                {/* Cart Items Section */}
                 <Box sx={{ flex: 1, minWidth: 0 }}>
-                    {/* Mobile Card View */}
                     <Box sx={{ display: { xs: 'block', md: 'none' } }}>
                         {cartItems.map((item) => (
                             <Card
@@ -340,7 +338,6 @@ const MyCart: React.FC<MyCartProps> = ({
                         ))}
                     </Box>
 
-                    {/* Desktop Table View */}
                     <StyledTableContainer sx={{ display: { xs: 'none', md: 'block' } }}>
                         <Table>
                             <StyledTableHead>
@@ -476,7 +473,6 @@ const MyCart: React.FC<MyCartProps> = ({
                     </StyledTableContainer>
                 </Box>
 
-                {/* Cart Summary Section */}
                 <Box sx={{
                     width: { xs: '100%', lg: '400px' },
                     position: { lg: 'sticky' },

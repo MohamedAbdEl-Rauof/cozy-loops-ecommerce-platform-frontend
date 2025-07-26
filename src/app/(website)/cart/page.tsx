@@ -57,9 +57,8 @@ const Page = () => {
     const handleProceedToCheckout = async () => {
         setIsCheckoutLoading(true);
         try {
-            // First, create an order from the cart
             const checkoutData: CheckoutData = {
-                shippingCost: 10.00, // Default shipping cost
+                shippingCost: 10.00, 
                 shippingAddress: {
                     street: "123 Main St",
                     city: "New York", 
@@ -71,11 +70,9 @@ const Page = () => {
 
             const order = await cartService.checkout(checkoutData);
             
-            // Navigate to payment page with order ID
             await router.push(`/payment?orderId=${order._id}`);
         } catch (error) {
             console.error('Checkout failed:', error);
-            // You might want to show an error message to the user here
         } finally {
             setIsCheckoutLoading(false);
         }
