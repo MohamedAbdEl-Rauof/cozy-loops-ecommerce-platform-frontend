@@ -4,7 +4,8 @@ import { Box, CircularProgress } from "@mui/material";
 import MyCart from "@/components/cart/MyCart"
 import ProtectedRoute from "@/provider/ProtectedRoute";
 import { useCart, useUpdateCart, useRemoveFromCart } from "@/hooks/useCart";
-import { Cart, CartItem, TransformedCartItem } from "@/types/cart";
+import { Cart, CartItem, TransformedCartItem, CheckoutData } from "@/types/cart";
+import { cartService } from "@/services/cartServices";
 import { useRouter } from "next/navigation";
 import React from "react";
 
@@ -56,7 +57,25 @@ const Page = () => {
     const handleProceedToCheckout = async () => {
         setIsCheckoutLoading(true);
         try {
-            await router.push('/payment');
+            // First, create an order from the cart
+            const checkoutData: CheckoutData = {
+                shippingCost: 10.00, // Default shipping cost
+                shippingAddress: {
+                    street: "123 Main St",
+                    city: "New York", 
+                    state: "NY",
+                    zipCode: "10001",
+                    country: "US"
+                }
+            };
+
+            const order = await cartService.checkout(checkoutData);
+            
+            // Navigate to payment page with order ID
+            await router.push(`/payment?orderId=${order._id}`);
+        } catch (error) {
+            console.error('Checkout failed:', error);
+            // You might want to show an error message to the user here
         } finally {
             setIsCheckoutLoading(false);
         }

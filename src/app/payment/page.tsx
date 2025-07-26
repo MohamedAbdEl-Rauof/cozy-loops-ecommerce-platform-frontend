@@ -1,8 +1,7 @@
 "use client"
 import React, { useEffect, useState } from 'react';
 import { Container, Typography, Alert, CircularProgress, Box, Paper, Grid, Divider } from '@mui/material';
-import { useCart } from '@/hooks/useCart';
-import { useAuth } from '@/context/AuthContext';
+import { useSearchParams } from 'next/navigation';
 import { paymentService } from '@/services/paymentService';
 import StripeCheckout from '@/components/payment/StripeCheckout';
 
@@ -22,26 +21,29 @@ interface CheckoutResponse {
 }
 
 const PaymentPage: React.FC = () => {
-    const { data: cart, isLoading: cartLoading, error } = useCart();
-    const { user } = useAuth();
+    const searchParams = useSearchParams();
+    const orderId = searchParams.get('orderId');
     const [checkoutData, setCheckoutData] = useState<CheckoutResponse | null>(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
-    const handleCheckout = async () => {
+    const handleCreatePaymentIntent = async () => {
+        if (!orderId) {
+            setCheckoutError('Order ID is required');
+            return;
+        }
+
         try {
             setIsProcessing(true);
             setCheckoutError(null);
 
-            const response = await paymentService.createCheckout({
-                cartId: cart?._id ,
-                userId: user?.id,
-                amount: cart?.totalAmount,
+            const response = await paymentService.createPaymentIntent({
+                orderId: orderId
             });
 
             setCheckoutData(response);
         } catch (error) {
-            setCheckoutError(error instanceof Error ? error.message : 'An error occurred during checkout');
+            setCheckoutError(error instanceof Error ? error.message : 'An error occurred during payment setup');
         } finally {
             setIsProcessing(false);
         }
@@ -64,28 +66,40 @@ const PaymentPage: React.FC = () => {
     };
 
     useEffect(() => {
-        if (cart?._id && user?.id && cart?.totalAmount && !cartLoading && !checkoutData) {
-            handleCheckout();
+        if (orderId && !checkoutData && !isProcessing) {
+            handleCreatePaymentIntent();
         }
-    }, [cart?._id, user?.id, cart?.totalAmount, cartLoading, checkoutData]);
+    }, [orderId, checkoutData, isProcessing]);
 
-    if (cartLoading || (isProcessing && !checkoutData)) {
+    if (!orderId) {
+        return (
+            <Box sx={{ bgcolor: 'white' }}>
+                <Container maxWidth="lg" sx={{ py: 4 }}>
+                    <Alert severity="error">
+                        Order ID is missing. Please go back to cart and try again.
+                    </Alert>
+                </Container>
+            </Box>
+        );
+    }
+
+    if (isProcessing && !checkoutData) {
         return (
             <Box sx={{ bgcolor: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
                 <CircularProgress />
                 <Typography sx={{ ml: 2 }}>
-                    {cartLoading ? 'Loading cart...' : 'Processing checkout...'}
+                    Setting up payment...
                 </Typography>
             </Box>
         );
     }
 
-    if (error || checkoutError) {
+    if (checkoutError) {
         return (
             <Box sx={{ bgcolor: 'white' }}>
                 <Container maxWidth="lg" sx={{ py: 4 }}>
                     <Alert severity="error">
-                        {(error instanceof Error ? error.message : error) || checkoutError || 'An unknown error occurred'}
+                        {checkoutError}
                     </Alert>
                 </Container>
             </Box>
@@ -111,7 +125,7 @@ const PaymentPage: React.FC = () => {
                     Complete Your Payment
                 </Typography>
 
-                {checkoutData && (
+                {checkoutData ? (
                     <Grid container spacing={3}>
                         <Grid size={{ xs: 12, md: 7 }}>
                             <Paper elevation={3} sx={{ p: 3 }}>
@@ -171,6 +185,13 @@ const PaymentPage: React.FC = () => {
                             </Paper>
                         </Grid>
                     </Grid>
+                ) : (
+                    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
+                        <CircularProgress />
+                        <Typography sx={{ ml: 2 }}>
+                            Loading payment information...
+                        </Typography>
+                    </Box>
                 )}
             </Container>
         </Box>

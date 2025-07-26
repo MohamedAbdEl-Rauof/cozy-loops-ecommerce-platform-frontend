@@ -65,17 +65,16 @@ const PaymentSuccessPage: React.FC = () => {
     useEffect(() => {
         const verifyPayment = async () => {
             try {
-                if (!orderNumber || !paymentIntentId || redirectStatus !== 'succeeded') {
+                if (!paymentIntentId || redirectStatus !== 'succeeded') {
                     throw new Error('Invalid payment parameters')
                 }
 
                 // Verify payment with your backend
                 const response = await paymentService.verifyPayment({
-                    orderNumber,
                     paymentIntentId
                 })
 
-                setPaymentDetails(response)
+                setPaymentDetails(response.data)
             } catch (error) {
                 console.error('Payment verification error:', error)
                 setError(error instanceof Error ? error.message : 'Failed to verify payment')
@@ -85,7 +84,7 @@ const PaymentSuccessPage: React.FC = () => {
         }
 
         verifyPayment()
-    }, [orderNumber, paymentIntentId, redirectStatus])
+    }, [paymentIntentId, redirectStatus])
 
     if (isLoading) {
         return (

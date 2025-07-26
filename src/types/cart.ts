@@ -60,7 +60,11 @@ export interface Cart {
   items: CartItem[];
   totalItems: number;
   totalAmount: number;
+  status: 'active' | 'processing' | 'completed';
+  orderId?: string | null;
   lastUpdated: string;
+  canModify?: boolean;
+  isProcessing?: boolean;
 }
 
 export interface AddToCartData {
@@ -111,4 +115,34 @@ export interface MyCartProps {
   onProceedToCheckout?: () => void;
   shippingCost?: number;
   isCheckoutLoading?: boolean;
+}
+
+export interface Order {
+  _id: string;
+  orderNumber: string;
+  items: Array<{
+    product: string;
+    quantity: number;
+    price: number;
+    totalPrice: number;
+    variant?: string;
+  }>;
+  subtotal: number;
+  shippingCost: number;
+  tax: number;
+  totalAmount: number;
+  orderStatus: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  paymentStatus: 'pending' | 'processing' | 'completed' | 'failed' | 'refunded';
+  createdAt: string;
+}
+
+export interface CheckoutData {
+  shippingCost?: number;
+  shippingAddress?: {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
+  };
 }

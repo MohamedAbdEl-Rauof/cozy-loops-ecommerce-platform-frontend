@@ -65,5 +65,25 @@ export const cartService = {
             console.error('Error clearing cart:', error);
             throw error;
         }
+    },
+
+    checkout: async (data: { shippingCost?: number; shippingAddress?: any }) => {
+        try {
+            const response = await apiClient.post('/api/cart/checkout', data);
+            return response.data.order;
+        } catch (error: any) {
+            console.error('Error during checkout:', error);
+            throw error;
+        }
+    },
+
+    getCartHistory: async (page: number = 1, limit: number = 10) => {
+        try {
+            const response = await apiClient.get(`/api/cart/history?page=${page}&limit=${limit}`);
+            return response.data.data;
+        } catch (error: any) {
+            console.error('Error fetching cart history:', error);
+            throw error;
+        }
     }
 };
