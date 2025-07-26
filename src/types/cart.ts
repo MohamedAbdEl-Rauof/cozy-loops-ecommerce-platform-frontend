@@ -103,3 +103,12 @@ export interface TransformedCartItem {
   slug: string;
   totalPrice: number;
 }
+
+export interface MyCartProps {
+  items?: TransformedCartItem[];
+  onUpdateQuantity?: (itemId: string, newQuantity: number) => void;
+  onRemoveItem?: (itemId: string) => void;
+  onProceedToCheckout?: () => void;
+  shippingCost?: number;
+  isCheckoutLoading?: boolean;
+}

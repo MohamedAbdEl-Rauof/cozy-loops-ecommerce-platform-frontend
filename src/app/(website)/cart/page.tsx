@@ -5,6 +5,8 @@ import MyCart from "@/components/cart/MyCart"
 import ProtectedRoute from "@/provider/ProtectedRoute";
 import { useCart, useUpdateCart, useRemoveFromCart } from "@/hooks/useCart";
 import { Cart, CartItem, TransformedCartItem } from "@/types/cart";
+import { useRouter } from "next/navigation";
+import React from "react";
 
 const transformCartData = (cart: Cart): TransformedCartItem[] => {
     if (!cart?.items) return [];
@@ -27,6 +29,8 @@ const Page = () => {
     const { data: cart, isLoading: cartLoading, error } = useCart();
     const { updateCart } = useUpdateCart();
     const { removeFromCart } = useRemoveFromCart();
+    const router = useRouter();
+    const [isCheckoutLoading, setIsCheckoutLoading] = React.useState(false);
 
     const cartItems: TransformedCartItem[] = cart ? transformCartData(cart) : [];
 
@@ -34,7 +38,7 @@ const Page = () => {
         const cartItem = cartItems.find((item: TransformedCartItem) => item.id === itemId);
         if (cartItem && cartItem.productId) {
             updateCart({
-                productId: cartItem.productId, 
+                productId: cartItem.productId,
                 quantity: newQuantity
             });
         }
@@ -44,13 +48,18 @@ const Page = () => {
         const cartItem = cartItems.find((item: TransformedCartItem) => item.id === itemId);
         if (cartItem && cartItem.productId) {
             removeFromCart({
-                productId: cartItem.productId, 
+                productId: cartItem.productId,
             });
         }
     };
 
-    const handleProceedToCheckout = () => {
-        console.log("Proceeding to checkout...");
+    const handleProceedToCheckout = async () => {
+        setIsCheckoutLoading(true);
+        try {
+            await router.push('/payment');
+        } finally {
+            setIsCheckoutLoading(false);
+        }
     };
 
     if (cartLoading) {
@@ -94,6 +103,7 @@ const Page = () => {
                     onRemoveItem={handleRemoveItem}
                     onProceedToCheckout={handleProceedToCheckout}
                     shippingCost={0}
+                    isCheckoutLoading={isCheckoutLoading}
                 />
             </Box>
         </ProtectedRoute>

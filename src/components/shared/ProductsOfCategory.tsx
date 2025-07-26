@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { useRouter } from 'next/navigation';
-import { useAddToCart } from '@/hooks/useCart';
+import { useAddToCart, useCart, useUpdateCart } from '@/hooks/useCart';
 interface Product {
     id: string;
     title: string;
@@ -35,15 +35,30 @@ const ProductsOfCategory: React.FC<ProductsOfCategoryProps> = ({
 }) => {
     const [showAll, setShowAll] = React.useState(false);
     const router = useRouter();
-    const { addToCart } = useAddToCart();
+    const { addToCart, isPending: isAddingToCart } = useAddToCart();
+    const { updateCart, isPending: isUpdatingCart } = useUpdateCart();
+    const { data: cartData } = useCart();
 
     const handleAddToCart = (productId: string) => {
-        addToCart({
-            productId: productId,
-            quantity: 1
-        });
-    };
+        if (isAddingToCart || isUpdatingCart) return;
 
+        const product = Products.productsData.find(item => item.id === productId);
+
+        if (product) {
+            const existingCartItem = cartData?.items?.find((item: any) => item.product._id === productId);
+            if (existingCartItem) {
+                updateCart({
+                    productId: productId,
+                    quantity: existingCartItem.quantity + 1,
+                });
+            } else {
+                addToCart({
+                    productId: productId,
+                    quantity: 1,
+                });
+            }
+        }
+    };
     const handleOnClick = (productSlug: string) => {
         router.push(`/categories/${Products.mainSlug}/products/${productSlug}`);
     }

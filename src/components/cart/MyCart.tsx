@@ -15,7 +15,8 @@ import {
     Card,
     CardContent,
     Divider,
-    Avatar
+    Avatar,
+    CircularProgress
 } from '@mui/material';
 import {
     Add as AddIcon,
@@ -24,7 +25,7 @@ import {
     ShoppingCart as ShoppingCartIcon
 } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
-import {TransformedCartItem } from '@/types/cart';
+import { MyCartProps } from '@/types/cart';
 
 const StyledTableContainer = styled(TableContainer)(() => ({
     borderRadius: '16px',
@@ -114,20 +115,13 @@ const CheckoutButton = styled(Button)(() => ({
     }
 }));
 
-interface MyCartProps {
-    items?: TransformedCartItem[];
-    onUpdateQuantity?: (itemId: string, newQuantity: number) => void; 
-    onRemoveItem?: (itemId: string) => void; 
-    onProceedToCheckout?: () => void;
-    shippingCost?: number;
-}
-
 const MyCart: React.FC<MyCartProps> = ({
     items = [],
     onUpdateQuantity,
     onRemoveItem,
     onProceedToCheckout,
-    shippingCost = 0
+    shippingCost = 0,
+    isCheckoutLoading
 }) => {
     const cartItems = items;
     const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -195,48 +189,180 @@ const MyCart: React.FC<MyCartProps> = ({
         );
     }
 
+
     return (
-        <Container maxWidth={false}   sx={{ py: 4 , maxWidth: '1350px'  }}>
+        <Container maxWidth={false} sx={{ py: { xs: 2, sm: 3, md: 4 }, maxWidth: '1350px', px: { xs: 2, sm: 3, md: 4 } }}>
             <Typography
                 variant="h3"
                 component="h1"
                 sx={{
                     fontWeight: 800,
-                    mb: 4,
+                    mb: { xs: 3, sm: 4 },
                     textAlign: 'center',
                     background: 'linear-gradient(135deg, #ff7043 0%, #ff5722 100%)',
                     backgroundClip: 'text',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
+                    fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.5rem', lg: '3rem' },
                 }}
             >
                 Shopping Cart
             </Typography>
 
-            <Box sx={{ display: 'flex', gap: 4, flexDirection: { xs: 'column', lg: 'row' } }}>
-                <Box sx={{ flex: 1 }}>
-                    <StyledTableContainer >
+            <Box sx={{
+                display: 'flex',
+                gap: { xs: 3, md: 4 },
+                flexDirection: { xs: 'column', lg: 'row' },
+                alignItems: { xs: 'stretch', lg: 'flex-start' }
+            }}>
+                {/* Cart Items Section */}
+                <Box sx={{ flex: 1, minWidth: 0 }}>
+                    {/* Mobile Card View */}
+                    <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+                        {cartItems.map((item) => (
+                            <Card
+                                key={item.id}
+                                sx={{
+                                    mb: 2,
+                                    borderRadius: '16px',
+                                    boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                                    border: '1px solid rgba(255, 112, 67, 0.1)',
+                                    overflow: 'hidden',
+                                }}
+                            >
+                                <CardContent sx={{ p: 2 }}>
+                                    <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+                                        <Avatar
+                                            src={item.image}
+                                            alt={item.name}
+                                            sx={{
+                                                width: 60,
+                                                height: 60,
+                                                borderRadius: '12px',
+                                                border: '2px solid rgba(255, 112, 67, 0.2)',
+                                                flexShrink: 0,
+                                            }}
+                                        />
+                                        <Box sx={{ flex: 1, minWidth: 0 }}>
+                                            <Typography
+                                                variant="h6"
+                                                sx={{
+                                                    fontWeight: 600,
+                                                    color: '#2c3e50',
+                                                    fontSize: '1rem',
+                                                    mb: 1,
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                    whiteSpace: 'nowrap',
+                                                }}
+                                            >
+                                                {item.name}
+                                            </Typography>
+                                            <Typography
+                                                variant="h6"
+                                                sx={{
+                                                    fontWeight: 600,
+                                                    color: '#ff7043',
+                                                    fontSize: '1.1rem',
+                                                }}
+                                            >
+                                                {item.price} EGP
+                                            </Typography>
+                                        </Box>
+                                        <IconButton
+                                            onClick={() => handleRemoveItem(item.id)}
+                                            sx={{
+                                                color: '#ff4444',
+                                                backgroundColor: 'rgba(255, 68, 68, 0.1)',
+                                                width: 36,
+                                                height: 36,
+                                                '&:hover': {
+                                                    backgroundColor: 'rgba(255, 68, 68, 0.2)',
+                                                },
+                                            }}
+                                        >
+                                            <DeleteIcon fontSize="small" />
+                                        </IconButton>
+                                    </Box>
+
+                                    <Box sx={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        flexWrap: 'wrap',
+                                        gap: 2,
+                                    }}>
+                                        <QuantityBox sx={{ minWidth: '100px' }}>
+                                            <QuantityButton
+                                                size="small"
+                                                onClick={() => handleQuantityChange(item.id, -1)}
+                                                disabled={item.quantity <= 1}
+                                                sx={{ width: '28px', height: '28px' }}
+                                            >
+                                                <RemoveIcon fontSize="small" />
+                                            </QuantityButton>
+
+                                            <Typography
+                                                variant="body1"
+                                                sx={{
+                                                    fontWeight: 700,
+                                                    color: '#2c3e50',
+                                                    minWidth: '20px',
+                                                    textAlign: 'center',
+                                                    fontSize: '0.9rem',
+                                                }}
+                                            >
+                                                {item.quantity}
+                                            </Typography>
+
+                                            <QuantityButton
+                                                size="small"
+                                                onClick={() => handleQuantityChange(item.id, 1)}
+                                                sx={{ width: '28px', height: '28px' }}
+                                            >
+                                                <AddIcon fontSize="small" />
+                                            </QuantityButton>
+                                        </QuantityBox>
+
+                                        <Typography
+                                            variant="h6"
+                                            sx={{
+                                                fontWeight: 700,
+                                                color: '#2c3e50',
+                                                fontSize: '1rem',
+                                            }}
+                                        >
+                                            {(item.price * item.quantity).toFixed(2)} EGP
+                                        </Typography>
+                                    </Box>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </Box>
+
+                    {/* Desktop Table View */}
+                    <StyledTableContainer sx={{ display: { xs: 'none', md: 'block' } }}>
                         <Table>
                             <StyledTableHead>
                                 <TableRow>
-                                    <TableCell>Product</TableCell>
-                                    <TableCell align="center">Price</TableCell>
-                                    <TableCell align="center">Quantity</TableCell>
-                                    <TableCell align="center">Subtotal</TableCell>
-                                    <TableCell align="center">Action</TableCell>
+                                    <TableCell sx={{ fontSize: { md: '0.9rem', lg: '1rem' } }}>Product</TableCell>
+                                    <TableCell align="center" sx={{ fontSize: { md: '0.9rem', lg: '1rem' } }}>Price</TableCell>
+                                    <TableCell align="center" sx={{ fontSize: { md: '0.9rem', lg: '1rem' } }}>Quantity</TableCell>
+                                    <TableCell align="center" sx={{ fontSize: { md: '0.9rem', lg: '1rem' } }}>Subtotal</TableCell>
+                                    <TableCell align="center" sx={{ fontSize: { md: '0.9rem', lg: '1rem' } }}>Action</TableCell>
                                 </TableRow>
                             </StyledTableHead>
                             <TableBody>
                                 {cartItems.map((item) => (
                                     <StyledTableRow key={item.id}>
-                                        <TableCell>
-                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                        <TableCell sx={{ padding: { md: '12px', lg: '16px' } }}>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: { md: 1.5, lg: 2 } }}>
                                                 <Avatar
                                                     src={item.image}
                                                     alt={item.name}
                                                     sx={{
-                                                        width: 60,
-                                                        height: 60,
+                                                        width: { md: 50, lg: 60 },
+                                                        height: { md: 50, lg: 60 },
                                                         borderRadius: '12px',
                                                         border: '2px solid rgba(255, 112, 67, 0.2)',
                                                     }}
@@ -246,7 +372,11 @@ const MyCart: React.FC<MyCartProps> = ({
                                                     sx={{
                                                         fontWeight: 600,
                                                         color: '#2c3e50',
-                                                        fontSize: '1rem',
+                                                        fontSize: { md: '0.9rem', lg: '1rem' },
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        whiteSpace: 'nowrap',
+                                                        maxWidth: { md: '150px', lg: '200px' },
                                                     }}
                                                 >
                                                     {item.name}
@@ -260,6 +390,7 @@ const MyCart: React.FC<MyCartProps> = ({
                                                 sx={{
                                                     fontWeight: 600,
                                                     color: '#ff7043',
+                                                    fontSize: { md: '0.9rem', lg: '1rem' },
                                                 }}
                                             >
                                                 {item.price} EGP
@@ -267,15 +398,19 @@ const MyCart: React.FC<MyCartProps> = ({
                                         </TableCell>
 
                                         <TableCell align="center">
-                                            <QuantityBox>
+                                            <QuantityBox sx={{ minWidth: { md: '100px', lg: '120px' } }}>
                                                 <QuantityButton
                                                     size="small"
                                                     onClick={() => handleQuantityChange(item.id, -1)}
                                                     disabled={item.quantity <= 1}
+                                                    sx={{
+                                                        width: { md: '28px', lg: '32px' },
+                                                        height: { md: '28px', lg: '32px' }
+                                                    }}
                                                 >
                                                     <RemoveIcon fontSize="small" />
                                                 </QuantityButton>
-                                                
+
                                                 <Typography
                                                     variant="h6"
                                                     sx={{
@@ -283,14 +418,19 @@ const MyCart: React.FC<MyCartProps> = ({
                                                         color: '#2c3e50',
                                                         minWidth: '24px',
                                                         textAlign: 'center',
+                                                        fontSize: { md: '0.9rem', lg: '1rem' },
                                                     }}
                                                 >
                                                     {item.quantity}
                                                 </Typography>
-                                                
+
                                                 <QuantityButton
                                                     size="small"
                                                     onClick={() => handleQuantityChange(item.id, 1)}
+                                                    sx={{
+                                                        width: { md: '28px', lg: '32px' },
+                                                        height: { md: '28px', lg: '32px' }
+                                                    }}
                                                 >
                                                     <AddIcon fontSize="small" />
                                                 </QuantityButton>
@@ -303,7 +443,7 @@ const MyCart: React.FC<MyCartProps> = ({
                                                 sx={{
                                                     fontWeight: 700,
                                                     color: '#2c3e50',
-                                                    fontSize: '1.1rem',
+                                                    fontSize: { md: '1rem', lg: '1.1rem' },
                                                 }}
                                             >
                                                 {(item.price * item.quantity).toFixed(2)} EGP
@@ -316,6 +456,9 @@ const MyCart: React.FC<MyCartProps> = ({
                                                 sx={{
                                                     color: '#ff4444',
                                                     backgroundColor: 'rgba(255, 68, 68, 0.1)',
+                                                    width: { md: 36, lg: 40 },
+                                                    height: { md: 36, lg: 40 },
+
                                                     '&:hover': {
                                                         backgroundColor: 'rgba(255, 68, 68, 0.2)',
                                                         transform: 'scale(1.1)',
@@ -323,7 +466,7 @@ const MyCart: React.FC<MyCartProps> = ({
                                                     transition: 'all 0.2s ease',
                                                 }}
                                             >
-                                                <DeleteIcon />
+                                                <DeleteIcon fontSize="small" />
                                             </IconButton>
                                         </TableCell>
                                     </StyledTableRow>
@@ -333,22 +476,29 @@ const MyCart: React.FC<MyCartProps> = ({
                     </StyledTableContainer>
                 </Box>
 
-                <Box sx={{ width: { xs: '100%', lg: '400px' } }}>
+                {/* Cart Summary Section */}
+                <Box sx={{
+                    width: { xs: '100%', lg: '400px' },
+                    position: { lg: 'sticky' },
+                    top: { lg: '20px' },
+                    alignSelf: { lg: 'flex-start' }
+                }}>
                     <CartTotalCard>
-                        <CardContent sx={{ p: 3 }}>
+                        <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
                             <Typography
                                 variant="h5"
                                 sx={{
                                     fontWeight: 700,
-                                    mb: 3,
+                                    mb: { xs: 2, sm: 3 },
                                     color: '#2c3e50',
                                     textAlign: 'center',
+                                    fontSize: { xs: '1.3rem', sm: '1.5rem' },
                                 }}
                             >
                                 Cart Totals
                             </Typography>
 
-                            <Box sx={{ mb: 3 }}>
+                            <Box sx={{ mb: { xs: 2, sm: 3 } }}>
                                 <Box
                                     sx={{
                                         display: 'flex',
@@ -356,6 +506,8 @@ const MyCart: React.FC<MyCartProps> = ({
                                         alignItems: 'center',
                                         mb: 2,
                                         py: 1,
+                                        flexWrap: 'wrap',
+                                        gap: 1,
                                     }}
                                 >
                                     <Typography
@@ -363,6 +515,7 @@ const MyCart: React.FC<MyCartProps> = ({
                                         sx={{
                                             fontWeight: 600,
                                             color: '#6c757d',
+                                            fontSize: { xs: '0.9rem', sm: '1rem' },
                                         }}
                                     >
                                         Subtotal:
@@ -372,6 +525,7 @@ const MyCart: React.FC<MyCartProps> = ({
                                         sx={{
                                             fontWeight: 600,
                                             color: '#2c3e50',
+                                            fontSize: { xs: '1rem', sm: '1.1rem' },
                                         }}
                                     >
                                         {subtotal.toFixed(2)} EGP
@@ -387,6 +541,8 @@ const MyCart: React.FC<MyCartProps> = ({
                                         alignItems: 'center',
                                         mb: 2,
                                         py: 1,
+                                        flexWrap: 'wrap',
+                                        gap: 1,
                                     }}
                                 >
                                     <Typography
@@ -394,6 +550,7 @@ const MyCart: React.FC<MyCartProps> = ({
                                         sx={{
                                             fontWeight: 600,
                                             color: '#6c757d',
+                                            fontSize: { xs: '0.9rem', sm: '1rem' },
                                         }}
                                     >
                                         Shipping:
@@ -403,6 +560,7 @@ const MyCart: React.FC<MyCartProps> = ({
                                         sx={{
                                             fontWeight: 600,
                                             color: shippingCost === 0 ? '#28a745' : '#2c3e50',
+                                            fontSize: { xs: '1rem', sm: '1.1rem' },
                                         }}
                                     >
                                         {shippingCost === 0 ? 'Free' : `${shippingCost.toFixed(2)} EGP`}
@@ -416,11 +574,13 @@ const MyCart: React.FC<MyCartProps> = ({
                                         display: 'flex',
                                         justifyContent: 'space-between',
                                         alignItems: 'center',
-                                        py: 2,
-                                        px: 2,
+                                        py: { xs: 1.5, sm: 2 },
+                                        px: { xs: 1.5, sm: 2 },
                                         borderRadius: '12px',
                                         backgroundColor: 'rgba(255, 112, 67, 0.1)',
                                         border: '1px solid rgba(255, 112, 67, 0.3)',
+                                        flexWrap: 'wrap',
+                                        gap: 1,
                                     }}
                                 >
                                     <Typography
@@ -428,6 +588,7 @@ const MyCart: React.FC<MyCartProps> = ({
                                         sx={{
                                             fontWeight: 700,
                                             color: '#2c3e50',
+                                            fontSize: { xs: '1.1rem', sm: '1.2rem' },
                                         }}
                                     >
                                         Total:
@@ -437,6 +598,7 @@ const MyCart: React.FC<MyCartProps> = ({
                                         sx={{
                                             fontWeight: 800,
                                             color: '#ff7043',
+                                            fontSize: { xs: '1.3rem', sm: '1.5rem' },
                                         }}
                                     >
                                         {total.toFixed(2)} EGP
@@ -447,9 +609,15 @@ const MyCart: React.FC<MyCartProps> = ({
                             <CheckoutButton
                                 fullWidth
                                 onClick={handleProceedToCheckout}
-                                startIcon={<ShoppingCartIcon />}
+                                startIcon={isCheckoutLoading ? <CircularProgress size={20} color="inherit" /> : <ShoppingCartIcon />}
+                                disabled={isCheckoutLoading}
+                                sx={{
+                                    py: { xs: 1.5, sm: 2 },
+                                    fontSize: { xs: '1rem', sm: '1.1rem' },
+                                    borderRadius: { xs: '20px', sm: '25px' },
+                                }}
                             >
-                                Proceed to Checkout
+                                {isCheckoutLoading ? 'Processing...' : 'Proceed to Checkout'}
                             </CheckoutButton>
                         </CardContent>
                     </CartTotalCard>
