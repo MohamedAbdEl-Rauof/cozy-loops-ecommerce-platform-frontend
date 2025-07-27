@@ -73,9 +73,9 @@ const OrderConfirmationPage: React.FC = () => {
 
                 console.log('Fetching order with number:', orderNumber)
                 console.log('orderService:', orderService) // Debug log
-                
+
                 const response = await orderService.getOrderByNumber(orderNumber)
-                
+
                 if (response.success) {
                     setOrder(response.order)
                 } else {
@@ -163,9 +163,9 @@ const OrderConfirmationPage: React.FC = () => {
                             <ReceiptIcon />
                             Order Summary
                         </Typography>
-                        
+
                         <Grid container spacing={3}>
-                            <Grid item xs={12} md={6}>
+                            <Grid size={{ xs: 12, md: 6 }}>
                                 <Box sx={{ mb: 2 }}>
                                     <Typography variant="body2" color="text.secondary">
                                         Order Number
@@ -186,7 +186,7 @@ const OrderConfirmationPage: React.FC = () => {
                                     <Typography variant="body2" color="text.secondary">
                                         Payment Status
                                     </Typography>
-                                    <Typography variant="body1" sx={{ 
+                                    <Typography variant="body1" sx={{
                                         color: order.paymentStatus === 'completed' ? '#4caf50' : '#ff9800',
                                         fontWeight: 600
                                     }}>
@@ -194,8 +194,8 @@ const OrderConfirmationPage: React.FC = () => {
                                     </Typography>
                                 </Box>
                             </Grid>
-                            
-                            <Grid item xs={12} md={6}>
+
+                            <Grid size={{ xs: 12, md: 6 }}>
                                 <Box sx={{
                                     bgcolor: '#f8f9fa',
                                     p: 3,
@@ -234,12 +234,12 @@ const OrderConfirmationPage: React.FC = () => {
                             <ShoppingBagIcon />
                             Order Items ({order.items.length})
                         </Typography>
-                        
+
                         {order.items.map((item, index) => (
                             <Card key={index} variant="outlined" sx={{ mb: 2, borderRadius: 2 }}>
                                 <CardContent sx={{ p: 3 }}>
                                     <Grid container spacing={3} alignItems="center">
-                                        <Grid item xs={12} sm={2}>
+                                        <Grid size={{ xs: 12, sm: 2 }}>
                                             <Box
                                                 component="img"
                                                 src={item.product.images[0] || '/placeholder-image.jpg'}
@@ -252,7 +252,7 @@ const OrderConfirmationPage: React.FC = () => {
                                                 }}
                                             />
                                         </Grid>
-                                        <Grid item xs={12} sm={6}>
+                                        <Grid size={{ xs: 12, sm: 6 }}>
                                             <Typography variant="h6" fontWeight="600" gutterBottom>
                                                 {item.product.name}
                                             </Typography>
@@ -260,7 +260,7 @@ const OrderConfirmationPage: React.FC = () => {
                                                 Price: ${item.price.toFixed(2)}
                                             </Typography>
                                         </Grid>
-                                        <Grid item xs={6} sm={2}>
+                                        <Grid size={{ xs: 6, sm: 2 }}>
                                             <Typography variant="body2" color="text.secondary">
                                                 Quantity
                                             </Typography>
@@ -268,7 +268,7 @@ const OrderConfirmationPage: React.FC = () => {
                                                 {item.quantity}
                                             </Typography>
                                         </Grid>
-                                        <Grid item xs={6} sm={2}>
+                                        <Grid size={{ xs: 6, sm: 2 }}>
                                             <Typography variant="body2" color="text.secondary">
                                                 Total
                                             </Typography>
@@ -325,7 +325,7 @@ const OrderConfirmationPage: React.FC = () => {
                     {/* Action Buttons */}
                     <Paper elevation={3} sx={{ p: 4, textAlign: 'center', borderRadius: 3 }}>
                         <Grid container spacing={2} justifyContent="center">
-                            <Grid item xs={12} sm={6} md={4}>
+                            <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                                 <Button
                                     variant="contained"
                                     fullWidth
@@ -340,7 +340,7 @@ const OrderConfirmationPage: React.FC = () => {
                                     View All Orders
                                 </Button>
                             </Grid>
-                            <Grid item xs={12} sm={6} md={4}>
+                            <Grid size={{ xs: 6, sm: 6, md: 4 }}>
                                 <Button
                                     variant="outlined"
                                     fullWidth
@@ -359,7 +359,7 @@ const OrderConfirmationPage: React.FC = () => {
                                     Continue Shopping
                                 </Button>
                             </Grid>
-                            <Grid item xs={12} sm={6} md={4}>
+                            <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                                 <Button
                                     variant="outlined"
                                     fullWidth

@@ -29,24 +29,19 @@ const PaymentSuccessPage: React.FC = () => {
                     return
                 }
 
-                // Verify payment with backend
                 const response = await paymentService.verifyPayment({
                     paymentIntentId
                 })
 
                 if (response.success) {
-                    // Clean up the URL by removing query parameters
                     window.history.replaceState({}, '', '/payment/success')
                     
-                    // Redirect to the URL provided by backend
                     if (response.redirectUrl) {
                         router.push(response.redirectUrl)
                     } else {
-                        // Fallback redirect
                         router.push('/orders')
                     }
                 } else {
-                    // Handle failed verification
                     if (response.redirectUrl) {
                         router.push(response.redirectUrl)
                     } else {

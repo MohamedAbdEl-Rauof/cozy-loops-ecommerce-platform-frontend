@@ -12,7 +12,6 @@ import {
 import {
     Warning as WarningIcon,
     Home as HomeIcon,
-    ShoppingCart as ShoppingCartIcon,
     CreditCard as CreditCardIcon
 } from '@mui/icons-material'
 
