@@ -14,131 +14,15 @@ import { useMakersBySlug } from "@/hooks/useMakers";
 import ExisitingComments from '@/components/about/ExisitingComments';
 import { useProductsTestimonialsBySlug } from '@/hooks/useTestimonials';
 import { useAddToWishlist, useRemoveFromWishlist, useWishlist } from '@/hooks/useWishlist';
-
-
-const FeatureCardsSectionData = {
-  sectionTitle: "Details & Inspiration",
-  sectionDescription: "Inspired by spring blooms and woven with care, this piece brings warmth to minimalist or boho spaces alike.",
-  cards: [
-    {
-      imageUrl: "/images/shared/textile 1.png",
-      title: "Materials",
-      description: "Cotton yarn, Monk's cloth, Wooden hoop frame",
-    },
-    {
-      imageUrl: "/images/shared/measuring-tape.png",
-      title: "Size/Dimensions",
-      description: "25cm diameter (custom sizes available on request)",
-    },
-    {
-      imageUrl: "/images/shared/color-palette.png",
-      title: "Color Palette",
-      description: "Coral, blush, sage, ivory",
-    },
-    {
-      imageUrl: "/images/shared/user-guide.png",
-      title: "Care Instructions",
-      description: "Gently dust or spot clean with a damp cloth. Keep out of direct sunlight.",
-    }
-  ]
-};
-
-const FeatureCardsSectionData2 = {
-  sectionTitle: "Shipping & Policies",
-  sectionDescription: "",
-  cards: [
-    {
-      imageUrl: "/images/shared/fast-delivery.png",
-      title: "Ships within 2–4 business days from Cairo",
-      description: "",
-    },
-    {
-      imageUrl: "/images/shared/delivery.png",
-      title: "Delivery across Egypt & the Middle East",
-      description: "",
-    },
-    {
-      imageUrl: "/images/shared/return 1.png",
-      title: "Free returns within 7 days",
-      description: "(conditions apply)",
-    }
-  ]
-};
-
-const similarProductsData = {
-  title: "Similar Products",
-  productsData: [
-    {
-      id: "1",
-      title: "Wireless Bluetooth Headphones",
-      image: "/images/shared/featuredCategory.jpg",
-      price: 99.99
-    },
-    {
-      id: "2",
-      title: "Smart Watch Series 5",
-      image: "/images/shared/featuredCategory.jpg",
-      price: 299.99
-    },
-    {
-      id: "3",
-      title: "Portable Bluetooth Speaker",
-      image: "/images/shared/featuredCategory.jpg",
-      price: 79.99
-    },
-    {
-      id: "4",
-      title: "USB-C Fast Charger",
-      image: "/images/shared/featuredCategory.jpg",
-      price: 29.99
-    },
-    {
-      id: "5",
-      title: "Wireless Mouse",
-      image: "/images/shared/featuredCategory.jpg",
-      price: 49.99
-    },
-    {
-      id: "6",
-      title: "Wireless Mouse",
-      image: "/images/shared/featuredCategory.jpg",
-      price: 49.99
-    },
-    {
-      id: "7",
-      title: "Wireless Mouse",
-      image: "/images/shared/featuredCategory.jpg",
-      price: 49.99
-    },
-    {
-      id: "8",
-      title: "Wireless Mouse",
-      image: "/images/shared/featuredCategory.jpg",
-      price: 49.99
-    },
-    {
-      id: "9",
-      title: "Wireless Mouse",
-      image: "/images/shared/featuredCategory.jpg",
-      price: 49.99
-    },
-    {
-      id: "10",
-      title: "Wireless Mouse",
-      image: "/images/shared/featuredCategory.jpg",
-      price: 49.99
-    }
-  ]
-};
+import { FeatureCardsSectionData, FeatureCardsSectionData2, similarProductsData } from '@/data/pages/productDetailsPageData';
 
 // Helper function to transform API images to component format
 const transformImages = (images: string[] = [], productName: string): ProductImage[] => {
   if (!images || images.length === 0) {
-    // Fallback to placeholder images if no images provided
     return [
       {
         id: '1',
-        url: '/placeholder-product.jpg', // Make sure you have this placeholder image
+        url: '/placeholder-product.jpg',
         alt: productName
       }
     ];
@@ -154,7 +38,6 @@ const transformImages = (images: string[] = [], productName: string): ProductIma
 // Helper function to transform API colors to component format
 const transformColors = (colors: string[] = []): ProductColor[] => {
   if (!colors || colors.length === 0) {
-    // Default colors if none provided by API
     return [
       {
         name: "Default",
@@ -164,7 +47,6 @@ const transformColors = (colors: string[] = []): ProductColor[] => {
     ];
   }
 
-  // Color name mapping (you can expand this based on your needs)
   const colorNames: { [key: string]: string } = {
     '#ff6b6b': 'Red',
     '#4ecdc4': 'Teal',
@@ -184,7 +66,6 @@ const transformColors = (colors: string[] = []): ProductColor[] => {
     available: true
   }));
 };
-
 
 const ProductPage = () => {
   const params = useParams();
@@ -208,11 +89,11 @@ const ProductPage = () => {
     refetch: refetchTestimonials
   } = useProductsTestimonialsBySlug(productSlug);
 
+  const { data: makerData, isLoading: makerLoading, error: makerError } = useMakersBySlug(product?.maker?.slug || '');
+
   const handleCommentSubmitted = () => {
     refetchTestimonials();
   };
-
-  const { data: makerData, isLoading: makerLoading, error: makerError } = useMakersBySlug(product?.maker?.slug || '');
 
   if (isLoading) {
     return (
@@ -256,7 +137,6 @@ const ProductPage = () => {
     );
   }
 
-
   // Transform the API data to match component expectations
   const transformedImages = transformImages(product.images, product.name);
   const transformedColors = transformColors(product.colors);
@@ -266,7 +146,6 @@ const ProductPage = () => {
     // Implement your add to cart logic here
   };
 
-
   const handleToggleFavorite = () => {
     if (isInWishlist(product._id)) {
       removeFromWishlist(product._id);
@@ -275,13 +154,34 @@ const ProductPage = () => {
     }
   };
 
-
-
   const handleShare = () => {
     console.log('Share product:', product._id);
   };
 
+  // Helper function to safely calculate years of experience
+  const calculateYearsOfExperience = (joinDate: string | undefined): number => {
+    if (!joinDate) return 0;
+    try {
+      return new Date().getFullYear() - new Date(joinDate).getFullYear();
+    } catch {
+      return 0;
+    }
+  };
 
+  // Helper function to safely format join date
+  const formatJoinDate = (joinDate: string | undefined): string => {
+    if (!joinDate) return "Unknown";
+    try {
+      return new Date(joinDate).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long'
+      });
+    } catch {
+      return "Unknown";
+    }
+  };
+
+  const makerName = makerData?.name || product?.maker?.name || "Unknown Maker";
 
   return (
     <Box component="main" sx={{ bgcolor: '#fafafa' }}>
@@ -381,75 +281,38 @@ const ProductPage = () => {
             }
           }}
         >
-          {/* <AbountMaker
-            title="About The Maker"
-            makerInfo={{
-              name: "Nour Hassan",
-              location: "Mansoura, Egypt",
-              miniBio: "Hi! I'm Nour from Mansoura. Punch needle art lets me bring joy to people's spaces—one loop at a time. I'm inspired by the colors of Egyptian nature and love turning simple threads into soft, happy designs.",
-              avatar: "/images/makers/nour-hassan.jpg",
-              joinedDate: "March 2020",
-              rating: 4,
-              totalReviews: 127,
-              specialties: ["Punch Needle", "Embroidery", "Wall Art", "Home Decor"],
-              yearsOfExperience: 6,
-              isVerified: true,
-              totalProducts: 45,
-              completedOrders: 320
-            }}
-            buttonText1="Visit Artisan Shop"
-            buttonText2="View More by Nour"
-            imageSrc="/images/shared/storyFeature.jpg"
-            imageAlt="Nour crafting a beautiful punch needle wall hanging"
-            onButton1Click={() => {
-              console.log('Navigate to Nour\'s artisan shop');
-              // router.push('/artisan/nour-hassan');
-            }}
-            onButton2Click={() => {
-              console.log('View more products by Nour');
-              // router.push('/products?maker=nour-hassan');
-            }}
-          /> */}
-
           <AbountMaker
             title="About The Maker"
             makerInfo={{
-              name: makerData?.name || product?.maker?.name || "Unknown Maker",
+              name: makerName,
               location: makerData?.location || product?.maker?.location || "Unknown Location",
               miniBio: makerData?.aboutMe || product?.maker?.message || "Passionate artisan creating beautiful handcrafted pieces.",
               avatar: makerData?.image || product?.maker?.image || "/images/makers/default-maker.jpg",
-              joinedDate: makerData?.joinDate
-                ? new Date(makerData.joinDate).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long'
-                })
-                : "Unknown",   // problem here 
+              joinedDate: formatJoinDate(makerData?.joinDate),
               rating: makerData?.rating || 4.5,
               totalReviews: 127,
               specialties: makerData?.specialties || ["Handcrafted", "Artisan"],
-              yearsOfExperience: makerData?.joinDate ? new Date().getFullYear() - new Date(makerData.joinDate).getFullYear() : 0,  // problem here
+              yearsOfExperience: calculateYearsOfExperience(makerData?.joinDate),
               isVerified: true,
               totalProducts: 45,
               completedOrders: 320
             }}
             buttonText1="Visit Artisan Shop"
-            buttonText2={`View More by ${makerData?.name || 'Maker'}`} // problem here
+            buttonText2={`View More by ${makerName}`}
             imageSrc={makerData?.image || product?.maker?.image || "/images/shared/storyFeature.jpg"}
-            imageAlt={`${makerData?.name || 'Maker'} crafting beautiful handmade pieces`} // problem here 
-            onButton1Click={() => {
-              console.log(`Navigate to ${makerData?.name}'s artisan shop`);
+            imageAlt={`${makerName} crafting beautiful handmade pieces`}
+                       onButton1Click={() => {
+              console.log(`Navigate to ${makerName}'s artisan shop`);
               // router.push(`/makers/${makerData?.slug}`);
             }}
             onButton2Click={() => {
-              console.log(`View more products by ${makerData?.name}`);
+              console.log(`View more products by ${makerName}`);
               // router.push(`/products?maker=${makerData?.slug}`);
             }}
           />
-
-
         </Box>
 
-        {/* Related Products Section */}
+        {/* Similar Products Section */}
         <Box
           component="section"
           sx={{
@@ -457,10 +320,13 @@ const ProductPage = () => {
             px: { xs: 2, sm: 3, md: 4 }
           }}
         >
-
+          <SimilarProducts 
+            Products={similarProductsData} 
+            onAddToCart={() => console.log("Product added to cart")} 
+          />
         </Box>
 
-        {/* Makers Section */}
+        {/* Comments Section */}
         <Box
           component="section"
           sx={{
@@ -468,20 +334,24 @@ const ProductPage = () => {
             px: { xs: 2, sm: 3, md: 4 }
           }}
         >
-
+          <Comments onCommentSubmitted={handleCommentSubmitted} />
         </Box>
 
+        {/* Existing Comments Section */}
+        <Box
+          component="section"
+          sx={{
+            mb: { xs: 6, sm: 8, md: 10 },
+            px: { xs: 2, sm: 3, md: 4 }
+          }}
+        >
+          <ExisitingComments 
+            mockComments={testimonials || []} 
+            onRefetch={refetchTestimonials} 
+          />
+        </Box>
 
-
-
-        <SimilarProducts Products={similarProductsData} onAddToCart={() => console.log("Product added to cart")} />
-
-
-
-        <Comments onCommentSubmitted={handleCommentSubmitted} />
-
-        <ExisitingComments mockComments={testimonials || []} onRefetch={refetchTestimonials} />
-
+        {/* Second Feature Cards Section */}
         <Box
           component="section"
           sx={{
@@ -496,14 +366,9 @@ const ProductPage = () => {
             cards={FeatureCardsSectionData2.cards}
           />
         </Box>
-
       </Container>
     </Box>
   );
 };
 
 export default ProductPage;
-
-function removeFromWishlist(_id: string) {
-  throw new Error('Function not implemented.');
-}
