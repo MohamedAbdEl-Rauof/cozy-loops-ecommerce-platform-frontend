@@ -20,3 +20,25 @@ export interface StripeCheckoutProps {
     orderData: OrderData;
     onPaymentStatusChange: (status: 'processing' | 'completed' | 'failed') => void;
 }
+
+export interface OrderDetails {
+    _id: string;
+    orderNumber: string;
+    totalAmount: number;
+    subtotal: number;
+    shippingCost: number;
+    tax: number;
+    paymentStatus: string;
+    orderStatus: string;
+    createdAt: string;
+    items: Array<{
+        product: {
+            _id: string;
+            name: string;
+            images: string[];
+        };
+        quantity: number;
+        price: number;
+        totalPrice: number;
+    }>;
+}

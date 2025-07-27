@@ -11,49 +11,18 @@ import {
     Button,
     Divider,
     Grid,
-    Card,
-    CardContent
 } from '@mui/material'
 import {
     CheckCircle as CheckCircleIcon,
     Home as HomeIcon,
     ShoppingBag as ShoppingBagIcon,
     Email as EmailIcon,
-    Receipt as ReceiptIcon
+    Receipt as ReceiptIcon,
+    Visibility as ViewIcon
 } from '@mui/icons-material'
-// Try both import methods to see which works
-import { orderService, type Order } from '@/services/orderService'
-// Alternative: import orderService from '@/services/orderService'
+import { orderService } from '@/services/orderService'
 import ProtectedRoute from '@/provider/ProtectedRoute'
-
-interface OrderDetails {
-    _id: string;
-    orderNumber: string;
-    totalAmount: number;
-    subtotal: number;
-    shippingCost: number;
-    tax: number;
-    paymentStatus: string;
-    orderStatus: string;
-    createdAt: string;
-    items: Array<{
-        product: {
-            _id: string;
-            name: string;
-            images: string[];
-        };
-        quantity: number;
-        price: number;
-        totalPrice: number;
-    }>;
-    shippingAddress?: {
-        street: string;
-        city: string;
-        state: string;
-        zipCode: string;
-        country: string;
-    };
-}
+import { OrderDetails } from '@/types/order'
 
 const OrderConfirmationPage: React.FC = () => {
     const searchParams = useSearchParams()
@@ -70,9 +39,6 @@ const OrderConfirmationPage: React.FC = () => {
                 if (!orderNumber) {
                     throw new Error('Order ID is required')
                 }
-
-                console.log('Fetching order with number:', orderNumber)
-                console.log('orderService:', orderService) // Debug log
 
                 const response = await orderService.getOrderByNumber(orderNumber)
 
@@ -92,7 +58,6 @@ const OrderConfirmationPage: React.FC = () => {
         fetchOrderDetails()
     }, [orderNumber])
 
-    // ... rest of your component code remains the same
     if (isLoading) {
         return (
             <ProtectedRoute>
@@ -137,11 +102,12 @@ const OrderConfirmationPage: React.FC = () => {
         )
     }
 
+    const totalItems = order.items.reduce((sum, item) => sum + item.quantity, 0)
+
     return (
         <ProtectedRoute>
             <Box sx={{ bgcolor: '#f5f5f5', minHeight: '100vh', py: 4 }}>
                 <Container maxWidth="md">
-                    {/* Success Header */}
                     <Paper elevation={3} sx={{ p: 4, textAlign: 'center', borderRadius: 3, mb: 3 }}>
                         <CheckCircleIcon
                             sx={{ fontSize: 80, color: '#4caf50', mb: 2 }}
@@ -157,7 +123,6 @@ const OrderConfirmationPage: React.FC = () => {
                         </Typography>
                     </Paper>
 
-                    {/* Order Summary */}
                     <Paper elevation={3} sx={{ p: 4, borderRadius: 3, mb: 3 }}>
                         <Typography variant="h6" fontWeight="600" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                             <ReceiptIcon />
@@ -179,18 +144,19 @@ const OrderConfirmationPage: React.FC = () => {
                                         Order Date
                                     </Typography>
                                     <Typography variant="body1">
-                                        {new Date(order.createdAt).toLocaleDateString()}
+                                        {new Date(order.createdAt).toLocaleDateString('en-US', {
+                                            year: 'numeric',
+                                            month: 'long',
+                                            day: 'numeric'
+                                        })}
                                     </Typography>
                                 </Box>
                                 <Box sx={{ mb: 2 }}>
                                     <Typography variant="body2" color="text.secondary">
-                                        Payment Status
+                                        Items Ordered
                                     </Typography>
-                                    <Typography variant="body1" sx={{
-                                        color: order.paymentStatus === 'completed' ? '#4caf50' : '#ff9800',
-                                        fontWeight: 600
-                                    }}>
-                                        {order.paymentStatus.charAt(0).toUpperCase() + order.paymentStatus.slice(1)}
+                                    <Typography variant="body1">
+                                        {totalItems} item{totalItems > 1 ? 's' : ''}
                                     </Typography>
                                 </Box>
                             </Grid>
@@ -228,92 +194,19 @@ const OrderConfirmationPage: React.FC = () => {
                         </Grid>
                     </Paper>
 
-                    {/* Order Items */}
-                    <Paper elevation={3} sx={{ p: 4, borderRadius: 3, mb: 3 }}>
-                        <Typography variant="h6" fontWeight="600" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <ShoppingBagIcon />
-                            Order Items ({order.items.length})
-                        </Typography>
-
-                        {order.items.map((item, index) => (
-                            <Card key={index} variant="outlined" sx={{ mb: 2, borderRadius: 2 }}>
-                                <CardContent sx={{ p: 3 }}>
-                                    <Grid container spacing={3} alignItems="center">
-                                        <Grid size={{ xs: 12, sm: 2 }}>
-                                            <Box
-                                                component="img"
-                                                src={item.product.images[0] || '/placeholder-image.jpg'}
-                                                alt={item.product.name}
-                                                sx={{
-                                                    width: '100%',
-                                                    height: 80,
-                                                    objectFit: 'cover',
-                                                    borderRadius: 1
-                                                }}
-                                            />
-                                        </Grid>
-                                        <Grid size={{ xs: 12, sm: 6 }}>
-                                            <Typography variant="h6" fontWeight="600" gutterBottom>
-                                                {item.product.name}
-                                            </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                Price: ${item.price.toFixed(2)}
-                                            </Typography>
-                                        </Grid>
-                                        <Grid size={{ xs: 6, sm: 2 }}>
-                                            <Typography variant="body2" color="text.secondary">
-                                                Quantity
-                                            </Typography>
-                                            <Typography variant="h6" fontWeight="600">
-                                                {item.quantity}
-                                            </Typography>
-                                        </Grid>
-                                        <Grid size={{ xs: 6, sm: 2 }}>
-                                            <Typography variant="body2" color="text.secondary">
-                                                Total
-                                            </Typography>
-                                            <Typography variant="h6" fontWeight="600" color="#ff5722">
-                                                ${item.totalPrice.toFixed(2)}
-                                            </Typography>
-                                        </Grid>
-                                    </Grid>
-                                </CardContent>
-                            </Card>
-                        ))}
-                    </Paper>
-
-                    {/* Shipping Address */}
-                    {order.shippingAddress && (
-                        <Paper elevation={3} sx={{ p: 4, borderRadius: 3, mb: 3 }}>
-                            <Typography variant="h6" fontWeight="600" gutterBottom>
-                                Shipping Address
-                            </Typography>
-                            <Typography variant="body1">
-                                {order.shippingAddress.street}
-                            </Typography>
-                            <Typography variant="body1">
-                                {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zipCode}
-                            </Typography>
-                            <Typography variant="body1">
-                                {order.shippingAddress.country}
-                            </Typography>
-                        </Paper>
-                    )}
-
-                    {/* Next Steps */}
                     <Paper elevation={3} sx={{ p: 4, borderRadius: 3, mb: 3 }}>
                         <Typography variant="h6" fontWeight="600" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                             <EmailIcon />
                             What's Next?
                         </Typography>
-                        <Box sx={{ pl: 4 }}>
-                            <Typography variant="body1" sx={{ mb: 2 }}>
+                        <Box sx={{ pl: 2 }}>
+                            <Typography variant="body1" sx={{ mb: 1, display: 'flex', alignItems: 'center' }}>
                                 • You will receive an email confirmation shortly
                             </Typography>
-                            <Typography variant="body1" sx={{ mb: 2 }}>
+                            <Typography variant="body1" sx={{ mb: 1 }}>
                                 • We'll send you tracking information once your order ships
                             </Typography>
-                            <Typography variant="body1" sx={{ mb: 2 }}>
+                            <Typography variant="body1" sx={{ mb: 1 }}>
                                 • Estimated delivery: 3-5 business days
                             </Typography>
                             <Typography variant="body1">
@@ -322,60 +215,79 @@ const OrderConfirmationPage: React.FC = () => {
                         </Box>
                     </Paper>
 
-                    {/* Action Buttons */}
-                    <Paper elevation={3} sx={{ p: 4, textAlign: 'center', borderRadius: 3 }}>
-                        <Grid container spacing={2} justifyContent="center">
-                            <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+                    <Paper 
+                        elevation={3} 
+                        sx={{ 
+                            p: 4, 
+                            textAlign: 'center', 
+                            borderRadius: 3,
+                            background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)'
+                        }}
+                    >
+                        <Grid container spacing={3} justifyContent="center">
+                            <Grid size={{ xs: 12, sm: 6 }}>
                                 <Button
                                     variant="contained"
                                     fullWidth
-                                    onClick={() => router.push('/orders')}
+                                    onClick={() => router.push(`/orders/${order._id}`)}
                                     sx={{
                                         bgcolor: '#ff5722',
-                                        '&:hover': { bgcolor: '#e64a19' },
-                                        py: 1.5
+                                        color: 'white',
+                                        py: 2.5,
+                                        px: 3,
+                                        borderRadius: 2,
+                                        fontWeight: 600,
+                                        fontSize: '0.95rem',
+                                        textTransform: 'none',
+                                        minHeight: 56,
+                                        boxShadow: '0 4px 12px rgba(255, 87, 34, 0.3)',
+                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        '&:hover': { 
+                                            bgcolor: '#e64a19',
+                                            transform: 'translateY(-2px)',
+                                            boxShadow: '0 6px 20px rgba(255, 87, 34, 0.4)'
+                                        },
+                                        '&:active': {
+                                            transform: 'translateY(0px)'
+                                        }
                                     }}
-                                    startIcon={<ReceiptIcon />}
+                                    startIcon={<ViewIcon sx={{ fontSize: 20 }} />}
+                                >
+                                    View Order Details
+                                </Button>
+                            </Grid>
+                            
+                            <Grid size={{ xs: 12, sm: 6 }}>
+                                <Button
+                                    variant="outlined"
+                                    fullWidth
+                                    onClick={() => router.push('/orders')}
+                                    sx={{
+                                        borderColor: '#9e9e9e',
+                                        color: '#616161',
+                                        py: 2.5,
+                                        px: 3,
+                                        borderRadius: 2,
+                                        fontWeight: 600,
+                                        fontSize: '0.95rem',
+                                        textTransform: 'none',
+                                        minHeight: 56,
+                                        borderWidth: 2,
+                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        '&:hover': {
+                                            borderColor: '#757575',
+                                            bgcolor: 'rgba(158, 158, 158, 0.08)',
+                                            color: '#424242',
+                                            transform: 'translateY(-2px)',
+                                            boxShadow: '0 4px 12px rgba(158, 158, 158, 0.2)'
+                                        },
+                                        '&:active': {
+                                            transform: 'translateY(0px)'
+                                        }
+                                    }}
+                                    startIcon={<ReceiptIcon sx={{ fontSize: 20 }} />}
                                 >
                                     View All Orders
-                                </Button>
-                            </Grid>
-                            <Grid size={{ xs: 6, sm: 6, md: 4 }}>
-                                <Button
-                                    variant="outlined"
-                                    fullWidth
-                                    onClick={() => router.push('/products')}
-                                    sx={{
-                                        borderColor: '#ff5722',
-                                        color: '#ff5722',
-                                        '&:hover': {
-                                            borderColor: '#e64a19',
-                                            bgcolor: 'rgba(255, 87, 34, 0.04)'
-                                        },
-                                        py: 1.5
-                                    }}
-                                    startIcon={<ShoppingBagIcon />}
-                                >
-                                    Continue Shopping
-                                </Button>
-                            </Grid>
-                            <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-                                <Button
-                                    variant="outlined"
-                                    fullWidth
-                                    onClick={() => router.push('/')}
-                                    sx={{
-                                        borderColor: '#757575',
-                                        color: '#757575',
-                                        '&:hover': {
-                                            borderColor: '#424242',
-                                            bgcolor: 'rgba(117, 117, 117, 0.04)'
-                                        },
-                                        py: 1.5
-                                    }}
-                                    startIcon={<HomeIcon />}
-                                >
-                                    Back to Home
                                 </Button>
                             </Grid>
                         </Grid>

@@ -406,7 +406,12 @@ const Navbar = ({
                         >
                             Profile
                         </MenuItem>
-                        <MenuItem onClick={handleUserMenuClose}>My Orders</MenuItem>
+                        <MenuItem
+                            onClick={() => {
+                                handleUserMenuClose();
+                                router.push("/orders");
+                            }}
+                        >My Orders</MenuItem>
                         <MenuItem
                             onClick={() => {
                                 handleUserMenuClose()
