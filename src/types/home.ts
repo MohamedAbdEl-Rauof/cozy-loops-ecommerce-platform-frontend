@@ -8,6 +8,10 @@ export interface FeaturedCategoriesData {
   buttonLink: string;
 }
 
+export interface FeaturedCategoriesProps {
+    featuredCategories: FeaturedCategoriesData;
+}
+
 export interface StoryFeatureData {
   title: string;
   description: string;

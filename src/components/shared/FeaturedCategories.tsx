@@ -14,11 +14,7 @@ import {
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import { ArrowForward, TrendingUp } from '@mui/icons-material';
-import { FeaturedCategoriesData } from '@/types/home';
-
-interface FeaturedCategoriesProps {
-    featuredCategories: FeaturedCategoriesData;
-}
+import { FeaturedCategoriesProps } from '@/types/home';
 
 const FeaturedCategories = ({
     featuredCategories

@@ -36,6 +36,14 @@ export interface Testimonial {
   replies: number;
 }
 
+export interface TestimonialsProps {
+  testimonialsData: {
+    title: string;
+    description: string;
+    items: Testimonial[];
+  }
+}
+
 export interface ApiResponse {
   success: boolean;
   data: ApiReview[];

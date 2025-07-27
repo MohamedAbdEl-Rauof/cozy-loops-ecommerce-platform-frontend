@@ -129,20 +129,22 @@ export default function Categories() {
 
   const enhancedHeroData = useMemo(() => ({
     ...heroSectionData,
-    onButtonClick: scrollToCategoriesGrid
+    onButtonClick: scrollToCategoriesGrid,
+    buttonText: heroSectionData.buttonText || 'Explore Categories', 
+    buttonLink: heroSectionData.buttonLink || '#categories-grid' 
   }), [scrollToCategoriesGrid]);
 
   const transformedCategoriesData = useMemo(() => ({
     ...categoriesGridData,
     categories: categories.map((category: Category) => ({
+      ...category, 
       id: category._id,
-      title: category.name,
+      title: category.name, 
       description: category.description || `Discover beautiful ${category.name.toLowerCase()} crafted by talented artisans`,
       image: category.image || "/images/categories/default-category.png",
       buttonText: category.buttonText || `Shop ${category.name}`,
       isMaker: false,
       buttonLink: `/categories/${category.slug}`,
-      slug: category.slug
     }))
   }), [categories]);
 

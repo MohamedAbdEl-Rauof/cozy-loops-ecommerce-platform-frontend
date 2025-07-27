@@ -5,26 +5,7 @@ import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import CallMadeIcon from '@mui/icons-material/CallMade';
-
-interface Category {
-  id: string;
-  title: string;
-  description: string;
-  image: string;
-  isMaker?: boolean;
-  buttonText: string;
-  buttonLink: string;
-}
-
-interface CategoriesData {
-  title: string;
-  description: string;
-  categories: Category[];
-}
-
-interface CategoriesGridProps {
-  categoriesData: CategoriesData;
-}
+import { CategoriesGridProps } from '@/types/category';
 
 const CategoriesGrid: React.FC<CategoriesGridProps> = ({ categoriesData }) => {
   const { title, description, categories } = categoriesData;
@@ -47,7 +28,7 @@ const CategoriesGrid: React.FC<CategoriesGridProps> = ({ categoriesData }) => {
     router.push(link);
   };
 
-   const handleImageLoad = (categoryId: string) => {
+  const handleImageLoad = (categoryId: string) => {
     setImageLoaded(prev => {
       const newSet = new Set(prev);
       newSet.add(categoryId);
@@ -61,7 +42,9 @@ const CategoriesGrid: React.FC<CategoriesGridProps> = ({ categoriesData }) => {
       sx={{
         opacity: isVisible ? 1 : 0,
         transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
-        transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+        transition: 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+        py: { xs: 4, sm: 6, md: 8 },
+        px: { xs: 2, sm: 3, md: 4 },
       }}
     >
       <Box
@@ -200,7 +183,7 @@ const CategoriesGrid: React.FC<CategoriesGridProps> = ({ categoriesData }) => {
                 )}
 
                 <Image
-                  src={category.image}
+                  src={category.image || "/images/categories/default-category.png"}
                   alt={category.title}
                   fill
                   style={{

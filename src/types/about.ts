@@ -19,6 +19,13 @@ export interface ImageWithTextData {
     flipContent: boolean;
     imageWidth: { xs: string; sm: string; md: string; lg: string };
     imageHeight: { xs: string; sm: string; md: string; lg: string };
+    buttonText: string;
+    buttonLink: string;
+    onButtonClick: () => void;
+}
+
+export interface ImageWithTextProps {
+    dataContent: ImageWithTextData;
 }
 
 export interface StoryFeatureData {

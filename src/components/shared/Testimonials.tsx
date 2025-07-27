@@ -3,7 +3,7 @@ import { Box, Typography, Card, CardContent, Avatar, Rating, Container } from "@
 import { styled, keyframes } from "@mui/material/styles"
 import { useState, useEffect } from "react"
 import { FormatQuote, Star } from "@mui/icons-material"
-import { TestimonialsData } from "@/types/Testimonial"
+import { TestimonialsProps } from "@/types/Testimonial"
 
 const float = keyframes`
     0%, 100% {
@@ -141,7 +141,7 @@ const CustomerInfo = styled(Box)(({ theme }) => ({
     position: "relative",
 }))
 
-const StyledRating = styled(Rating)(({ theme }) => ({
+const StyledRating = styled(Rating)(() => ({
     "& .MuiRating-iconFilled": {
         color: "#FF7043",
         filter: "drop-shadow(0 2px 6px rgba(255, 112, 67, 0.4))",
@@ -169,7 +169,7 @@ const QuoteIcon = styled(FormatQuote)(({ theme }) => ({
     transition: "all 0.3s ease",
 }))
 
-const SectionContainer = styled(Box)(({ theme }) => ({
+const SectionContainer = styled(Box)(() => ({
     background: `
         linear-gradient(135deg, #FFFBF7 0%, #FFF8F0 25%, #FFFBF7 50%, #FFF5E6 75%, #FFFBF7 100%),
         radial-gradient(circle at 30% 20%, rgba(255, 229, 184, 0.05) 0%, transparent 50%),
@@ -208,10 +208,6 @@ const HeaderContainer = styled(Box)(({ theme }) => ({
         animation: `${shimmer} 3s ease-in-out infinite`,
     }
 }))
-
-interface TestimonialsProps {
-    testimonialsData: TestimonialsData
-}
 
 const TestimonialsSection = ({ testimonialsData }: TestimonialsProps) => {
     const { title, description, items } = testimonialsData;

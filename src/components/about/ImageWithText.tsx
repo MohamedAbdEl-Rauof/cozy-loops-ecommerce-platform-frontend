@@ -4,42 +4,12 @@ import { Box, Typography, Fade, Slide, Button, useTheme, useMediaQuery } from '@
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-
-interface ImageWithTextData {
-    title: string;
-    description: string;
-    imageSrc: string;
-    imageAlt: string;
-    flipContent?: boolean;
-    imageWidth?: {
-        xs?: string;
-        sm?: string;
-        md?: string;
-        lg?: string;
-        xl?: string;
-    };
-    imageHeight?: {
-        xs?: string;
-        sm?: string;
-        md?: string;
-        lg?: string;
-        xl?: string;
-    };
-    buttonText?: string;
-    buttonLink?: string;
-    onButtonClick?: () => void;
-    priority?: boolean;
-    className?: string;
-}
-
-interface ImageWithTextProps {
-    dataContent: ImageWithTextData;
-}
+import {ImageWithTextProps } from '@/types/about';
 
 const ImageWithText = ({
     dataContent
 }: ImageWithTextProps) => {
-    const { title, description, imageSrc, imageAlt, flipContent, imageWidth, imageHeight, buttonText, buttonLink, onButtonClick, } = dataContent
+    const { title, description, imageSrc, imageAlt, flipContent, imageWidth, imageHeight, buttonText, buttonLink, onButtonClick } = dataContent
     const [isVisible, setIsVisible] = useState(false);
     const [imageLoaded, setImageLoaded] = useState(false);
     const [isInView, setIsInView] = useState(false);

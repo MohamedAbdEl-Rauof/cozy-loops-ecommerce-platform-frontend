@@ -328,7 +328,7 @@ const StoryFeature = ({
                                         : 'brightness(1) contrast(1) saturate(1)',
                                     transition: 'filter 0.4s ease',
                                 }}
-                                onError={(e) => {
+                                onError={() => {
                                     console.error("Image failed to load:", imageSrc);
                                 }}
                             />
@@ -348,7 +348,7 @@ const StoryFeature = ({
                                         : 'brightness(1) contrast(1) saturate(1)',
                                     transition: 'filter 0.4s ease',
                                 }}
-                                onError={(e) => {
+                                onError={() => {
                                     console.error("Image failed to load:", imageSrc);
                                 }}
                             />

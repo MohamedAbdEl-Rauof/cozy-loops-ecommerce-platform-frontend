@@ -16,6 +16,10 @@ export interface Category {
   productCount: number;
   createdAt: string;
   updatedAt: string;
+  id: string;
+  title: string;
+  isMaker?: boolean;
+  buttonLink: string;
 }
 
 export interface ApiResponse<T> {
@@ -30,4 +34,40 @@ export interface CategoryState {
   selectedCategory: Category | null;
   loading: boolean;
   error: string | null;
+}
+
+export interface CategoriesData {
+  title: string;
+  description: string;
+  categories: Category[];
+}
+
+export interface CategoriesGridProps {
+  categoriesData: CategoriesData;
+}
+
+export interface CategoryStatsCardProps {
+  categoryName: string;
+  description: string;
+  totalProducts: number;
+  totalArtisans: number;
+  rating?: number;
+}
+
+export interface Product {
+  id: string;
+  title: string;
+  image: string;
+  price: number;
+  slug: string;
+}
+
+export interface ProductsData {
+  title: string;
+  mainSlug: string;
+  productsData: Product[];
+}
+
+export interface ProductsOfCategoryProps {
+  Products: ProductsData;
 }
