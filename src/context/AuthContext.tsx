@@ -1,6 +1,7 @@
+
 'use client';
 
-import React, { createContext, useState, useEffect, ReactNode, useContext, useCallback } from 'react';
+import React, { createContext, useState, useEffect, ReactNode, useContext, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -80,8 +81,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [error, setError] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [initialLoading, setInitialLoading] = useState<boolean>(true);
+  const [authCheckInProgress, setAuthCheckInProgress] = useState<boolean>(false);
+  
   const router = useRouter();
-  const queryClient = useQueryClient(); 
+  const queryClient = useQueryClient();
+  
+  // Refs to prevent multiple simultaneous calls
+  const authCheckTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastAuthCheckRef = useRef<number>(0);
+  const isRefreshingRef = useRef<boolean>(false);
 
   const { data: user, isLoading: userLoading, refetch: refetchUserQuery } = useUserQuery(isAuthenticated);
   const loginMutation = useLoginMutation();
@@ -89,7 +97,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logoutMutation = useLogoutMutation();
   const refreshTokenMutation = useRefreshTokenMutation();
 
-  const loading = initialLoading || userLoading || loginMutation.isPending || logoutMutation.isPending;
+  const loading = initialLoading || userLoading || loginMutation.isPending || logoutMutation.isPending || authCheckInProgress;
 
   const isUserAuthenticated = useCallback((): boolean => {
     const accessToken = Cookies.get('accessToken');
@@ -102,54 +110,105 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setError(null);
   }, []);
 
-  const checkAuthStatus = useCallback(async (): Promise<boolean> => {
-    const accessToken = Cookies.get('accessToken');
-    const refreshTokenValue = Cookies.get('refreshToken');
-
-    if (!accessToken && !refreshTokenValue) {
-      setIsAuthenticated(false);
-      queryClient.removeQueries({ queryKey: USER_QUERY_KEYS.user });
-      return false;
+  // Debounced auth check to prevent multiple simultaneous calls
+  const debouncedCheckAuthStatus = useCallback(async (): Promise<boolean> => {
+    const now = Date.now();
+    const timeSinceLastCheck = now - lastAuthCheckRef.current;
+    
+    // Prevent multiple calls within 1 second
+    if (timeSinceLastCheck < 1000 || authCheckInProgress || isRefreshingRef.current) {
+      return isAuthenticated;
     }
 
-    if (accessToken) {
-      try {
-        setIsAuthenticated(true);
-        await refetchUserQuery();
-        return true;
-      } catch (error) {
-        console.error('Failed to get user data with access token:', error);
-      }
-    }
+    lastAuthCheckRef.current = now;
+    setAuthCheckInProgress(true);
 
-    if (refreshTokenValue) {
-      try {
-        await refreshTokenMutation.mutateAsync(refreshTokenValue);
-        setIsAuthenticated(true);
-        await refetchUserQuery();
-        return true;
-      } catch (refreshError) {
-        console.error('Token refresh failed:', refreshError);
+    try {
+      const accessToken = Cookies.get('accessToken');
+      const refreshTokenValue = Cookies.get('refreshToken');
+
+      if (!accessToken && !refreshTokenValue) {
         setIsAuthenticated(false);
+        queryClient.removeQueries({ queryKey: USER_QUERY_KEYS.user });
         return false;
       }
+
+      if (accessToken) {
+        try {
+          setIsAuthenticated(true);
+          await refetchUserQuery();
+          return true;
+        } catch (error: any) {
+          console.error('Failed to get user data with access token:', error);
+          // If access token is invalid, try refresh token
+          if (error?.response?.status === 401 && refreshTokenValue) {
+            // Continue to refresh token logic below
+          } else {
+            setIsAuthenticated(false);
+            return false;
+          }
+        }
+      }
+
+      if (refreshTokenValue && !isRefreshingRef.current) {
+        try {
+          isRefreshingRef.current = true;
+          await refreshTokenMutation.mutateAsync(refreshTokenValue);
+          setIsAuthenticated(true);
+          await refetchUserQuery();
+          return true;
+        } catch (refreshError) {
+          console.error('Token refresh failed:', refreshError);
+          setIsAuthenticated(false);
+          Cookies.remove('accessToken');
+          Cookies.remove('refreshToken');
+          queryClient.removeQueries({ queryKey: USER_QUERY_KEYS.user });
+          return false;
+        } finally {
+          isRefreshingRef.current = false;
+        }
+      }
+
+      setIsAuthenticated(false);
+      return false;
+    } finally {
+      setAuthCheckInProgress(false);
+    }
+  }, [isAuthenticated, authCheckInProgress, refetchUserQuery, refreshTokenMutation, queryClient]);
+
+  const checkAuthStatus = useCallback(async (): Promise<boolean> => {
+    // Clear any existing timeout
+    if (authCheckTimeoutRef.current) {
+      clearTimeout(authCheckTimeoutRef.current);
     }
 
-    setIsAuthenticated(false);
-    return false;
-  }, [refetchUserQuery, refreshTokenMutation, queryClient]);
+    // Debounce the actual auth check
+    return new Promise((resolve) => {
+      authCheckTimeoutRef.current = setTimeout(async () => {
+        const result = await debouncedCheckAuthStatus();
+        resolve(result);
+      }, 100);
+    });
+  }, [debouncedCheckAuthStatus]);
 
   useEffect(() => {
     const initialAuthCheck = async () => {
       try {
-        await checkAuthStatus();
+        await debouncedCheckAuthStatus();
       } finally {
         setInitialLoading(false);
       }
     };
 
     initialAuthCheck();
-  }, [checkAuthStatus]);
+
+    // Cleanup timeout on unmount
+    return () => {
+      if (authCheckTimeoutRef.current) {
+        clearTimeout(authCheckTimeoutRef.current);
+      }
+    };
+  }, [debouncedCheckAuthStatus]);
 
   const handleLogin = async (email: string, password: string): Promise<AuthResponse> => {
     try {
@@ -229,6 +288,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       await logoutMutation.mutateAsync();
       setIsAuthenticated(false);
+      isRefreshingRef.current = false;
+      lastAuthCheckRef.current = 0;
 
       if (redirect) {
         router.push('/');
@@ -236,6 +297,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } catch (error) {
       console.error('Logout error:', error);
       setIsAuthenticated(false);
+      isRefreshingRef.current = false;
+      lastAuthCheckRef.current = 0;
       if (redirect) {
         router.push('/');
       }
@@ -276,17 +339,29 @@ export const useAuth = () => {
   }
 
   const { isAuthenticated, loading, checkAuthStatus } = context;
+  const lastCheckRef = useRef<number>(0);
 
   useEffect(() => {
+    const now = Date.now();
+    const timeSinceLastCheck = now - lastCheckRef.current;
+    
+    // Only check auth status if enough time has passed
+    if (timeSinceLastCheck < 2000) {
+      return;
+    }
+
     const hasAccessToken = !!Cookies.get('accessToken');
     const hasRefreshToken = !!Cookies.get('refreshToken');
 
     if ((hasAccessToken || hasRefreshToken) && !isAuthenticated && !loading) {
+      lastCheckRef.current = now;
       checkAuthStatus();
-    } else if (!hasAccessToken && !hasRefreshToken && isAuthenticated && !loading) {
+
+    } else if (!hasAccessToken && !hasRefreshToken && isAuthenticated) {
+      // Clear authentication state if no tokens exist
       context.setIsAuthenticated(false);
     }
-  }, [context, isAuthenticated, loading, checkAuthStatus]);
+  }, [isAuthenticated, loading, checkAuthStatus, context]);
 
   return context;
 };

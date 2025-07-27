@@ -26,7 +26,7 @@ import {
 } from "@mui/icons-material"
 import Image from "next/image"
 import Link from "next/link"
-import ForgotPasswordDialog from "@/components/auth/ForgetPasswordDialog"
+import ForgotPasswordDialog from "@/components/dialogs/ForgetPasswordDialog"
 import { useAuth } from "@/context/AuthContext"
 import { CountdownRedirect } from "@/components/auth/CountdownRedirect"
 import { useRouter } from "next/navigation"
@@ -88,33 +88,16 @@ export default function LoginPage() {
     },
   })
 
+
   useEffect(() => {
-    if (isUserAuthenticated() && !showSuccessAnimation) {
+    if (isUserAuthenticated() && !showSuccessAnimation && !isSubmitting) {
       setShowAuthenticatedMessage(true);
     }
-  }, [isAuthenticated, loading, isUserAuthenticated, showSuccessAnimation]);
-
-  useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const verified = searchParams.get('verified');
-
-    if (verified === 'true') {
-      setSnackbar({
-        open: true,
-        message: 'Email verified successfully! You can now log in.',
-        severity: 'success'
-      });
-      const newUrl = window.location.pathname;
-      window.history.replaceState({}, document.title, newUrl);
-    }
-  }, []);
-
-  const handleCloseSnackbar = () => {
-    setSnackbar(prev => ({ ...prev, open: false }));
-  };
+  }, [isAuthenticated, loading, isUserAuthenticated, showSuccessAnimation, isSubmitting]);
 
   const onSubmit = async (data: FormData): Promise<void> => {
     setIsSubmitting(true);
+    setShowAuthenticatedMessage(false);
 
     try {
       await login(data.email, data.password);
@@ -122,7 +105,6 @@ export default function LoginPage() {
     } catch (error: any) {
       console.error("Login error:", error);
 
-      // Handle specific error cases
       if (error.response && error.response.status === 403 &&
         error.response.data && error.response.data.emailVerified === false) {
         setSnackbar({
@@ -143,6 +125,25 @@ export default function LoginPage() {
     }
   };
 
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const verified = searchParams.get('verified');
+
+    if (verified === 'true') {
+      setSnackbar({
+        open: true,
+        message: 'Email verified successfully! You can now log in.',
+        severity: 'success'
+      });
+      const newUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, newUrl);
+    }
+  }, []);
+
+  const handleCloseSnackbar = () => {
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
+
   if (showAuthenticatedMessage && !showSuccessAnimation) {
     return (
       <CountdownRedirect
@@ -154,12 +155,12 @@ export default function LoginPage() {
   }
 
   return (
-    <Box sx={{ minHeight: "100vh", display: "flex" }}>
-      {/* Left side - Image */}
+    <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: { xs: "column", lg: "row" } }}>
       <Box
         sx={{
-          display: { xs: "none", lg: "flex" },
-          width: { lg: "50%" },
+          display: "flex",
+          width: { xs: "100%", lg: "50%" },
+          height: { xs: "200px", sm: "250px", md: "300px", lg: "100vh" },
           position: "relative",
         }}
       >
@@ -173,7 +174,6 @@ export default function LoginPage() {
         />
       </Box>
 
-      {/* Right side - Form */}
       <Box
         sx={{
           width: { xs: "100%", lg: "50%" },
@@ -182,6 +182,7 @@ export default function LoginPage() {
           justifyContent: "center",
           p: 3,
           backgroundColor: "white",
+          minHeight: { xs: "calc(100vh - 200px)", sm: "calc(100vh - 250px)", md: "calc(100vh - 300px)", lg: "100vh" },
         }}
       >
         <Container maxWidth="sm">
@@ -208,7 +209,6 @@ export default function LoginPage() {
               sx={{ mt: 3 }}
               noValidate
             >
-              {/* Email */}
               <Controller
                 name="email"
                 control={control}
@@ -232,7 +232,6 @@ export default function LoginPage() {
                 )}
               />
 
-              {/* Password */}
               <Controller
                 name="password"
                 control={control}
@@ -271,7 +270,6 @@ export default function LoginPage() {
                 )}
               />
 
-              {/* Forget Password */}
               <Box sx={{ textAlign: "left", mb: 3 }}>
                 <MuiLink sx={{ color: 'var(--primary-color)', cursor: 'pointer' }} underline="hover" onClick={() => setForgetPasswordOpen(true)}>
                   Forgot password?
@@ -279,7 +277,6 @@ export default function LoginPage() {
                 <ForgotPasswordDialog open={forgetPasswordOpen} onClose={() => setForgetPasswordOpen(false)} />
               </Box>
 
-              {/* Submit Button */}
               <Button
                 type="submit"
                 fullWidth
@@ -303,10 +300,8 @@ export default function LoginPage() {
                 {isSubmitting ? <CircularProgress size={30} sx={{ color: "#fff" }} /> : "sign in"}
               </Button>
 
-              {/* Social Login */}
               <SocialAuthDialog />
 
-              {/* Sign Up Link */}
               <Typography variant="body2" sx={{ textAlign: "center", color: "#666" }}>
                 Don't have an account?{" "}
                 <Link
@@ -401,11 +396,11 @@ export default function LoginPage() {
               >
                 Login Successful!
               </Typography>
-            
+
               <Box sx={{ width: '100%', mt: 1 }}>
                 <LinearProgress
                   variant="determinate"
-                  value={progressValue} 
+                  value={progressValue}
                   sx={{
                     height: 6,
                     borderRadius: 3,

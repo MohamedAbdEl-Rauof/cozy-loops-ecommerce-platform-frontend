@@ -319,7 +319,6 @@ export default function ResetPassword() {
     } catch (error: any) {
       console.error("Error resetting password:", error);
 
-      // Check for specific error message about same password
       if (error.response?.data?.message === "New password cannot be the same as your current password") {
         showNotification("New password cannot be the same as your current password.", "error");
       } else {
@@ -341,8 +340,7 @@ export default function ResetPassword() {
   }
 
   return (
-    <Box sx={{ minHeight: "100vh", display: "flex" }}>
-      {/* Left side - Image */}
+    <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: { xs: "column", lg: "row" } }}>
       <Box
         sx={{
           display: { xs: "none", lg: "flex" },
@@ -360,7 +358,6 @@ export default function ResetPassword() {
         />
       </Box>
 
-      {/* Right side - Form */}
       <Box
         sx={{
           width: { xs: "100%", lg: "50%" },
@@ -373,7 +370,6 @@ export default function ResetPassword() {
       >
         <Container maxWidth="sm">
           <Box sx={{ width: "100%", maxWidth: 400, mx: "auto" }}>
-            {/* Redirect Message */}
             {showRedirectMessage && (
               <Box sx={{
                 mb: 3,

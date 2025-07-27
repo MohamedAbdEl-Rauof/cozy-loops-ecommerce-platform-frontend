@@ -133,7 +133,6 @@ export default function VerifyEmailPage() {
                 setVerificationStatus('pending');
                 setVerificationMessage('Verifying your email address...');
 
-                // Check if already verified
                 const tokenKey = `verified_token_${token}`;
                 if (localStorage.getItem(tokenKey)) {
                     handleVerificationSuccess();
@@ -698,7 +697,6 @@ export default function VerifyEmailPage() {
                                         </Box>
                                     </>
                                 ) : verificationStatus === 'success' ? (
-                                    // Success UI 
                                     <>
                                         <Typography variant="body1" color="text.secondary">
                                             Redirecting to homepage in <strong>{redirectCountdown}</strong> seconds...
@@ -877,7 +875,6 @@ export default function VerifyEmailPage() {
                                         </Box>
                                     </>
                                 ) : (
-                                    // Error UI 
                                     <>
                                         <Box sx={{ textAlign: 'center', mb: 4 }}>
                                             <Box

@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getUser } from '@/services/userServices';
 import { login, register, logout, refreshToken } from '@/services/authService';
@@ -13,12 +14,16 @@ export const useUserQuery = (enabled: boolean = true) => {
     queryKey: USER_QUERY_KEYS.user,
     queryFn: getUser,
     enabled,
-    staleTime: 5 * 60 * 1000, 
+    staleTime: 10 * 60 * 1000, 
+    gcTime: 15 * 60 * 1000, 
+    refetchOnWindowFocus: false, 
+    refetchOnMount: false, 
+    refetchInterval: false, 
     retry: (failureCount, error: any) => {
       if (error?.response?.status === 401) {
         return false;
       }
-      return failureCount < 2;
+      return failureCount < 1; 
     },
   });
 };
@@ -31,13 +36,13 @@ export const useLoginMutation = () => {
       login(email, password),
     onSuccess: (response) => {
       Cookies.set('accessToken', response.accessToken, {
-        secure: true,
+        secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
         expires: 1
       });
 
       Cookies.set('refreshToken', response.refreshToken, {
-        secure: true,
+        secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
         expires: 7
       });
@@ -85,7 +90,7 @@ export const useRefreshTokenMutation = () => {
     mutationFn: (refreshTokenValue: string) => refreshToken(refreshTokenValue),
     onSuccess: (response) => {
       Cookies.set('accessToken', response.accessToken, {
-        secure: true,
+        secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
         expires: 1
       });

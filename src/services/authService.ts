@@ -33,6 +33,9 @@ interface VerifyOtpResponse {
   resetToken?: string;
 }
 
+// Request deduplication for refresh token
+let refreshTokenPromise: Promise<LoginResponse> | null = null;
+
 export const login = async (email: string, password: string): Promise<LoginResponse> => {
   try {
     const response = await apiClient.post('/api/auth/login', { email, password });
@@ -62,13 +65,25 @@ export const logout = async (refreshTokenValue: string): Promise<void> => {
 };
 
 export const refreshToken = async (refreshTokenValue: string): Promise<LoginResponse> => {
-  try {
-    const response = await apiClient.post('/api/auth/refresh-token', { refreshToken: refreshTokenValue });
-    return response.data;
-  } catch (error) {
-    console.error('Error refreshing token:', error);
-    throw error;
+  // Deduplicate refresh token requests
+  if (refreshTokenPromise) {
+    return refreshTokenPromise;
   }
+
+  refreshTokenPromise = (async () => {
+    try {
+      const response = await apiClient.post('/api/auth/refresh-token', { refreshToken: refreshTokenValue });
+      return response.data;
+    } catch (error) {
+      console.error('Error refreshing token:', error);
+      throw error;
+    } finally {
+      // Clear the promise after completion
+      refreshTokenPromise = null;
+    }
+  })();
+
+  return refreshTokenPromise;
 };
 
 export const forgotPassword = async (email: string): Promise<ForgotPasswordResponse> => {

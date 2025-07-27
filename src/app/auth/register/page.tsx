@@ -104,11 +104,9 @@ export default function RegistrationPage() {
     },
   })
 
-  // Watch password field to show requirements
   const password = watch("password")
   const hasStartedTypingPassword = password && password.length > 0
 
-  // Password validation checks
   const passwordChecks = {
     lowercase: /[a-z]/.test(password || ""),
     uppercase: /[A-Z]/.test(password || ""),
@@ -153,7 +151,6 @@ export default function RegistrationPage() {
     }
   };
 
-  // Password requirement component
   const PasswordRequirement = ({ met, text }: { met: boolean; text: string }) => (
     <Box sx={{
       display: "flex",
@@ -210,7 +207,6 @@ export default function RegistrationPage() {
       };
     }, [countdown]);
 
-    // Initialize countdown when dialog opens
     useEffect(() => {
       if (showSuccess) {
         setCountdown(5);
@@ -267,7 +263,12 @@ export default function RegistrationPage() {
   }
 
   return (
-    <Box sx={{ minHeight: "100vh", display: "flex" }}>
+    <Box sx={{
+      minHeight: "100vh",
+      display: "flex",
+      flexDirection: { xs: "column", lg: "row" },
+      overflow: "hidden"
+    }}>
       <Dialog
         open={showSuccess}
         TransitionComponent={Grow}
@@ -311,12 +312,19 @@ export default function RegistrationPage() {
         </Alert>
       </Snackbar>
 
-      {/* Left side - Image */}
+
       <Box
         sx={{
-          display: { xs: "none", lg: "flex" },
-          width: { lg: "50%" },
+          display: "flex",
+          width: { xs: "100%", lg: "50%" },
+          height: {
+            xs: "250px",
+            sm: "280px",
+            md: "320px",
+            lg: "120vh"
+          },
           position: "relative",
+          flexShrink: 0,
         }}
       >
         <Image
@@ -329,18 +337,25 @@ export default function RegistrationPage() {
         />
       </Box>
 
-      {/* Right side - Form */}
       <Box
         sx={{
           width: { xs: "100%", lg: "50%" },
           display: "flex",
-          alignItems: "center",
+          alignItems: "flex-start",
           justifyContent: "center",
           p: 3,
           backgroundColor: "white",
+          minHeight: {
+            xs: "calc(100vh - 250px)",
+            sm: "calc(100vh - 280px)",
+            md: "calc(100vh - 320px)",
+            lg: "100vh"
+          },
+          overflowY: "auto",
+          flexShrink: 0,
         }}
       >
-        <Container maxWidth="sm">
+        <Container maxWidth="sm" sx={{ width: "100%", py: { xs: 2, lg: 4 } }}>
           <Box sx={{ width: "100%", maxWidth: 400, mx: "auto" }}>
             <Typography
               variant="h4"
@@ -356,7 +371,6 @@ export default function RegistrationPage() {
             </Typography>
 
             <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 3 }}>
-              {/* Email */}
               <Controller
                 name="email"
                 control={control}
@@ -380,7 +394,6 @@ export default function RegistrationPage() {
                 )}
               />
 
-              {/* First Name */}
               <Controller
                 name="firstName"
                 control={control}
@@ -403,7 +416,6 @@ export default function RegistrationPage() {
                 )}
               />
 
-              {/* Last Name */}
               <Controller
                 name="lastName"
                 control={control}
@@ -426,7 +438,6 @@ export default function RegistrationPage() {
                 )}
               />
 
-              {/* Password */}
               <Controller
                 name="password"
                 control={control}
@@ -485,7 +496,6 @@ export default function RegistrationPage() {
                 </Box>
               </Collapse>
 
-              {/* Confirm Password */}
               <Controller
                 name="confirmPassword"
                 control={control}
@@ -518,7 +528,6 @@ export default function RegistrationPage() {
                 )}
               />
 
-              {/* Checkboxes */}
               <Box sx={{ mb: 3 }}>
                 <Controller
                   name="emailUpdates"
@@ -556,7 +565,6 @@ export default function RegistrationPage() {
                 )}
               </Box>
 
-              {/* Submit Button */}
               <Button
                 type="submit"
                 fullWidth
@@ -583,10 +591,8 @@ export default function RegistrationPage() {
                 {isSubmitting ? <CircularProgress size={30} sx={{ color: "#fff" }} /> : "Create Account"}
               </Button>
 
-              {/* Social Login */}
               <SocialAuthDialog />
 
-              {/* Sign In Link */}
               <Typography variant="body2" sx={{ textAlign: "center", color: "#666" }}>
                 Already have an account?{" "}
                 <Link href="/auth/login" sx={{ color: "var(--primary-color)" }} underline="hover">

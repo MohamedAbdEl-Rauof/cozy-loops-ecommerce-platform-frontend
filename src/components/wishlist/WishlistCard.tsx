@@ -26,27 +26,27 @@ import { useRemoveFromWishlist, useWishlist } from '@/hooks/useWishlist';
 import { useAddToCart, useCart, useUpdateCart } from '@/hooks/useCart';
 
 const slideInUp = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    `;
 
 const pulse = keyframes`
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
-`;
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+    `;
 
 const StyledCard = styled(Card)(() => ({
     borderRadius: '16px',
@@ -76,38 +76,6 @@ const ProductImage = styled(CardMedia)({
     overflow: 'hidden',
     transition: 'transform 0.3s ease',
 });
-
-const DeleteButton = styled(IconButton)(() => ({
-    position: 'absolute',
-    top: 12,
-    right: 12,
-    backgroundColor: 'rgba(244, 67, 54, 0.9)',
-    color: 'white',
-    zIndex: 2,
-    width: 40,
-    height: 40,
-    '&:hover': {
-        backgroundColor: '#d32f2f',
-        transform: 'scale(1.1)',
-    },
-    transition: 'all 0.3s ease',
-}));
-
-const CartButton = styled(IconButton)(() => ({
-    position: 'absolute',
-    bottom: 12,
-    left: 12,
-    backgroundColor: 'rgba(255, 112, 67, 0.9)',
-    color: 'white',
-    zIndex: 2,
-    width: 48,
-    height: 48,
-    '&:hover': {
-        backgroundColor: '#ff5722',
-        transform: 'scale(1.1)',
-    },
-    transition: 'all 0.3s ease',
-}));
 
 const HeaderContainer = styled(Box)(({ theme }) => ({
     display: 'flex',
@@ -304,112 +272,277 @@ const WishlistCard: React.FC = () => {
                 )}
             </HeaderContainer>
 
+
             {itemCount > 0 ? (
-                <Grid container spacing={3}>
+                <Grid container spacing={{ xs: 2, sm: 3, md: 4 }}>
                     {transformedItems.map((item, index) => (
-                        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4 }} key={item.id}>
+                        <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3, xl: 3 }} key={item.id}>
                             <Fade
                                 in={true}
                                 timeout={800}
                                 style={{ transitionDelay: `${index * 100}ms` }}
                             >
-                                <StyledCard>
-                                    <Box sx={{ position: 'relative' }}>
+                                <StyledCard
+                                    sx={{
+                                        height: '100%',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                        '&:hover': {
+                                            transform: 'translateY(-8px)',
+                                            boxShadow: '0 20px 40px rgba(0,0,0,0.15)',
+                                            '& .product-image': {
+                                                transform: 'scale(1.05)',
+                                            },
+                                            '& .action-buttons': {
+                                                opacity: 1,
+                                                transform: 'translateY(0)',
+                                            }
+                                        }
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            position: 'relative',
+                                            overflow: 'hidden',
+                                            borderRadius: '16px 16px 0 0',
+                                            aspectRatio: '1/1',
+                                            background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+                                        }}
+                                    >
                                         <ProductImage
                                             className="product-image"
                                             image={item.image}
                                             title={item.title}
+                                            sx={{
+                                                transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                objectFit: 'cover',
+                                                width: '100%',
+                                                height: '100%',
+                                            }}
                                         />
 
-                                        <Tooltip title="Remove from Wishlist">
-                                            <DeleteButton
-                                                onClick={() => handleDeleteItem(item.id)}
+                                        <Box
+                                            sx={{
+                                                position: 'absolute',
+                                                top: 12,
+                                                left: 12,
+                                                zIndex: 2,
+                                            }}
+                                        >
+                                            <Chip
+                                                label={item.inStock ? 'In Stock' : 'Out of Stock'}
                                                 size="small"
-                                            >
-                                                <DeleteIcon fontSize="small" />
-                                            </DeleteButton>
-                                        </Tooltip>
-
-                                        <Tooltip title="Add to Cart">
-                                            <CartButton
-                                                onClick={() => handleAddToCart(item.id)}
                                                 sx={{
-                                                    opacity: item.inStock ? 1 : 0.5,
-                                                    cursor: item.inStock ? 'pointer' : 'not-allowed',
+                                                    backgroundColor: item.inStock ? '#4caf50' : '#f44336',
+                                                    color: 'white',
+                                                    fontWeight: 600,
+                                                    fontSize: '0.75rem',
+                                                    height: '24px',
+                                                    '& .MuiChip-label': {
+                                                        px: 1.5,
+                                                    }
                                                 }}
-                                                disabled={!item.inStock}
+                                            />
+                                        </Box>
+
+                                        {item.originalPrice && item.originalPrice > item.price && (
+                                            <Box
+                                                sx={{
+                                                    position: 'absolute',
+                                                    top: 12,
+                                                    right: 12,
+                                                    zIndex: 2,
+                                                }}
                                             >
-                                                <ShoppingCartIcon />
-                                            </CartButton>
-                                        </Tooltip>
+                                                <Chip
+                                                    label={`-${Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100)}%`}
+                                                    size="small"
+                                                    sx={{
+                                                        backgroundColor: '#ff5722',
+                                                        color: 'white',
+                                                        fontWeight: 700,
+                                                        fontSize: '0.75rem',
+                                                        height: '24px',
+                                                    }}
+                                                />
+                                            </Box>
+                                        )}
+
+
+                                        <Box
+                                            className="action-buttons"
+                                            sx={{
+                                                position: 'absolute',
+                                                bottom: 12,
+                                                right: 12,
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                gap: 1,
+                                                opacity: { xs: 1, md: 0 },
+                                                transform: { xs: 'translateY(0)', md: 'translateY(10px)' },
+                                                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                zIndex: 10, 
+                                            }}
+                                        >
+                                            <Tooltip title="Remove from Wishlist" placement="left">
+                                                <IconButton
+                                                    onClick={() => handleDeleteItem(item.id)}
+                                                    size="small"
+                                                    sx={{
+                                                        width: 40,
+                                                        height: 40,
+                                                        backgroundColor: 'rgba(244, 67, 54, 0.95)', // Increased opacity
+                                                        backdropFilter: 'blur(10px)',
+                                                        color: 'white', 
+                                                        border: '1px solid rgba(255, 255, 255, 0.2)', // Add border for better visibility
+                                                        boxShadow: '0 4px 12px rgba(244, 67, 54, 0.3)', // Add shadow
+                                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                        '&:hover': {
+                                                            backgroundColor: '#f44336',
+                                                            transform: 'scale(1.1)',
+                                                            boxShadow: '0 6px 16px rgba(244, 67, 54, 0.4)',
+                                                        },
+                                                        '& .MuiSvgIcon-root': {
+                                                            color: 'white',
+                                                            fontSize: '1.2rem',
+                                                        }
+                                                    }}
+                                                >
+                                                    <DeleteIcon />
+                                                </IconButton>
+                                            </Tooltip>
+
+                                            <Tooltip title={item.inStock ? "Add to Cart" : "Out of Stock"} placement="left">
+                                                <IconButton
+                                                    onClick={() => handleAddToCart(item.id)}
+                                                    disabled={!item.inStock}
+                                                    size="small"
+                                                    sx={{
+                                                        width: 40,
+                                                        height: 40,
+                                                        backgroundColor: item.inStock
+                                                            ? 'rgba(76, 175, 80, 0.95)' 
+                                                            : 'rgba(158, 158, 158, 0.95)',
+                                                        backdropFilter: 'blur(10px)',
+                                                        color: 'white', 
+                                                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                                                        boxShadow: item.inStock
+                                                            ? '0 4px 12px rgba(76, 175, 80, 0.3)'
+                                                            : '0 4px 12px rgba(158, 158, 158, 0.3)', 
+                                                        cursor: item.inStock ? 'pointer' : 'not-allowed',
+                                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                        '&:hover': {
+                                                            backgroundColor: item.inStock ? '#4caf50' : 'rgba(158, 158, 158, 0.95)',
+                                                            transform: item.inStock ? 'scale(1.1)' : 'none',
+                                                            boxShadow: item.inStock
+                                                                ? '0 6px 16px rgba(76, 175, 80, 0.4)'
+                                                                : '0 4px 12px rgba(158, 158, 158, 0.3)',
+                                                        },
+                                                        '&:disabled': {
+                                                            opacity: 0.7,
+                                                        },
+                                                        '& .MuiSvgIcon-root': { 
+                                                            color: 'white',
+                                                            fontSize: '1.2rem',
+                                                        }
+                                                    }}
+                                                >
+                                                    <ShoppingCartIcon />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Box>
                                     </Box>
 
-                                    <CardContent sx={{ p: 3 }}>
+                                    <CardContent
+                                        sx={{
+                                            p: { xs: 2, sm: 3 },
+                                            flexGrow: 1,
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: 2,
+                                        }}
+                                    >
                                         <Typography
                                             variant="h6"
                                             component="h3"
                                             sx={{
                                                 fontWeight: 600,
-                                                fontSize: '1.1rem',
+                                                fontSize: { xs: '1rem', sm: '1.1rem' },
                                                 color: '#2c3e50',
-                                                mb: 2,
                                                 lineHeight: 1.3,
                                                 display: '-webkit-box',
                                                 WebkitLineClamp: 2,
                                                 WebkitBoxOrient: 'vertical',
                                                 overflow: 'hidden',
                                                 textOverflow: 'ellipsis',
-                                                minHeight: '2.6rem',
+                                                minHeight: { xs: '2.4rem', sm: '2.6rem' },
+                                                transition: 'color 0.2s ease',
+                                                '&:hover': {
+                                                    color: '#ff7043',
+                                                }
                                             }}
                                         >
                                             {item.title}
                                         </Typography>
 
-                                        <Box
-                                            sx={{
-                                                display: 'flex',
-                                                justifyContent: 'space-between',
-                                                alignItems: 'center',
-                                                gap: 2,
-                                            }}
-                                        >
-                                            <ViewProductButton
-                                                startIcon={<VisibilityIcon />}
-                                                onClick={() => handleViewProduct(item.id)}
-                                                size="small"
+                                        <Box sx={{ mt: 'auto' }}>
+                                            <Box
                                                 sx={{
-                                                    flex: 1,
-                                                    maxWidth: '140px',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: 1,
+                                                    mb: 2,
                                                 }}
                                             >
-                                                View Product
-                                            </ViewProductButton>
-
-                                            <Box sx={{ textAlign: 'right' }}>
-                                                {item.originalPrice && item.originalPrice > item.price && (
-                                                    <Typography
-                                                        variant="body2"
-                                                        sx={{
-                                                            textDecoration: 'line-through',
-                                                            color: '#999',
-                                                            fontSize: '0.875rem',
-                                                        }}
-                                                    >
-                                                        {item.originalPrice} EGP
-                                                    </Typography>
-                                                )}
                                                 <Typography
                                                     variant="h6"
                                                     sx={{
                                                         fontWeight: 700,
-                                                        fontSize: '1.25rem',
+                                                        fontSize: { xs: '1.1rem', sm: '1.25rem' },
                                                         color: '#ff7043',
                                                         lineHeight: 1,
                                                     }}
                                                 >
                                                     {item.price} EGP
                                                 </Typography>
+                                                {item.originalPrice && item.originalPrice > item.price && (
+                                                    <Typography
+                                                        variant="body2"
+                                                        sx={{
+                                                            textDecoration: 'line-through',
+                                                            color: '#999',
+                                                            fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                                                        }}
+                                                    >
+                                                        {item.originalPrice} EGP
+                                                    </Typography>
+                                                )}
                                             </Box>
+
+                                            <ViewProductButton
+                                                startIcon={<VisibilityIcon />}
+                                                onClick={() => handleViewProduct(item.id)}
+                                                fullWidth
+                                                sx={{
+                                                    fontSize: { xs: '0.875rem', sm: '1rem' },
+                                                    py: { xs: 1, sm: 1.5 },
+                                                    borderRadius: '12px',
+                                                    textTransform: 'none',
+                                                    fontWeight: 600,
+                                                    background: 'linear-gradient(135deg, #ff7043 0%, #ff5722 100%)',
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                    '&:hover': {
+                                                        background: 'linear-gradient(135deg, #ff5722 0%, #e64a19 100%)',
+                                                        transform: 'translateY(-2px)',
+                                                        boxShadow: '0 8px 25px rgba(255, 112, 67, 0.4)',
+                                                    }
+                                                }}
+                                            >
+                                                View Product
+                                            </ViewProductButton>
                                         </Box>
                                     </CardContent>
                                 </StyledCard>
