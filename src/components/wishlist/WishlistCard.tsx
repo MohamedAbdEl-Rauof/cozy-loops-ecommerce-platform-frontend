@@ -115,7 +115,7 @@ const ViewProductButton = styled(Button)(() => ({
     '&:hover': {
         backgroundColor: 'rgba(255, 112, 67, 0.1)',
         borderColor: '#ff5722',
-        color: '#ff5722',
+        color: '#dfb5a8ff',
     }
 }));
 
@@ -229,18 +229,40 @@ const WishlistCard: React.FC = () => {
                 py: { xs: 3, md: 4 },
             }}
         >
-            <HeaderContainer>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+
+            <HeaderContainer
+                sx={{
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    alignItems: { xs: 'flex-start', sm: 'center' },
+                    gap: { xs: 2, sm: 0 },
+                    textAlign: { xs: 'left', sm: 'initial' },
+                }}
+            >
+                <Box
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: { xs: 1.5, sm: 2 },
+                        width: { xs: '100%', sm: 'auto' },
+                        justifyContent: { xs: 'space-between', sm: 'flex-start' },
+                    }}
+                >
                     <Typography
                         variant="h4"
                         component="h1"
                         sx={{
                             fontWeight: 800,
-                            fontSize: { xs: '1.75rem', md: '2.25rem' },
+                            fontSize: {
+                                xs: '1.5rem',
+                                sm: '1.75rem',
+                                md: '2rem',
+                                lg: '2.25rem'
+                            },
                             background: 'linear-gradient(135deg, #ff7043 0%, #ff5722 100%)',
                             backgroundClip: 'text',
                             WebkitBackgroundClip: 'text',
                             WebkitTextFillColor: 'transparent',
+                            lineHeight: 1.2,
                         }}
                     >
                         Wishlist
@@ -251,23 +273,52 @@ const WishlistCard: React.FC = () => {
                             backgroundColor: '#ff7043',
                             color: 'white',
                             fontWeight: 600,
-                            fontSize: '1rem',
-                            height: '32px',
+                            fontSize: { xs: '0.875rem', sm: '1rem' },
+                            height: { xs: '28px', sm: '32px' },
+                            minWidth: { xs: '28px', sm: '32px' },
                             animation: `${pulse} 2s infinite`,
+                            '& .MuiChip-label': {
+                                px: { xs: 1, sm: 1.5 },
+                            }
                         }}
                     />
                 </Box>
 
                 {itemCount > 0 && (
                     <MoveAllButton
-                        startIcon={<ShoppingBagIcon />}
+                        startIcon={<ShoppingBagIcon sx={{ fontSize: { xs: '1rem', sm: '1.25rem' } }} />}
                         onClick={handleMoveAllToCart}
                         sx={{
-                            fontSize: { xs: '0.875rem', md: '1rem' },
-                            padding: { xs: '8px 16px', md: '12px 24px' },
+                            fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' },
+                            padding: { xs: '6px 12px', sm: '8px 16px', md: '12px 30px' },
+                            minWidth: { xs: '140px', sm: '160px', md: '180px' },
+                            width: { xs: '100%', sm: 'auto' },
+                            maxWidth: { xs: '100%', sm: '200px' },
+                            height: { xs: '36px', sm: '40px', md: '44px' },
+                            borderRadius: { xs: '20px', sm: '25px' },
+                            whiteSpace: 'nowrap',
+                            '& .MuiButton-startIcon': {
+                                marginRight: { xs: '4px', sm: '8px' },
+                                marginLeft: 0,
+                            }
                         }}
                     >
-                        Move All to Cart
+                        <Box
+                            component="span"
+                            sx={{
+                                display: { xs: 'none', sm: 'inline' }
+                            }}
+                        >
+                            Move All to Cart
+                        </Box>
+                        <Box
+                            component="span"
+                            sx={{
+                                display: { xs: 'inline', sm: 'none' }
+                            }}
+                        >
+                            Move All
+                        </Box>
                     </MoveAllButton>
                 )}
             </HeaderContainer>
@@ -382,7 +433,7 @@ const WishlistCard: React.FC = () => {
                                                 opacity: { xs: 1, md: 0 },
                                                 transform: { xs: 'translateY(0)', md: 'translateY(10px)' },
                                                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                zIndex: 10, 
+                                                zIndex: 10,
                                             }}
                                         >
                                             <Tooltip title="Remove from Wishlist" placement="left">
@@ -394,7 +445,7 @@ const WishlistCard: React.FC = () => {
                                                         height: 40,
                                                         backgroundColor: 'rgba(244, 67, 54, 0.95)', // Increased opacity
                                                         backdropFilter: 'blur(10px)',
-                                                        color: 'white', 
+                                                        color: 'white',
                                                         border: '1px solid rgba(255, 255, 255, 0.2)', // Add border for better visibility
                                                         boxShadow: '0 4px 12px rgba(244, 67, 54, 0.3)', // Add shadow
                                                         transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -422,14 +473,14 @@ const WishlistCard: React.FC = () => {
                                                         width: 40,
                                                         height: 40,
                                                         backgroundColor: item.inStock
-                                                            ? 'rgba(76, 175, 80, 0.95)' 
+                                                            ? 'rgba(76, 175, 80, 0.95)'
                                                             : 'rgba(158, 158, 158, 0.95)',
                                                         backdropFilter: 'blur(10px)',
-                                                        color: 'white', 
+                                                        color: 'white',
                                                         border: '1px solid rgba(255, 255, 255, 0.2)',
                                                         boxShadow: item.inStock
                                                             ? '0 4px 12px rgba(76, 175, 80, 0.3)'
-                                                            : '0 4px 12px rgba(158, 158, 158, 0.3)', 
+                                                            : '0 4px 12px rgba(158, 158, 158, 0.3)',
                                                         cursor: item.inStock ? 'pointer' : 'not-allowed',
                                                         transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                                         '&:hover': {
@@ -442,7 +493,7 @@ const WishlistCard: React.FC = () => {
                                                         '&:disabled': {
                                                             opacity: 0.7,
                                                         },
-                                                        '& .MuiSvgIcon-root': { 
+                                                        '& .MuiSvgIcon-root': {
                                                             color: 'white',
                                                             fontSize: '1.2rem',
                                                         }
@@ -533,12 +584,7 @@ const WishlistCard: React.FC = () => {
                                                     background: 'linear-gradient(135deg, #ff7043 0%, #ff5722 100%)',
                                                     color: 'white',
                                                     border: 'none',
-                                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                    '&:hover': {
-                                                        background: 'linear-gradient(135deg, #ff5722 0%, #e64a19 100%)',
-                                                        transform: 'translateY(-2px)',
-                                                        boxShadow: '0 8px 25px rgba(255, 112, 67, 0.4)',
-                                                    }
+                                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
                                                 }}
                                             >
                                                 View Product
