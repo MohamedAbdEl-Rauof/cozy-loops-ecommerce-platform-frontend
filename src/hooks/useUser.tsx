@@ -1,8 +1,17 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getUser } from '@/services/userServices';
-import { login, register, logout, refreshToken } from '@/services/authService';
 import Cookies from 'js-cookie';
+
+import { login, register, logout, refreshToken } from '@/services/authService';
+import { getUser } from '@/services/userServices';
+
+interface RegisterData {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber?: string;
+}
+
 
 export const USER_QUERY_KEYS = {
   user: ['user'] as const,
@@ -19,8 +28,9 @@ export const useUserQuery = (enabled: boolean = true) => {
     refetchOnWindowFocus: false, 
     refetchOnMount: false, 
     refetchInterval: false, 
-    retry: (failureCount, error: any) => {
-      if (error?.response?.status === 401) {
+    retry: (failureCount, error: unknown) => {
+      const errorResponse = error as { response?: { status?: number } };
+      if (errorResponse?.response?.status === 401) {
         return false;
       }
       return failureCount < 1; 
@@ -57,7 +67,7 @@ export const useLoginMutation = () => {
 
 export const useRegisterMutation = () => {
   return useMutation({
-    mutationFn: (userData: any) => register(userData),
+    mutationFn: (userData: RegisterData) => register(userData),
   });
 };
 

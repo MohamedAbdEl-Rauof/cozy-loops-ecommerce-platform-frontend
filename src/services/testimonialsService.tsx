@@ -1,5 +1,5 @@
 import apiClient from '@/lib/apiClient';
-import { ApiReview, Testimonial, ApiResponse, CreateTestimonialData } from '@/types/Testimonial';
+import { ApiReview, Testimonial, ApiResponse, CreateTestimonialData, ApiError, UpdateTestimonialResponse, ProductTestimonialsResponse } from '@/types/Testimonial';
 
 const getAccessToken = () => {
   if (typeof window !== 'undefined') {
@@ -87,7 +87,7 @@ export const testimonialsService = {
   },
 
 
-  getProductsTestimonials: async (productSlug: string): Promise<any> => {
+  getProductsTestimonials: async (productSlug: string): Promise<ProductTestimonialsResponse['data']> => {
     try {
       const accessToken = getAccessToken();
 
@@ -106,21 +106,21 @@ export const testimonialsService = {
         }
       }
 
-      const response = await apiClient.get<any>(url);
+      const response = await apiClient.get<ProductTestimonialsResponse>(url);
 
       if (!response.data || !response.data.success) {
         throw new Error('Failed to fetch testimonials.');
       }
 
       return response.data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error fetching product testimonials:', error);
       throw error;
     }
   },
 
 
-  createTestimonial: async (data: CreateTestimonialData): Promise<Testimonial> => {
+  createTestimonial: async (data: CreateTestimonialData): Promise<void> => {
     try {
       const accessToken = getAccessToken();
 
@@ -143,15 +143,16 @@ export const testimonialsService = {
         throw new Error(response.data?.message || 'Failed to create review.');
       }
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error creating testimonial:', error);
       throw error;
     }
   },
 
+
   updateTestimonial: async (testimonialId: string, comment: string, rating: number): Promise<void> => {
     try {
-      const response = await apiClient.put<{ success: boolean, message: string, data?: any }>(
+      const response = await apiClient.put<UpdateTestimonialResponse>(
         `/api/reviews/${testimonialId}`,
         {
           comment: comment.trim(),
@@ -161,7 +162,7 @@ export const testimonialsService = {
           headers: {
             'Content-Type': 'application/json',
           },
-          withCredentials: true 
+          withCredentials: true
         }
       );
 
@@ -169,24 +170,25 @@ export const testimonialsService = {
         throw new Error(response.data?.message || 'Failed to update review.');
       }
 
-      return response.data.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error updating testimonial:', error);
 
-      // Handle specific backend error messages
-      if (error.response?.data?.message) {
-        throw new Error(error.response.data.message);
-      }
+      if (error && typeof error === 'object' && 'response' in error) {
+        const apiError = error as ApiError;
 
-      // Handle different HTTP status codes
-      if (error.response?.status === 401) {
-        throw new Error('Session expired. Please log in again.');
-      } else if (error.response?.status === 404) {
-        throw new Error('Review not found');
-      } else if (error.response?.status === 403) {
-        throw new Error('Not authorized to update this review');
-      } else if (error.response?.status === 400) {
-        throw new Error(error.response.data?.message || 'Invalid request data');
+        if (apiError.response?.data?.message) {
+          throw new Error(apiError.response.data.message);
+        }
+
+        if (apiError.response?.status === 401) {
+          throw new Error('Session expired. Please log in again.');
+        } else if (apiError.response?.status === 404) {
+          throw new Error('Review not found');
+        } else if (apiError.response?.status === 403) {
+          throw new Error('Not authorized to update this review');
+        } else if (apiError.response?.status === 400) {
+          throw new Error(apiError.response.data?.message || 'Invalid request data');
+        }
       }
 
       throw error;
@@ -197,8 +199,8 @@ export const testimonialsService = {
     try {
       const response = await apiClient.delete<{ success: boolean, message: string }>(
         `/api/reviews/${testimonialId}`,
-        { 
-          withCredentials: true 
+        {
+          withCredentials: true
         }
       );
 
@@ -207,7 +209,7 @@ export const testimonialsService = {
       }
 
       return;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error deleting testimonial:', error);
       throw error;
     }

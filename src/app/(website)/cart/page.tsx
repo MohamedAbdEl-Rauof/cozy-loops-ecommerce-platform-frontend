@@ -1,13 +1,13 @@
 
 "use client";
 import { Box, CircularProgress } from "@mui/material";
+import React from "react";
+import { useRouter } from "next/navigation";
 import MyCart from "@/components/cart/MyCart"
 import ProtectedRoute from "@/provider/ProtectedRoute";
 import { useCart, useUpdateCart, useRemoveFromCart } from "@/hooks/useCart";
-import { Cart, CartItem, TransformedCartItem, CheckoutData } from "@/types/cart";
 import { cartService } from "@/services/cartServices";
-import { useRouter } from "next/navigation";
-import React from "react";
+import { Cart, CartItem, TransformedCartItem, CheckoutData } from "@/types/cart";
 
 const transformCartData = (cart: Cart): TransformedCartItem[] => {
     if (!cart?.items) return [];

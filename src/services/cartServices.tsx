@@ -7,7 +7,7 @@ export const cartService = {
         try {
             const response = await apiClient.get<CartApiResponse>('/api/cart');
             return response.data.cart;
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error fetching cart:', error);
             throw error;
         }
@@ -20,7 +20,7 @@ export const cartService = {
                 quantity: data.quantity || 1,
             });
             return response.data.cart;
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error adding to cart:', error);
             throw error;
         }
@@ -33,7 +33,7 @@ export const cartService = {
                 quantity: data.quantity,
             });
             return response.data.cart;
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error updating cart:', error);
             throw error;
         }
@@ -48,7 +48,7 @@ export const cartService = {
                 }
             });
             return response.data.cart;
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error removing item from cart:', error);
             throw error;
         }
@@ -61,17 +61,17 @@ export const cartService = {
             if (!response.data.success) {
                 throw new Error(response.data.message || 'Failed to clear cart');
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error clearing cart:', error);
             throw error;
         }
     },
 
-    checkout: async (data: { shippingCost?: number; shippingAddress?: any }) => {
+    checkout: async (data: { shippingCost?: number; shippingAddress?: unknown }) => {
         try {
             const response = await apiClient.post('/api/cart/checkout', data);
             return response.data.order;
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error during checkout:', error);
             throw error;
         }
@@ -81,7 +81,7 @@ export const cartService = {
         try {
             const response = await apiClient.get(`/api/cart/history?page=${page}&limit=${limit}`);
             return response.data.data;
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error fetching cart history:', error);
             throw error;
         }

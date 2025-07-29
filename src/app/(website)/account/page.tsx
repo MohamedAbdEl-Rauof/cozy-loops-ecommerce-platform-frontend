@@ -1,6 +1,7 @@
-import AccountPage from "@/components/account/AccountPage"
-import ProtectedRoute from "@/provider/ProtectedRoute"
 import { Box } from "@mui/material"
+import AccountPage from "@/components/account/AccountPage"
+
+import ProtectedRoute from "@/provider/ProtectedRoute"
 
 const Page = () => {
     return (

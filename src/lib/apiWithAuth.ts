@@ -10,7 +10,7 @@ import Cookies from 'js-cookie';
 interface RefreshTokenResponse {
   accessToken: string;
   refreshToken?: string;
-  user?: any;
+  user?: unknown;
 }
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -40,7 +40,7 @@ apiWithAuth.interceptors.response.use(
   (response: AxiosResponse): AxiosResponse => {
     return response;
   },
-  async (error: AxiosError): Promise<any> => {
+  async (error: AxiosError): Promise<AxiosResponse | never> => {
     if (!error.config) {
       return Promise.reject(error);
     }

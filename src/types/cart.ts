@@ -1,4 +1,6 @@
 
+import {ApiReview} from './Testimonial';
+
 export interface CartItem {
   _id: string;
   product: {
@@ -42,7 +44,7 @@ export interface CartItem {
     createdAt?: string;
     updatedAt?: string;
     __v?: number;
-    reviews?: any[];
+    reviews?: ApiReview[];
   };
   quantity: number;
   variant?: string | null;
@@ -110,8 +112,8 @@ export interface TransformedCartItem {
 
 export interface MyCartProps {
   items?: TransformedCartItem[];
-  onUpdateQuantity?: (itemId: string, newQuantity: number) => void;
-  onRemoveItem?: (itemId: string) => void;
+  onUpdateQuantity?: (_itemId: string, _newQuantity: number) => void;
+  onRemoveItem?: (_itemId: string) => void;
   onProceedToCheckout?: () => void;
   shippingCost?: number;
   isCheckoutLoading?: boolean;
@@ -145,4 +147,10 @@ export interface CheckoutData {
     zipCode: string;
     country: string;
   };
+}
+
+export interface CartUpdateData {
+  cart: unknown;
+  action: string;
+  item?: unknown;
 }

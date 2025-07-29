@@ -1,4 +1,5 @@
 "use client"
+
 import {
     Box,
     Typography,
@@ -22,8 +23,9 @@ import {
 } from '@mui/icons-material';
 import { styled, keyframes } from '@mui/material/styles';
 import { useRouter } from 'next/navigation';
-import { useRemoveFromWishlist, useWishlist } from '@/hooks/useWishlist';
+
 import { useAddToCart, useCart, useUpdateCart } from '@/hooks/useCart';
+import { useRemoveFromWishlist, useWishlist } from '@/hooks/useWishlist';
 
 const slideInUp = keyframes`
     from {
@@ -147,7 +149,7 @@ const WishlistCard: React.FC = () => {
         if (isAddingToCart || isUpdatingCart) return;
         const product = wishlistItems?.find(item => item.product._id === itemId)?.product;
         if (product) {
-            const existingCartItem = cartData?.items?.find((item: any) => item.product._id === itemId);
+            const existingCartItem = cartData?.items?.find((item: { product: { _id: string } }) => item.product._id === itemId);
 
             if (existingCartItem) {
                 updateCart({

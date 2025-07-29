@@ -67,7 +67,7 @@ export interface Product {
   numReviews: number;
   createdAt: string;
   updatedAt: string;
-  variants: any[];
+  variants: ProductVariant[];
   rating: number;
   reviewCount: number;
   inStock: boolean;
