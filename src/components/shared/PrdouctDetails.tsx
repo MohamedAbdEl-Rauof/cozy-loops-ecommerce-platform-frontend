@@ -22,39 +22,12 @@ import {
     ShoppingCart
 } from '@mui/icons-material';
 import Image from 'next/image';
-
-interface ProductImage {
-    id: string;
-    url: string;
-    alt: string;
-}
-
-interface ProductColor {
-    name: string;
-    value: string;
-    available: boolean;
-}
-
-interface ProductDetailsProps {
-    id: string;
-    name: string;
-    images: ProductImage[];
-    rating: number;
-    reviewCount: number;
-    inStock: boolean;
-    stockCount?: number;
-    price: number;
-    originalPrice?: number;
-    colors: ProductColor[];
-    description?: string;
-    onAddToCart?: (quantity: number, color: string) => void;
-    onToggleFavorite?: () => void;
-    onShare?: () => void;
-    isFavorite?: boolean;
-    discountPercentage?: number;
-}
+import { useAddToCart, useCart, useUpdateCart } from '@/hooks/useCart';
+import { useSnackbar } from 'notistack';
+import { ProductDetailsProps } from '@/types/product';
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({
+    id,
     name,
     images,
     rating,
@@ -65,15 +38,20 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     originalPrice,
     colors,
     description,
-    onAddToCart,
     onToggleFavorite,
-    onShare,
     discountPercentage = 0,
-    isFavorite = false
+    isFavorite = false,
+    mainImage
 }) => {
-    const [selectedImage, setSelectedImage] = useState(images[0]?.url || '');
+    const [selectedImage, setSelectedImage] = useState(
+        mainImage || images[0]?.url || ''
+    );
     const [selectedColor, setSelectedColor] = useState(colors[0]?.value || '');
     const [quantity, setQuantity] = useState(1);
+    const { addToCart, isPending: isAddingToCart } = useAddToCart();
+    const { updateCart, isPending: isUpdatingCart } = useUpdateCart();
+    const { data: cartData } = useCart();
+    const { enqueueSnackbar } = useSnackbar();
 
     const handleQuantityChange = (change: number) => {
         const newQuantity = quantity + change;
@@ -82,8 +60,62 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
         }
     };
 
-    const handleAddToCart = () => {
-        onAddToCart?.(quantity, selectedColor);
+    const handleAddToCart = async (productId: string) => {
+        if (isAddingToCart || isUpdatingCart) return;
+
+        try {
+            const existingCartItem = cartData?.items?.find((item: any) =>
+                item.product._id === productId || item.product.id === productId
+            );
+
+            if (existingCartItem) {
+                await updateCart({
+                    productId: productId,
+                    quantity: existingCartItem.quantity + quantity,
+                    variant: selectedColor
+                });
+            } else {
+                await addToCart({
+                    productId: productId,
+                    quantity: quantity,
+                    variant: selectedColor
+                });
+            }
+        } catch (error) {
+            console.error('Error adding to cart:', error);
+        }
+    };
+
+    const handleShare = async () => {
+        const shareData = {
+            title: name,
+            text: `Check out this amazing product: ${name} - Only ${price.toFixed(2)} EGP`,
+            url: window.location.href,
+        };
+
+        try {
+            if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+                await navigator.share(shareData);
+            } else {
+                await navigator.clipboard.writeText(
+                    `${shareData.title}\n${shareData.text}\n${shareData.url}`
+                );
+                enqueueSnackbar('Product link copied to clipboard!', { variant: 'success' });
+
+            }
+        } catch (error) {
+            console.error('Error sharing:', error);
+            try {
+                await navigator.clipboard.writeText(window.location.href);
+                enqueueSnackbar('Product link copied to clipboard!', { variant: 'success' });
+
+            } catch (clipboardError) {
+                console.error('Clipboard error:', clipboardError);
+                alert('Unable to share. Please copy the URL manually.');
+                enqueueSnackbar('Unable to share. Please copy the URL manually.', { variant: 'success' });
+
+            }
+        }
     };
 
     return (
@@ -96,7 +128,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 p: { xs: 2, md: 4 }
             }}
         >
-            {/* Left Side - Images */}
             <Box
                 sx={{
                     flex: 1,
@@ -105,7 +136,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                     gap: 5
                 }}
             >
-                {/* Thumbnail Images */}
                 <Box
                     sx={{
                         display: 'flex',
@@ -126,7 +156,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                         }
                     }}
                 >
-                    {images.slice(0, 4).map((image, index) => (
+                    {images.slice(0, 4).map((image) => (
                         <Box
                             key={image.id}
                             sx={{
@@ -162,7 +192,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                     ))}
                 </Box>
 
-                {/* Main Image */}
                 <Box
                     sx={{
                         flex: 1,
@@ -200,9 +229,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                 </Box>
             </Box>
 
-            {/* Right Side - Product Details */}
             <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
-                {/* Product Name */}
                 <Typography
                     variant="h4"
                     sx={{
@@ -215,7 +242,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                     {name}
                 </Typography>
 
-                {/* Rating and Stock */}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Rating value={rating} precision={0.1} readOnly size="small" />
@@ -232,7 +258,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                     />
                 </Box>
 
-                {/* Price */}
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     <Typography
                         variant="h5"
@@ -258,7 +283,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                     )}
                 </Box>
 
-                {/* Product Description */}
                 {description && (
                     <Box>
                         <Typography
@@ -274,7 +298,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                     </Box>
                 )}
 
-                {/* Colors */}
                 <Box sx={{
                     display: 'flex',
                     alignItems: 'center',
@@ -312,49 +335,80 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                     </Box>
                 </Box>
 
-                {/* Quantity Counter */}
                 <Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <IconButton
-                            onClick={() => handleQuantityChange(-1)}
-                            disabled={quantity <= 1}
-                            sx={{
-                                border: '1px solid #e0e0e0',
-                                borderRadius: '8px',
-                                '&:hover': { bgcolor: 'var(--primary-color)', color: 'white' }
-                            }}
-                        >
-                            <Remove />
-                        </IconButton>
-                        <Typography
-                            sx={{
-                                minWidth: '60px',
-                                textAlign: 'center',
-                                py: 1,
-                                px: 2,
-                                border: '1px solid #e0e0e0',
-                                borderRadius: '8px',
-                                fontWeight: 600,
-                                color: 'var(--text-primary)'
-                            }}
-                        >
-                            {quantity}
+                    <Box>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'text.secondary', mb: 1 }}>
+                            Quantity:
                         </Typography>
-                        <IconButton
-                            onClick={() => handleQuantityChange(1)}
-                            disabled={quantity >= (stockCount || 99)}
-                            sx={{
-                                border: '1px solid #e0e0e0',
-                                borderRadius: '8px',
-                                '&:hover': { bgcolor: 'var(--primary-color)', color: 'white' }
-                            }}
-                        >
-                            <Add />
-                        </IconButton>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <IconButton
+                                onClick={() => handleQuantityChange(-1)}
+                                disabled={quantity <= 1}
+                                sx={{
+                                    border: '1px solid #e0e0e0',
+                                    borderRadius: '8px',
+                                    width: 40,
+                                    height: 40,
+                                    '&:hover': {
+                                        bgcolor: 'var(--primary-color)',
+                                        color: 'white',
+                                        borderColor: 'var(--primary-color)'
+                                    },
+                                    '&:disabled': {
+                                        bgcolor: '#f5f5f5',
+                                        color: '#ccc',
+                                        borderColor: '#e0e0e0'
+                                    }
+                                }}
+                            >
+                                <Remove fontSize="small" />
+                            </IconButton>
+                            <Typography
+                                sx={{
+                                    minWidth: '60px',
+                                    textAlign: 'center',
+                                    py: 1,
+                                    px: 2,
+                                    border: '1px solid #e0e0e0',
+                                    borderRadius: '8px',
+                                    fontWeight: 600,
+                                    color: 'var(--text-primary)',
+                                    bgcolor: 'white'
+                                }}
+                            >
+                                {quantity}
+                            </Typography>
+                            <IconButton
+                                onClick={() => handleQuantityChange(1)}
+                                disabled={quantity >= (stockCount || 99)}
+                                sx={{
+                                    border: '1px solid #e0e0e0',
+                                    borderRadius: '8px',
+                                    width: 40,
+                                    height: 40,
+                                    '&:hover': {
+                                        bgcolor: 'var(--primary-color)',
+                                        color: 'white',
+                                        borderColor: 'var(--primary-color)'
+                                    },
+                                    '&:disabled': {
+                                        bgcolor: '#f5f5f5',
+                                        color: '#ccc',
+                                        borderColor: '#e0e0e0'
+                                    }
+                                }}
+                            >
+                                <Add fontSize="small" />
+                            </IconButton>
+                        </Box>
+                        {stockCount && (
+                            <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
+                                {stockCount} items available
+                            </Typography>
+                        )}
                     </Box>
                 </Box>
 
-                {/* Action Buttons */}
                 <Box sx={{
                     display: 'flex',
                     gap: 2,
@@ -365,8 +419,8 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                         variant="contained"
                         size="large"
                         startIcon={<ShoppingCart />}
-                        onClick={handleAddToCart}
-                        disabled={!inStock}
+                        onClick={() => handleAddToCart(id)}
+                        disabled={!inStock || isAddingToCart || isUpdatingCart}
                         sx={{
                             flex: 1,
                             py: 1.5,
@@ -388,7 +442,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                             }
                         }}
                     >
-                        Add to Cart
+                        {isAddingToCart || isUpdatingCart ? 'Adding...' : 'Add to Cart'}
                     </Button>
 
                     <Box sx={{ display: 'flex', gap: 1 }}>
@@ -411,7 +465,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                         </IconButton>
 
                         <IconButton
-                            onClick={onShare}
+                            onClick={handleShare}
                             sx={{
                                 border: '2px solid #e0e0e0',
                                 borderRadius: '12px',
@@ -430,7 +484,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                     </Box>
                 </Box>
 
-                {/* Delivery & Return Info */}
                 <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                     <Card
                         sx={{
@@ -443,7 +496,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                         }}
                     >
                         <CardContent sx={{ p: 3, '&:last-child': { pb: 3 } }}>
-                            {/* Free Delivery Section */}
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
                                 <Box
                                     sx={{
@@ -468,7 +520,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                                 </Box>
                             </Box>
 
-                            {/* Divider */}
                             <Box
                                 sx={{
                                     height: '1px',
@@ -478,7 +529,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                                 }}
                             />
 
-                            {/* Easy Returns Section */}
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                                 <Box
                                     sx={{

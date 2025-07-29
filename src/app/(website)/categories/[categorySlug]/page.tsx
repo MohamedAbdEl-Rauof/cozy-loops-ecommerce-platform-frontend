@@ -117,7 +117,8 @@ export default function CategoryPage() {
                     image: product.maker.image || "/images/shared/makers/defaultMaker.png",
                     isMaker: true,
                     buttonText: "View Profile",
-                    buttonLink: `/makers/${product.maker.slug}`,
+                    // buttonLink: `/makers/${product.maker.slug}`,
+                    buttonLink: "#",    
                     slug: product.maker.slug
                 });
             }

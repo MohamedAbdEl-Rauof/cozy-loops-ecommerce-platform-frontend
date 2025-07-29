@@ -3,7 +3,7 @@
 import { useParams } from 'next/navigation';
 import { Box, Container, CircularProgress, Alert } from '@mui/material';
 import { useProductFromCategory } from '@/hooks/useProducts';
-import { ProductImage, ProductColor } from '@/types/product';
+import { ProductImage } from '@/types/product';
 import SmallNavbar from "@/components/shared/SmallNavbar";
 import ProductDetails from "@/components/shared/PrdouctDetails";
 import FeatureCardsSection from "@/components/shared/FeatureCardsSection";
@@ -16,7 +16,18 @@ import { useProductsTestimonialsBySlug } from '@/hooks/useTestimonials';
 import { useAddToWishlist, useRemoveFromWishlist, useWishlist } from '@/hooks/useWishlist';
 import { FeatureCardsSectionData, FeatureCardsSectionData2, similarProductsData } from '@/data/pages/productDetailsPageData';
 
-// Helper function to transform API images to component format
+const createImagesArray = (mainImage: string, images: string[] = []): string[] => {
+  const imageUrls = new Set<string>();
+
+  if (mainImage) {
+    imageUrls.add(mainImage);
+  }
+
+  images.forEach(url => imageUrls.add(url));
+
+  return Array.from(imageUrls);
+};
+
 const transformImages = (images: string[] = [], productName: string): ProductImage[] => {
   if (!images || images.length === 0) {
     return [
@@ -35,36 +46,37 @@ const transformImages = (images: string[] = [], productName: string): ProductIma
   }));
 };
 
-// Helper function to transform API colors to component format
-const transformColors = (colors: string[] = []): ProductColor[] => {
+
+const transformColors = (colors: string[] = []) => {
   if (!colors || colors.length === 0) {
     return [
       {
-        name: "Default",
+        name: "Red",
+        value: "#ff6b6b",
+        available: true
+      },
+      {
+        name: "Blue",
+        value: "#45b7d1",
+        available: true
+      },
+      {
+        name: "Green",
+        value: "#96ceb4",
+        available: true
+      },
+      {
+        name: "Yellow",
+        value: "#feca57",
+        available: true
+      },
+      {
+        name: "Black",
         value: "#000000",
         available: true
       }
     ];
   }
-
-  const colorNames: { [key: string]: string } = {
-    '#ff6b6b': 'Red',
-    '#4ecdc4': 'Teal',
-    '#45b7d1': 'Blue',
-    '#96ceb4': 'Green',
-    '#feca57': 'Yellow',
-    '#000000': 'Black',
-    '#ffffff': 'White',
-    '#8b4513': 'Brown',
-    '#800080': 'Purple',
-    '#ffc0cb': 'Pink'
-  };
-
-  return colors.map((color, index) => ({
-    name: colorNames[color.toLowerCase()] || `Color ${index + 1}`,
-    value: color,
-    available: true
-  }));
 };
 
 const ProductPage = () => {
@@ -82,12 +94,29 @@ const ProductPage = () => {
     error,
   } = useProductFromCategory(categorySlug, productSlug);
 
+  console.log('Product data:', product);
+
   const {
     data: testimonials,
     isLoading: testimonialsLoading,
     error: testimonialsError,
     refetch: refetchTestimonials
   } = useProductsTestimonialsBySlug(productSlug);
+
+  const actualReviewCount = testimonials?.length || 0;
+
+  const calculateAverageRating = (testimonials: any[] = []): number => {
+    if (!testimonials || testimonials.length === 0) return 0;
+
+    const totalRating = testimonials.reduce((sum, testimonial) => {
+      return sum + (testimonial.rating || 0);
+    }, 0);
+
+    return Number((totalRating / testimonials.length).toFixed(1));
+  };
+
+  const actualAverageRating = calculateAverageRating(testimonials);
+
 
   const { data: makerData, isLoading: makerLoading, error: makerError } = useMakersBySlug(product?.maker?.slug || '');
 
@@ -137,14 +166,10 @@ const ProductPage = () => {
     );
   }
 
-  // Transform the API data to match component expectations
-  const transformedImages = transformImages(product.images, product.name);
+  // Create images array with mainImage first, then other images
+  const allImages = createImagesArray(product.mainImage, product.images);
+  const transformedImages = transformImages(allImages, product.name);
   const transformedColors = transformColors(product.colors);
-
-  const handleAddToCart = (quantity: number, color: string) => {
-    console.log('Adding to cart:', { productId: product._id, quantity, color });
-    // Implement your add to cart logic here
-  };
 
   const handleToggleFavorite = () => {
     if (isInWishlist(product._id)) {
@@ -153,11 +178,6 @@ const ProductPage = () => {
       addToWishlist(product._id);
     }
   };
-
-  const handleShare = () => {
-    console.log('Share product:', product._id);
-  };
-
   // Helper function to safely calculate years of experience
   const calculateYearsOfExperience = (joinDate: string | undefined): number => {
     if (!joinDate) return 0;
@@ -185,7 +205,6 @@ const ProductPage = () => {
 
   return (
     <Box component="main" sx={{ bgcolor: '#fafafa' }}>
-      {/* Navigation */}
       <SmallNavbar
         category={product.category?.name || "Category"}
         page1={product.category?.name || "Products"}
@@ -205,7 +224,6 @@ const ProductPage = () => {
           mx: 'auto',
         }}
       >
-        {/* Product Details Section */}
         <Box
           component="section"
           sx={{
@@ -219,18 +237,17 @@ const ProductPage = () => {
             id={product._id}
             name={product.name}
             images={transformedImages}
-            rating={product.rating || 4.5}
-            reviewCount={product.reviewCount || 0}
+            mainImage={product.mainImage}
+            rating={actualAverageRating }
+            reviewCount={actualReviewCount}
             inStock={product.inStock !== false}
             stockCount={product.stockCount || 10}
             price={product.price}
             originalPrice={product.priceBeforeDiscount}
-            colors={transformedColors}
+            colors={transformedColors || []}
             description={product.shortDescription || product.description}
             discountPercentage={product.discountPercentage || 0}
-            onAddToCart={handleAddToCart}
             onToggleFavorite={handleToggleFavorite}
-            onShare={handleShare}
             isFavorite={isInWishlist(product._id)}
           />
         </Box>
@@ -301,7 +318,7 @@ const ProductPage = () => {
             buttonText2={`View More by ${makerName}`}
             imageSrc={makerData?.image || product?.maker?.image || "/images/shared/storyFeature.jpg"}
             imageAlt={`${makerName} crafting beautiful handmade pieces`}
-                       onButton1Click={() => {
+            onButton1Click={() => {
               console.log(`Navigate to ${makerName}'s artisan shop`);
               // router.push(`/makers/${makerData?.slug}`);
             }}
@@ -320,9 +337,9 @@ const ProductPage = () => {
             px: { xs: 2, sm: 3, md: 4 }
           }}
         >
-          <SimilarProducts 
-            Products={similarProductsData} 
-            onAddToCart={() => console.log("Product added to cart")} 
+          <SimilarProducts
+            Products={similarProductsData}
+            onAddToCart={() => console.log("Product added to cart")}
           />
         </Box>
 
@@ -345,9 +362,9 @@ const ProductPage = () => {
             px: { xs: 2, sm: 3, md: 4 }
           }}
         >
-          <ExisitingComments 
-            mockComments={testimonials || []} 
-            onRefetch={refetchTestimonials} 
+          <ExisitingComments
+            mockComments={testimonials || []}
+            onRefetch={refetchTestimonials}
           />
         </Box>
 

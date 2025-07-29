@@ -21,8 +21,6 @@ export const useProductFromCategory = (categorySlug: string, productSlug: string
     }
   ) || null;
 
-  console.log('Found product:', product);
-
   return {
     data: product,
     isLoading,

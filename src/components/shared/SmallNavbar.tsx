@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Container, Typography } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 
 interface SmallNavbarProps {
     category?: string;
@@ -14,6 +15,8 @@ const SmallNavbar: React.FC<SmallNavbarProps> = ({
     page1,
     page2
 }) => {
+     const params = useParams();
+    const categorySlug = params.categorySlug as string;
     return (
         <Box
             component="nav"
@@ -73,17 +76,22 @@ const SmallNavbar: React.FC<SmallNavbarProps> = ({
                                 }}
                                 aria-hidden="true"
                             />
-
-                            <Typography
-                                variant="body2"
-                                sx={{
-                                    color: page2 ? 'white' : 'var(--primary-color)',
-                                    fontWeight: page2 ? 500 : 600,
-                                    fontSize: '0.875rem',
-                                }}
-                            >
-                                {page1}
-                            </Typography>
+                            <Link href={`/categories/${categorySlug}`} style={{ textDecoration: 'none' , color: 'inherit' }}>
+                                <Typography
+                                    variant="body2"
+                                    sx={{
+                                        color: page2 ? 'white' : 'var(--primary-color)',
+                                        fontWeight: page2 ? 500 : 600,
+                                        fontSize: '0.875rem',
+                                        cursor: 'pointer',
+                                        '&:hover': {
+                                            color: 'var(--primary-color)',
+                                        }
+                                    }}
+                                >
+                                    {page1}
+                                </Typography>
+                            </Link>
                         </>
                     )}
 

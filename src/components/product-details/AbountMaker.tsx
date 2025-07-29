@@ -22,36 +22,10 @@ import {
     Store,
     Verified,
     CalendarToday,
-    Star,
     Palette,
     Handyman
 } from '@mui/icons-material';
-
-interface MakerInfo {
-    name: string;
-    location: string;
-    miniBio: string;
-    avatar?: string;
-    joinedDate?: string;
-    rating?: number;
-    totalReviews?: number;
-    specialties?: string[];
-    yearsOfExperience?: number;
-    isVerified?: boolean;
-    totalProducts?: number;
-    completedOrders?: number;
-}
-
-interface StoryFeatureProps {
-    title: string;
-    makerInfo: MakerInfo;
-    buttonText1: string;
-    buttonText2: string;
-    imageSrc: string;
-    imageAlt: string;
-    onButton1Click?: () => void;
-    onButton2Click?: () => void;
-}
+import { StoryFeatureProps } from '@/types/product';
 
 const AbountMaker = ({
     title,
