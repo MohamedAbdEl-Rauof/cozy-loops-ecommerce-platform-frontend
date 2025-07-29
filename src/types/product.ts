@@ -43,6 +43,7 @@ export interface Product {
     description: string;
   };
   maker: {
+    message: string | undefined;
     _id: string;
     name: string;
     slug: string;

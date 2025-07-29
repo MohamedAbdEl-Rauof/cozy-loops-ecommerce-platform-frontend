@@ -117,8 +117,10 @@ const ProductPage = () => {
 
   const actualAverageRating = calculateAverageRating(testimonials);
 
-
   const { data: makerData, isLoading: makerLoading, error: makerError } = useMakersBySlug(product?.maker?.slug || '');
+  console.log('Maker data:', makerData);
+
+
 
   const handleCommentSubmitted = () => {
     refetchTestimonials();
@@ -238,7 +240,7 @@ const ProductPage = () => {
             name={product.name}
             images={transformedImages}
             mainImage={product.mainImage}
-            rating={actualAverageRating }
+            rating={actualAverageRating}
             reviewCount={actualReviewCount}
             inStock={product.inStock !== false}
             stockCount={product.stockCount || 10}
