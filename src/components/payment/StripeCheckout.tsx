@@ -1,11 +1,17 @@
 'use client'
-import React, { useEffect, useState } from 'react'
-import { Elements } from '@stripe/react-stripe-js'
-import type { Stripe } from '@stripe/stripe-js'
-import { loadStripe } from '@stripe/stripe-js'
 import { Box, Alert, CircularProgress, Typography } from '@mui/material'
-import StripeCheckoutForm from './StripeCheckoutForm'
+import { Elements } from '@stripe/react-stripe-js'
+import { loadStripe } from '@stripe/stripe-js'
+import React, { useEffect, useState } from 'react'
+
 import { StripeCheckoutProps } from '@/types/order'
+
+import StripeCheckoutForm from './StripeCheckoutForm'
+
+import type { Stripe } from '@stripe/stripe-js'
+
+
+
 
 const StripeCheckout: React.FC<StripeCheckoutProps> = ({ 
     clientSecret, 

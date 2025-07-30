@@ -1,7 +1,7 @@
 
-import React, { useState } from 'react';
-import { Box, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography } from '@mui/material';
 import { Google, Apple, Instagram, Pinterest, Info, Close } from '@mui/icons-material';
+import { Box, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography } from '@mui/material';
+import React, { useState } from 'react';
 
 const SocialAuthDialog = () => {
     const [dialogOpen, setDialogOpen] = useState(false);

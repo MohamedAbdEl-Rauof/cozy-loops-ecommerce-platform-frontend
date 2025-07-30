@@ -1,11 +1,12 @@
 
 'use client';
 
+import CallMadeIcon from '@mui/icons-material/CallMade';
 import { Box, Typography, useTheme } from '@mui/material';
 import Image from 'next/image';
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import CallMadeIcon from '@mui/icons-material/CallMade';
+import { useState } from 'react';
+
 import { ShopByCraftProps } from '@/types/home';
 
 const ShopByCraft = ({ craftCategories }: ShopByCraftProps) => {

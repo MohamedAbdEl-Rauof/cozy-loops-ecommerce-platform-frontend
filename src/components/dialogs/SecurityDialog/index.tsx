@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect } from 'react';
+import { Warning, Close } from '@mui/icons-material';
 import {
     Dialog,
     DialogTitle,
@@ -11,8 +11,8 @@ import {
     IconButton,
     LinearProgress,
 } from '@mui/material';
-import { Warning, Close } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
+import React, { useState, useEffect } from 'react';
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialog-paper': {

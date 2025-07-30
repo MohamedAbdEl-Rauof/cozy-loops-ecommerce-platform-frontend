@@ -1,5 +1,10 @@
 "use client"
-import React, { useState } from 'react';
+import {
+    Star as StarIcon,
+    MoreVert as MoreVertIcon,
+    Edit as EditIcon,
+    Delete as DeleteIcon,
+} from '@mui/icons-material';
 import {
     Box,
     Typography,
@@ -10,17 +15,13 @@ import {
     Menu,
     MenuItem,
 } from '@mui/material';
-import {
-    Star as StarIcon,
-    MoreVert as MoreVertIcon,
-    Edit as EditIcon,
-    Delete as DeleteIcon,
-} from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
-import { testimonialsService } from '@/services/testimonialsService';
-import { useAuth } from '@/context/AuthContext';
-import EditReviewDialog from '@/components/dialogs/EditReviewDialog';
+import React, { useState } from 'react';
+
 import DeleteReviewDialog from '@/components/dialogs/DeleteReviewDialog';
+import EditReviewDialog from '@/components/dialogs/EditReviewDialog';
+import { useAuth } from '@/context/AuthContext';
+import { testimonialsService } from '@/services/testimonialsService';
 
 const CommentCard = styled(Paper)(({ theme }) => ({
     padding: theme.spacing(3),
@@ -51,7 +52,7 @@ interface Review {
     rating: number;
     likesCount: number;
     dislikesCount: number;
-    likes: any[];
+    likes: unknown[];
     createdAt: string;
     updatedAt: string;
     isOwner: boolean;
@@ -78,8 +79,6 @@ const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) 
         message: '',
         severity: 'success' as 'success' | 'error' | 'warning' | 'info'
     });
-
-    // ... existing functions ...
 
     const handleEditSave = async () => {
         if (!selectedReviewId || !editComment.trim() || !editRating) {
@@ -116,12 +115,12 @@ const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) 
             // Refresh the reviews list
             onRefetch();
 
-        } catch (error: any) {
+        } catch (error) {
             console.error('Error updating review:', error);
 
             setSnackbar({
                 open: true,
-                message: error.message || 'Failed to update review',
+                message: error instanceof Error ? error.message : 'Failed to update review',
                 severity: 'error'
             });
         } finally {
@@ -188,12 +187,12 @@ const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) 
             // Refresh the reviews list
             onRefetch();
 
-        } catch (error: any) {
+        } catch (error) {
             console.error('Error deleting review:', error);
 
             setSnackbar({
                 open: true,
-                message: error.message || 'Failed to delete review',
+                message: error instanceof Error ? error.message : 'Failed to delete review',
                 severity: 'error'
             });
         } finally {
@@ -238,7 +237,7 @@ const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) 
                 Customer Reviews ({mockComments.length})
             </Typography>
 
-            {reviewsWithOwnership.map((comment, index) => (
+            {reviewsWithOwnership.map((comment) => (
                 <CommentCard key={comment._id}>
                     <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 2 }}>
                         <Box

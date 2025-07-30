@@ -1,5 +1,6 @@
 "use client"
-import React, { useState, useMemo } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Visibility, VisibilityOff, CheckCircle, Cancel } from '@mui/icons-material';
 import {
     Box,
     Typography,
@@ -11,15 +12,16 @@ import {
     InputAdornment,
     Collapse,
 } from '@mui/material';
-import { Visibility, VisibilityOff, CheckCircle, Cancel } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { UpdatePassword } from '@/services/userServices';
-import { useRouter } from 'next/navigation';
-import SecurityDialog from '@/components/dialogs/SecurityDialog'
 import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation';
+import React, { useState, useMemo } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { z } from 'zod';
+
+import SecurityDialog from '@/components/dialogs/SecurityDialog'
+import { UpdatePassword } from '@/services/userServices';
+
 
 const passwordSchema = z.object({
     currentPassword: z.string()

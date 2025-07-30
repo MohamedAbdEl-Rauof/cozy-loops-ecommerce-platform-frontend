@@ -1,6 +1,12 @@
 "use client"
 
 import {
+    Delete as DeleteIcon,
+    ShoppingCart as ShoppingCartIcon,
+    Visibility as VisibilityIcon,
+    ShoppingBag as ShoppingBagIcon
+} from '@mui/icons-material';
+import {
     Box,
     Typography,
     Button,
@@ -15,12 +21,6 @@ import {
     Fade,
     CircularProgress
 } from '@mui/material';
-import {
-    Delete as DeleteIcon,
-    ShoppingCart as ShoppingCartIcon,
-    Visibility as VisibilityIcon,
-    ShoppingBag as ShoppingBagIcon
-} from '@mui/icons-material';
 import { styled, keyframes } from '@mui/material/styles';
 import { useRouter } from 'next/navigation';
 

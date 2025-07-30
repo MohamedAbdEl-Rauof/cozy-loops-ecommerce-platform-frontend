@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
     Box,
     Typography,
@@ -9,14 +9,15 @@ import {
     CircularProgress,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import PhoneInput from 'react-phone-number-input';
+import { isValidPhoneNumber } from 'react-phone-number-input';
 import { z } from 'zod';
+
 import { useAuth } from '@/context/AuthContext';
 import { UpdateProfile } from '@/services/userServices';
-import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import { isValidPhoneNumber } from 'react-phone-number-input';
 
 const profileSchema = z.object({
     firstName: z.string()

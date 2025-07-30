@@ -1,7 +1,8 @@
 'use client';
 
-import { CategoryStatsCardProps } from '@/types/category';
 import { Container, Card, CardContent, Chip, Typography, Grid } from '@mui/material';
+
+import { CategoryStatsCardProps } from '@/types/category';
 
 export default function CategoryStatsCard({
   categoryName,

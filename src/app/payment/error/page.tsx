@@ -1,6 +1,9 @@
 'use client'
-import React from 'react'
-import { useRouter } from 'next/navigation'
+import {
+    Error as ErrorIcon,
+    Home as HomeIcon,
+    ShoppingCart as ShoppingCartIcon
+} from '@mui/icons-material'
 import {
     Container,
     Typography,
@@ -9,11 +12,8 @@ import {
     Button,
     Alert
 } from '@mui/material'
-import {
-    Error as ErrorIcon,
-    Home as HomeIcon,
-    ShoppingCart as ShoppingCartIcon
-} from '@mui/icons-material'
+import { useRouter } from 'next/navigation'
+import React from 'react'
 
 const PaymentErrorPage: React.FC = () => {
     const router = useRouter()
@@ -29,7 +29,7 @@ const PaymentErrorPage: React.FC = () => {
                         Payment Failed
                     </Typography>
                     <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
-                        We couldn't process your payment
+                        We couldn&apos;t process your payment
                     </Typography>
                     <Alert severity="error" sx={{ mb: 3, textAlign: 'left' }}>
                         Your payment was not successful. This could be due to:

@@ -1,10 +1,11 @@
 'use client';
 
+import CallMadeIcon from '@mui/icons-material/CallMade';
 import { Box, Typography, Button, Grid, IconButton, Skeleton } from '@mui/material';
 import Image from 'next/image';
-import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import CallMadeIcon from '@mui/icons-material/CallMade';
+import { useState, useEffect, useRef } from 'react';
+
 import { CategoriesGridProps } from '@/types/category';
 
 const CategoriesGrid: React.FC<CategoriesGridProps> = ({ categoriesData }) => {

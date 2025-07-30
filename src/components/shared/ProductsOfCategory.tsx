@@ -1,5 +1,5 @@
 "use client"
-import React from 'react';
+import AddIcon from '@mui/icons-material/Add';
 import {
     Box,
     Typography,
@@ -9,8 +9,9 @@ import {
     Container,
     Fade
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
 import { useRouter } from 'next/navigation';
+import React from 'react';
+
 import { useAddToCart, useCart, useUpdateCart } from '@/hooks/useCart';
 import { ProductsOfCategoryProps } from '@/types/category';
 

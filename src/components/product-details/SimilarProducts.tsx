@@ -1,5 +1,12 @@
 "use client"
-import React, { useEffect, useRef, useState } from 'react';
+import AddIcon from '@mui/icons-material/Add';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import {
     Box,
     Typography,
@@ -14,15 +21,8 @@ import {
     Tooltip,
     Badge
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import { styled, keyframes } from '@mui/material/styles';
+import React, { useEffect, useRef, useState } from 'react';
 
 // Enhanced animations
 const slideInUp = keyframes`

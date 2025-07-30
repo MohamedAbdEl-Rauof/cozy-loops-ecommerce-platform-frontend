@@ -1,7 +1,5 @@
-import { useState, useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { CheckCircle } from "@mui/icons-material";
 import {
     Dialog,
     DialogTitle,
@@ -14,9 +12,13 @@ import {
     CircularProgress,
     Alert,
 } from "@mui/material";
-import { CheckCircle } from "@mui/icons-material";
-import { forgotPassword } from "@/services/authService";
 import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { z } from "zod";
+
+import { forgotPassword } from "@/services/authService";
+
 
 const forgotPasswordSchema = z.object({
     email: z.string().email({ message: "Please enter a valid email address" }),

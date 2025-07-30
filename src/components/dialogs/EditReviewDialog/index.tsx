@@ -1,5 +1,4 @@
 "use client"
-import React from 'react';
 import {
     Dialog,
     DialogTitle,
@@ -11,6 +10,7 @@ import {
     Typography,
     Box,
 } from '@mui/material';
+import React from 'react';
 
 interface EditReviewDialogProps {
     open: boolean;

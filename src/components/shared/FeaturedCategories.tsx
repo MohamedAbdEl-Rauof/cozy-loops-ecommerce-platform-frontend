@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
+import { ArrowForward, TrendingUp } from '@mui/icons-material';
 import {
     Typography,
     Box,
@@ -12,8 +11,10 @@ import {
     Button,
     Chip
 } from '@mui/material';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { ArrowForward, TrendingUp } from '@mui/icons-material';
+import { useState, useEffect } from 'react';
+
 import { FeaturedCategoriesProps } from '@/types/home';
 
 const FeaturedCategories = ({

@@ -1,8 +1,6 @@
 "use client"
-import { useState, useRef, useEffect } from "react"
-import { useForm, Controller } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Visibility, VisibilityOff, Check } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -17,13 +15,16 @@ import {
   Collapse,
   Snackbar,
   Alert,
-} from "@mui/material"
-import Image from "next/image"
-import { useRouter, useSearchParams } from "next/navigation"
-import { Visibility, VisibilityOff, Check } from "@mui/icons-material"
-import { verifyOtp, forgotPassword, resetPassword } from "@/services/authService"
-import { useAuth } from "@/context/AuthContext"
-import { CountdownRedirect } from "@/components/auth/CountdownRedirect"
+} from "@mui/material";
+import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useRef, useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { z } from "zod";
+
+import { CountdownRedirect } from "@/components/auth/CountdownRedirect";
+import { useAuth } from "@/context/AuthContext";
+import { verifyOtp, forgotPassword, resetPassword } from "@/services/authService";
 
 const otpSchema = z.object({
   otp: z.string().length(6, { message: "OTP must be 6 digits" }).regex(/^\d+$/, { message: "OTP must contain only numbers" }),
@@ -274,10 +275,10 @@ export default function ResetPassword() {
         showNotification("OTP has been sent to your email", "success");
         setResendDisabled(true);
         setCountdown(60);
-      } catch (error: any) {
+      } catch (error) {
         console.error("Error resending OTP:", error);
-
-        if (error.response?.data?.message === "User not found with this email") {
+        
+        if (axios.isAxiosError(error) && error.response?.data?.message === "User not found with this email") {
           showNotification("User not found with this email", "error");
         } else {
           showNotification("Failed to send OTP. Please try again.", "error");
@@ -316,10 +317,10 @@ export default function ResetPassword() {
       showNotification("Password reset successful! You will be redirected to login.", "success");
 
       setTimeout(() => router.push('/auth/login'), 2000);
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error resetting password:", error);
-
-      if (error.response?.data?.message === "New password cannot be the same as your current password") {
+      
+      if (axios.isAxiosError(error) && error.response?.data?.message === "New password cannot be the same as your current password") {
         showNotification("New password cannot be the same as your current password.", "error");
       } else {
         showNotification("Failed to reset password. Please try again.", "error");

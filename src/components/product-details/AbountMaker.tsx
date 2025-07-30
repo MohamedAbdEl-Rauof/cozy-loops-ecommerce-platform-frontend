@@ -1,7 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
+import {
+    LocationOn,
+    Person,
+    Store,
+    Verified,
+    CalendarToday,
+    Palette,
+    Handyman
+} from '@mui/icons-material';
 import {
     Typography,
     Box,
@@ -15,16 +22,10 @@ import {
     Rating,
     Stack
 } from '@mui/material';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import {
-    LocationOn,
-    Person,
-    Store,
-    Verified,
-    CalendarToday,
-    Palette,
-    Handyman
-} from '@mui/icons-material';
+import { useState, useEffect } from 'react';
+
 import { StoryFeatureProps } from '@/types/product';
 
 const AbountMaker = ({

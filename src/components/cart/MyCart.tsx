@@ -1,5 +1,10 @@
 "use client"
-import React from 'react';
+import {
+    Add as AddIcon,
+    Remove as RemoveIcon,
+    Delete as DeleteIcon,
+    ShoppingCart as ShoppingCartIcon
+} from '@mui/icons-material';
 import {
     Box,
     Container,
@@ -18,13 +23,9 @@ import {
     Avatar,
     CircularProgress
 } from '@mui/material';
-import {
-    Add as AddIcon,
-    Remove as RemoveIcon,
-    Delete as DeleteIcon,
-    ShoppingCart as ShoppingCartIcon
-} from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
+import React from 'react';
+
 import { MyCartProps } from '@/types/cart';
 
 const StyledTableContainer = styled(TableContainer)(() => ({

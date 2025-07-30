@@ -1,15 +1,3 @@
-import React, { useState } from 'react';
-import {
-    Box,
-    Typography,
-    Rating,
-    Button,
-    IconButton,
-    Chip,
-    Card,
-    CardContent,
-    Tooltip
-} from '@mui/material';
 import {
     FavoriteBorder,
     Favorite,
@@ -21,9 +9,22 @@ import {
     Verified,
     ShoppingCart
 } from '@mui/icons-material';
+import {
+    Box,
+    Typography,
+    Rating,
+    Button,
+    IconButton,
+    Chip,
+    Card,
+    CardContent,
+    Tooltip
+} from '@mui/material';
 import Image from 'next/image';
-import { useAddToCart, useCart, useUpdateCart } from '@/hooks/useCart';
 import { useSnackbar } from 'notistack';
+import React, { useState } from 'react';
+
+import { useAddToCart, useCart, useUpdateCart } from '@/hooks/useCart';
 import { ProductDetailsProps } from '@/types/product';
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({

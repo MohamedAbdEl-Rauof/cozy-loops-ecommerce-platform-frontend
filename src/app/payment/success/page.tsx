@@ -1,6 +1,4 @@
 'use client'
-import React, { useEffect, useState } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
 import {
     Container,
     Typography,
@@ -8,8 +6,11 @@ import {
     CircularProgress,
     Alert
 } from '@mui/material'
-import { paymentService } from '@/services/paymentService'
+import { useSearchParams, useRouter } from 'next/navigation'
+import React, { useEffect, useState } from 'react'
+
 import ProtectedRoute from '@/provider/ProtectedRoute'
+import { paymentService } from '@/services/paymentService'
 
 const PaymentSuccessPage: React.FC = () => {
     const searchParams = useSearchParams()
@@ -50,7 +51,7 @@ const PaymentSuccessPage: React.FC = () => {
                     }
                 }
 
-            } catch (error: any) {
+            } catch (error) {
                 console.error('Payment verification error:', error)
                 setError('Payment verification failed')
                 setTimeout(() => router.push('/payment/error'), 2000)

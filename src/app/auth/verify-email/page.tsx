@@ -1,7 +1,16 @@
 
 'use client';
 
-import React, { useCallback, useEffect, useState } from 'react';
+import CheckIcon from '@mui/icons-material/Check';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import EmailIcon from '@mui/icons-material/Email';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import InfoIcon from '@mui/icons-material/Info';
+import LightbulbIcon from '@mui/icons-material/Lightbulb';
+import LoginIcon from '@mui/icons-material/Login';
+import MarkEmailReadIcon from '@mui/icons-material/MarkEmailRead';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import {
     Box,
     Typography,
@@ -16,27 +25,19 @@ import {
     CardContent,
     Chip,
     Snackbar,
-    CircularProgress
+    CircularProgress,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText
 } from '@mui/material';
-import InfoIcon from '@mui/icons-material/Info';
-import EmailIcon from '@mui/icons-material/Email';
-import MarkEmailReadIcon from '@mui/icons-material/MarkEmailRead';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { resendVerificationEmail } from "@/services/authService";
-import { useAuth } from '@/context/AuthContext';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import RefreshIcon from '@mui/icons-material/Refresh';
-import LoginIcon from '@mui/icons-material/Login';
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import CheckIcon from '@mui/icons-material/Check';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import LightbulbIcon from '@mui/icons-material/Lightbulb';
+import React, { useCallback, useEffect, useState } from 'react';
+
 import { CountdownRedirect } from '@/components/auth/CountdownRedirect';
+import { useAuth } from '@/context/AuthContext';
+import { resendVerificationEmail } from "@/services/authService";
 
 type VerificationStatus = 'pending' | 'success' | 'error';
 type SnackbarSeverity = 'success' | 'error' | 'info' | 'warning';
@@ -170,9 +171,9 @@ export default function VerifyEmailPage() {
                         handleVerificationSuccess(token);
                     }
                 }
-            } catch (error: any) {
+            } catch (error) {
                 console.error('Email verification failed:', error);
-                const errorMessage = error.message || '';
+                const errorMessage = error instanceof Error ? error.message : '';
 
                 if (errorMessage.includes('already') || errorMessage.includes('used')) {
                     setVerificationStatus('success');
@@ -834,7 +835,7 @@ export default function VerifyEmailPage() {
                                                             <CheckIcon sx={{ fontSize: 16, color: 'success.main' }} />
                                                         </ListItemIcon>
                                                         <ListItemText
-                                                            primary="You'll be redirected to login page shortly"
+                                                            primary="You&apos;ll be redirected to login page shortly"
                                                             primaryTypographyProps={{ variant: 'body2' }}
                                                         />
                                                     </ListItem>
@@ -1124,7 +1125,7 @@ export default function VerifyEmailPage() {
                                         </Box>
 
                                         <Typography variant="body2" sx={{ mb: 2 }}>
-                                            We've sent a verification link to:
+                                            We&apos;ve sent a verification link to:
                                         </Typography>
 
                                         <Box
@@ -1172,7 +1173,7 @@ export default function VerifyEmailPage() {
                                 >
                                     <Box>
                                         <Typography variant="body2" paragraph sx={{ mt: 0 }}>
-                                            <strong>Can't find the email?</strong>
+                                            <strong>Can&apos;t find the email?</strong>
                                         </Typography>
                                         <Typography variant="body2" component="div" sx={{ pl: 1 }}>
                                             • Check your spam or junk folder
@@ -1196,7 +1197,7 @@ export default function VerifyEmailPage() {
 
                                 <Box sx={{ mb: 2 }}>
                                     <Typography variant="subtitle2" align="center" gutterBottom sx={{ mb: 2 }}>
-                                        Haven't received the verification email?
+                                        Haven&apos;t received the verification email?
                                     </Typography>
 
                                     <Button

@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
 import { Box, Container, Typography, Grid, Card, CardContent } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Image from 'next/image';
+import React, { useEffect, useRef, useState } from 'react';
 
 const StyledCard = styled(Card)(({ theme }) => ({
   height: '100%',

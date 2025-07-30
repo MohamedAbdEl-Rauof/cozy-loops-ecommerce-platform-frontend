@@ -1,6 +1,11 @@
 'use client'
-import React, { useEffect, useState } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+
+import {
+    CheckCircle as CheckCircleIcon,
+    Email as EmailIcon,
+    Receipt as ReceiptIcon,
+    Visibility as ViewIcon
+} from '@mui/icons-material'
 import {
     Container,
     Typography,
@@ -12,16 +17,11 @@ import {
     Divider,
     Grid,
 } from '@mui/material'
-import {
-    CheckCircle as CheckCircleIcon,
-    Home as HomeIcon,
-    ShoppingBag as ShoppingBagIcon,
-    Email as EmailIcon,
-    Receipt as ReceiptIcon,
-    Visibility as ViewIcon
-} from '@mui/icons-material'
-import { orderService } from '@/services/orderService'
+import { useSearchParams, useRouter } from 'next/navigation'
+import React, { useEffect, useState } from 'react'
+
 import ProtectedRoute from '@/provider/ProtectedRoute'
+import { orderService } from '@/services/orderService'
 import { OrderDetails } from '@/types/order'
 
 const OrderConfirmationPage: React.FC = () => {
@@ -130,7 +130,7 @@ const OrderConfirmationPage: React.FC = () => {
                         </Typography>
 
                         <Grid container spacing={3}>
-                            <Grid size={{ xs: 12, md: 6 }}>
+                            <Grid size={{xs:12 , md:6}}>
                                 <Box sx={{ mb: 2 }}>
                                     <Typography variant="body2" color="text.secondary">
                                         Order Number
@@ -161,7 +161,7 @@ const OrderConfirmationPage: React.FC = () => {
                                 </Box>
                             </Grid>
 
-                            <Grid size={{ xs: 12, md: 6 }}>
+                            <Grid size={{xs:12 , md:6}}>
                                 <Box sx={{
                                     bgcolor: '#f8f9fa',
                                     p: 3,
@@ -197,14 +197,14 @@ const OrderConfirmationPage: React.FC = () => {
                     <Paper elevation={3} sx={{ p: 4, borderRadius: 3, mb: 3 }}>
                         <Typography variant="h6" fontWeight="600" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                             <EmailIcon />
-                            What's Next?
+                            What&apos;s Next?
                         </Typography>
                         <Box sx={{ pl: 2 }}>
                             <Typography variant="body1" sx={{ mb: 1, display: 'flex', alignItems: 'center' }}>
                                 • You will receive an email confirmation shortly
                             </Typography>
                             <Typography variant="body1" sx={{ mb: 1 }}>
-                                • We'll send you tracking information once your order ships
+                                • We&apos;ll send you tracking information once your order ships
                             </Typography>
                             <Typography variant="body1" sx={{ mb: 1 }}>
                                 • Estimated delivery: 3-5 business days
@@ -225,7 +225,7 @@ const OrderConfirmationPage: React.FC = () => {
                         }}
                     >
                         <Grid container spacing={3} justifyContent="center">
-                            <Grid size={{ xs: 12, sm: 6 }}>
+                            <Grid xs={12} sm={6}>
                                 <Button
                                     variant="contained"
                                     fullWidth
@@ -257,7 +257,7 @@ const OrderConfirmationPage: React.FC = () => {
                                 </Button>
                             </Grid>
                             
-                            <Grid size={{ xs: 12, sm: 6 }}>
+                            <Grid xs={12} sm={6}>
                                 <Button
                                     variant="outlined"
                                     fullWidth

@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react';
+import { PhotoCamera } from '@mui/icons-material';
 import {
     Box,
     Typography,
@@ -7,8 +7,9 @@ import {
     Avatar,
     CircularProgress,
 } from '@mui/material';
-import { PhotoCamera } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
+import React, { useState } from 'react';
+
 import { useAuth } from '@/context/AuthContext';
 import { UpdateProfile, uploadImageToCloudinary } from '@/services/userServices';
 
@@ -117,8 +118,8 @@ const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({ onSuccess, onEr
             setProfileImage(response.user.avatar);
             setSelectedImageFile(null);
             onSuccess('Profile image updated successfully!');
-        } catch (error: any) {
-            onError(error.message || 'Failed to update profile image');
+        } catch (error) {
+            onError(error instanceof Error ? error.message : 'Failed to update profile image');
         } finally {
             setLoading(false);
         }

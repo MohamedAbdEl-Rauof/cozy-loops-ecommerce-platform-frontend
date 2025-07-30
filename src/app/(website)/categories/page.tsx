@@ -1,18 +1,19 @@
 'use client';
 
-import { useRef, useCallback, useMemo } from "react";
-import { Alert, Box, CircularProgress, Container, Typography } from "@mui/material";
 import { Refresh } from "@mui/icons-material";
+import { Alert, Box, CircularProgress, Container, Typography } from "@mui/material";
+import { useRef, useCallback, useMemo } from "react";
+
 import ImageWithText from "@/components/about/ImageWithText";
-import FeaturedCategories from "@/components/shared/FeaturedCategories";
 import CategoriesGrid from "@/components/shared/CategoriesGrid";
-import { useCategories } from "@/hooks/useCategories";
+import FeaturedCategories from "@/components/shared/FeaturedCategories";
 import { 
   heroSectionData, 
   featuredCategoriesData, 
   categoriesGridData,
   pageStructure,
 } from "@/data/pages/categoriesPageData";
+import { useCategories } from "@/hooks/useCategories";
 import { Category } from "@/types/category";
 
 const LoadingState = () => (

@@ -1,10 +1,9 @@
 'use client';
 
-import Cookies from 'js-cookie';
-
-import React, { createContext, useState, useEffect, ReactNode, useContext, useCallback, useRef } from 'react';
-import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation';
+import React, { createContext, useState, useEffect, ReactNode, useContext, useCallback, useRef } from 'react';
 
 import {
   useUserQuery,

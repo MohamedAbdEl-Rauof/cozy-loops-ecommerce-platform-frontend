@@ -1,5 +1,4 @@
 "use client"
-import React from 'react';
 import {
     Dialog,
     DialogTitle,
@@ -8,6 +7,7 @@ import {
     Button,
     Typography,
 } from '@mui/material';
+import React from 'react';
 
 interface DeleteReviewDialogProps {
     open: boolean;

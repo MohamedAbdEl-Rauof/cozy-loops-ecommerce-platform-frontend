@@ -1,10 +1,11 @@
 "use client"
-import React, { useEffect, useState } from 'react';
 import { Container, Typography, Alert, CircularProgress, Box, Paper, Grid, Divider } from '@mui/material';
 import { useSearchParams } from 'next/navigation';
-import { paymentService } from '@/services/paymentService';
+import React, { useEffect, useState } from 'react';
+
 import StripeCheckout from '@/components/payment/StripeCheckout';
 import ProtectedRoute from '@/provider/ProtectedRoute';
+import { paymentService } from '@/services/paymentService';
 
 interface CheckoutResponse {
     clientSecret: string;
@@ -70,7 +71,7 @@ const PaymentPage: React.FC = () => {
         if (orderId && !checkoutData && !isProcessing) {
             handleCreatePaymentIntent();
         }
-    }, [orderId, checkoutData, isProcessing]);
+    }, [orderId]); // eslint-disable-line react-hooks/exhaustive-deps
 
     if (!orderId) {
         return (

@@ -1,8 +1,8 @@
-import React from 'react';
-import { Box, Container, Typography } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import { Box, Container, Typography } from '@mui/material';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import React from 'react';
 
 interface SmallNavbarProps {
     category?: string;

@@ -1,8 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { cartService } from '@/services/cartServices';
 import { useSnackbar } from 'notistack';
 import { useEffect } from 'react';
+
 import { socket } from '@/lib/cartSocket'; 
+import { cartService } from '@/services/cartServices';
 import { CartUpdateData } from '@/types/cart';
 
 export const useCart = () => {

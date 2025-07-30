@@ -2,10 +2,10 @@
 
 import { SnackbarProvider } from "notistack";
 
-import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
-import QueryProvider from "@/provider/QueryProvider";
+import Navbar from "@/components/shared/Navbar";
 import { AuthProvider } from "@/context/AuthContext";
+import QueryProvider from "@/provider/QueryProvider";
 
 export default function ClientLayout({
   children,

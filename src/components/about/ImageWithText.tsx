@@ -2,8 +2,9 @@
 
 import { Box, Typography, Fade, Slide, Button, useTheme, useMediaQuery } from '@mui/material';
 import Image from 'next/image';
-import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { useState, useEffect, useRef } from 'react';
+
 import {ImageWithTextProps } from '@/types/about';
 
 const ImageWithText = ({

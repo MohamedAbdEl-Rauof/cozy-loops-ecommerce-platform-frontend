@@ -1,8 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { ArrowForward, AutoStories } from '@mui/icons-material';
 import {
     Typography,
     Box,
@@ -12,7 +10,9 @@ import {
     Button,
     Chip,
 } from '@mui/material';
-import { ArrowForward, AutoStories } from '@mui/icons-material';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 import {StoryFeatureData} from '@/types/home';
 

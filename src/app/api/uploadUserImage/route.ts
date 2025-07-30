@@ -16,10 +16,11 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ url: uploadResponse.secure_url });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Upload error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
     return NextResponse.json(
-      { error: 'Upload failed', details: error.message },
+      { error: 'Upload failed', details: errorMessage },
       { status: 500 }
     );
   }
