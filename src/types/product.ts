@@ -150,4 +150,5 @@ export interface ProductDetailsProps {
   isFavorite?: boolean;
   discountPercentage?: number;
   mainImage: string
+  _id: string;
 }

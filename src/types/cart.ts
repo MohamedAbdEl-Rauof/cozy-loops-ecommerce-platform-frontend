@@ -4,6 +4,7 @@ import {ApiReview} from './Testimonial';
 export interface CartItem {
   _id: string;
   product: {
+    id: string;
     _id: string;
     name: string;
     price: number;

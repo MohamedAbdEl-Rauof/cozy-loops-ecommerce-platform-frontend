@@ -14,6 +14,10 @@ import {
     IconButton,
     Menu,
     MenuItem,
+    Backdrop,
+    CircularProgress,
+    Snackbar,
+    Alert,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React, { useState } from 'react';
@@ -220,8 +224,27 @@ const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) 
         setEditRating(rating);
     };
 
+    const handleSnackbarClose = () => {
+        setSnackbar(prev => ({ ...prev, open: false }));
+    };
+
     return (
         <Box sx={{ position: 'relative', zIndex: 2 }}>
+
+            <Backdrop
+                sx={{
+                    color: '#fff',
+                    zIndex: (theme) => theme.zIndex.drawer + 1,
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+                }}
+                open={isLoading}
+            >
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                    <CircularProgress color="inherit" />
+                    <Typography variant="body1">Processing...</Typography>
+                </Box>
+            </Backdrop>
+
             <Typography
                 variant="h5"
                 sx={{
@@ -352,16 +375,16 @@ const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) 
             ))}
 
             {/* Menu */}
-            <Menu
+           <Menu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
                 onClose={handleMenuClose}
             >
-                <MenuItem onClick={handleEditClick}>
+                <MenuItem onClick={handleEditClick} disabled={isLoading}>
                     <EditIcon sx={{ mr: 1 }} />
                     Edit
                 </MenuItem>
-                <MenuItem onClick={handleDeleteClick} sx={{ color: 'error.main' }}>
+                <MenuItem onClick={handleDeleteClick} sx={{ color: 'error.main' }} disabled={isLoading}>
                     <DeleteIcon sx={{ mr: 1 }} />
                     Delete
                 </MenuItem>
@@ -376,6 +399,7 @@ const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) 
                 rating={editRating}
                 onCommentChange={handleCommentChange}
                 onRatingChange={handleRatingChange}
+                isLoading={isLoading}
             />
 
             {/* Delete Review Dialog */}
@@ -383,9 +407,28 @@ const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) 
                 open={deleteDialogOpen}
                 onClose={handleDeleteDialogClose}
                 onConfirm={handleDeleteConfirm}
+                isLoading={isLoading}
             />
+
+            {/* Snackbar for notifications */}
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={6000}
+                onClose={handleSnackbarClose}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert
+                    onClose={handleSnackbarClose}
+                    severity={snackbar.severity}
+                    sx={{ width: '100%' }}
+                    variant="filled"
+                >
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 };
+
 
 export default ExisitingComments;

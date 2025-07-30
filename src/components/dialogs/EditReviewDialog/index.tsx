@@ -20,6 +20,7 @@ interface EditReviewDialogProps {
     rating: number | null;
     onCommentChange: (comment: string) => void;
     onRatingChange: (rating: number | null) => void;
+    isLoading: boolean;
 }
 
 const EditReviewDialog: React.FC<EditReviewDialogProps> = ({
@@ -30,6 +31,7 @@ const EditReviewDialog: React.FC<EditReviewDialogProps> = ({
     rating,
     onCommentChange,
     onRatingChange,
+    isLoading
 }) => {
     return (
         <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -39,7 +41,7 @@ const EditReviewDialog: React.FC<EditReviewDialogProps> = ({
                     <Typography variant="subtitle2" sx={{ mb: 1 }}>Rating</Typography>
                     <Rating
                         value={rating}
-                        onChange={(_, newValue) => onRatingChange(newValue)}
+                        onChange={(_event, newValue) => onRatingChange(newValue)}
                         sx={{
                             '& .MuiRating-iconFilled': {
                                 color: '#F59E0B',
@@ -60,7 +62,7 @@ const EditReviewDialog: React.FC<EditReviewDialogProps> = ({
             <DialogActions>
                 <Button onClick={onClose}>Cancel</Button>
                 <Button onClick={onSave} variant="contained" sx={{ bgcolor: '#D97706' }}>
-                    Save Changes
+                    {isLoading ? 'Saving...' : 'Save Changes'}
                 </Button>
             </DialogActions>
         </Dialog>

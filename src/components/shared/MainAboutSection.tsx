@@ -79,9 +79,9 @@ const MainAboutSection = () => {
                                 }
                             }}
                         >
-                            At Cozy Loops, we believe that handmade is more than a product—it's a feeling.
+                            At Cozy Loops, we believe that handmade is more than a product—it&apos;s a feeling.
                             A reminder that care, creativity, and culture still have a place in the fast-paced
-                            world we live in. We're here to connect you with local artisans across Egypt and
+                            world we live in. We&apos;re here to connect you with local artisans across Egypt and
                             the Middle East, each with a story to tell and a craft to share.
                         </Typography>
                     </Box>

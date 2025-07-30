@@ -25,12 +25,12 @@ import {
     Avatar
 } from '@mui/material'
 import { useRouter } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 
 import ProtectedRoute from '@/provider/ProtectedRoute'
 import { orderService, type Order } from '@/services/orderService'
 
-const OrdersPage: React.FC = () => {
+const OrdersPage = () => {
     const router = useRouter()
     const [orders, setOrders] = useState<Order[]>([])
     const [isLoading, setIsLoading] = useState(true)
@@ -43,7 +43,7 @@ const OrdersPage: React.FC = () => {
 
     const ordersPerPage = 10
 
-    const fetchOrders = async () => {
+    const fetchOrders = useCallback(async () => {
         try {
             setIsLoading(true)
             const response = await orderService.getUserOrders(currentPage, ordersPerPage)
@@ -61,11 +61,11 @@ const OrdersPage: React.FC = () => {
         } finally {
             setIsLoading(false)
         }
-    }
+    }, [currentPage, ordersPerPage])
 
     useEffect(() => {
         fetchOrders()
-    }, [currentPage])
+    }, [fetchOrders])
 
     useEffect(() => {
         if (searchTerm.trim() === '') {

@@ -51,7 +51,7 @@ const StripeCheckoutForm: React.FC<StripeCheckoutFormProps> = ({
             } else {
                 onPaymentStatusChange('completed')
             }
-        } catch (err) {
+        } catch {
             const errorMessage = 'An unexpected error occurred. Please try again.'
             setPaymentError(errorMessage)
             onPaymentStatusChange('failed')

@@ -111,8 +111,8 @@ const StyledPhoneInput = styled(PhoneInput)(() => ({
 
 
 interface PersonalInfoSectionProps {
-    onSuccess: (message: string) => void;
-    onError: (message: string) => void;
+    onSuccess: (_message: string) => void;
+    onError: (_message: string) => void;
 }
 
 const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ onSuccess, onError }) => {
@@ -157,8 +157,9 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ onSuccess, on
 
             reset(data);
             onSuccess('Profile updated successfully!');
-        } catch (error: any) {
-            onError(error.response?.data?.message || 'Failed to update profile');
+        } catch (error: unknown) {
+            const err = error as { response?: { data?: { message?: string } } };
+            onError(err.response?.data?.message || 'Failed to update profile');
         } finally {
             setLoading(false);
         }

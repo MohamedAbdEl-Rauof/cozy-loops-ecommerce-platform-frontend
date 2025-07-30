@@ -1,4 +1,3 @@
-
 'use client';
 
 import CheckIcon from '@mui/icons-material/Check';
@@ -660,7 +659,7 @@ export default function VerifyEmailPage() {
                                                                 While you wait:
                                                             </Typography>
                                                             <Typography variant="body2" color="text.secondary">
-                                                                Make sure to check your spam folder if you don't see our verification email.
+                                                                Make sure to check your spam folder if you don&apos;t see our verification email.
                                                                 You can also request a new verification email if needed.
                                                             </Typography>
                                                         </Box>
@@ -1072,8 +1071,8 @@ export default function VerifyEmailPage() {
                                             justifyContent: 'center',
                                             mb: 2,
                                             boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-                                            animation: 'pulse 2s infinite',
-                                            '@keyframes pulse': {
+                                            animation: 'pulse2 2s infinite',
+                                            '@keyframes pulse2': {
                                                 '0%': { boxShadow: '0 0 0 0 rgba(25, 118, 210, 0.7)' },
                                                 '70%': { boxShadow: '0 0 0 10px rgba(25, 118, 210, 0)' },
                                                 '100%': { boxShadow: '0 0 0 0 rgba(25, 118, 210, 0)' }

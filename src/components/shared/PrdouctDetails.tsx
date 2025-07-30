@@ -65,7 +65,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
         if (isAddingToCart || isUpdatingCart) return;
 
         try {
-            const existingCartItem = cartData?.items?.find((item: any) =>
+            const existingCartItem = cartData?.items?.find((item) =>
                 item.product._id === productId || item.product.id === productId
             );
 

@@ -13,7 +13,7 @@ import {
     Alert,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 
@@ -39,6 +39,29 @@ export default function ForgotPasswordDialog({ open, onClose }: ForgotPasswordDi
     const router = useRouter();
     const [submittedEmail, setSubmittedEmail] = useState<string>("");
 
+    const {
+        control,
+        handleSubmit,
+        reset,
+        formState: { errors, isValid, isDirty },
+    } = useForm<FormData>({
+        resolver: zodResolver(forgotPasswordSchema),
+        mode: "onChange",
+        defaultValues: {
+            email: "",
+        },
+    });
+
+    const handleClose = useCallback(() => {
+        if (!isSubmitting) {
+            reset();
+            setSuccess(false);
+            setError(null);
+            setCountdown(5);
+            onClose();
+        }
+    }, [isSubmitting, reset, onClose]);
+
     useEffect(() => {
         let time: NodeJS.Timeout;
         if (success && countdown > 0) {
@@ -52,20 +75,7 @@ export default function ForgotPasswordDialog({ open, onClose }: ForgotPasswordDi
         return () => {
             if (time) clearTimeout(time);
         };
-    }, [success, countdown]);
-
-    const {
-        control,
-        handleSubmit,
-        reset,
-        formState: { errors, isValid, isDirty },
-    } = useForm<FormData>({
-        resolver: zodResolver(forgotPasswordSchema),
-        mode: "onChange",
-        defaultValues: {
-            email: "",
-        },
-    });
+    }, [success, countdown, handleClose, router, submittedEmail]);
 
     const onSubmit = async (data: FormData) => {
         setIsSubmitting(true);
@@ -85,16 +95,6 @@ export default function ForgotPasswordDialog({ open, onClose }: ForgotPasswordDi
             }
         } finally {
             setIsSubmitting(false);
-        }
-    };
-
-    const handleClose = () => {
-        if (!isSubmitting) {
-            reset();
-            setSuccess(false);
-            setError(null);
-            setCountdown(5);
-            onClose();
         }
     };
 

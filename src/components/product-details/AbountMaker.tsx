@@ -320,7 +320,7 @@ const AbountMaker = ({
                                     bgcolor: 'grey.25'
                                 }}
                             >
-                                "{makerInfo.miniBio}"
+                                &ldquo;{makerInfo.miniBio}&rdquo;
                             </Typography>
                         </Box>
 

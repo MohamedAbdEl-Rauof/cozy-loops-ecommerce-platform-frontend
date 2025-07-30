@@ -15,7 +15,6 @@ import {
     Alert,
     CircularProgress,
     Chip,
-    useTheme,
     Snackbar,
 } from '@mui/material';
 import { styled, keyframes } from '@mui/material/styles';
@@ -58,11 +57,9 @@ const shimmer = keyframes`
   }
 `;
 
-// Styled Components with Cozy Loops Branding
 const StyledPaper = styled(Paper)(({ theme }) => ({
     padding: theme.spacing(4),
     borderRadius: '20px',
-    // background: 'linear-gradient(135deg, rgba(255,248,235,0.95) 0%, rgba(254,243,224,0.9) 100%)',
     backdropFilter: 'blur(20px)',
     border: '1px solid rgba(217, 119, 6, 0.1)',
     boxShadow: '0 8px 32px rgba(217, 119, 6, 0.08)',
@@ -97,10 +94,9 @@ const SubmitButton = styled(Button)(({ theme }) => ({
     }
 }));
 
-const StyledTextField = styled(TextField)(({ theme }) => ({
+const StyledTextField = styled(TextField)(() => ({
     '& .MuiOutlinedInput-root': {
         borderRadius: '16px',
-        // backgroundColor: 'rgba(255, 248, 235, 0.8)',
         backdropFilter: 'blur(10px)',
         transition: 'all 0.3s ease',
         '& fieldset': {

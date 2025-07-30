@@ -13,12 +13,14 @@ interface DeleteReviewDialogProps {
     open: boolean;
     onClose: () => void;
     onConfirm: () => void;
+    isLoading: boolean;
 }
 
 const DeleteReviewDialog: React.FC<DeleteReviewDialogProps> = ({
     open,
     onClose,
     onConfirm,
+    isLoading
 }) => {
     return (
         <Dialog open={open} onClose={onClose}>
@@ -31,7 +33,7 @@ const DeleteReviewDialog: React.FC<DeleteReviewDialogProps> = ({
             <DialogActions>
                 <Button onClick={onClose}>Cancel</Button>
                 <Button onClick={onConfirm} color="error" variant="contained">
-                    Delete
+                    {isLoading ? 'Deleting...' : 'Delete'}
                 </Button>
             </DialogActions>
         </Dialog>

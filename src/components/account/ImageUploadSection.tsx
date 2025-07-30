@@ -51,8 +51,8 @@ const SectionBox = styled(Box)(() => ({
 }));
 
 interface ImageUploadSectionProps {
-    onSuccess: (message: string) => void;
-    onError: (message: string) => void;
+    onSuccess: (_message: string) => void;
+    onError: (_message: string) => void;
 }
 
 const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({ onSuccess, onError }) => {

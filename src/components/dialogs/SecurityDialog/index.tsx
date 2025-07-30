@@ -4,9 +4,7 @@ import {
     Dialog,
     DialogTitle,
     DialogContent,
-    DialogActions,
     Typography,
-    Button,
     Box,
     IconButton,
     LinearProgress,
@@ -14,7 +12,7 @@ import {
 import { styled } from '@mui/material/styles';
 import React, { useState, useEffect } from 'react';
 
-const StyledDialog = styled(Dialog)(({ theme }) => ({
+const StyledDialog = styled(Dialog)(() => ({
     '& .MuiDialog-paper': {
         borderRadius: '16px',
         padding: '8px',
@@ -23,24 +21,13 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
     },
 }));
 
-const WarningIcon = styled(Warning)(({ theme }) => ({
+const WarningIcon = styled(Warning)(() => ({
     fontSize: '48px',
     color: '#ff6b35',
     marginBottom: '16px',
 }));
 
-const ActionButton = styled(Button)(({ theme }) => ({
-    backgroundColor: '#FF7043',
-    color: 'white',
-    padding: '12px 24px',
-    borderRadius: '8px',
-    fontWeight: 600,
-    '&:hover': {
-        backgroundColor: '#FF5722',
-    },
-}));
-
-const CountdownBox = styled(Box)(({ theme }) => ({
+const CountdownBox = styled(Box)(() => ({
     backgroundColor: '#fff3e0',
     border: '2px solid #FF7043',
     borderRadius: '12px',
