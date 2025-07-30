@@ -16,6 +16,7 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
+import axios from "axios";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
@@ -25,6 +26,8 @@ import { z } from "zod";
 import { CountdownRedirect } from "@/components/auth/CountdownRedirect";
 import { useAuth } from "@/context/AuthContext";
 import { verifyOtp, forgotPassword, resetPassword } from "@/services/authService";
+
+export const dynamic = 'force-dynamic'
 
 const otpSchema = z.object({
   otp: z.string().length(6, { message: "OTP must be 6 digits" }).regex(/^\d+$/, { message: "OTP must contain only numbers" }),
@@ -275,7 +278,7 @@ export default function ResetPassword() {
         showNotification("OTP has been sent to your email", "success");
         setResendDisabled(true);
         setCountdown(60);
-      } catch (error) {
+      } catch (error: unknown) {
         console.error("Error resending OTP:", error);
         
         if (axios.isAxiosError(error) && error.response?.data?.message === "User not found with this email") {

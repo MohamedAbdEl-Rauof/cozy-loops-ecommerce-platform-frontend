@@ -1,15 +1,9 @@
+
 "use client";
 
-import { useRouter } from "next/navigation";
-import Image from "next/image";
-import Link from "next/link";
-import React, { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import {
   Alert,
   Box,
@@ -27,6 +21,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { z } from "zod";
 
 import { CountdownRedirect } from "@/components/auth/CountdownRedirect";
 import ForgotPasswordDialog from "@/components/dialogs/ForgetPasswordDialog";

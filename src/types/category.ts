@@ -71,3 +71,11 @@ export interface ProductsData {
 export interface ProductsOfCategoryProps {
   Products: ProductsData;
 }
+export interface CartItem {
+  product: {
+    _id: string;
+    [key: string]: unknown;
+  };
+  quantity: number;
+  [key: string]: unknown;
+}

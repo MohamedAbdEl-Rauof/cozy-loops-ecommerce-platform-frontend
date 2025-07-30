@@ -38,6 +38,8 @@ import { CountdownRedirect } from '@/components/auth/CountdownRedirect';
 import { useAuth } from '@/context/AuthContext';
 import { resendVerificationEmail } from "@/services/authService";
 
+export const dynamic = 'force-dynamic'
+
 type VerificationStatus = 'pending' | 'success' | 'error';
 type SnackbarSeverity = 'success' | 'error' | 'info' | 'warning';
 

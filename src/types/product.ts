@@ -135,7 +135,7 @@ export interface ProductColor {
 }
 
 export interface ProductDetailsProps {
-  id: string;
+  id?: string;
   name: string;
   images: ProductImage[];
   rating: number;
@@ -150,5 +150,5 @@ export interface ProductDetailsProps {
   isFavorite?: boolean;
   discountPercentage?: number;
   mainImage: string
-  _id: string;
+  _id?: string;
 }

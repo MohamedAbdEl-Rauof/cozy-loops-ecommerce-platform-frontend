@@ -1,5 +1,4 @@
 "use client"
-import AddIcon from '@mui/icons-material/Add';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -19,7 +18,6 @@ import {
     Rating,
     Button,
     Tooltip,
-    Badge
 } from '@mui/material';
 import { styled, keyframes } from '@mui/material/styles';
 import React, { useEffect, useRef, useState } from 'react';
@@ -66,7 +64,7 @@ const float = keyframes`
   }
 `;
 
-const AnimatedSection = styled(Box)(({ theme }) => ({
+const AnimatedSection = styled(Box)(() => ({
     opacity: 0,
     transform: 'translateY(50px)',
     transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -77,7 +75,7 @@ const AnimatedSection = styled(Box)(({ theme }) => ({
     },
 }));
 
-const NavigationButton = styled(IconButton)(({ theme }) => ({
+const NavigationButton = styled(IconButton)(() => ({
     position: 'absolute',
     top: '50%',
     transform: 'translateY(-50%)',
@@ -108,7 +106,7 @@ const NavigationButton = styled(IconButton)(({ theme }) => ({
     }
 }));
 
-const ProductCard = styled(Box)(({ theme }) => ({
+const ProductCard = styled(Box)(() => ({
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
@@ -154,7 +152,7 @@ const ProductCard = styled(Box)(({ theme }) => ({
     }
 }));
 
-const ActionButton = styled(IconButton)(({ theme }) => ({
+const ActionButton = styled(IconButton)(() => ({
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
     backdropFilter: 'blur(20px)',
     border: '1px solid rgba(255, 255, 255, 0.3)',
@@ -167,7 +165,7 @@ const ActionButton = styled(IconButton)(({ theme }) => ({
     }
 }));
 
-const PaginationDot = styled(Box)(({ theme, active }: { theme?: any, active: boolean }) => ({
+const PaginationDot = styled(Box)<{ active: boolean }>(({ active }) => ({
     width: active ? 32 : 12,
     height: 12,
     borderRadius: 6,

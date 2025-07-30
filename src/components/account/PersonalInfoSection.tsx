@@ -81,13 +81,13 @@ const StyledPhoneInput = styled(PhoneInput)(() => ({
         fontSize: '16px',
         fontFamily: 'inherit',
         width: '100%',
-        height: '40px', 
+        height: '40px',
         boxSizing: 'border-box',
         '&:focus': {
             outline: 'none',
             borderColor: '#FF7043',
             borderWidth: '2px',
-            padding: '7px 13px', 
+            padding: '7px 13px',
         },
         '&.PhoneInputInput--error': {
             borderColor: '#d32f2f',
@@ -98,7 +98,7 @@ const StyledPhoneInput = styled(PhoneInput)(() => ({
         border: 'none',
         background: 'transparent',
         fontSize: '16px',
-        height: '40px', 
+        height: '40px',
         display: 'flex',
         alignItems: 'center',
     },
@@ -119,6 +119,7 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ onSuccess, on
     const { user } = useAuth();
     const [loading, setLoading] = useState(false);
 
+
     const {
         control,
         handleSubmit,
@@ -131,7 +132,8 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ onSuccess, on
         defaultValues: {
             firstName: user?.firstName || '',
             lastName: user?.lastName || '',
-            phone: user?.phoneNumber || '',
+
+            phone: user?.phoneNumber?.toString() || '',
         }
     });
 
@@ -140,7 +142,7 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ onSuccess, on
             reset({
                 firstName: user.firstName || '',
                 lastName: user.lastName || '',
-                phone: user.phone || user.phoneNumber || '',
+                phone: user.phoneNumber?.toString() || '',
             });
         }
     }, [user, reset]);

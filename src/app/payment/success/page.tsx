@@ -12,6 +12,8 @@ import React, { useEffect, useState } from 'react'
 import ProtectedRoute from '@/provider/ProtectedRoute'
 import { paymentService } from '@/services/paymentService'
 
+export const dynamic = 'force-dynamic'
+
 const PaymentSuccessPage: React.FC = () => {
     const searchParams = useSearchParams()
     const router = useRouter()

@@ -71,7 +71,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
     }
 }));
 
-const SubmitButton = styled(Button)(({ theme }) => ({
+const SubmitButton = styled(Button)(() => ({
     borderRadius: '25px',
     padding: '12px 32px',
     fontWeight: 600,
@@ -157,7 +157,7 @@ const Comments = ({ onCommentSubmitted }: CommentsProps) => {
     const [showSuccess, setShowSuccess] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [showError, setShowError] = useState(false);
-    const [hoveredRating, setHoveredRating] = useState(null);
+    const [hoveredRating, setHoveredRating] = useState<number | null>(null);
     const params = useParams();
 
     const productSlug = params.productSlug as string;
@@ -172,7 +172,7 @@ const Comments = ({ onCommentSubmitted }: CommentsProps) => {
         if (error) setError(null);
     };
 
-    const handleRatingChange = (event: React.SyntheticEvent, newValue: number | null) => {
+    const handleRatingChange = (_event: React.SyntheticEvent, newValue: number | null) => {
         setFormData(prev => ({
             ...prev,
             rating: newValue
@@ -203,7 +203,7 @@ const Comments = ({ onCommentSubmitted }: CommentsProps) => {
             setFormData({ comment: '', rating: null });
             setHoveredRating(null);
 
-            if(onCommentSubmitted){
+            if (onCommentSubmitted) {
                 onCommentSubmitted();
             }
 
@@ -211,18 +211,29 @@ const Comments = ({ onCommentSubmitted }: CommentsProps) => {
             setTimeout(() => {
                 setShowSuccess(false);
             }, 5000);
+
+
         } catch (error) {
             console.error('Error submitting comment:', error);
 
-            // Better error message extraction
             let errorMessage = 'Failed to submit review. Please try again.';
 
-            if (error?.response?.data?.message) {
-                errorMessage = error.response.data.message;
-            } else if (error?.response?.message) {
-                errorMessage = error.response.message;
-            } else if (error?.message) {
-                errorMessage = error.message;
+            if (error && typeof error === 'object') {
+                const err = error as {
+                    response?: {
+                        data?: { message?: string };
+                        message?: string;
+                    };
+                    message?: string;
+                };
+
+                if (err.response?.data?.message) {
+                    errorMessage = err.response.data.message;
+                } else if (err.response?.message) {
+                    errorMessage = err.response.message;
+                } else if (err.message) {
+                    errorMessage = err.message;
+                }
             }
 
             setError(errorMessage);
@@ -392,7 +403,7 @@ const Comments = ({ onCommentSubmitted }: CommentsProps) => {
                                     name="product-rating"
                                     value={formData.rating}
                                     onChange={handleRatingChange}
-                                    onChangeActive={(event, newHover) => {
+                                    onChangeActive={(_event, newHover) => {
                                         setHoveredRating(newHover);
                                     }}
                                     size="large"

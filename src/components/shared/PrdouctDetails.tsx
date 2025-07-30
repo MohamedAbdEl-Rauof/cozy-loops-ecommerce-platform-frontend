@@ -28,7 +28,7 @@ import { useAddToCart, useCart, useUpdateCart } from '@/hooks/useCart';
 import { ProductDetailsProps } from '@/types/product';
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({
-    id,
+    _id,
     name,
     images,
     rating,
@@ -420,7 +420,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                         variant="contained"
                         size="large"
                         startIcon={<ShoppingCart />}
-                        onClick={() => handleAddToCart(id)}
+                        onClick={() => _id && handleAddToCart(_id)}
                         disabled={!inStock || isAddingToCart || isUpdatingCart}
                         sx={{
                             flex: 1,

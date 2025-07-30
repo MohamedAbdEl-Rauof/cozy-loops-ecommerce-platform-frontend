@@ -50,6 +50,7 @@ interface AuthError {
   message?: string;
 }
 
+
 interface AuthContextType {
   user: User | null;
   loading: boolean;
@@ -276,7 +277,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const handleRegister = async (userData: RegisterData): Promise<any> => {
+  const handleRegister = async (userData: RegisterData): Promise<unknown> => {
     try {
       clearError();
       const response = await registerMutation.mutateAsync(userData);

@@ -468,7 +468,7 @@ const AbountMaker = ({
                                     display: 'block',
                                     borderRadius: '20px'
                                 }}
-                                onError={(e) => {
+                                onError={() => {
                                     console.error("Image failed to load:", imageSrc);
                                 }}
                             />
@@ -484,7 +484,7 @@ const AbountMaker = ({
                                 }}
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 55vw"
                                 priority
-                                onError={(e) => {
+                                onError={() => {
                                     console.error("Image failed to load:", imageSrc);
                                 }}
                             />

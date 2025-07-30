@@ -24,6 +24,8 @@ import ProtectedRoute from '@/provider/ProtectedRoute'
 import { orderService } from '@/services/orderService'
 import { OrderDetails } from '@/types/order'
 
+export const dynamic = 'force-dynamic'
+
 const OrderConfirmationPage: React.FC = () => {
     const searchParams = useSearchParams()
     const router = useRouter()
@@ -130,7 +132,7 @@ const OrderConfirmationPage: React.FC = () => {
                         </Typography>
 
                         <Grid container spacing={3}>
-                            <Grid size={{xs:12 , md:6}}>
+                            <Grid size={{ xs: 12, md: 6 }}>
                                 <Box sx={{ mb: 2 }}>
                                     <Typography variant="body2" color="text.secondary">
                                         Order Number
@@ -161,7 +163,7 @@ const OrderConfirmationPage: React.FC = () => {
                                 </Box>
                             </Grid>
 
-                            <Grid size={{xs:12 , md:6}}>
+                            <Grid size={{ xs: 12, md: 6 }}>
                                 <Box sx={{
                                     bgcolor: '#f8f9fa',
                                     p: 3,
@@ -215,17 +217,17 @@ const OrderConfirmationPage: React.FC = () => {
                         </Box>
                     </Paper>
 
-                    <Paper 
-                        elevation={3} 
-                        sx={{ 
-                            p: 4, 
-                            textAlign: 'center', 
+                    <Paper
+                        elevation={3}
+                        sx={{
+                            p: 4,
+                            textAlign: 'center',
                             borderRadius: 3,
                             background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)'
                         }}
                     >
                         <Grid container spacing={3} justifyContent="center">
-                            <Grid xs={12} sm={6}>
+                            <Grid size={{ xs: 12, sm: 6 }}>
                                 <Button
                                     variant="contained"
                                     fullWidth
@@ -242,7 +244,7 @@ const OrderConfirmationPage: React.FC = () => {
                                         minHeight: 56,
                                         boxShadow: '0 4px 12px rgba(255, 87, 34, 0.3)',
                                         transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                                        '&:hover': { 
+                                        '&:hover': {
                                             bgcolor: '#e64a19',
                                             transform: 'translateY(-2px)',
                                             boxShadow: '0 6px 20px rgba(255, 87, 34, 0.4)'
@@ -256,8 +258,8 @@ const OrderConfirmationPage: React.FC = () => {
                                     View Order Details
                                 </Button>
                             </Grid>
-                            
-                            <Grid xs={12} sm={6}>
+
+                            <Grid size={{ xs: 12, sm: 6 }}>
                                 <Button
                                     variant="outlined"
                                     fullWidth

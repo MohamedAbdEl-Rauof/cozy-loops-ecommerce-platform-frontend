@@ -7,6 +7,8 @@ import StripeCheckout from '@/components/payment/StripeCheckout';
 import ProtectedRoute from '@/provider/ProtectedRoute';
 import { paymentService } from '@/services/paymentService';
 
+export const dynamic = 'force-dynamic'
+
 interface CheckoutResponse {
     clientSecret: string;
     paymentIntentId: string;

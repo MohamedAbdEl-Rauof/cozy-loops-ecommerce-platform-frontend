@@ -1,6 +1,6 @@
-import type { Metadata } from "next";
-
+/* eslint-disable import/order */
 import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata } from "next";
 
 import ClientLayout from "@/provider/ClientLayout";
 

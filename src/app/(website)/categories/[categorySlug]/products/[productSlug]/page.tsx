@@ -17,7 +17,6 @@ import { useProductFromCategory } from '@/hooks/useProducts';
 import { useProductsTestimonialsBySlug } from '@/hooks/useTestimonials';
 import { useAddToWishlist, useRemoveFromWishlist, useWishlist } from '@/hooks/useWishlist';
 import { ProductImage } from '@/types/product';
-import { type Testimonial } from '@/types/Testimonial';
 
 const createImagesArray = (mainImage: string, images: string[] = []): string[] => {
 
@@ -233,7 +232,7 @@ const ProductPage = () => {
           }}
         >
           <ProductDetails
-            id={product._id}
+            _id={product._id}
             name={product.name}
             images={transformedImages}
             mainImage={product.mainImage}
@@ -361,14 +360,44 @@ const ProductPage = () => {
             px: { xs: 2, sm: 3, md: 4 }
           }}
         >
-        <ExisitingComments
-          mockComments={testimonials?.reviews?.map((review: Testimonial) => ({
-            ...review,
-            isOwner: false // This will be set properly inside ExisitingComments component
-          })) || []}
-          onRefetch={refetchTestimonials}
-        />
 
+
+
+          <ExisitingComments
+            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+            mockComments={testimonials?.reviews?.map((review: any) => ({
+              _id: review._id || review.id,
+              id: review._id || review.id,
+              user: {
+                _id: review.user?._id || review.user?.id || '',
+                firstName: review.user?.firstName || '',
+                lastName: review.user?.lastName || '',
+                name: `${review.user?.firstName || ''} ${review.user?.lastName || ''}`.trim() || 'Anonymous',
+                Avatar: review.user?.Avatar || review.user?.avatar || '/images/default-avatar.jpg', // Capital A for Avatar
+                verified: review.user?.verified || false,
+                email: review.user?.email || '',
+                role: review.user?.role || 'user',
+                phoneNumber: review.user?.phoneNumber || '',
+                addresses: review.user?.addresses || [],
+                emailVerified: review.user?.emailVerified || false,
+                active: review.user?.active !== false,
+                createdAt: review.user?.createdAt || new Date().toISOString(),
+                updatedAt: review.user?.updatedAt || new Date().toISOString()
+              },
+              product: review.product || product._id,
+              rating: review.rating,
+              comment: review.comment,
+              date: review.createdAt || review.date || new Date().toISOString(),
+              createdAt: review.createdAt || review.date || new Date().toISOString(),
+              updatedAt: review.updatedAt || review.createdAt || new Date().toISOString(),
+              likes: review.likes || [],
+              likesCount: review.likesCount || review.likes || 0,
+              dislikesCount: review.dislikesCount || review.dislikes || 0,
+              replies: review.replies || 0,
+              isOwner: false // This will be set properly inside ExisitingComments component
+            })) || []}
+            onRefetch={refetchTestimonials}
+          />
 
         </Box>
 
