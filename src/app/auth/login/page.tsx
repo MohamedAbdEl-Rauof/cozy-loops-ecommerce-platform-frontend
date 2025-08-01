@@ -1,37 +1,37 @@
-"use client"
-import { useEffect, useState } from "react"
-import { useForm, Controller } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
+
+"use client";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import {
+  Alert,
   Box,
   Button,
-  TextField,
-  Typography,
+  CircularProgress,
+  Container,
+  Dialog,
+  DialogContent,
+  Fade,
   IconButton,
   InputAdornment,
-  Link as MuiLink,
-  Container,
-  CircularProgress,
-  Snackbar,
-  Alert,
   LinearProgress,
-  DialogContent,
-  Dialog,
-  Fade,
-} from "@mui/material"
-import {
-  Visibility,
-  VisibilityOff,
-} from "@mui/icons-material"
-import Image from "next/image"
-import Link from "next/link"
-import SocialAuth from "@/components/shared/SocialAuth"
-import ForgotPasswordDialog from "@/components/auth/ForgetPasswordDialog"
-import { useAuth } from "@/context/AuthContext"
-import { CountdownRedirect } from "@/components/auth/CountdownRedirect"
-import { useRouter } from "next/navigation"
-import CheckCircleIcon from "@mui/icons-material/CheckCircle"
+  Link as MuiLink,
+  Snackbar,
+  TextField,
+  Typography,
+} from "@mui/material";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { z } from "zod";
+
+import { CountdownRedirect } from "@/components/auth/CountdownRedirect";
+import ForgotPasswordDialog from "@/components/dialogs/ForgetPasswordDialog";
+import SocialAuthDialog from "@/components/dialogs/SocialAuthDialog";
+import { useAuth } from "@/context/AuthContext";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -88,11 +88,44 @@ export default function LoginPage() {
     },
   })
 
+
   useEffect(() => {
-    if (isUserAuthenticated() && !showSuccessAnimation) {
+    if (isUserAuthenticated() && !showSuccessAnimation && !isSubmitting) {
       setShowAuthenticatedMessage(true);
     }
-  }, [isAuthenticated, loading, isUserAuthenticated, showSuccessAnimation]);
+  }, [isAuthenticated, loading, isUserAuthenticated, showSuccessAnimation, isSubmitting]);
+
+  const onSubmit = async (data: FormData): Promise<void> => {
+    setIsSubmitting(true);
+    setShowAuthenticatedMessage(false);
+
+    try {
+      await login(data.email, data.password);
+      setShowSuccessAnimation(true);
+    } catch (error: unknown) {
+      console.error("Login error:", error);
+
+      const err = error as { response?: { status: number; data: { emailVerified?: boolean; message?: string } }; message?: string };
+
+      if (err.response && err.response.status === 403 &&
+        err.response.data && err.response.data.emailVerified === false) {
+        setSnackbar({
+          open: true,
+          message: 'Email not verified. Please check your inbox for verification email.',
+          severity: 'warning'
+        });
+      } else {
+        setSnackbar({
+          open: true,
+          message: err.response?.data?.message || err.message || 'Login failed. Please try again.',
+          severity: 'error'
+        });
+      }
+      return;
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -113,36 +146,6 @@ export default function LoginPage() {
     setSnackbar(prev => ({ ...prev, open: false }));
   };
 
-  const onSubmit = async (data: FormData): Promise<void> => {
-    setIsSubmitting(true);
-
-    try {
-      await login(data.email, data.password);
-      setShowSuccessAnimation(true);
-    } catch (error: any) {
-      console.error("Login error:", error);
-
-      // Handle specific error cases
-      if (error.response && error.response.status === 403 &&
-        error.response.data && error.response.data.emailVerified === false) {
-        setSnackbar({
-          open: true,
-          message: 'Email not verified. Please check your inbox for verification email.',
-          severity: 'warning'
-        });
-      } else {
-        setSnackbar({
-          open: true,
-          message: error.response?.data?.message || error.message || 'Login failed. Please try again.',
-          severity: 'error'
-        });
-      }
-      return;
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   if (showAuthenticatedMessage && !showSuccessAnimation) {
     return (
       <CountdownRedirect
@@ -154,12 +157,12 @@ export default function LoginPage() {
   }
 
   return (
-    <Box sx={{ minHeight: "100vh", display: "flex" }}>
-      {/* Left side - Image */}
+    <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: { xs: "column", lg: "row" } }}>
       <Box
         sx={{
-          display: { xs: "none", lg: "flex" },
-          width: { lg: "50%" },
+          display: "flex",
+          width: { xs: "100%", lg: "50%" },
+          height: { xs: "200px", sm: "250px", md: "300px", lg: "100vh" },
           position: "relative",
         }}
       >
@@ -173,7 +176,6 @@ export default function LoginPage() {
         />
       </Box>
 
-      {/* Right side - Form */}
       <Box
         sx={{
           width: { xs: "100%", lg: "50%" },
@@ -182,6 +184,7 @@ export default function LoginPage() {
           justifyContent: "center",
           p: 3,
           backgroundColor: "white",
+          minHeight: { xs: "calc(100vh - 200px)", sm: "calc(100vh - 250px)", md: "calc(100vh - 300px)", lg: "100vh" },
         }}
       >
         <Container maxWidth="sm">
@@ -208,7 +211,6 @@ export default function LoginPage() {
               sx={{ mt: 3 }}
               noValidate
             >
-              {/* Email */}
               <Controller
                 name="email"
                 control={control}
@@ -232,7 +234,6 @@ export default function LoginPage() {
                 )}
               />
 
-              {/* Password */}
               <Controller
                 name="password"
                 control={control}
@@ -271,7 +272,6 @@ export default function LoginPage() {
                 )}
               />
 
-              {/* Forget Password */}
               <Box sx={{ textAlign: "left", mb: 3 }}>
                 <MuiLink sx={{ color: 'var(--primary-color)', cursor: 'pointer' }} underline="hover" onClick={() => setForgetPasswordOpen(true)}>
                   Forgot password?
@@ -279,7 +279,6 @@ export default function LoginPage() {
                 <ForgotPasswordDialog open={forgetPasswordOpen} onClose={() => setForgetPasswordOpen(false)} />
               </Box>
 
-              {/* Submit Button */}
               <Button
                 type="submit"
                 fullWidth
@@ -303,12 +302,10 @@ export default function LoginPage() {
                 {isSubmitting ? <CircularProgress size={30} sx={{ color: "#fff" }} /> : "sign in"}
               </Button>
 
-              {/* Social Login */}
-              <SocialAuth />
+              <SocialAuthDialog />
 
-              {/* Sign Up Link */}
               <Typography variant="body2" sx={{ textAlign: "center", color: "#666" }}>
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <Link
                   href="/auth/register"
                   style={{
@@ -401,18 +398,18 @@ export default function LoginPage() {
               >
                 Login Successful!
               </Typography>
-            
+
               <Box sx={{ width: '100%', mt: 1 }}>
                 <LinearProgress
                   variant="determinate"
-                  value={progressValue} 
+                  value={progressValue}
                   sx={{
                     height: 6,
                     borderRadius: 3,
                     backgroundColor: 'rgba(var(--primary-color-rgb), 0.1)',
                     '& .MuiLinearProgress-bar': {
                       borderRadius: 3,
-                      backgroundColor: 'var(--primary-color)',
+                      backgroundColor: 'var(--primary-color)'
                     }
                   }}
                 />

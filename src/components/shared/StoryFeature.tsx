@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
+import { ArrowForward, AutoStories } from '@mui/icons-material';
 import {
     Typography,
     Box,
@@ -11,19 +10,11 @@ import {
     Button,
     Chip,
 } from '@mui/material';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { ArrowForward, AutoStories } from '@mui/icons-material';
+import { useState, useEffect } from 'react';
 
-interface StoryFeatureProps {
-    title: string;
-    description: string;
-    buttonText: string;
-    imageSrc: string;
-    imageAlt: string;
-    onButtonClick?: string;
-    badge?: string;
-    reverse?: boolean;
-}
+import {StoryFeatureData} from '@/types/home';
 
 const StoryFeature = ({
     title,
@@ -34,7 +25,7 @@ const StoryFeature = ({
     onButtonClick,
     badge,
     reverse = false,
-}: StoryFeatureProps) => {
+}: StoryFeatureData) => {
     const theme = useTheme();
     const [isVisible, setIsVisible] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
@@ -220,10 +211,10 @@ const StoryFeature = ({
                             alignSelf: 'flex-start',
                             bgcolor: brandColors.primary,
                             color: 'white',
-                            fontWeight: 600,
-                            fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' },
-                            px: { xs: 4, sm: 5, md: 6 },
-                            py: { xs: 1.5, sm: 2, md: 2.5 },
+                            fontWeight: 500,
+                            fontSize: { xs: '0.6rem', sm: '1rem', md: '1.125rem' },
+                            px: { xs: 1, sm: 5, md: 6 },
+                            py: { xs: 0.1, sm: 2, md: 2.5 },
                             borderRadius: '9999px !important',
                             textTransform: 'none',
                             boxShadow: `0 8px 24px rgba(255, 112, 67, 0.3)`,
@@ -338,7 +329,7 @@ const StoryFeature = ({
                                         : 'brightness(1) contrast(1) saturate(1)',
                                     transition: 'filter 0.4s ease',
                                 }}
-                                onError={(e) => {
+                                onError={() => {
                                     console.error("Image failed to load:", imageSrc);
                                 }}
                             />
@@ -358,7 +349,7 @@ const StoryFeature = ({
                                         : 'brightness(1) contrast(1) saturate(1)',
                                     transition: 'filter 0.4s ease',
                                 }}
-                                onError={(e) => {
+                                onError={() => {
                                     console.error("Image failed to load:", imageSrc);
                                 }}
                             />

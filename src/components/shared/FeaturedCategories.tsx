@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
+import { ArrowForward, TrendingUp } from '@mui/icons-material';
 import {
     Typography,
     Box,
@@ -12,20 +11,11 @@ import {
     Button,
     Chip
 } from '@mui/material';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { ArrowForward, TrendingUp } from '@mui/icons-material';
+import { useState, useEffect } from 'react';
 
-interface FeaturedCategoriesProps {
-    featuredCategories: {
-        title: string;
-        isTitleCenter: boolean;
-        description: string;
-        image: string;
-        ctaText: string;
-        buttonText: string;
-        buttonLink: string;
-    };
-}
+import { FeaturedCategoriesProps } from '@/types/home';
 
 const FeaturedCategories = ({
     featuredCategories
@@ -205,7 +195,7 @@ const FeaturedCategories = ({
                                     transition: 'all 0.2s ease',
                                     transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
                                     '&:hover': {
-                                        bgcolor:'var(--primary-color)',
+                                        bgcolor: 'var(--primary-color)',
                                         color: 'white',
                                         transform: 'translateY(-2px) scale(1.05)',
                                     }
@@ -220,7 +210,7 @@ const FeaturedCategories = ({
                                 fontWeight: 800,
                                 mb: { xs: 1.5, sm: 2, md: 2.5, lg: 3 },
                                 textAlign: isTitleCenter ? 'center' : 'left',
-                                color: '#2c1810', 
+                                color: '#2c1810',
                                 textShadow: `0 2px 8px rgba(255, 229, 184, 0.8), 0 4px 16px rgba(255, 112, 67, 0.3)`,
                                 fontSize: {
                                     xs: '1.75rem',
@@ -246,7 +236,7 @@ const FeaturedCategories = ({
                                 textAlign: isTitleCenter ? 'center' : 'left',
                                 maxWidth: { xs: '95%', sm: '90%', md: '85%', lg: '80%' },
                                 mb: { xs: 2, sm: 2.5, md: 3, lg: 3.5 },
-                                color: '#3d2914', 
+                                color: '#3d2914',
                                 textShadow: `0 2px 8px rgba(255, 229, 184, 0.6)`,
                                 fontSize: {
                                     xs: '0.95rem',

@@ -2,44 +2,15 @@
 
 import { Box, Typography, Fade, Slide, Button, useTheme, useMediaQuery } from '@mui/material';
 import Image from 'next/image';
-import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { useState, useEffect, useRef } from 'react';
 
-interface ImageWithTextData {
-    title: string;
-    description: string;
-    imageSrc: string;
-    imageAlt: string;
-    flipContent?: boolean;
-    imageWidth?: {
-        xs?: string;
-        sm?: string;
-        md?: string;
-        lg?: string;
-        xl?: string;
-    };
-    imageHeight?: {
-        xs?: string;
-        sm?: string;
-        md?: string;
-        lg?: string;
-        xl?: string;
-    };
-    buttonText?: string;
-    buttonLink?: string;
-    onButtonClick?: () => void;
-    priority?: boolean;
-    className?: string;
-}
-
-interface ImageWithTextProps {
-    dataContent: ImageWithTextData;
-}
+import {ImageWithTextProps } from '@/types/about';
 
 const ImageWithText = ({
     dataContent
 }: ImageWithTextProps) => {
-    const { title, description, imageSrc, imageAlt, flipContent, imageWidth, imageHeight, buttonText, buttonLink, onButtonClick, } = dataContent
+    const { title, description, imageSrc, imageAlt, flipContent, imageWidth, imageHeight, buttonText, buttonLink, onButtonClick } = dataContent
     const [isVisible, setIsVisible] = useState(false);
     const [imageLoaded, setImageLoaded] = useState(false);
     const [isInView, setIsInView] = useState(false);
@@ -78,13 +49,14 @@ const ImageWithText = ({
             }
         );
 
-        if (containerRef.current) {
-            observer.observe(containerRef.current);
+        const currentRef = containerRef.current;
+        if (currentRef) {
+            observer.observe(currentRef);
         }
 
         return () => {
-            if (containerRef.current) {
-                observer.unobserve(containerRef.current);
+            if (currentRef) {
+                observer.unobserve(currentRef);
             }
         };
     }, []);
@@ -150,9 +122,9 @@ const ImageWithText = ({
                         maxWidth: {
                             xs: '320px',
                             sm: '380px',
-                            md: '420px',
-                            lg: '480px',
-                            xl: '520px'
+                            md: '520px',
+                            lg: '580px',
+                            xl: '640px'
                         },
                         borderRadius: {
                             xs: '16px',
@@ -357,7 +329,6 @@ const ImageWithText = ({
                                         transform: 'translateY(-1px)',
                                         boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
                                     },
-                                    // Responsive touch targets
                                     '@media (hover: none)': {
                                         '&:hover': {
                                             transform: 'none',

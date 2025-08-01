@@ -1,3 +1,36 @@
+
+export interface ProductTestimonialsResponse {
+  success: boolean;
+  data: {
+    reviews: ApiReview[];
+    pagination?: {
+      currentPage: number;
+      totalPages: number;
+      totalItems: number;
+      hasNext: boolean;
+      hasPrev: boolean;
+    };
+    userReview?: ApiReview;
+  };
+  message?: string;
+}
+
+export interface ApiError {
+  response?: {
+    status: number;
+    data?: {
+      message?: string;
+    };
+  };
+  message: string;
+}
+
+export interface UpdateTestimonialResponse {
+  success: boolean;
+  message: string;
+  data?: ApiReview;
+}
+
 export interface ApiReview {
   _id: string;
   user: {
@@ -34,6 +67,14 @@ export interface Testimonial {
   likes: number;
   dislikes: number;
   replies: number;
+}
+
+export interface TestimonialsProps {
+  testimonialsData: {
+    title: string;
+    description: string;
+    items: Testimonial[];
+  }
 }
 
 export interface ApiResponse {

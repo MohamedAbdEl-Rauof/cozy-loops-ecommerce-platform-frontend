@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
 import { Box, Container, Typography, Grid, Card, CardContent } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Image from 'next/image';
+import React, { useEffect, useRef, useState } from 'react';
 
 const StyledCard = styled(Card)(({ theme }) => ({
   height: '100%',
@@ -31,7 +31,7 @@ const ImageContainer = styled(Box)({
   justifyContent: 'center',
 });
 
-const AnimatedSection = styled(Box)(({ theme }) => ({
+const AnimatedSection = styled(Box)(() => ({
   opacity: 0,
   transform: 'translateY(50px)',
   transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -41,7 +41,7 @@ const AnimatedSection = styled(Box)(({ theme }) => ({
   },
 }));
 
-const AnimatedCard = styled(StyledCard)(({ theme }) => ({
+const AnimatedCard = styled(StyledCard)(() => ({
   opacity: 0,
   transform: 'translateY(30px) scale(0.95)',
   transition: 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -77,11 +77,11 @@ const FeatureCardsSection: React.FC<FeatureCardsSectionProps> = ({
       case 1:
         return { xs: 12, sm: 8, md: 6, lg: 4 };
       case 2:
-        return { xs: 12, sm: 6, md: 6, lg: 4 }; 
+        return { xs: 12, sm: 6, md: 6, lg: 4 };
       case 3:
-        return { xs: 12, sm: 6, md: 4, lg: 4 }; 
+        return { xs: 12, sm: 6, md: 4, lg: 4 };
       default:
-        return { xs: 12, sm: 6, md: 4, lg: 3 }; 
+        return { xs: 12, sm: 6, md: 4, lg: 3 };
     }
   };
 
@@ -97,7 +97,7 @@ const FeatureCardsSection: React.FC<FeatureCardsSectionProps> = ({
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
-          
+
           cards.forEach((_, index) => {
             setTimeout(() => {
               setVisibleCards(prev => {
@@ -105,7 +105,7 @@ const FeatureCardsSection: React.FC<FeatureCardsSectionProps> = ({
                 newVisible[index] = true;
                 return newVisible;
               });
-            }, index * 150); 
+            }, index * 150);
           });
         }
       },
@@ -193,14 +193,14 @@ const FeatureCardsSection: React.FC<FeatureCardsSectionProps> = ({
             width: '100%',
           }}
         >
-          <Grid 
-            container 
+          <Grid
+            container
             spacing={{ xs: 3, sm: 4, md: 6 }}
             sx={{
               justifyContent: cards.length < 4 ? 'center' : 'flex-start',
-              maxWidth: cards.length === 1 ? '400px' : 
-                       cards.length === 2 ? '800px' : 
-                       cards.length === 3 ? '1200px' : '100%',
+              maxWidth: cards.length === 1 ? '400px' :
+                cards.length === 2 ? '800px' :
+                  cards.length === 3 ? '1200px' : '100%',
             }}
           >
             {cards.map((card, index) => (
@@ -233,7 +233,7 @@ const FeatureCardsSection: React.FC<FeatureCardsSectionProps> = ({
                         }}
                       />
                     </ImageContainer>
-                    
+
                     <Typography
                       variant="h5"
                       component="h3"
@@ -246,7 +246,7 @@ const FeatureCardsSection: React.FC<FeatureCardsSectionProps> = ({
                     >
                       {card.title}
                     </Typography>
-                    
+
                     <Typography
                       variant="body2"
                       sx={{

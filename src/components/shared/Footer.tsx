@@ -1,9 +1,9 @@
 "use client"
+import { Twitter, LinkedIn, Facebook, GitHub, Language, Public } from "@mui/icons-material"
 import { Box, Container, Typography, Link, Grid, IconButton, Divider, Stack } from "@mui/material"
 import { styled } from "@mui/material/styles"
-import { Twitter, LinkedIn, Facebook, GitHub, Language, Public } from "@mui/icons-material"
-import { usePathname } from "next/navigation"
 import Image from "next/image"
+import { usePathname } from "next/navigation"
 
 const FooterContainer = styled(Box)(() => ({
     color: "white",

@@ -43,6 +43,7 @@ export interface Product {
     description: string;
   };
   maker: {
+    message: string | undefined;
     _id: string;
     name: string;
     slug: string;
@@ -66,7 +67,7 @@ export interface Product {
   numReviews: number;
   createdAt: string;
   updatedAt: string;
-  variants: any[];
+  variants: ProductVariant[];
   rating: number;
   reviewCount: number;
   inStock: boolean;
@@ -93,8 +94,61 @@ export interface ProductImage {
   alt: string;
 }
 
+
+export interface MakerInfo {
+  name: string;
+  location: string;
+  miniBio: string;
+  avatar?: string;
+  joinedDate?: string;
+  rating?: number;
+  totalReviews?: number;
+  specialties?: string[];
+  yearsOfExperience?: number;
+  isVerified?: boolean;
+  totalProducts?: number;
+  completedOrders?: number;
+}
+
+export interface StoryFeatureProps {
+  title: string;
+  makerInfo: MakerInfo;
+  buttonText1: string;
+  buttonText2: string;
+  imageSrc: string;
+  imageAlt: string;
+  onButton1Click?: () => void;
+  onButton2Click?: () => void;
+}
+
+
+export interface ProductImage {
+  id: string;
+  url: string;
+  alt: string;
+}
+
 export interface ProductColor {
   name: string;
   value: string;
   available: boolean;
+}
+
+export interface ProductDetailsProps {
+  id?: string;
+  name: string;
+  images: ProductImage[];
+  rating: number;
+  reviewCount: number;
+  inStock: boolean;
+  stockCount?: number;
+  price: number;
+  originalPrice?: number;
+  colors: ProductColor[];
+  description?: string;
+  onToggleFavorite?: () => void;
+  isFavorite?: boolean;
+  discountPercentage?: number;
+  mainImage: string
+  _id?: string;
 }

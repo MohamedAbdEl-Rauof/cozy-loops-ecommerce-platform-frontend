@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react';
+import { PhotoCamera } from '@mui/icons-material';
 import {
     Box,
     Typography,
@@ -7,19 +7,20 @@ import {
     Avatar,
     CircularProgress,
 } from '@mui/material';
-import { PhotoCamera } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
+import React, { useState } from 'react';
+
 import { useAuth } from '@/context/AuthContext';
 import { UpdateProfile, uploadImageToCloudinary } from '@/services/userServices';
 
-const ProfileAvatar = styled(Avatar)(({ theme }) => ({
+const ProfileAvatar = styled(Avatar)(() => ({
     width: 120,
     height: 120,
     margin: '0 auto 20px',
     border: '4px solid #FF7043',
 }));
 
-const UploadButton = styled(Button)<{ component?: React.ElementType }>(({ theme }) => ({
+const UploadButton = styled(Button)<{ component?: React.ElementType }>(() => ({
     marginTop: '10px',
     backgroundColor: '#FF7043',
     padding: '12px 30px',
@@ -28,7 +29,7 @@ const UploadButton = styled(Button)<{ component?: React.ElementType }>(({ theme 
     },
 }));
 
-const SaveButton = styled(Button)(({ theme }) => ({
+const SaveButton = styled(Button)(() => ({
     backgroundColor: '#FF7043',
     color: 'white',
     padding: '12px 30px',
@@ -41,7 +42,7 @@ const SaveButton = styled(Button)(({ theme }) => ({
     },
 }));
 
-const SectionBox = styled(Box)(({ theme }) => ({
+const SectionBox = styled(Box)(() => ({
     backgroundColor: '#f9f9f9',
     padding: '24px',
     borderRadius: '12px',
@@ -50,8 +51,8 @@ const SectionBox = styled(Box)(({ theme }) => ({
 }));
 
 interface ImageUploadSectionProps {
-    onSuccess: (message: string) => void;
-    onError: (message: string) => void;
+    onSuccess: (_message: string) => void;
+    onError: (_message: string) => void;
 }
 
 const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({ onSuccess, onError }) => {
@@ -117,8 +118,8 @@ const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({ onSuccess, onEr
             setProfileImage(response.user.avatar);
             setSelectedImageFile(null);
             onSuccess('Profile image updated successfully!');
-        } catch (error: any) {
-            onError(error.message || 'Failed to update profile image');
+        } catch (error) {
+            onError(error instanceof Error ? error.message : 'Failed to update profile image');
         } finally {
             setLoading(false);
         }

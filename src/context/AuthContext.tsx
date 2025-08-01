@@ -1,11 +1,18 @@
 'use client';
 
-import React, { createContext, useState, useEffect, ReactNode, useContext, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { login, register, logout, refreshToken } from '@/services/authService';
-
+import { useQueryClient } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
-import { getUser } from '@/services/userServices';
+import { useRouter } from 'next/navigation';
+import React, { createContext, useState, useEffect, ReactNode, useContext, useCallback, useRef } from 'react';
+
+import {
+  useUserQuery,
+  useLoginMutation,
+  useRegisterMutation,
+  useLogoutMutation,
+  useRefreshTokenMutation,
+  USER_QUERY_KEYS
+} from '@/hooks/useUser';
 
 interface User {
   id: string;
@@ -16,7 +23,7 @@ interface User {
   emailVerified?: boolean;
   avatar?: string;
   phone?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface AuthResponse {
@@ -30,8 +37,19 @@ interface RegisterData {
   lastName: string;
   email: string;
   password: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
+
+interface AuthError {
+  response?: {
+    data?: {
+      message?: string;
+    };
+    status?: number;
+  };
+  message?: string;
+}
+
 
 interface AuthContextType {
   user: User | null;
@@ -39,7 +57,7 @@ interface AuthContextType {
   error: string | null;
   login: (email: string, password: string) => Promise<AuthResponse>;
   loginWithToken: (token: string, refreshTokenValue?: string) => Promise<User>;
-  register: (userData: RegisterData) => Promise<any>;
+  register: (userData: RegisterData) => Promise<unknown>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
   clearError: () => void;
@@ -70,11 +88,26 @@ export const AuthContext = createContext<AuthContextType>({
 });
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [initialLoading, setInitialLoading] = useState<boolean>(true);
+  const [authCheckInProgress, setAuthCheckInProgress] = useState<boolean>(false);
+
   const router = useRouter();
+  const queryClient = useQueryClient();
+
+  const authCheckTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastAuthCheckRef = useRef<number>(0);
+  const isRefreshingRef = useRef<boolean>(false);
+
+  const { data: user, isLoading: userLoading, refetch: refetchUserQuery } = useUserQuery(isAuthenticated);
+  const loginMutation = useLoginMutation();
+  const registerMutation = useRegisterMutation();
+  const logoutMutation = useLogoutMutation();
+  const refreshTokenMutation = useRefreshTokenMutation();
+
+  const loading = initialLoading || userLoading || loginMutation.isPending || logoutMutation.isPending || authCheckInProgress;
+
   const isUserAuthenticated = useCallback((): boolean => {
     const accessToken = Cookies.get('accessToken');
     const refreshToken = Cookies.get('refreshToken');
@@ -86,141 +119,128 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setError(null);
   }, []);
 
-  const checkAuthStatus = useCallback(async (): Promise<boolean> => {
-    const accessToken = Cookies.get('accessToken');
-    const refreshTokenValue = Cookies.get('refreshToken');
+  const debouncedCheckAuthStatus = useCallback(async (): Promise<boolean> => {
+    const now = Date.now();
+    const timeSinceLastCheck = now - lastAuthCheckRef.current;
 
-    if (!accessToken && !refreshTokenValue) {
-      setIsAuthenticated(false);
-      setUser(null);
-      return false;
+    if (timeSinceLastCheck < 1000 || authCheckInProgress || isRefreshingRef.current) {
+      return isAuthenticated;
     }
 
-    if (accessToken) {
-      try {
-        const userData = await getUser();
-        setUser(userData);
-        setIsAuthenticated(true);
-        return true;
-      } catch (error) {
-        console.error('Failed to get user data with access token:', error);
-      }
-    }
+    lastAuthCheckRef.current = now;
+    setAuthCheckInProgress(true);
 
-    if (refreshTokenValue) {
-      try {
-        const response = await refreshToken(refreshTokenValue);
+    try {
+      const accessToken = Cookies.get('accessToken');
+      const refreshTokenValue = Cookies.get('refreshToken');
 
-        Cookies.set('accessToken', response.accessToken, {
-          secure: true,
-          sameSite: 'strict',
-          expires: 1
-        });
-
-        try {
-          const userData = await getUser();
-          setUser(userData);
-          setIsAuthenticated(true);
-          return true;
-        } catch (userDataError) {
-          if (response.user) {
-            setUser(response.user);
-            setIsAuthenticated(true);
-            return true;
-          }
-          throw userDataError;
-        }
-      } catch (refreshError) {
-        console.error('Token refresh failed:', refreshError);
+      if (!accessToken && !refreshTokenValue) {
         setIsAuthenticated(false);
-        setUser(null);
-        Cookies.remove('accessToken');
-        Cookies.remove('refreshToken');
+        queryClient.removeQueries({ queryKey: USER_QUERY_KEYS.user });
         return false;
       }
+
+      if (accessToken) {
+        try {
+          setIsAuthenticated(true);
+          await refetchUserQuery();
+          return true;
+        } catch (error: unknown) {
+          console.error('Failed to get user data with access token:', error);
+          const authError = error as AuthError;
+          if (authError?.response?.status === 401 && refreshTokenValue) {
+          } else {
+            setIsAuthenticated(false);
+            return false;
+          }
+        }
+      }
+
+      if (refreshTokenValue && !isRefreshingRef.current) {
+        try {
+          isRefreshingRef.current = true;
+          await refreshTokenMutation.mutateAsync(refreshTokenValue);
+          setIsAuthenticated(true);
+          await refetchUserQuery();
+          return true;
+        } catch (refreshError) {
+          console.error('Token refresh failed:', refreshError);
+          setIsAuthenticated(false);
+          Cookies.remove('accessToken');
+          Cookies.remove('refreshToken');
+          queryClient.removeQueries({ queryKey: USER_QUERY_KEYS.user });
+          return false;
+        } finally {
+          isRefreshingRef.current = false;
+        }
+      }
+
+      setIsAuthenticated(false);
+      return false;
+    } finally {
+      setAuthCheckInProgress(false);
+    }
+  }, [isAuthenticated, authCheckInProgress, refetchUserQuery, refreshTokenMutation, queryClient]);
+
+  const checkAuthStatus = useCallback(async (): Promise<boolean> => {
+    if (authCheckTimeoutRef.current) {
+      clearTimeout(authCheckTimeoutRef.current);
     }
 
-    setIsAuthenticated(false);
-    setUser(null);
-    Cookies.remove('accessToken');
-    return false;
-  }, []);
+    return new Promise((resolve) => {
+      authCheckTimeoutRef.current = setTimeout(async () => {
+        const result = await debouncedCheckAuthStatus();
+        resolve(result);
+      }, 100);
+    });
+  }, [debouncedCheckAuthStatus]);
 
   useEffect(() => {
     const initialAuthCheck = async () => {
       try {
-        await checkAuthStatus();
+        await debouncedCheckAuthStatus();
       } finally {
-        setLoading(false);
+        setInitialLoading(false);
       }
     };
 
     initialAuthCheck();
-  }, [checkAuthStatus]);
+
+    return () => {
+      if (authCheckTimeoutRef.current) {
+        clearTimeout(authCheckTimeoutRef.current);
+      }
+    };
+  }, [debouncedCheckAuthStatus]);
 
   const handleLogin = async (email: string, password: string): Promise<AuthResponse> => {
-    setLoading(true);
-
     try {
       clearError();
 
-      const response = await login(email, password);
-
-      Cookies.set('accessToken', response.accessToken, {
-        secure: true,
-        sameSite: 'strict',
-        expires: 1
-      });
-
-      Cookies.set('refreshToken', response.refreshToken, {
-        secure: true,
-        sameSite: 'strict',
-        expires: 7
-      });
-
-      let userData = response.user;
-
-      try {
-        const fullUserData = await getUser();
-        userData = {
-          ...userData,
-          ...fullUserData,
-          firstName: fullUserData.firstName || userData.firstName || '',
-          lastName: fullUserData.lastName || userData.lastName || ''
-        };
-      } catch (profileError) {
-        console.warn('Could not fetch complete profile, using basic user data', profileError);
-      }
-
-      setUser(userData);
+      const response = await loginMutation.mutateAsync({ email, password });
       setIsAuthenticated(true);
 
+      await refetchUserQuery();
+
       setTimeout(() => {
-        if (userData.role === 'admin') {
+        if (response.user.role === 'admin') {
           router.push('/admin/dashboard');
         } else {
           router.push('/');
         }
-      }, 20000);
+      }, 100);
 
-      return {
-        accessToken: response.accessToken,
-        refreshToken: response.refreshToken,
-        user: userData
-      };
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'Login failed';
+      return response;
+    } catch (error: unknown) {
+      const authError = error as AuthError;
+      const errorMessage = authError?.response?.data?.message || 'Login failed';
       setError(errorMessage);
-
       throw error;
-    } finally {
-      setLoading(false);
     }
   };
 
   const loginWithToken = async (token: string, refreshTokenValue?: string): Promise<User> => {
     try {
-      setLoading(true);
       clearError();
 
       Cookies.set('accessToken', token, {
@@ -237,54 +257,54 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         });
       }
 
-      const userData = await getUser();
-
-      setUser(userData);
       setIsAuthenticated(true);
+      const { data: userData } = await refetchUserQuery();
+
+      if (!userData) {
+        throw new Error('Failed to fetch user data');
+      }
 
       return userData;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Login with token failed:', error);
       Cookies.remove('accessToken');
       if (refreshTokenValue) Cookies.remove('refreshToken');
+      setIsAuthenticated(false);
 
-      setError(error.message || 'Failed to authenticate with token');
+      const authError = error as AuthError;
+      setError(authError?.message || 'Failed to authenticate with token');
       throw error;
-    } finally {
-      setLoading(false);
     }
   };
 
-  const handleRegister = async (userData: RegisterData): Promise<any> => {
+  const handleRegister = async (userData: RegisterData): Promise<unknown> => {
     try {
-      setLoading(true);
       clearError();
-      const response = await register(userData);
+      const response = await registerMutation.mutateAsync(userData);
       return response;
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'Registration failed';
+    } catch (error: unknown) {
+      const authError = error as AuthError;
+      const errorMessage = authError?.response?.data?.message || 'Registration failed';
       setError(errorMessage);
       throw error;
-    } finally {
-      setLoading(false);
     }
   };
 
   const handleLogout = async (redirect: boolean = true): Promise<void> => {
     try {
-      const refreshTokenValue = Cookies.get('refreshToken');
-      if (refreshTokenValue) {
-        await logout(refreshTokenValue).catch(err => {
-          console.warn('Server logout failed, continuing with client logout:', err);
-        });
-      }
-    } finally {
-      Cookies.remove('accessToken');
-      Cookies.remove('refreshToken');
-
-      setUser(null);
+      await logoutMutation.mutateAsync();
       setIsAuthenticated(false);
+      isRefreshingRef.current = false;
+      lastAuthCheckRef.current = 0;
 
+      if (redirect) {
+        router.push('/');
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+      setIsAuthenticated(false);
+      isRefreshingRef.current = false;
+      lastAuthCheckRef.current = 0;
       if (redirect) {
         router.push('/');
       }
@@ -293,17 +313,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const refetchUser = useCallback(async (): Promise<void> => {
     try {
-      const userData = await getUser();
-      setUser(userData);
+      await refetchUserQuery();
     } catch (error) {
       console.error('Failed to refetch user data:', error);
     }
-  }, []);
+  }, [refetchUserQuery]);
 
   const value: AuthContextType = {
-    user,
+    user: user || null,
     loading,
-    error,
+    error: error || loginMutation.error?.message || registerMutation.error?.message || null,
     login: handleLogin,
     loginWithToken,
     register: handleRegister,
@@ -326,17 +345,27 @@ export const useAuth = () => {
   }
 
   const { isAuthenticated, loading, checkAuthStatus } = context;
+  const lastCheckRef = useRef<number>(0);
 
   useEffect(() => {
+    const now = Date.now();
+    const timeSinceLastCheck = now - lastCheckRef.current;
+
+    if (timeSinceLastCheck < 2000) {
+      return;
+    }
+
     const hasAccessToken = !!Cookies.get('accessToken');
     const hasRefreshToken = !!Cookies.get('refreshToken');
 
     if ((hasAccessToken || hasRefreshToken) && !isAuthenticated && !loading) {
+      lastCheckRef.current = now;
       checkAuthStatus();
-    } else if (!hasAccessToken && !hasRefreshToken && isAuthenticated && !loading) {
+
+    } else if (!hasAccessToken && !hasRefreshToken && isAuthenticated) {
       context.setIsAuthenticated(false);
     }
-  }, [context, isAuthenticated, loading, checkAuthStatus]);
+  }, [isAuthenticated, loading, checkAuthStatus, context]);
 
   return context;
 };

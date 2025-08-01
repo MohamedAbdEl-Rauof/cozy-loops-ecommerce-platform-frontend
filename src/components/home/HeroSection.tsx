@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import {
   Box,
   Container,
@@ -9,41 +8,11 @@ import {
   IconButton,
 } from '@mui/material';
 import { Link as MuiLink } from '@mui/material';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import Image from 'next/image';
+import Link from 'next/link';
+import React, { useState, useEffect } from 'react';
 
-const productImages = [
-  {
-    src: "/images/home/heroSec/rethaferguson.png",
-    alt: "Knitting craft with colorful yarn",
-    category: "Fiber Arts"
-  },
-  {
-    src: "/images/home/heroSec/karolina.png",
-    alt: "White ceramic sculpture",
-    category: "Ceramics"
-  },
-  {
-    src: "/images/home/heroSec/hiteshchoudhary.png",
-    alt: "Handwoven fabric pattern",
-    category: "Textiles"
-  },
-  {
-    src: "/images/home/heroSec/enginakyurt.png",
-    alt: "Colorful embroidery work",
-    category: "Embroidery"
-  },
-  {
-    src: "/images/home/heroSec/unsplash.png",
-    alt: "Wooden loom weaving",
-    category: "Weaving"
-  },
-  {
-    src: "/images/home/heroSec/toochinda.png",
-    alt: "Hands making pottery",
-    category: "Pottery"
-  }
-];
+import { productImages } from '@/data/pages/homePageData';
 
 const HeroSection: React.FC = () => {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
@@ -302,7 +271,7 @@ const HeroSection: React.FC = () => {
                   px: { xs: 5, sm: 6 },
                   minWidth: { xs: '200px', sm: '220px' },
                   height: { xs: '48px', sm: '56px' },
-                  fontSize: { xs: '0.95rem', sm: '1.05rem' },
+                  fontSize: { xs: '0.7rem', sm: '0.85rem' ,md: '1.05rem' },
                   fontWeight: 600,
                   letterSpacing: '0.5px',
                   boxShadow: '0 10px 25px -5px rgba(249, 115, 22, 0.4), 0 8px 10px -6px rgba(249, 115, 22, 0.2)',

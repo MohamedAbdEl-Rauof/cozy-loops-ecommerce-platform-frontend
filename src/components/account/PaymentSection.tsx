@@ -1,5 +1,13 @@
 "use client"
-import React, { useState } from 'react';
+import {
+    Edit,
+    Delete,
+    Add,
+    CreditCard,
+    Security,
+    CalendarToday,
+    Person,
+} from '@mui/icons-material';
 import {
     Box,
     Typography,
@@ -13,18 +21,10 @@ import {
     Alert,
     InputAdornment,
 } from '@mui/material';
-import {
-    Edit,
-    Delete,
-    Add,
-    CreditCard,
-    Security,
-    CalendarToday,
-    Person,
-} from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
+import React, { useState } from 'react';
 
-const PaymentCard = styled(Card)(({ theme }) => ({
+const PaymentCard = styled(Card)(() => ({
     marginBottom: '16px',
     border: '2px solid transparent',
     transition: 'all 0.2s ease',
@@ -34,13 +34,13 @@ const PaymentCard = styled(Card)(({ theme }) => ({
     },
 }));
 
-const DefaultChip = styled(Chip)(({ theme }) => ({
+const DefaultChip = styled(Chip)(() => ({
     backgroundColor: '#FF7043',
     color: 'white',
     fontWeight: 600,
 }));
 
-const SaveButton = styled(Button)(({ theme }) => ({
+const SaveButton = styled(Button)(() => ({
     backgroundColor: '#FF7043',
     color: 'white',
     padding: '12px 30px',
@@ -49,7 +49,7 @@ const SaveButton = styled(Button)(({ theme }) => ({
     },
 }));
 
-const CardIcon = styled(Box)(({ theme }) => ({
+const CardIcon = styled(Box)(() => ({
     width: 40,
     height: 25,
     borderRadius: '4px',
@@ -82,7 +82,7 @@ const PaymentSection: React.FC = () => {
         },
         {
             id: '2',
-            type: 'mastercard',
+            type: 'amex',
             cardNumber: '**** **** **** 5678',
             expiryDate: '08/26',
             cardholderName: 'John Doe',
@@ -178,7 +178,6 @@ const PaymentSection: React.FC = () => {
         const cardType = getCardType(formData.cardNumber);
 
         if (editingCard) {
-            // Update existing card
             setPaymentMethods(prev => prev.map(card =>
                 card.id === editingCard.id
                     ? {
@@ -191,7 +190,6 @@ const PaymentSection: React.FC = () => {
                     : card
             ));
         } else {
-            // Add new card
             const newCard: PaymentMethod = {
                 id: Date.now().toString(),
                 type: cardType,
@@ -258,7 +256,6 @@ const PaymentSection: React.FC = () => {
                 </Alert>
             )}
 
-            {/* Payment Form */}
             {showForm && (
                 <Card sx={{ mb: 4, border: '2px solid #FF7043' }}>
                     <CardContent sx={{ p: 3 }}>
@@ -357,67 +354,222 @@ const PaymentSection: React.FC = () => {
                 </Card>
             )}
 
-            {/* Payment Methods List */}
             <Grid container spacing={3}>
                 {paymentMethods.map((card) => (
                     <Grid size={{ xs: 12, md: 6 }} key={card.id}>
-                        <PaymentCard>
-                            <CardContent>
-                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+                        <PaymentCard
+                            sx={{
+                                background: `linear-gradient(135deg, ${getCardColor(card.type)}15 0%, ${getCardColor(card.type)}08 100%)`,
+                                borderRadius: '16px',
+                                position: 'relative',
+                                overflow: 'hidden',
+                                '&::before': {
+                                    content: '""',
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 0,
+                                    right: 0,
+                                    height: '4px',
+                                    background: `linear-gradient(90deg, ${getCardColor(card.type)} 0%, ${getCardColor(card.type)}80 100%)`,
+                                }
+                            }}
+                        >
+                            <CardContent sx={{ p: 3, position: 'relative' }}>
+                                <Box sx={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'flex-start',
+                                    mb: 3
+                                }}>
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                                        <CardIcon sx={{ backgroundColor: getCardColor(card.type) }}>
+                                        <CardIcon sx={{
+                                            backgroundColor: getCardColor(card.type),
+                                            borderRadius: '8px',
+                                            width: 50,
+                                            height: 32,
+                                            fontSize: '11px',
+                                            fontWeight: 'bold',
+                                            boxShadow: `0 2px 8px ${getCardColor(card.type)}40`
+                                        }}>
                                             {card.type.toUpperCase()}
                                         </CardIcon>
                                         {card.isDefault && (
-                                            <DefaultChip label="Default" size="small" />
+                                            <DefaultChip
+                                                label="Default"
+                                                size="small"
+                                                sx={{
+                                                    background: 'linear-gradient(45deg, #FF7043 30%, #FF5722 90%)',
+                                                    fontWeight: 600,
+                                                    fontSize: '0.75rem',
+                                                    boxShadow: '0 2px 4px rgba(255, 112, 67, 0.3)'
+                                                }}
+                                            />
                                         )}
                                     </Box>
-                                    <Box>
+                                    <Box sx={{
+                                        display: 'flex',
+                                        gap: 0.5,
+                                        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                                        borderRadius: '12px',
+                                        p: 0.5
+                                    }}>
                                         <IconButton
                                             size="small"
                                             onClick={() => handleEdit(card)}
-                                            sx={{ color: '#FF7043' }}
+                                            sx={{
+                                                color: '#FF7043',
+                                                '&:hover': {
+                                                    backgroundColor: 'rgba(255, 112, 67, 0.1)',
+                                                    transform: 'scale(1.1)'
+                                                },
+                                                transition: 'all 0.2s ease'
+                                            }}
                                         >
-                                            <Edit />
+                                            <Edit fontSize="small" />
                                         </IconButton>
                                         <IconButton
                                             size="small"
                                             onClick={() => handleDelete(card.id)}
-                                            sx={{ color: '#f44336' }}
+                                            sx={{
+                                                color: '#f44336',
+                                                '&:hover': {
+                                                    backgroundColor: 'rgba(244, 67, 54, 0.1)',
+                                                    transform: 'scale(1.1)'
+                                                },
+                                                transition: 'all 0.2s ease'
+                                            }}
                                         >
-                                            <Delete />
+                                            <Delete fontSize="small" />
                                         </IconButton>
                                     </Box>
                                 </Box>
 
-                                <Typography variant="h6" sx={{ fontWeight: 600, mb: 1, fontFamily: 'monospace' }}>
-                                    {card.cardNumber}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                                    Expires: {card.expiryDate}
-                                </Typography>
-                                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                                    {card.cardholderName}
-                                </Typography>
+                                <Box sx={{ mb: 2 }}>
+                                    <Typography
+                                        variant="h6"
+                                        sx={{
+                                            fontWeight: 600,
+                                            fontFamily: 'monospace',
+                                            fontSize: '1.1rem',
+                                            color: '#2c3e50',
+                                            letterSpacing: '1px',
+                                            textShadow: '0 1px 2px rgba(0,0,0,0.1)'
+                                        }}
+                                    >
+                                        {card.cardNumber}
+                                    </Typography>
+                                </Box>
+
+                                <Box sx={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    mb: 3,
+                                    p: 2,
+                                    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+                                    borderRadius: '12px',
+                                    backdropFilter: 'blur(10px)'
+                                }}>
+                                    <Box>
+                                        <Typography
+                                            variant="caption"
+                                            sx={{
+                                                color: '#666',
+                                                fontWeight: 500,
+                                                textTransform: 'uppercase',
+                                                letterSpacing: '0.5px'
+                                            }}
+                                        >
+                                            Expires
+                                        </Typography>
+                                        <Typography
+                                            variant="body2"
+                                            sx={{
+                                                fontWeight: 600,
+                                                color: '#2c3e50',
+                                                fontFamily: 'monospace'
+                                            }}
+                                        >
+                                            {card.expiryDate}
+                                        </Typography>
+                                    </Box>
+                                    <Box sx={{ textAlign: 'right' }}>
+                                        <Typography
+                                            variant="caption"
+                                            sx={{
+                                                color: '#666',
+                                                fontWeight: 500,
+                                                textTransform: 'uppercase',
+                                                letterSpacing: '0.5px'
+                                            }}
+                                        >
+                                            Cardholder
+                                        </Typography>
+                                        <Typography
+                                            variant="body2"
+                                            sx={{
+                                                fontWeight: 600,
+                                                color: '#2c3e50',
+                                                textTransform: 'capitalize'
+                                            }}
+                                        >
+                                            {card.cardholderName}
+                                        </Typography>
+                                    </Box>
+                                </Box>
 
                                 {!card.isDefault && (
                                     <Button
                                         size="small"
                                         variant="outlined"
                                         onClick={() => setAsDefault(card.id)}
+                                        fullWidth
                                         sx={{
                                             borderColor: '#FF7043',
                                             color: '#FF7043',
                                             textTransform: 'none',
+                                            fontWeight: 600,
+                                            borderRadius: '12px',
+                                            py: 1,
+                                            background: 'rgba(255, 255, 255, 0.8)',
+                                            backdropFilter: 'blur(10px)',
                                             '&:hover': {
                                                 backgroundColor: 'rgba(255, 112, 67, 0.1)',
                                                 borderColor: '#FF5722',
-                                            }
+                                                transform: 'translateY(-1px)',
+                                                boxShadow: '0 4px 12px rgba(255, 112, 67, 0.2)'
+                                            },
+                                            transition: 'all 0.3s ease'
                                         }}
                                     >
                                         Set as Default
                                     </Button>
                                 )}
+
+                                <Box
+                                    sx={{
+                                        position: 'absolute',
+                                        top: -20,
+                                        right: -20,
+                                        width: 80,
+                                        height: 80,
+                                        borderRadius: '50%',
+                                        background: `linear-gradient(45deg, ${getCardColor(card.type)}20, ${getCardColor(card.type)}10)`,
+                                        zIndex: 0
+                                    }}
+                                />
+                                <Box
+                                    sx={{
+                                        position: 'absolute',
+                                        bottom: -30,
+                                        left: -30,
+                                        width: 100,
+                                        height: 100,
+                                        borderRadius: '50%',
+                                        background: `linear-gradient(135deg, ${getCardColor(card.type)}15, ${getCardColor(card.type)}05)`,
+                                        zIndex: 0
+                                    }}
+                                />
                             </CardContent>
                         </PaymentCard>
                     </Grid>

@@ -13,6 +13,7 @@ export interface Maker {
   isActive: boolean;
   rating: number;
   totalProducts: number;
+  message?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -24,12 +25,31 @@ export interface MakerResponse {
 
 export const makerService = {
   async getMakerById(makerId: string): Promise<Maker> {
+
     try {
-      const response = await apiClient.get<MakerResponse>(`/makers/${makerId}`);
+      const response = await apiClient.get<MakerResponse>(`/api/makers/${makerId}`);
+
+      if (!response.data.success) {
+        throw new Error('API returned success: false');
+      }
+
       return response.data.data;
-    } catch (error) {
-      console.error('Error fetching maker:', error);
-      throw new Error('Failed to fetch maker information');
+    } catch (error: unknown) {
+      console.error('🚨 API Error Details:', error);
+
+      if (error && typeof error === 'object' && 'response' in error) {
+        const apiError = error as { response?: { status?: number } };
+
+        if (apiError.response?.status === 404) {
+          throw new Error(`Maker with ID/slug "${makerId}" not found`);
+        }
+      }
+
+      const errorMessage = error && typeof error === 'object' && 'message' in error
+        ? (error as { message: string }).message
+        : 'Unknown error occurred';
+
+      throw new Error(`Failed to fetch maker: ${errorMessage}`);
     }
   }
-};
+}

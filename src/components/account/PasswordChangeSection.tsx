@@ -1,5 +1,6 @@
 "use client"
-import React, { useState, useMemo } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Visibility, VisibilityOff, CheckCircle, Cancel } from '@mui/icons-material';
 import {
     Box,
     Typography,
@@ -11,15 +12,16 @@ import {
     InputAdornment,
     Collapse,
 } from '@mui/material';
-import { Visibility, VisibilityOff, CheckCircle, Cancel } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { UpdatePassword } from '@/services/userServices';
-import { useRouter } from 'next/navigation';
-import SecurityDialog from '@/components/dialogs/SecurityDialog'
 import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation';
+import React, { useState, useMemo } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { z } from 'zod';
+
+import SecurityDialog from '@/components/dialogs/SecurityDialog'
+import { UpdatePassword } from '@/services/userServices';
+
 
 const passwordSchema = z.object({
     currentPassword: z.string()
@@ -37,7 +39,7 @@ const passwordSchema = z.object({
 
 type PasswordFormData = z.infer<typeof passwordSchema>;
 
-const SaveButton = styled(Button)(({ theme }) => ({
+const SaveButton = styled(Button)(() => ({
     backgroundColor: '#FF7043',
     color: 'white',
     padding: '12px 30px',
@@ -49,7 +51,7 @@ const SaveButton = styled(Button)(({ theme }) => ({
     },
 }));
 
-const SectionBox = styled(Box)(({ theme }) => ({
+const SectionBox = styled(Box)(() => ({
     backgroundColor: '#f9f9f9',
     padding: '24px',
     borderRadius: '12px',
@@ -82,8 +84,8 @@ const PasswordRequirement: React.FC<PasswordRequirementProps> = ({ met, text }) 
 );
 
 interface PasswordChangeSectionProps {
-    onSuccess: (message: string) => void;
-    onError: (message: string) => void;
+    onSuccess: (_message: string) => void;
+    onError: (_message: string) => void;
 }
 
 const PasswordChangeSection: React.FC<PasswordChangeSectionProps> = ({ onSuccess, onError }) => {
@@ -171,13 +173,14 @@ const PasswordChangeSection: React.FC<PasswordChangeSectionProps> = ({ onSuccess
                 confirm: false,
             });
             onSuccess('Password updated successfully!');
-        } catch (error: any) {
-            if (error.response?.status === 429) {
+        } catch (error: unknown) {
+            const err = error as { response?: { status: number; data?: { message?: string } } };
+            if (err.response?.status === 429) {
                 setShowSecurityDialog(true);
                 return;
             }
 
-            onError(error.response?.data?.message || 'Failed to update password');
+            onError(err.response?.data?.message || 'Failed to update password');
         } finally {
             setLoading(false);
         }
@@ -250,7 +253,6 @@ const PasswordChangeSection: React.FC<PasswordChangeSectionProps> = ({ onSuccess
                                 )}
                             />
 
-                            {/* Password Requirements Collapse */}
                             <Collapse in={hasStartedTypingPassword} timeout={600}>
                                 <Box sx={{
                                     mt: 2,
@@ -306,7 +308,6 @@ const PasswordChangeSection: React.FC<PasswordChangeSectionProps> = ({ onSuccess
                                 )}
                             />
 
-                            {/* Password Mismatch Indicator */}
                             <Collapse in={passwordsDoNotMatch} timeout={600}>
                                 <Box sx={{
                                     mt: 1,
@@ -326,7 +327,7 @@ const PasswordChangeSection: React.FC<PasswordChangeSectionProps> = ({ onSuccess
                                                 fontWeight: 500
                                             }}
                                         >
-                                            Passwords don't match
+                                            Passwords don&apos;t match
                                         </Typography>
                                     </Box>
                                 </Box>

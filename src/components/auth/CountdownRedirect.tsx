@@ -1,11 +1,11 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Box, Typography, Paper, CircularProgress, Divider } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { Box, Typography, Paper, CircularProgress, Divider } from '@mui/material';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface CountdownRedirectProps {
   message: string;

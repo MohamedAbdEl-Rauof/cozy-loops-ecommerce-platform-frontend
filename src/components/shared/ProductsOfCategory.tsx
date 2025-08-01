@@ -1,5 +1,5 @@
 "use client"
-import React from 'react';
+import AddIcon from '@mui/icons-material/Add';
 import {
     Box,
     Typography,
@@ -9,46 +9,45 @@ import {
     Container,
     Fade
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
 import { useRouter } from 'next/navigation';
-interface Product {
-    id: string;
-    title: string;
-    image: string;
-    price: number;
-    slug: string;
-}
+import React from 'react';
 
-interface ProductsData {
-    title: string;
-    mainSlug : string;
-    productsData: Product[];
-}
-
-interface ProductsOfCategoryProps {
-    Products: ProductsData;
-    onAddToCart: (productId: string) => void;
-}
+import { useAddToCart, useCart, useUpdateCart } from '@/hooks/useCart';
+import { CartItem } from '@/types/cart';
+import { ProductsOfCategoryProps } from '@/types/category';
 
 const ProductsOfCategory: React.FC<ProductsOfCategoryProps> = ({
     Products,
-    onAddToCart
 }) => {
     const [showAll, setShowAll] = React.useState(false);
     const router = useRouter();
-    
+    const { addToCart, isPending: isAddingToCart } = useAddToCart();
+    const { updateCart, isPending: isUpdatingCart } = useUpdateCart();
+    const { data: cartData } = useCart();
 
-    const handleAddToCart = (productId: string) => {
-        if (onAddToCart) {
-            onAddToCart(productId);
+  const handleAddToCart = (productId: string) => {
+    if (isAddingToCart || isUpdatingCart) return;
+
+    const product = Products.productsData.find(item => item.id === productId);
+
+    if (product) {
+        const existingCartItem = cartData?.items?.find((item: CartItem) => item.product._id === productId);
+        if (existingCartItem) {
+            updateCart({
+                productId: productId,
+                quantity: existingCartItem.quantity + 1,
+            });
         } else {
-            console.log(`Adding product ${productId} to cart`);
+            addToCart({
+                productId: productId,
+                quantity: 1,
+            });
         }
-    };
-
+    }
+};
     const handleOnClick = (productSlug: string) => {
         router.push(`/categories/${Products.mainSlug}/products/${productSlug}`);
-        }
+    }
 
     const displayedProducts = showAll ? Products.productsData : Products.productsData.slice(0, 6);
     const hasMoreProducts = Products.productsData.length > 6;
@@ -56,7 +55,6 @@ const ProductsOfCategory: React.FC<ProductsOfCategoryProps> = ({
     return (
         <Box sx={{ py: 6, bgcolor: '#f8f9fa' }}>
             <Container maxWidth="lg">
-                {/* Title Section */}
                 <Box
                     sx={{
                         textAlign: 'center',
@@ -79,7 +77,6 @@ const ProductsOfCategory: React.FC<ProductsOfCategoryProps> = ({
                     </Typography>
                 </Box>
 
-                {/* Products Grid */}
                 <Grid container spacing={4}>
                     {displayedProducts.map((product, index) => (
                         <Grid size={{ xs: 12, md: 4, sm: 6 }} key={product.id}>
@@ -107,7 +104,6 @@ const ProductsOfCategory: React.FC<ProductsOfCategoryProps> = ({
                                         }
                                     }}
                                 >
-                                    {/* Product Image with Add Button */}
                                     <Box sx={{ position: 'relative', overflow: 'hidden' }}>
                                         <CardMedia
                                             component="img"
@@ -121,7 +117,6 @@ const ProductsOfCategory: React.FC<ProductsOfCategoryProps> = ({
                                             }}
                                         />
 
-                                        {/* Add to Cart Button */}
                                         <IconButton
                                             onClick={() => handleAddToCart(product.id)}
                                             className="add-to-cart-btn"
@@ -148,7 +143,6 @@ const ProductsOfCategory: React.FC<ProductsOfCategoryProps> = ({
                                         </IconButton>
                                     </Box>
 
-                                    {/* Product Content */}
                                     <Box
                                         sx={{
                                             flexGrow: 1,
@@ -274,7 +268,6 @@ const ProductsOfCategory: React.FC<ProductsOfCategoryProps> = ({
                     </Box>
                 )}
 
-                {/* Empty State */}
                 {Products.productsData.length === 0 && (
                     <Box
                         sx={{

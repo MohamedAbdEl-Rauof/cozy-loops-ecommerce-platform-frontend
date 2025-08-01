@@ -1,143 +1,42 @@
-'use client';
+'use client'
 
-import { useParams } from 'next/navigation';
 import { Box, Container, CircularProgress, Alert } from '@mui/material';
-import { useProductFromCategory } from '@/hooks/useProducts';
-import { ProductImage, ProductColor } from '@/types/product';
-import SmallNavbar from "@/components/shared/SmallNavbar";
-import ProductDetails from "@/components/shared/PrdouctDetails";
-import FeatureCardsSection from "@/components/shared/FeatureCardsSection";
-import AbountMaker from "@/components/product-details/AbountMaker";
-import SimilarProducts from "@/components/product-details/SimilarProducts";
-import Comments from "@/components/product-details/Comments";
-import { useMakersBySlug } from "@/hooks/useMakers";
+import { useParams } from 'next/navigation';
+import React from 'react';
+
 import ExisitingComments from '@/components/about/ExisitingComments';
+import AbountMaker from '@/components/product-details/AbountMaker';
+import Comments from '@/components/product-details/Comments';
+import SimilarProducts from '@/components/product-details/SimilarProducts';
+import FeatureCardsSection from '@/components/shared/FeatureCardsSection';
+import ProductDetails from '@/components/shared/PrdouctDetails';
+import SmallNavbar from '@/components/shared/SmallNavbar';
+import { FeatureCardsSectionData, FeatureCardsSectionData2, similarProductsData } from '@/data/pages/productDetailsPageData';
+import { useMakersBySlug } from '@/hooks/useMakers';
+import { useProductFromCategory } from '@/hooks/useProducts';
 import { useProductsTestimonialsBySlug } from '@/hooks/useTestimonials';
+import { useAddToWishlist, useRemoveFromWishlist, useWishlist } from '@/hooks/useWishlist';
+import { ProductImage } from '@/types/product';
 
+const createImagesArray = (mainImage: string, images: string[] = []): string[] => {
 
-const FeatureCardsSectionData = {
-  sectionTitle: "Details & Inspiration",
-  sectionDescription: "Inspired by spring blooms and woven with care, this piece brings warmth to minimalist or boho spaces alike.",
-  cards: [
-    {
-      imageUrl: "/images/shared/textile 1.png",
-      title: "Materials",
-      description: "Cotton yarn, Monk's cloth, Wooden hoop frame",
-    },
-    {
-      imageUrl: "/images/shared/measuring-tape.png",
-      title: "Size/Dimensions",
-      description: "25cm diameter (custom sizes available on request)",
-    },
-    {
-      imageUrl: "/images/shared/color-palette.png",
-      title: "Color Palette",
-      description: "Coral, blush, sage, ivory",
-    },
-    {
-      imageUrl: "/images/shared/user-guide.png",
-      title: "Care Instructions",
-      description: "Gently dust or spot clean with a damp cloth. Keep out of direct sunlight.",
-    }
-  ]
+  const imageUrls = new Set<string>();
+
+  if (mainImage) {
+    imageUrls.add(mainImage);
+  }
+
+  images.forEach(url => imageUrls.add(url));
+
+  return Array.from(imageUrls);
 };
 
-const FeatureCardsSectionData2 = {
-  sectionTitle: "Shipping & Policies",
-  sectionDescription: "",
-  cards: [
-    {
-      imageUrl: "/images/shared/fast-delivery.png",
-      title: "Ships within 2–4 business days from Cairo",
-      description: "",
-    },
-    {
-      imageUrl: "/images/shared/delivery.png",
-      title: "Delivery across Egypt & the Middle East",
-      description: "",
-    },
-    {
-      imageUrl: "/images/shared/return 1.png",
-      title: "Free returns within 7 days",
-      description: "(conditions apply)",
-    }
-  ]
-};
-
-const similarProductsData = {
-  title: "Similar Products",
-  productsData: [
-    {
-      id: "1",
-      title: "Wireless Bluetooth Headphones",
-      image: "/images/shared/featuredCategory.jpg",
-      price: 99.99
-    },
-    {
-      id: "2",
-      title: "Smart Watch Series 5",
-      image: "/images/shared/featuredCategory.jpg",
-      price: 299.99
-    },
-    {
-      id: "3",
-      title: "Portable Bluetooth Speaker",
-      image: "/images/shared/featuredCategory.jpg",
-      price: 79.99
-    },
-    {
-      id: "4",
-      title: "USB-C Fast Charger",
-      image: "/images/shared/featuredCategory.jpg",
-      price: 29.99
-    },
-    {
-      id: "5",
-      title: "Wireless Mouse",
-      image: "/images/shared/featuredCategory.jpg",
-      price: 49.99
-    },
-    {
-      id: "6",
-      title: "Wireless Mouse",
-      image: "/images/shared/featuredCategory.jpg",
-      price: 49.99
-    },
-    {
-      id: "7",
-      title: "Wireless Mouse",
-      image: "/images/shared/featuredCategory.jpg",
-      price: 49.99
-    },
-    {
-      id: "8",
-      title: "Wireless Mouse",
-      image: "/images/shared/featuredCategory.jpg",
-      price: 49.99
-    },
-    {
-      id: "9",
-      title: "Wireless Mouse",
-      image: "/images/shared/featuredCategory.jpg",
-      price: 49.99
-    },
-    {
-      id: "10",
-      title: "Wireless Mouse",
-      image: "/images/shared/featuredCategory.jpg",
-      price: 49.99
-    }
-  ]
-};
-
-// Helper function to transform API images to component format
 const transformImages = (images: string[] = [], productName: string): ProductImage[] => {
   if (!images || images.length === 0) {
-    // Fallback to placeholder images if no images provided
     return [
       {
         id: '1',
-        url: '/placeholder-product.jpg', // Make sure you have this placeholder image
+        url: '/placeholder-product.jpg',
         alt: productName
       }
     ];
@@ -150,43 +49,43 @@ const transformImages = (images: string[] = [], productName: string): ProductIma
   }));
 };
 
-// Helper function to transform API colors to component format
-const transformColors = (colors: string[] = []): ProductColor[] => {
+const transformColors = (colors: string[] = []) => {
   if (!colors || colors.length === 0) {
-    // Default colors if none provided by API
     return [
       {
-        name: "Default",
+        name: "Red",
+        value: "#ff6b6b",
+        available: true
+      },
+      {
+        name: "Blue",
+        value: "#45b7d1",
+        available: true
+      },
+      {
+        name: "Green",
+        value: "#96ceb4",
+        available: true
+      },
+      {
+        name: "Yellow",
+        value: "#feca57",
+        available: true
+      },
+      {
+        name: "Black",
         value: "#000000",
         available: true
       }
     ];
   }
-
-  // Color name mapping (you can expand this based on your needs)
-  const colorNames: { [key: string]: string } = {
-    '#ff6b6b': 'Red',
-    '#4ecdc4': 'Teal',
-    '#45b7d1': 'Blue',
-    '#96ceb4': 'Green',
-    '#feca57': 'Yellow',
-    '#000000': 'Black',
-    '#ffffff': 'White',
-    '#8b4513': 'Brown',
-    '#800080': 'Purple',
-    '#ffc0cb': 'Pink'
-  };
-
-  return colors.map((color, index) => ({
-    name: colorNames[color.toLowerCase()] || `Color ${index + 1}`,
-    value: color,
-    available: true
-  }));
 };
-
 
 const ProductPage = () => {
   const params = useParams();
+  const { isInWishlist } = useWishlist();
+  const { addToWishlist } = useAddToWishlist();
+  const { removeFromWishlist } = useRemoveFromWishlist();
 
   const categorySlug = params.categorySlug as string;
   const productSlug = params.productSlug as string;
@@ -199,16 +98,28 @@ const ProductPage = () => {
 
   const {
     data: testimonials,
-    isLoading: testimonialsLoading,
-    error: testimonialsError,
     refetch: refetchTestimonials
   } = useProductsTestimonialsBySlug(productSlug);
+
+  const actualReviewCount = testimonials?.reviews?.length || 0;
+
+  const calculateAverageRating = (testimonials: Array<{ rating?: number }> = []): number => {
+    if (!testimonials || testimonials.length === 0) return 0;
+
+    const totalRating = testimonials.reduce((sum, testimonial) => {
+      return sum + (testimonial.rating || 0);
+    }, 0);
+
+    return Number((totalRating / testimonials.length).toFixed(1));
+  };
+
+  const actualAverageRating = calculateAverageRating(testimonials?.reviews);
+
+  const { data: makerData } = useMakersBySlug(product?.maker?.slug || '');
 
   const handleCommentSubmitted = () => {
     refetchTestimonials();
   };
-
-  const { data: makerData, isLoading: makerLoading, error: makerError } = useMakersBySlug(product?.maker?.slug || '');
 
   if (isLoading) {
     return (
@@ -252,31 +163,46 @@ const ProductPage = () => {
     );
   }
 
-
-  // Transform the API data to match component expectations
-  const transformedImages = transformImages(product.images, product.name);
+  // Create images array with mainImage first, then other images
+  const allImages = createImagesArray(product.mainImage, product.images);
+  const transformedImages = transformImages(allImages, product.name);
   const transformedColors = transformColors(product.colors);
 
-  const handleAddToCart = (quantity: number, color: string) => {
-    console.log('Adding to cart:', { productId: product._id, quantity, color });
-    // Implement your add to cart logic here
-  };
-
   const handleToggleFavorite = () => {
-    console.log('Toggle favorite for product:', product._id);
-    // Implement your favorite toggle logic here
+    if (isInWishlist(product._id)) {
+      removeFromWishlist(product._id);
+    } else {
+      addToWishlist(product._id);
+    }
   };
 
-  const handleShare = () => {
-    console.log('Share product:', product._id);
-    // Implement your share logic here
+  // Helper function to safely calculate years of experience
+  const calculateYearsOfExperience = (joinDate: string | undefined): number => {
+    if (!joinDate) return 0;
+    try {
+      return new Date().getFullYear() - new Date(joinDate).getFullYear();
+    } catch {
+      return 0;
+    }
   };
 
+  // Helper function to safely format join date
+  const formatJoinDate = (joinDate: string | undefined): string => {
+    if (!joinDate) return "Unknown";
+    try {
+      return new Date(joinDate).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long'
+      });
+    } catch {
+      return "Unknown";
+    }
+  };
 
+  const makerName = makerData?.name || product?.maker?.name || "Unknown Maker";
 
   return (
     <Box component="main" sx={{ bgcolor: '#fafafa' }}>
-      {/* Navigation */}
       <SmallNavbar
         category={product.category?.name || "Category"}
         page1={product.category?.name || "Products"}
@@ -296,7 +222,6 @@ const ProductPage = () => {
           mx: 'auto',
         }}
       >
-        {/* Product Details Section */}
         <Box
           component="section"
           sx={{
@@ -307,22 +232,21 @@ const ProductPage = () => {
           }}
         >
           <ProductDetails
-            id={product._id}
+            _id={product._id}
             name={product.name}
             images={transformedImages}
-            rating={product.rating || 4.5}
-            reviewCount={product.reviewCount || 0}
+            mainImage={product.mainImage}
+            rating={actualAverageRating}
+            reviewCount={actualReviewCount}
             inStock={product.inStock !== false}
             stockCount={product.stockCount || 10}
             price={product.price}
             originalPrice={product.priceBeforeDiscount}
-            colors={transformedColors}
+            colors={transformedColors || []}
             description={product.shortDescription || product.description}
             discountPercentage={product.discountPercentage || 0}
-            onAddToCart={handleAddToCart}
             onToggleFavorite={handleToggleFavorite}
-            onShare={handleShare}
-            isFavorite={false}
+            isFavorite={isInWishlist(product._id)}
           />
         </Box>
 
@@ -372,75 +296,63 @@ const ProductPage = () => {
             }
           }}
         >
-          {/* <AbountMaker
-            title="About The Maker"
-            makerInfo={{
-              name: "Nour Hassan",
-              location: "Mansoura, Egypt",
-              miniBio: "Hi! I'm Nour from Mansoura. Punch needle art lets me bring joy to people's spaces—one loop at a time. I'm inspired by the colors of Egyptian nature and love turning simple threads into soft, happy designs.",
-              avatar: "/images/makers/nour-hassan.jpg",
-              joinedDate: "March 2020",
-              rating: 4,
-              totalReviews: 127,
-              specialties: ["Punch Needle", "Embroidery", "Wall Art", "Home Decor"],
-              yearsOfExperience: 6,
-              isVerified: true,
-              totalProducts: 45,
-              completedOrders: 320
-            }}
-            buttonText1="Visit Artisan Shop"
-            buttonText2="View More by Nour"
-            imageSrc="/images/shared/storyFeature.jpg"
-            imageAlt="Nour crafting a beautiful punch needle wall hanging"
-            onButton1Click={() => {
-              console.log('Navigate to Nour\'s artisan shop');
-              // router.push('/artisan/nour-hassan');
-            }}
-            onButton2Click={() => {
-              console.log('View more products by Nour');
-              // router.push('/products?maker=nour-hassan');
-            }}
-          /> */}
-
           <AbountMaker
             title="About The Maker"
             makerInfo={{
-              name: makerData?.name || product?.maker?.name || "Unknown Maker",
+              name: makerName,
               location: makerData?.location || product?.maker?.location || "Unknown Location",
               miniBio: makerData?.aboutMe || product?.maker?.message || "Passionate artisan creating beautiful handcrafted pieces.",
               avatar: makerData?.image || product?.maker?.image || "/images/makers/default-maker.jpg",
-              joinedDate: makerData?.joinDate
-                ? new Date(makerData.joinDate).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long'
-                })
-                : "Unknown",   // problem here 
+              joinedDate: formatJoinDate(makerData?.joinDate),
               rating: makerData?.rating || 4.5,
               totalReviews: 127,
               specialties: makerData?.specialties || ["Handcrafted", "Artisan"],
-              yearsOfExperience: makerData?.joinDate ? new Date().getFullYear() - new Date(makerData.joinDate).getFullYear() : 0,  // problem here
+              yearsOfExperience: calculateYearsOfExperience(makerData?.joinDate),
               isVerified: true,
               totalProducts: 45,
               completedOrders: 320
             }}
             buttonText1="Visit Artisan Shop"
-            buttonText2={`View More by ${makerData?.name || 'Maker'}`} // problem here
+            buttonText2={`View More by ${makerName}`}
             imageSrc={makerData?.image || product?.maker?.image || "/images/shared/storyFeature.jpg"}
-            imageAlt={`${makerData?.name || 'Maker'} crafting beautiful handmade pieces`} // problem here 
+            imageAlt={`${makerName} crafting beautiful handmade pieces`}
             onButton1Click={() => {
-              console.log(`Navigate to ${makerData?.name}'s artisan shop`);
+              console.log(`Navigate to ${makerName}'s artisan shop`);
               // router.push(`/makers/${makerData?.slug}`);
             }}
             onButton2Click={() => {
-              console.log(`View more products by ${makerData?.name}`);
+              console.log(`View more products by ${makerName}`);
               // router.push(`/products?maker=${makerData?.slug}`);
             }}
           />
-
-
         </Box>
 
-        {/* Related Products Section */}
+        {/* Similar Products Section */}
+        <Box
+          component="section"
+          sx={{
+            mb: { xs: 6, sm: 8, md: 10 },
+            px: { xs: 2, sm: 3, md: 4 }
+          }}
+        >
+          <SimilarProducts
+            Products={similarProductsData}
+            onAddToCart={() => console.log("Product added to cart")}
+          />
+        </Box>
+
+        {/* Comments Section */}
+        <Box
+          component="section"
+          sx={{
+            mb: { xs: 6, sm: 8, md: 10 },
+            px: { xs: 2, sm: 3, md: 4 }
+          }}
+        >
+          <Comments onCommentSubmitted={handleCommentSubmitted} />
+        </Box>
+
+        {/* Existing Comments Section */}
         <Box
           component="section"
           sx={{
@@ -449,30 +361,47 @@ const ProductPage = () => {
           }}
         >
 
+
+
+          <ExisitingComments
+            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+            mockComments={testimonials?.reviews?.map((review: any) => ({
+              _id: review._id || review.id,
+              id: review._id || review.id,
+              user: {
+                _id: review.user?._id || review.user?.id || '',
+                firstName: review.user?.firstName || '',
+                lastName: review.user?.lastName || '',
+                name: `${review.user?.firstName || ''} ${review.user?.lastName || ''}`.trim() || 'Anonymous',
+                Avatar: review.user?.Avatar || review.user?.avatar || '/images/default-avatar.jpg', // Capital A for Avatar
+                verified: review.user?.verified || false,
+                email: review.user?.email || '',
+                role: review.user?.role || 'user',
+                phoneNumber: review.user?.phoneNumber || '',
+                addresses: review.user?.addresses || [],
+                emailVerified: review.user?.emailVerified || false,
+                active: review.user?.active !== false,
+                createdAt: review.user?.createdAt || new Date().toISOString(),
+                updatedAt: review.user?.updatedAt || new Date().toISOString()
+              },
+              product: review.product || product._id,
+              rating: review.rating,
+              comment: review.comment,
+              date: review.createdAt || review.date || new Date().toISOString(),
+              createdAt: review.createdAt || review.date || new Date().toISOString(),
+              updatedAt: review.updatedAt || review.createdAt || new Date().toISOString(),
+              likes: review.likes || [],
+              likesCount: review.likesCount || review.likes || 0,
+              dislikesCount: review.dislikesCount || review.dislikes || 0,
+              replies: review.replies || 0,
+              isOwner: false // This will be set properly inside ExisitingComments component
+            })) || []}
+            onRefetch={refetchTestimonials}
+          />
+
         </Box>
 
-        {/* Makers Section */}
-        <Box
-          component="section"
-          sx={{
-            mb: { xs: 6, sm: 8, md: 10 },
-            px: { xs: 2, sm: 3, md: 4 }
-          }}
-        >
-
-        </Box>
-
-
-
-
-        <SimilarProducts Products={similarProductsData} onAddToCart={() => console.log("Product added to cart")} />
-
-
-
-        <Comments onCommentSubmitted={handleCommentSubmitted} />
-
-        <ExisitingComments mockComments={testimonials || []}  onRefetch={refetchTestimonials} />
-
+        {/* Second Feature Cards Section */}
         <Box
           component="section"
           sx={{
@@ -487,10 +416,9 @@ const ProductPage = () => {
             cards={FeatureCardsSectionData2.cards}
           />
         </Box>
-
       </Container>
     </Box>
   );
 };
 
-export default ProductPage; 
+export default ProductPage;

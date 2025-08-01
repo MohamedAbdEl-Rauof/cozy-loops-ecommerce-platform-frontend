@@ -1,5 +1,8 @@
 "use client"
-import React, { useState } from 'react';
+import {
+    Send as SendIcon,
+    Star as StarIcon,
+} from '@mui/icons-material';
 import {
     Box,
     Typography,
@@ -12,17 +15,15 @@ import {
     Alert,
     CircularProgress,
     Chip,
-    useTheme,
     Snackbar,
 } from '@mui/material';
-import {
-    Send as SendIcon,
-    Star as StarIcon,
-} from '@mui/icons-material';
 import { styled, keyframes } from '@mui/material/styles';
+import { useParams } from 'next/navigation';
+import React, { useState } from 'react';
+
 import { testimonialsService } from '@/services/testimonialsService';
 import { CreateTestimonialData } from '@/types/Testimonial';
-import { useParams } from 'next/navigation';
+
 
 const slideInUp = keyframes`
   from {
@@ -56,11 +57,9 @@ const shimmer = keyframes`
   }
 `;
 
-// Styled Components with Cozy Loops Branding
 const StyledPaper = styled(Paper)(({ theme }) => ({
     padding: theme.spacing(4),
     borderRadius: '20px',
-    // background: 'linear-gradient(135deg, rgba(255,248,235,0.95) 0%, rgba(254,243,224,0.9) 100%)',
     backdropFilter: 'blur(20px)',
     border: '1px solid rgba(217, 119, 6, 0.1)',
     boxShadow: '0 8px 32px rgba(217, 119, 6, 0.08)',
@@ -72,7 +71,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
     }
 }));
 
-const SubmitButton = styled(Button)(({ theme }) => ({
+const SubmitButton = styled(Button)(() => ({
     borderRadius: '25px',
     padding: '12px 32px',
     fontWeight: 600,
@@ -95,10 +94,9 @@ const SubmitButton = styled(Button)(({ theme }) => ({
     }
 }));
 
-const StyledTextField = styled(TextField)(({ theme }) => ({
+const StyledTextField = styled(TextField)(() => ({
     '& .MuiOutlinedInput-root': {
         borderRadius: '16px',
-        // backgroundColor: 'rgba(255, 248, 235, 0.8)',
         backdropFilter: 'blur(10px)',
         transition: 'all 0.3s ease',
         '& fieldset': {
@@ -159,7 +157,7 @@ const Comments = ({ onCommentSubmitted }: CommentsProps) => {
     const [showSuccess, setShowSuccess] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [showError, setShowError] = useState(false);
-    const [hoveredRating, setHoveredRating] = useState(null);
+    const [hoveredRating, setHoveredRating] = useState<number | null>(null);
     const params = useParams();
 
     const productSlug = params.productSlug as string;
@@ -174,7 +172,7 @@ const Comments = ({ onCommentSubmitted }: CommentsProps) => {
         if (error) setError(null);
     };
 
-    const handleRatingChange = (event: React.SyntheticEvent, newValue: number | null) => {
+    const handleRatingChange = (_event: React.SyntheticEvent, newValue: number | null) => {
         setFormData(prev => ({
             ...prev,
             rating: newValue
@@ -205,7 +203,7 @@ const Comments = ({ onCommentSubmitted }: CommentsProps) => {
             setFormData({ comment: '', rating: null });
             setHoveredRating(null);
 
-            if(onCommentSubmitted){
+            if (onCommentSubmitted) {
                 onCommentSubmitted();
             }
 
@@ -213,18 +211,29 @@ const Comments = ({ onCommentSubmitted }: CommentsProps) => {
             setTimeout(() => {
                 setShowSuccess(false);
             }, 5000);
+
+
         } catch (error) {
             console.error('Error submitting comment:', error);
 
-            // Better error message extraction
             let errorMessage = 'Failed to submit review. Please try again.';
 
-            if (error?.response?.data?.message) {
-                errorMessage = error.response.data.message;
-            } else if (error?.response?.message) {
-                errorMessage = error.response.message;
-            } else if (error?.message) {
-                errorMessage = error.message;
+            if (error && typeof error === 'object') {
+                const err = error as {
+                    response?: {
+                        data?: { message?: string };
+                        message?: string;
+                    };
+                    message?: string;
+                };
+
+                if (err.response?.data?.message) {
+                    errorMessage = err.response.data.message;
+                } else if (err.response?.message) {
+                    errorMessage = err.response.message;
+                } else if (err.message) {
+                    errorMessage = err.message;
+                }
             }
 
             setError(errorMessage);
@@ -394,7 +403,7 @@ const Comments = ({ onCommentSubmitted }: CommentsProps) => {
                                     name="product-rating"
                                     value={formData.rating}
                                     onChange={handleRatingChange}
-                                    onChangeActive={(event, newHover) => {
+                                    onChangeActive={(_event, newHover) => {
                                         setHoveredRating(newHover);
                                     }}
                                     size="large"

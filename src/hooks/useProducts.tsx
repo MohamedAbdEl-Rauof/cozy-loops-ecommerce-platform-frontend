@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+
 import { productService } from '@/services/productService';
 import { Product } from '@/types/product';
 
@@ -20,8 +21,6 @@ export const useProductFromCategory = (categorySlug: string, productSlug: string
       return p.slug === productSlug;
     }
   ) || null;
-
-  console.log('Found product:', product);
 
   return {
     data: product,

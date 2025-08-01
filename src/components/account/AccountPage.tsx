@@ -1,5 +1,12 @@
 "use client"
-import React, { useState } from 'react';
+import {
+    Person,
+    LocationOn,
+    CreditCard,
+    Favorite,
+    ShoppingCart,
+    ExitToApp,
+} from '@mui/icons-material';
 import {
     Container,
     Grid,
@@ -11,40 +18,35 @@ import {
     Box,
     Typography,
 } from '@mui/material';
-import {
-    Person,
-    LocationOn,
-    CreditCard,
-    Favorite,
-    ShoppingCart,
-    ExitToApp,
-} from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
-import ProfileSection from './ProfileSection';
-import AddressSection from './AddressSection';
-import PaymentSection from './PaymentSection';
+import React, { useState } from 'react';
+
 import {useAuth} from "@/context/AuthContext";
 
-const AccountContainer = styled(Container)(({ theme }) => ({
+import AddressSection from './AddressSection';
+import PaymentSection from './PaymentSection';
+import ProfileSection from './ProfileSection';
+
+const AccountContainer = styled(Container)(() => ({
     paddingTop: '40px',
     paddingBottom: '40px',
     minHeight: '70vh',
 }));
 
-const SidebarPaper = styled(Paper)(({ theme }) => ({
+const SidebarPaper = styled(Paper)(() => ({
     padding: '20px',
     borderRadius: '12px',
     boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
 }));
 
-const ContentPaper = styled(Paper)(({ theme }) => ({
+const ContentPaper = styled(Paper)(() => ({
     padding: '30px',
     borderRadius: '12px',
     boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
     minHeight: '500px',
 }));
 
-const NavItem = styled(ListItem)<{ active?: boolean }>(({ theme, active }) => ({
+const NavItem = styled(ListItem)<{ active?: boolean }>(({ active }) => ({
     borderRadius: '8px',
     marginBottom: '8px',
     cursor: 'pointer',
@@ -95,7 +97,6 @@ const AccountPage: React.FC = () => {
             </Typography>
 
             <Grid container spacing={4}>
-                {/* Simple Sidebar */}
                 <Grid size={{ xs: 12, md: 3 }}>
                     <SidebarPaper>
                         <List sx={{ padding: 0 }}>
@@ -112,7 +113,6 @@ const AccountPage: React.FC = () => {
                                 </NavItem>
                             ))}
 
-                            {/* Quick Links */}
                             <Box sx={{ mt: 3, pt: 3, borderTop: '1px solid #eee' }}>
                                 <NavItem onClick={() => handleNavigation('/wishlist')}>
                                     <ListItemIcon>
@@ -139,7 +139,6 @@ const AccountPage: React.FC = () => {
                     </SidebarPaper>
                 </Grid>
 
-                {/* Content Area */}
                 <Grid  size={{ xs: 12, md: 9 }}>
                     <ContentPaper>
                         {renderContent()}

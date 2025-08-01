@@ -1,7 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
+import {
+    LocationOn,
+    Person,
+    Store,
+    Verified,
+    CalendarToday,
+    Palette,
+    Handyman
+} from '@mui/icons-material';
 import {
     Typography,
     Box,
@@ -15,43 +22,11 @@ import {
     Rating,
     Stack
 } from '@mui/material';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import {
-    LocationOn,
-    Person,
-    Store,
-    Verified,
-    CalendarToday,
-    Star,
-    Palette,
-    Handyman
-} from '@mui/icons-material';
+import { useState, useEffect } from 'react';
 
-interface MakerInfo {
-    name: string;
-    location: string;
-    miniBio: string;
-    avatar?: string;
-    joinedDate?: string;
-    rating?: number;
-    totalReviews?: number;
-    specialties?: string[];
-    yearsOfExperience?: number;
-    isVerified?: boolean;
-    totalProducts?: number;
-    completedOrders?: number;
-}
-
-interface StoryFeatureProps {
-    title: string;
-    makerInfo: MakerInfo;
-    buttonText1: string;
-    buttonText2: string;
-    imageSrc: string;
-    imageAlt: string;
-    onButton1Click?: () => void;
-    onButton2Click?: () => void;
-}
+import { StoryFeatureProps } from '@/types/product';
 
 const AbountMaker = ({
     title,
@@ -345,7 +320,7 @@ const AbountMaker = ({
                                     bgcolor: 'grey.25'
                                 }}
                             >
-                                "{makerInfo.miniBio}"
+                                &ldquo;{makerInfo.miniBio}&rdquo;
                             </Typography>
                         </Box>
 
@@ -493,7 +468,7 @@ const AbountMaker = ({
                                     display: 'block',
                                     borderRadius: '20px'
                                 }}
-                                onError={(e) => {
+                                onError={() => {
                                     console.error("Image failed to load:", imageSrc);
                                 }}
                             />
@@ -509,7 +484,7 @@ const AbountMaker = ({
                                 }}
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 55vw"
                                 priority
-                                onError={(e) => {
+                                onError={() => {
                                     console.error("Image failed to load:", imageSrc);
                                 }}
                             />
