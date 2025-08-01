@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
     Box,
     Typography,
@@ -9,14 +9,15 @@ import {
     CircularProgress,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import PhoneInput from 'react-phone-number-input';
+import { isValidPhoneNumber } from 'react-phone-number-input';
 import { z } from 'zod';
+
 import { useAuth } from '@/context/AuthContext';
 import { UpdateProfile } from '@/services/userServices';
-import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
-import { isValidPhoneNumber } from 'react-phone-number-input';
 
 const profileSchema = z.object({
     firstName: z.string()
@@ -80,13 +81,13 @@ const StyledPhoneInput = styled(PhoneInput)(() => ({
         fontSize: '16px',
         fontFamily: 'inherit',
         width: '100%',
-        height: '40px', 
+        height: '40px',
         boxSizing: 'border-box',
         '&:focus': {
             outline: 'none',
             borderColor: '#FF7043',
             borderWidth: '2px',
-            padding: '7px 13px', 
+            padding: '7px 13px',
         },
         '&.PhoneInputInput--error': {
             borderColor: '#d32f2f',
@@ -97,7 +98,7 @@ const StyledPhoneInput = styled(PhoneInput)(() => ({
         border: 'none',
         background: 'transparent',
         fontSize: '16px',
-        height: '40px', 
+        height: '40px',
         display: 'flex',
         alignItems: 'center',
     },
@@ -110,13 +111,14 @@ const StyledPhoneInput = styled(PhoneInput)(() => ({
 
 
 interface PersonalInfoSectionProps {
-    onSuccess: (message: string) => void;
-    onError: (message: string) => void;
+    onSuccess: (_message: string) => void;
+    onError: (_message: string) => void;
 }
 
 const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ onSuccess, onError }) => {
     const { user } = useAuth();
     const [loading, setLoading] = useState(false);
+
 
     const {
         control,
@@ -130,7 +132,8 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ onSuccess, on
         defaultValues: {
             firstName: user?.firstName || '',
             lastName: user?.lastName || '',
-            phone: user?.phoneNumber || '',
+
+            phone: user?.phoneNumber?.toString() || '',
         }
     });
 
@@ -139,7 +142,7 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ onSuccess, on
             reset({
                 firstName: user.firstName || '',
                 lastName: user.lastName || '',
-                phone: user.phone || user.phoneNumber || '',
+                phone: user.phoneNumber?.toString() || '',
             });
         }
     }, [user, reset]);
@@ -156,8 +159,9 @@ const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({ onSuccess, on
 
             reset(data);
             onSuccess('Profile updated successfully!');
-        } catch (error: any) {
-            onError(error.response?.data?.message || 'Failed to update profile');
+        } catch (error: unknown) {
+            const err = error as { response?: { data?: { message?: string } } };
+            onError(err.response?.data?.message || 'Failed to update profile');
         } finally {
             setLoading(false);
         }

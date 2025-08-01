@@ -1,6 +1,26 @@
 'use client'
-import React, { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import {
+    ArrowBack as ArrowBackIcon,
+    LocalShipping as ShippingIcon,
+    Payment as PaymentIcon,
+    Receipt as ReceiptIcon,
+    ShoppingBag as ShoppingBagIcon,
+    Home as HomeIcon,
+    Print as PrintIcon,
+    Download as DownloadIcon,
+    Cancel as CancelIcon,
+    CheckCircle as CheckCircleIcon,
+    Schedule as ScheduleIcon,
+    LocalShippingOutlined as TrackingIcon,
+} from '@mui/icons-material'
+import {
+    Timeline,
+    TimelineItem,
+    TimelineSeparator,
+    TimelineDot,
+    TimelineConnector,
+    TimelineContent,
+} from '@mui/lab'
 import {
     Container,
     Typography,
@@ -18,30 +38,11 @@ import {
     Step,
     StepLabel,
 } from '@mui/material'
-import {
-    Timeline,
-    TimelineItem,
-    TimelineSeparator,
-    TimelineDot,
-    TimelineConnector,
-    TimelineContent,
-} from '@mui/lab'
-import {
-    ArrowBack as ArrowBackIcon,
-    LocalShipping as ShippingIcon,
-    Payment as PaymentIcon,
-    Receipt as ReceiptIcon,
-    ShoppingBag as ShoppingBagIcon,
-    Home as HomeIcon,
-    Print as PrintIcon,
-    Download as DownloadIcon,
-    Cancel as CancelIcon,
-    CheckCircle as CheckCircleIcon,
-    Schedule as ScheduleIcon,
-    LocalShippingOutlined as TrackingIcon,
-} from '@mui/icons-material'
-import { orderService, type Order } from '@/services/orderService'
+import { useParams, useRouter } from 'next/navigation'
+import React, { useEffect, useState } from 'react'
+
 import ProtectedRoute from '@/provider/ProtectedRoute'
+import { orderService, type Order } from '@/services/orderService'
 
 const OrderDetailsPage: React.FC = () => {
     const params = useParams()

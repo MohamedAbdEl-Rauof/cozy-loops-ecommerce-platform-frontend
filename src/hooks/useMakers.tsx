@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+
 import { makerService } from '@/services/makerService';
 
 export const useMakersBySlug = (slug: string) => {  

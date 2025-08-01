@@ -2,8 +2,9 @@
 
 import { Box, Typography, Fade, Slide, Button, useTheme, useMediaQuery } from '@mui/material';
 import Image from 'next/image';
-import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { useState, useEffect, useRef } from 'react';
+
 import {ImageWithTextProps } from '@/types/about';
 
 const ImageWithText = ({
@@ -48,13 +49,14 @@ const ImageWithText = ({
             }
         );
 
-        if (containerRef.current) {
-            observer.observe(containerRef.current);
+        const currentRef = containerRef.current;
+        if (currentRef) {
+            observer.observe(currentRef);
         }
 
         return () => {
-            if (containerRef.current) {
-                observer.unobserve(containerRef.current);
+            if (currentRef) {
+                observer.unobserve(currentRef);
             }
         };
     }, []);

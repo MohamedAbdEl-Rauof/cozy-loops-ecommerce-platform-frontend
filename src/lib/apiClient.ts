@@ -34,7 +34,7 @@ apiClient.interceptors.response.use(
   (response: AxiosResponse): AxiosResponse => {
     return response;
   },
-  (error: AxiosError): Promise<any> => {
+  (error: AxiosError): Promise<never> => {
     return Promise.reject(error);
   }
 );

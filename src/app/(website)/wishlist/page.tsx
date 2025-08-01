@@ -1,8 +1,9 @@
 
 "use client";
+import { Box} from "@mui/material"
+
 import WishlistCard from "@/components/wishlist/WishlistCard"
 import ProtectedRoute from "@/provider/ProtectedRoute";
-import { Box} from "@mui/material"
 
 
 const Page = () => {

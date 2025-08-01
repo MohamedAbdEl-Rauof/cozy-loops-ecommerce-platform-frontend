@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+
 import { testimonialsService } from '@/services/testimonialsService';
 
 export const useTestimonials = () => {

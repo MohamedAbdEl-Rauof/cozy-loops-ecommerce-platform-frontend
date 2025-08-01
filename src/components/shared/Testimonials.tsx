@@ -1,8 +1,10 @@
 "use client"
+
+import { FormatQuote, Star } from "@mui/icons-material"
 import { Box, Typography, Card, CardContent, Avatar, Rating, Container } from "@mui/material"
 import { styled, keyframes } from "@mui/material/styles"
 import { useState, useEffect } from "react"
-import { FormatQuote, Star } from "@mui/icons-material"
+
 import { TestimonialsProps } from "@/types/Testimonial"
 
 const float = keyframes`

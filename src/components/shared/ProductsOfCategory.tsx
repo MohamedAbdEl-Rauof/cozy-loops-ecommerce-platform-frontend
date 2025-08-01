@@ -1,5 +1,5 @@
 "use client"
-import React from 'react';
+import AddIcon from '@mui/icons-material/Add';
 import {
     Box,
     Typography,
@@ -9,9 +9,11 @@ import {
     Container,
     Fade
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
 import { useRouter } from 'next/navigation';
+import React from 'react';
+
 import { useAddToCart, useCart, useUpdateCart } from '@/hooks/useCart';
+import { CartItem } from '@/types/cart';
 import { ProductsOfCategoryProps } from '@/types/category';
 
 const ProductsOfCategory: React.FC<ProductsOfCategoryProps> = ({
@@ -23,26 +25,26 @@ const ProductsOfCategory: React.FC<ProductsOfCategoryProps> = ({
     const { updateCart, isPending: isUpdatingCart } = useUpdateCart();
     const { data: cartData } = useCart();
 
-    const handleAddToCart = (productId: string) => {
-        if (isAddingToCart || isUpdatingCart) return;
+  const handleAddToCart = (productId: string) => {
+    if (isAddingToCart || isUpdatingCart) return;
 
-        const product = Products.productsData.find(item => item.id === productId);
+    const product = Products.productsData.find(item => item.id === productId);
 
-        if (product) {
-            const existingCartItem = cartData?.items?.find((item: any) => item.product._id === productId);
-            if (existingCartItem) {
-                updateCart({
-                    productId: productId,
-                    quantity: existingCartItem.quantity + 1,
-                });
-            } else {
-                addToCart({
-                    productId: productId,
-                    quantity: 1,
-                });
-            }
+    if (product) {
+        const existingCartItem = cartData?.items?.find((item: CartItem) => item.product._id === productId);
+        if (existingCartItem) {
+            updateCart({
+                productId: productId,
+                quantity: existingCartItem.quantity + 1,
+            });
+        } else {
+            addToCart({
+                productId: productId,
+                quantity: 1,
+            });
         }
-    };
+    }
+};
     const handleOnClick = (productSlug: string) => {
         router.push(`/categories/${Products.mainSlug}/products/${productSlug}`);
     }

@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from 'react';
+import { Edit, Delete, Add } from '@mui/icons-material';
 import {
   Box,
   Typography,
@@ -12,8 +12,9 @@ import {
   IconButton,
   Alert,
 } from '@mui/material';
-import { Edit, Delete, Add } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
+import React, { useEffect, useState } from 'react';
+
 import {
   getAddresses,
   createAddress,
@@ -64,7 +65,18 @@ const AddressSection: React.FC = () => {
       setLoading(true);
       setError(null);
       const response = await getAddresses();
-      const mappedAddresses = response.addresses.map((addr: any) => ({
+      const mappedAddresses = response.addresses.map((addr: {
+        _id: string;
+        type: 'shipping' | 'billing';
+        street: string;
+        city: string;
+        state: string;
+        zipCode: string;
+        country: string;
+        isDefault: boolean;
+        createdAt: string;
+        updatedAt: string;
+      }) => ({
         _id: addr._id,
         type: addr.type,
         street: addr.street,

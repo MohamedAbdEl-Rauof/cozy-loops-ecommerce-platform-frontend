@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { WishlistService } from '@/services/wishlistService';
 import { useSnackbar } from 'notistack';
 
-// Main wishlist query hook
+import { WishlistService } from '@/services/wishlistService';
+
 export const useWishlist = () => {
     const query = useQuery({
         queryKey: ['wishlist'],
@@ -24,7 +24,6 @@ export const useWishlist = () => {
     };
 };
 
-// Add to wishlist
 export const useAddToWishlist = () => {
     const queryClient = useQueryClient();
     const { enqueueSnackbar } = useSnackbar();
@@ -35,8 +34,12 @@ export const useAddToWishlist = () => {
             queryClient.invalidateQueries({ queryKey: ['wishlist'] });
             enqueueSnackbar('Added to wishlist!', { variant: 'success' });
         },
-        onError: (error: any) => {
-            enqueueSnackbar(error.response?.data?.message || 'Failed to add to wishlist', { variant: 'error' });
+       
+        onError: (error: unknown) => {
+            const errorMessage = error instanceof Error && 'response' in error 
+                ? (error as { response?: { data?: { message?: string } } }).response?.data?.message 
+                : 'Failed to add to wishlist';
+            enqueueSnackbar(errorMessage || 'Failed to add to wishlist', { variant: 'error' });
         }
     });
 
@@ -46,7 +49,6 @@ export const useAddToWishlist = () => {
     };
 };
 
-// Remove from wishlist
 export const useRemoveFromWishlist = () => {
     const queryClient = useQueryClient();
     const { enqueueSnackbar } = useSnackbar();
@@ -57,8 +59,12 @@ export const useRemoveFromWishlist = () => {
             queryClient.invalidateQueries({ queryKey: ['wishlist'] });
             enqueueSnackbar('Removed from wishlist', { variant: 'info' });
         },
-        onError: (error: any) => {
-            enqueueSnackbar(error.response?.data?.message || 'Failed to remove from wishlist', { variant: 'error' });
+        
+        onError: (error: unknown) => {
+            const errorMessage = error instanceof Error && 'response' in error 
+                ? (error as { response?: { data?: { message?: string } } }).response?.data?.message 
+                : 'Failed to remove from wishlist';
+            enqueueSnackbar(errorMessage || 'Failed to remove from wishlist', { variant: 'error' });
         }
     });
 
@@ -68,7 +74,6 @@ export const useRemoveFromWishlist = () => {
     };
 };
 
-// Clear wishlist
 export const useClearWishlist = () => {
     const queryClient = useQueryClient();
     const { enqueueSnackbar } = useSnackbar();
@@ -79,8 +84,11 @@ export const useClearWishlist = () => {
             queryClient.invalidateQueries({ queryKey: ['wishlist'] });
             enqueueSnackbar('Wishlist cleared', { variant: 'warning' });
         },
-        onError: (error: any) => {
-            enqueueSnackbar(error.response?.data?.message || 'Failed to clear wishlist', { variant: 'error' });
+        onError: (error: unknown) => {
+            const errorMessage = error instanceof Error && 'response' in error 
+                ? (error as { response?: { data?: { message?: string } } }).response?.data?.message 
+                : 'Failed to clear wishlist';
+            enqueueSnackbar(errorMessage || 'Failed to clear wishlist', { variant: 'error' });
         }
     });
 

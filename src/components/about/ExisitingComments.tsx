@@ -1,5 +1,10 @@
 "use client"
-import React, { useState } from 'react';
+import {
+    Star as StarIcon,
+    MoreVert as MoreVertIcon,
+    Edit as EditIcon,
+    Delete as DeleteIcon,
+} from '@mui/icons-material';
 import {
     Box,
     Typography,
@@ -9,18 +14,18 @@ import {
     IconButton,
     Menu,
     MenuItem,
+    Backdrop,
+    CircularProgress,
+    Snackbar,
+    Alert,
 } from '@mui/material';
-import {
-    Star as StarIcon,
-    MoreVert as MoreVertIcon,
-    Edit as EditIcon,
-    Delete as DeleteIcon,
-} from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
-import { testimonialsService } from '@/services/testimonialsService';
-import { useAuth } from '@/context/AuthContext';
-import EditReviewDialog from '@/components/dialogs/EditReviewDialog';
+import React, { useState } from 'react';
+
 import DeleteReviewDialog from '@/components/dialogs/DeleteReviewDialog';
+import EditReviewDialog from '@/components/dialogs/EditReviewDialog';
+import { useAuth } from '@/context/AuthContext';
+import { testimonialsService } from '@/services/testimonialsService';
 
 const CommentCard = styled(Paper)(({ theme }) => ({
     padding: theme.spacing(3),
@@ -51,7 +56,7 @@ interface Review {
     rating: number;
     likesCount: number;
     dislikesCount: number;
-    likes: any[];
+    likes: unknown[];
     createdAt: string;
     updatedAt: string;
     isOwner: boolean;
@@ -78,8 +83,6 @@ const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) 
         message: '',
         severity: 'success' as 'success' | 'error' | 'warning' | 'info'
     });
-
-    // ... existing functions ...
 
     const handleEditSave = async () => {
         if (!selectedReviewId || !editComment.trim() || !editRating) {
@@ -116,12 +119,12 @@ const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) 
             // Refresh the reviews list
             onRefetch();
 
-        } catch (error: any) {
+        } catch (error) {
             console.error('Error updating review:', error);
 
             setSnackbar({
                 open: true,
-                message: error.message || 'Failed to update review',
+                message: error instanceof Error ? error.message : 'Failed to update review',
                 severity: 'error'
             });
         } finally {
@@ -188,12 +191,12 @@ const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) 
             // Refresh the reviews list
             onRefetch();
 
-        } catch (error: any) {
+        } catch (error) {
             console.error('Error deleting review:', error);
 
             setSnackbar({
                 open: true,
-                message: error.message || 'Failed to delete review',
+                message: error instanceof Error ? error.message : 'Failed to delete review',
                 severity: 'error'
             });
         } finally {
@@ -221,8 +224,27 @@ const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) 
         setEditRating(rating);
     };
 
+    const handleSnackbarClose = () => {
+        setSnackbar(prev => ({ ...prev, open: false }));
+    };
+
     return (
         <Box sx={{ position: 'relative', zIndex: 2 }}>
+
+            <Backdrop
+                sx={{
+                    color: '#fff',
+                    zIndex: (theme) => theme.zIndex.drawer + 1,
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+                }}
+                open={isLoading}
+            >
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                    <CircularProgress color="inherit" />
+                    <Typography variant="body1">Processing...</Typography>
+                </Box>
+            </Backdrop>
+
             <Typography
                 variant="h5"
                 sx={{
@@ -238,7 +260,7 @@ const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) 
                 Customer Reviews ({mockComments.length})
             </Typography>
 
-            {reviewsWithOwnership.map((comment, index) => (
+            {reviewsWithOwnership.map((comment) => (
                 <CommentCard key={comment._id}>
                     <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 2 }}>
                         <Box
@@ -353,16 +375,16 @@ const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) 
             ))}
 
             {/* Menu */}
-            <Menu
+           <Menu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
                 onClose={handleMenuClose}
             >
-                <MenuItem onClick={handleEditClick}>
+                <MenuItem onClick={handleEditClick} disabled={isLoading}>
                     <EditIcon sx={{ mr: 1 }} />
                     Edit
                 </MenuItem>
-                <MenuItem onClick={handleDeleteClick} sx={{ color: 'error.main' }}>
+                <MenuItem onClick={handleDeleteClick} sx={{ color: 'error.main' }} disabled={isLoading}>
                     <DeleteIcon sx={{ mr: 1 }} />
                     Delete
                 </MenuItem>
@@ -377,6 +399,7 @@ const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) 
                 rating={editRating}
                 onCommentChange={handleCommentChange}
                 onRatingChange={handleRatingChange}
+                isLoading={isLoading}
             />
 
             {/* Delete Review Dialog */}
@@ -384,9 +407,28 @@ const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) 
                 open={deleteDialogOpen}
                 onClose={handleDeleteDialogClose}
                 onConfirm={handleDeleteConfirm}
+                isLoading={isLoading}
             />
+
+            {/* Snackbar for notifications */}
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={6000}
+                onClose={handleSnackbarClose}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert
+                    onClose={handleSnackbarClose}
+                    severity={snackbar.severity}
+                    sx={{ width: '100%' }}
+                    variant="filled"
+                >
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 };
+
 
 export default ExisitingComments;

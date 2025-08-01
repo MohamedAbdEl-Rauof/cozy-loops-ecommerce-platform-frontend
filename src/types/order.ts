@@ -11,14 +11,14 @@ export interface OrderData {
 
 export interface StripeCheckoutFormProps {
     orderData: OrderData;
-    onPaymentStatusChange: (status: 'processing' | 'completed' | 'failed') => void;
+    onPaymentStatusChange: (_status: 'processing' | 'completed' | 'failed') => void;
 }
 
 export interface StripeCheckoutProps {
     clientSecret: string;
     publishableKey?: string;
     orderData: OrderData;
-    onPaymentStatusChange: (status: 'processing' | 'completed' | 'failed') => void;
+    onPaymentStatusChange: (_status: 'processing' | 'completed' | 'failed') => void;
 }
 
 export interface OrderDetails {

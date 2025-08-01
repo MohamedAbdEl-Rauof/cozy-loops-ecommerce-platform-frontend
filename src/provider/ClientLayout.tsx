@@ -1,10 +1,11 @@
 "use client";
 
-import { AuthProvider } from "@/context/AuthContext";
-import Navbar from "@/components/shared/Navbar";
-import Footer from "@/components/shared/Footer";
-import QueryProvider from "@/provider/QueryProvider";
 import { SnackbarProvider } from "notistack";
+
+import Footer from "@/components/shared/Footer";
+import Navbar from "@/components/shared/Navbar";
+import { AuthProvider } from "@/context/AuthContext";
+import QueryProvider from "@/provider/QueryProvider";
 
 export default function ClientLayout({
   children,

@@ -1,12 +1,12 @@
-
 'use client';
+
+import { Box, Container } from "@mui/material";
 
 import ImageWithText from "@/components/about/ImageWithText";
 import FeatureCardsSection from "@/components/shared/FeatureCardsSection";
+import FeaturedCategories from "@/components/shared/FeaturedCategories";
 import MainAboutSection from "@/components/shared/MainAboutSection";
 import StoryFeature from "@/components/shared/StoryFeature";
-import FeaturedCategories from "@/components/shared/FeaturedCategories";
-import { Box, Container } from "@mui/material";
 import {
     featureCardsSectionData,
     missionData,

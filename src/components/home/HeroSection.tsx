@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import {
   Box,
   Container,
@@ -9,8 +8,10 @@ import {
   IconButton,
 } from '@mui/material';
 import { Link as MuiLink } from '@mui/material';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import Image from 'next/image';
+import Link from 'next/link';
+import React, { useState, useEffect } from 'react';
+
 import { productImages } from '@/data/pages/homePageData';
 
 const HeroSection: React.FC = () => {

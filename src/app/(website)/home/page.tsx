@@ -1,18 +1,19 @@
 'use client';
 
 import { Box, Container, CircularProgress, Alert, Typography } from '@mui/material';
+
 import HeroSection from '@/components/home/HeroSection';
 import ShopByCraft from '@/components/home/ShopByCraft';
 import FeaturedCategories from '@/components/shared/FeaturedCategories';
 import StoryFeature from '@/components/shared/StoryFeature';
 import Testimonials from '@/components/shared/Testimonials';
-import { useCategories } from "@/hooks/useCategories";
-import { useTestimonials } from '@/hooks/useTestimonials';
 import {
   featuredCategoriesData,
   storyFeatureData,
   testimonialsData,
 } from '@/data/pages/homePageData';
+import { useCategories } from "@/hooks/useCategories";
+import { useTestimonials } from '@/hooks/useTestimonials';
 import {
   containerConfig,
   heroBackgroundGradient,

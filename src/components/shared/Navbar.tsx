@@ -1,7 +1,15 @@
 "use client"
 
-import type React from "react"
-import { useState } from "react"
+import {
+    Search as SearchIcon,
+    Menu as MenuIcon,
+    Person as PersonIcon,
+    Home as HomeIcon,
+    Category as CategoryIcon,
+    Info as InfoIcon,
+} from "@mui/icons-material"
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import StorefrontIcon from '@mui/icons-material/Storefront';
 import {
     AppBar,
     Toolbar,
@@ -23,23 +31,17 @@ import {
     Container,
     styled,
 } from "@mui/material"
-import {
-    Search as SearchIcon,
-    Menu as MenuIcon,
-    Person as PersonIcon,
-    Home as HomeIcon,
-    Category as CategoryIcon,
-    Info as InfoIcon,
-} from "@mui/icons-material"
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import StorefrontIcon from '@mui/icons-material/Storefront';
-import { usePathname } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { useRouter } from "next/navigation"
+import { useState } from "react"
+
 import { useAuth } from "@/context/AuthContext"
 import { useCart } from "@/hooks/useCart"
 import { useWishlist } from "@/hooks/useWishlist"
+
+import type React from "react"
 
 const NavbarContainer = styled(Box)(() => ({
     backgroundColor: "var(--foreground)",

@@ -1,5 +1,12 @@
 "use client"
-import React, { useState } from 'react';
+import {
+    Person,
+    LocationOn,
+    CreditCard,
+    Favorite,
+    ShoppingCart,
+    ExitToApp,
+} from '@mui/icons-material';
 import {
     Container,
     Grid,
@@ -11,19 +18,14 @@ import {
     Box,
     Typography,
 } from '@mui/material';
-import {
-    Person,
-    LocationOn,
-    CreditCard,
-    Favorite,
-    ShoppingCart,
-    ExitToApp,
-} from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
-import ProfileSection from './ProfileSection';
+import React, { useState } from 'react';
+
+import {useAuth} from "@/context/AuthContext";
+
 import AddressSection from './AddressSection';
 import PaymentSection from './PaymentSection';
-import {useAuth} from "@/context/AuthContext";
+import ProfileSection from './ProfileSection';
 
 const AccountContainer = styled(Container)(() => ({
     paddingTop: '40px',

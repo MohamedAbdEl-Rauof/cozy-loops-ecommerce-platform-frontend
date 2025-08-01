@@ -36,7 +36,6 @@ export interface WishlistData {
   lastUpdated: string;
 }
 
-// ✅ Add interface for WishlistCard component
 export interface WishlistCardItem {
   id: string;
   title: string;
@@ -51,9 +50,9 @@ export interface WishlistCardItem {
 
 export interface WishlistCardProps {
   items?: WishlistCardItem[];
-  onDeleteItem?: (itemId: string) => void;
-  onAddToCart?: (itemId: string) => void;
-  onViewProduct?: (itemId: string) => void;
+  onDeleteItem?: (_itemId: string) => void;
+  onAddToCart?: (_itemId: string) => void;
+  onViewProduct?: (_itemId: string) => void;
   onMoveAllToCart?: () => void;
   onStartShopping?: () => void;
 }

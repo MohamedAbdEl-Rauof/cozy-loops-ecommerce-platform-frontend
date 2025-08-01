@@ -1,22 +1,25 @@
-'use client';
+'use client'
 
-import { useParams } from 'next/navigation';
 import { Box, Container, CircularProgress, Alert } from '@mui/material';
-import { useProductFromCategory } from '@/hooks/useProducts';
-import { ProductImage } from '@/types/product';
-import SmallNavbar from "@/components/shared/SmallNavbar";
-import ProductDetails from "@/components/shared/PrdouctDetails";
-import FeatureCardsSection from "@/components/shared/FeatureCardsSection";
-import AbountMaker from "@/components/product-details/AbountMaker";
-import SimilarProducts from "@/components/product-details/SimilarProducts";
-import Comments from "@/components/product-details/Comments";
-import { useMakersBySlug } from "@/hooks/useMakers";
+import { useParams } from 'next/navigation';
+import React from 'react';
+
 import ExisitingComments from '@/components/about/ExisitingComments';
+import AbountMaker from '@/components/product-details/AbountMaker';
+import Comments from '@/components/product-details/Comments';
+import SimilarProducts from '@/components/product-details/SimilarProducts';
+import FeatureCardsSection from '@/components/shared/FeatureCardsSection';
+import ProductDetails from '@/components/shared/PrdouctDetails';
+import SmallNavbar from '@/components/shared/SmallNavbar';
+import { FeatureCardsSectionData, FeatureCardsSectionData2, similarProductsData } from '@/data/pages/productDetailsPageData';
+import { useMakersBySlug } from '@/hooks/useMakers';
+import { useProductFromCategory } from '@/hooks/useProducts';
 import { useProductsTestimonialsBySlug } from '@/hooks/useTestimonials';
 import { useAddToWishlist, useRemoveFromWishlist, useWishlist } from '@/hooks/useWishlist';
-import { FeatureCardsSectionData, FeatureCardsSectionData2, similarProductsData } from '@/data/pages/productDetailsPageData';
+import { ProductImage } from '@/types/product';
 
 const createImagesArray = (mainImage: string, images: string[] = []): string[] => {
+
   const imageUrls = new Set<string>();
 
   if (mainImage) {
@@ -45,7 +48,6 @@ const transformImages = (images: string[] = [], productName: string): ProductIma
     alt: `${productName} - Image ${index + 1}`
   }));
 };
-
 
 const transformColors = (colors: string[] = []) => {
   if (!colors || colors.length === 0) {
@@ -94,18 +96,14 @@ const ProductPage = () => {
     error,
   } = useProductFromCategory(categorySlug, productSlug);
 
-  console.log('Product data:', product);
-
   const {
     data: testimonials,
-    isLoading: testimonialsLoading,
-    error: testimonialsError,
     refetch: refetchTestimonials
   } = useProductsTestimonialsBySlug(productSlug);
 
-  const actualReviewCount = testimonials?.length || 0;
+  const actualReviewCount = testimonials?.reviews?.length || 0;
 
-  const calculateAverageRating = (testimonials: any[] = []): number => {
+  const calculateAverageRating = (testimonials: Array<{ rating?: number }> = []): number => {
     if (!testimonials || testimonials.length === 0) return 0;
 
     const totalRating = testimonials.reduce((sum, testimonial) => {
@@ -115,12 +113,9 @@ const ProductPage = () => {
     return Number((totalRating / testimonials.length).toFixed(1));
   };
 
-  const actualAverageRating = calculateAverageRating(testimonials);
+  const actualAverageRating = calculateAverageRating(testimonials?.reviews);
 
-  const { data: makerData, isLoading: makerLoading, error: makerError } = useMakersBySlug(product?.maker?.slug || '');
-  console.log('Maker data:', makerData);
-
-
+  const { data: makerData } = useMakersBySlug(product?.maker?.slug || '');
 
   const handleCommentSubmitted = () => {
     refetchTestimonials();
@@ -180,6 +175,7 @@ const ProductPage = () => {
       addToWishlist(product._id);
     }
   };
+
   // Helper function to safely calculate years of experience
   const calculateYearsOfExperience = (joinDate: string | undefined): number => {
     if (!joinDate) return 0;
@@ -236,7 +232,7 @@ const ProductPage = () => {
           }}
         >
           <ProductDetails
-            id={product._id}
+            _id={product._id}
             name={product.name}
             images={transformedImages}
             mainImage={product.mainImage}
@@ -364,10 +360,45 @@ const ProductPage = () => {
             px: { xs: 2, sm: 3, md: 4 }
           }}
         >
+
+
+
           <ExisitingComments
-            mockComments={testimonials || []}
+            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+            mockComments={testimonials?.reviews?.map((review: any) => ({
+              _id: review._id || review.id,
+              id: review._id || review.id,
+              user: {
+                _id: review.user?._id || review.user?.id || '',
+                firstName: review.user?.firstName || '',
+                lastName: review.user?.lastName || '',
+                name: `${review.user?.firstName || ''} ${review.user?.lastName || ''}`.trim() || 'Anonymous',
+                Avatar: review.user?.Avatar || review.user?.avatar || '/images/default-avatar.jpg', // Capital A for Avatar
+                verified: review.user?.verified || false,
+                email: review.user?.email || '',
+                role: review.user?.role || 'user',
+                phoneNumber: review.user?.phoneNumber || '',
+                addresses: review.user?.addresses || [],
+                emailVerified: review.user?.emailVerified || false,
+                active: review.user?.active !== false,
+                createdAt: review.user?.createdAt || new Date().toISOString(),
+                updatedAt: review.user?.updatedAt || new Date().toISOString()
+              },
+              product: review.product || product._id,
+              rating: review.rating,
+              comment: review.comment,
+              date: review.createdAt || review.date || new Date().toISOString(),
+              createdAt: review.createdAt || review.date || new Date().toISOString(),
+              updatedAt: review.updatedAt || review.createdAt || new Date().toISOString(),
+              likes: review.likes || [],
+              likesCount: review.likesCount || review.likes || 0,
+              dislikesCount: review.dislikesCount || review.dislikes || 0,
+              replies: review.replies || 0,
+              isOwner: false // This will be set properly inside ExisitingComments component
+            })) || []}
             onRefetch={refetchTestimonials}
           />
+
         </Box>
 
         {/* Second Feature Cards Section */}

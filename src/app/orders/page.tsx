@@ -1,6 +1,11 @@
 'use client'
-import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import {
+    ShoppingBag as ShoppingBagIcon,
+    Search as SearchIcon,
+    Receipt as ReceiptIcon,
+    LocalShipping as ShippingIcon,
+    Visibility as VisibilityIcon,
+} from '@mui/icons-material'
 import {
     Container,
     Typography,
@@ -19,17 +24,13 @@ import {
     Divider,
     Avatar
 } from '@mui/material'
-import {
-    ShoppingBag as ShoppingBagIcon,
-    Search as SearchIcon,
-    Receipt as ReceiptIcon,
-    LocalShipping as ShippingIcon,
-    Visibility as VisibilityIcon,
-} from '@mui/icons-material'
-import { orderService, type Order } from '@/services/orderService'
-import ProtectedRoute from '@/provider/ProtectedRoute'
+import { useRouter } from 'next/navigation'
+import React, { useEffect, useState, useCallback } from 'react'
 
-const OrdersPage: React.FC = () => {
+import ProtectedRoute from '@/provider/ProtectedRoute'
+import { orderService, type Order } from '@/services/orderService'
+
+const OrdersPage = () => {
     const router = useRouter()
     const [orders, setOrders] = useState<Order[]>([])
     const [isLoading, setIsLoading] = useState(true)
@@ -42,25 +43,7 @@ const OrdersPage: React.FC = () => {
 
     const ordersPerPage = 10
 
-    useEffect(() => {
-        fetchOrders()
-    }, [currentPage])
-
-    useEffect(() => {
-        if (searchTerm.trim() === '') {
-            setFilteredOrders(orders)
-        } else {
-            const filtered = orders.filter(order =>
-                order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                order.items.some(item =>
-                    item.product.name.toLowerCase().includes(searchTerm.toLowerCase())
-                )
-            )
-            setFilteredOrders(filtered)
-        }
-    }, [orders, searchTerm])
-
-    const fetchOrders = async () => {
+    const fetchOrders = useCallback(async () => {
         try {
             setIsLoading(true)
             const response = await orderService.getUserOrders(currentPage, ordersPerPage)
@@ -78,7 +61,25 @@ const OrdersPage: React.FC = () => {
         } finally {
             setIsLoading(false)
         }
-    }
+    }, [currentPage, ordersPerPage])
+
+    useEffect(() => {
+        fetchOrders()
+    }, [fetchOrders])
+
+    useEffect(() => {
+        if (searchTerm.trim() === '') {
+            setFilteredOrders(orders)
+        } else {
+            const filtered = orders.filter(order =>
+                order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                order.items.some(item =>
+                    item.product.name.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+            )
+            setFilteredOrders(filtered)
+        }
+    }, [orders, searchTerm])
 
     const getOrderStatusColor = (status: string) => {
         switch (status) {
@@ -91,7 +92,7 @@ const OrdersPage: React.FC = () => {
         }
     }
 
-    const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
+    const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
         setCurrentPage(page)
     }
 

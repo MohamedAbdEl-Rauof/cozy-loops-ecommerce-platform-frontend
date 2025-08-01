@@ -1,18 +1,20 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { cartService } from '@/services/cartServices';
 import { useSnackbar } from 'notistack';
 import { useEffect } from 'react';
+
 import { socket } from '@/lib/cartSocket'; 
+import { cartService } from '@/services/cartServices';
+import { CartUpdateData } from '@/types/cart';
 
 export const useCart = () => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    const handleCartUpdate = (updatedCart: any) => {
+    const handleCartUpdate = (updatedCart: CartUpdateData) => {
       queryClient.setQueryData(['cart'], updatedCart);
     };
 
-    const handleCartItemAdded = (data: any) => {
+    const handleCartItemAdded = () => {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
     };
 

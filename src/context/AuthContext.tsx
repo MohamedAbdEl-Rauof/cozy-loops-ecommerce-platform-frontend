@@ -1,18 +1,17 @@
-
 'use client';
 
-import React, { createContext, useState, useEffect, ReactNode, useContext, useCallback, useRef } from 'react';
-import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
-
 import Cookies from 'js-cookie';
-import { 
-  useUserQuery, 
-  useLoginMutation, 
-  useRegisterMutation, 
-  useLogoutMutation, 
+import { useRouter } from 'next/navigation';
+import React, { createContext, useState, useEffect, ReactNode, useContext, useCallback, useRef } from 'react';
+
+import {
+  useUserQuery,
+  useLoginMutation,
+  useRegisterMutation,
+  useLogoutMutation,
   useRefreshTokenMutation,
-  USER_QUERY_KEYS 
+  USER_QUERY_KEYS
 } from '@/hooks/useUser';
 
 interface User {
@@ -24,7 +23,7 @@ interface User {
   emailVerified?: boolean;
   avatar?: string;
   phone?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface AuthResponse {
@@ -38,8 +37,19 @@ interface RegisterData {
   lastName: string;
   email: string;
   password: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
+
+interface AuthError {
+  response?: {
+    data?: {
+      message?: string;
+    };
+    status?: number;
+  };
+  message?: string;
+}
+
 
 interface AuthContextType {
   user: User | null;
@@ -47,7 +57,7 @@ interface AuthContextType {
   error: string | null;
   login: (email: string, password: string) => Promise<AuthResponse>;
   loginWithToken: (token: string, refreshTokenValue?: string) => Promise<User>;
-  register: (userData: RegisterData) => Promise<any>;
+  register: (userData: RegisterData) => Promise<unknown>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
   clearError: () => void;
@@ -82,11 +92,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [initialLoading, setInitialLoading] = useState<boolean>(true);
   const [authCheckInProgress, setAuthCheckInProgress] = useState<boolean>(false);
-  
+
   const router = useRouter();
   const queryClient = useQueryClient();
-  
-  // Refs to prevent multiple simultaneous calls
+
   const authCheckTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastAuthCheckRef = useRef<number>(0);
   const isRefreshingRef = useRef<boolean>(false);
@@ -110,12 +119,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setError(null);
   }, []);
 
-  // Debounced auth check to prevent multiple simultaneous calls
   const debouncedCheckAuthStatus = useCallback(async (): Promise<boolean> => {
     const now = Date.now();
     const timeSinceLastCheck = now - lastAuthCheckRef.current;
-    
-    // Prevent multiple calls within 1 second
+
     if (timeSinceLastCheck < 1000 || authCheckInProgress || isRefreshingRef.current) {
       return isAuthenticated;
     }
@@ -138,11 +145,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setIsAuthenticated(true);
           await refetchUserQuery();
           return true;
-        } catch (error: any) {
+        } catch (error: unknown) {
           console.error('Failed to get user data with access token:', error);
-          // If access token is invalid, try refresh token
-          if (error?.response?.status === 401 && refreshTokenValue) {
-            // Continue to refresh token logic below
+          const authError = error as AuthError;
+          if (authError?.response?.status === 401 && refreshTokenValue) {
           } else {
             setIsAuthenticated(false);
             return false;
@@ -177,12 +183,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, [isAuthenticated, authCheckInProgress, refetchUserQuery, refreshTokenMutation, queryClient]);
 
   const checkAuthStatus = useCallback(async (): Promise<boolean> => {
-    // Clear any existing timeout
     if (authCheckTimeoutRef.current) {
       clearTimeout(authCheckTimeoutRef.current);
     }
 
-    // Debounce the actual auth check
     return new Promise((resolve) => {
       authCheckTimeoutRef.current = setTimeout(async () => {
         const result = await debouncedCheckAuthStatus();
@@ -202,7 +206,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     initialAuthCheck();
 
-    // Cleanup timeout on unmount
     return () => {
       if (authCheckTimeoutRef.current) {
         clearTimeout(authCheckTimeoutRef.current);
@@ -228,8 +231,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }, 100);
 
       return response;
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'Login failed';
+    } catch (error: unknown) {
+      const authError = error as AuthError;
+      const errorMessage = authError?.response?.data?.message || 'Login failed';
       setError(errorMessage);
       throw error;
     }
@@ -261,24 +265,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       return userData;
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Login with token failed:', error);
       Cookies.remove('accessToken');
       if (refreshTokenValue) Cookies.remove('refreshToken');
       setIsAuthenticated(false);
 
-      setError(error.message || 'Failed to authenticate with token');
+      const authError = error as AuthError;
+      setError(authError?.message || 'Failed to authenticate with token');
       throw error;
     }
   };
 
-  const handleRegister = async (userData: RegisterData): Promise<any> => {
+  const handleRegister = async (userData: RegisterData): Promise<unknown> => {
     try {
       clearError();
       const response = await registerMutation.mutateAsync(userData);
       return response;
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || 'Registration failed';
+    } catch (error: unknown) {
+      const authError = error as AuthError;
+      const errorMessage = authError?.response?.data?.message || 'Registration failed';
       setError(errorMessage);
       throw error;
     }
@@ -344,8 +350,7 @@ export const useAuth = () => {
   useEffect(() => {
     const now = Date.now();
     const timeSinceLastCheck = now - lastCheckRef.current;
-    
-    // Only check auth status if enough time has passed
+
     if (timeSinceLastCheck < 2000) {
       return;
     }
@@ -358,7 +363,6 @@ export const useAuth = () => {
       checkAuthStatus();
 
     } else if (!hasAccessToken && !hasRefreshToken && isAuthenticated) {
-      // Clear authentication state if no tokens exist
       context.setIsAuthenticated(false);
     }
   }, [isAuthenticated, loading, checkAuthStatus, context]);

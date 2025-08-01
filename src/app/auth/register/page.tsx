@@ -1,8 +1,11 @@
 "use client"
-import { useEffect, useState } from "react"
-import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
+import {
+  Visibility,
+  VisibilityOff,
+  Check,
+  CheckCircle,
+} from "@mui/icons-material"
 import {
   Box,
   Button,
@@ -20,19 +23,17 @@ import {
   CircularProgress,
   Collapse,
 } from "@mui/material"
-import {
-  Visibility,
-  VisibilityOff,
-  Check,
-  CheckCircle,
-} from "@mui/icons-material"
 import { Dialog, DialogContent, Fade, Grow } from "@mui/material";
-import { useAuth } from "@/context/AuthContext"
-import Image from "next/image"
 import axios from "axios"
-import SocialAuthDialog from "@/components/dialogs/SocialAuthDialog"
+import Image from "next/image"
 import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import { useForm, Controller } from "react-hook-form"
+import { z } from "zod"
+
 import { CountdownRedirect } from "@/components/auth/CountdownRedirect"
+import SocialAuthDialog from "@/components/dialogs/SocialAuthDialog"
+import { useAuth } from "@/context/AuthContext"
 
 // Zod validation schema
 const registrationSchema = z
@@ -211,7 +212,7 @@ export default function RegistrationPage() {
       if (showSuccess) {
         setCountdown(5);
       }
-    }, [showSuccess]);
+    }, []);
 
     return (
       <Box sx={{
@@ -242,7 +243,7 @@ export default function RegistrationPage() {
         </Typography>
 
         <Typography variant="body1" sx={{ mb: 2, color: '#666', fontSize: '1.2rem', maxWidth: 600 }}>
-          Please check your email to confirm your account. We've sent a verification link to your email address.
+          Please check your email to confirm your account. We&apos;ve sent a verification link to your email address.
         </Typography>
 
         <Typography variant="body2" sx={{ mb: 4, color: '#666' }}>
@@ -560,7 +561,7 @@ export default function RegistrationPage() {
                 />
                 {errors.agreeToTerms && (
                   <FormHelperText error sx={{ ml: 0 }}>
-                    {errors.agreeToTerms.message}
+                    {errors.agreeToTerms?.message}
                   </FormHelperText>
                 )}
               </Box>

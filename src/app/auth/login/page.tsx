@@ -1,37 +1,37 @@
-"use client"
-import { useEffect, useState } from "react"
-import { useForm, Controller } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
+
+"use client";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import {
+  Alert,
   Box,
   Button,
-  TextField,
-  Typography,
+  CircularProgress,
+  Container,
+  Dialog,
+  DialogContent,
+  Fade,
   IconButton,
   InputAdornment,
-  Link as MuiLink,
-  Container,
-  CircularProgress,
-  Snackbar,
-  Alert,
   LinearProgress,
-  DialogContent,
-  Dialog,
-  Fade,
-} from "@mui/material"
-import {
-  Visibility,
-  VisibilityOff,
-} from "@mui/icons-material"
-import Image from "next/image"
-import Link from "next/link"
-import ForgotPasswordDialog from "@/components/dialogs/ForgetPasswordDialog"
-import { useAuth } from "@/context/AuthContext"
-import { CountdownRedirect } from "@/components/auth/CountdownRedirect"
-import { useRouter } from "next/navigation"
-import CheckCircleIcon from "@mui/icons-material/CheckCircle"
-import SocialAuthDialog from "@/components/dialogs/SocialAuthDialog"
+  Link as MuiLink,
+  Snackbar,
+  TextField,
+  Typography,
+} from "@mui/material";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { z } from "zod";
+
+import { CountdownRedirect } from "@/components/auth/CountdownRedirect";
+import ForgotPasswordDialog from "@/components/dialogs/ForgetPasswordDialog";
+import SocialAuthDialog from "@/components/dialogs/SocialAuthDialog";
+import { useAuth } from "@/context/AuthContext";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -102,11 +102,13 @@ export default function LoginPage() {
     try {
       await login(data.email, data.password);
       setShowSuccessAnimation(true);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Login error:", error);
 
-      if (error.response && error.response.status === 403 &&
-        error.response.data && error.response.data.emailVerified === false) {
+      const err = error as { response?: { status: number; data: { emailVerified?: boolean; message?: string } }; message?: string };
+
+      if (err.response && err.response.status === 403 &&
+        err.response.data && err.response.data.emailVerified === false) {
         setSnackbar({
           open: true,
           message: 'Email not verified. Please check your inbox for verification email.',
@@ -115,7 +117,7 @@ export default function LoginPage() {
       } else {
         setSnackbar({
           open: true,
-          message: error.response?.data?.message || error.message || 'Login failed. Please try again.',
+          message: err.response?.data?.message || err.message || 'Login failed. Please try again.',
           severity: 'error'
         });
       }
@@ -303,7 +305,7 @@ export default function LoginPage() {
               <SocialAuthDialog />
 
               <Typography variant="body2" sx={{ textAlign: "center", color: "#666" }}>
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <Link
                   href="/auth/register"
                   style={{
@@ -407,7 +409,7 @@ export default function LoginPage() {
                     backgroundColor: 'rgba(var(--primary-color-rgb), 0.1)',
                     '& .MuiLinearProgress-bar': {
                       borderRadius: 3,
-                      backgroundColor: 'var(--primary-color)',
+                      backgroundColor: 'var(--primary-color)'
                     }
                   }}
                 />

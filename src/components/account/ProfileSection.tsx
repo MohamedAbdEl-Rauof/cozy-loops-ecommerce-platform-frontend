@@ -1,13 +1,15 @@
 "use client"
-import React, { useState } from 'react';
 import {
     Box,
     Alert,
 } from '@mui/material';
-import ImageUploadSection from './ImageUploadSection';
-import PersonalInfoSection from './PersonalInfoSection';
-import PasswordChangeSection from './PasswordChangeSection';
+import React, { useState } from 'react';
+
 import { useAuth } from '@/context/AuthContext';
+
+import ImageUploadSection from './ImageUploadSection';
+import PasswordChangeSection from './PasswordChangeSection';
+import PersonalInfoSection from './PersonalInfoSection';
 
 const ProfileSection: React.FC = () => {
     const [showSuccess, setShowSuccess] = useState<string | null>(null);

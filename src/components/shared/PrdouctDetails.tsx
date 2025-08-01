@@ -1,15 +1,3 @@
-import React, { useState } from 'react';
-import {
-    Box,
-    Typography,
-    Rating,
-    Button,
-    IconButton,
-    Chip,
-    Card,
-    CardContent,
-    Tooltip
-} from '@mui/material';
 import {
     FavoriteBorder,
     Favorite,
@@ -21,13 +9,26 @@ import {
     Verified,
     ShoppingCart
 } from '@mui/icons-material';
+import {
+    Box,
+    Typography,
+    Rating,
+    Button,
+    IconButton,
+    Chip,
+    Card,
+    CardContent,
+    Tooltip
+} from '@mui/material';
 import Image from 'next/image';
-import { useAddToCart, useCart, useUpdateCart } from '@/hooks/useCart';
 import { useSnackbar } from 'notistack';
+import React, { useState } from 'react';
+
+import { useAddToCart, useCart, useUpdateCart } from '@/hooks/useCart';
 import { ProductDetailsProps } from '@/types/product';
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({
-    id,
+    _id,
     name,
     images,
     rating,
@@ -64,7 +65,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
         if (isAddingToCart || isUpdatingCart) return;
 
         try {
-            const existingCartItem = cartData?.items?.find((item: any) =>
+            const existingCartItem = cartData?.items?.find((item) =>
                 item.product._id === productId || item.product.id === productId
             );
 
@@ -419,7 +420,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                         variant="contained"
                         size="large"
                         startIcon={<ShoppingCart />}
-                        onClick={() => handleAddToCart(id)}
+                        onClick={() => _id && handleAddToCart(_id)}
                         disabled={!inStock || isAddingToCart || isUpdatingCart}
                         sx={{
                             flex: 1,

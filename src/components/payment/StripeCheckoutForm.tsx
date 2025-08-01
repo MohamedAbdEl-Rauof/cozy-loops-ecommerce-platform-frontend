@@ -1,5 +1,8 @@
-import React, { useState } from 'react'
-import { PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js'
+import {
+    CreditCard as CreditCardIcon,
+    Security as SecurityIcon,
+    CheckCircle as CheckCircleIcon
+} from '@mui/icons-material'
 import {
     Button,
     CircularProgress,
@@ -8,11 +11,9 @@ import {
     Paper,
     Alert
 } from '@mui/material'
-import {
-    CreditCard as CreditCardIcon,
-    Security as SecurityIcon,
-    CheckCircle as CheckCircleIcon
-} from '@mui/icons-material'
+import { PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js'
+import React, { useState } from 'react'
+
 import { StripeCheckoutFormProps } from '@/types/order';
 
 const StripeCheckoutForm: React.FC<StripeCheckoutFormProps> = ({
@@ -50,7 +51,7 @@ const StripeCheckoutForm: React.FC<StripeCheckoutFormProps> = ({
             } else {
                 onPaymentStatusChange('completed')
             }
-        } catch (err) {
+        } catch {
             const errorMessage = 'An unexpected error occurred. Please try again.'
             setPaymentError(errorMessage)
             onPaymentStatusChange('failed')

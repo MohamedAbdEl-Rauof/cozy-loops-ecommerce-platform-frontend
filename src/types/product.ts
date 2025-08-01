@@ -67,7 +67,7 @@ export interface Product {
   numReviews: number;
   createdAt: string;
   updatedAt: string;
-  variants: any[];
+  variants: ProductVariant[];
   rating: number;
   reviewCount: number;
   inStock: boolean;
@@ -135,7 +135,7 @@ export interface ProductColor {
 }
 
 export interface ProductDetailsProps {
-  id: string;
+  id?: string;
   name: string;
   images: ProductImage[];
   rating: number;
@@ -150,4 +150,5 @@ export interface ProductDetailsProps {
   isFavorite?: boolean;
   discountPercentage?: number;
   mainImage: string
+  _id?: string;
 }
