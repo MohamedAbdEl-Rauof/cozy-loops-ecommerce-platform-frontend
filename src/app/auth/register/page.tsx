@@ -42,11 +42,11 @@ const registrationSchema = z
     firstName: z
       .string()
       .min(2, { message: "First name is required" })
-      .max(10, { message: "First name must be less than 10 characters" }),
+      .max(20, { message: "First name must be less than 20 characters" }),
     lastName: z
       .string()
       .min(2, { message: "Last name is required" })
-      .max(10, { message: "Last name must be less than 10 characters" }),
+      .max(20, { message: "Last name must be less than 20 characters" }),
     password: z
       .string()
       .min(8, { message: "Password must be at least 8 characters" })
@@ -551,7 +551,7 @@ export default function RegistrationPage() {
                       label={
                         <Typography variant="body2" color="black">
                           I agree to the
-                          <Link href="/auth/register" sx={{ color: "var(--primary-color)" }} underline="hover">
+                          <Link href="#" sx={{ color: "var(--primary-color)" }} underline="hover">
                             Terms of Services
                           </Link>
                         </Typography>
