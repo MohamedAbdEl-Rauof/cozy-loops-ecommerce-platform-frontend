@@ -229,12 +229,12 @@ interface ProductsData {
 }
 
 interface SimilarProductsProps {
-    Products: ProductsData;
+    productsData: ProductsData;
     onQuickView?: (categoryId: string, productId: string) => void;
 }
 
 const SimilarProducts: React.FC<SimilarProductsProps> = ({
-    Products,
+    productsData,
     onQuickView
 }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -252,7 +252,7 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
     const { removeFromWishlist } = useRemoveFromWishlist();
 
     const productsPerPage = 3;
-    const totalProducts = Products.productsData.length;
+    const totalProducts = productsData.productsData.length;
     const maxIndex = Math.max(0, totalProducts - productsPerPage);
 
 
@@ -291,7 +291,7 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
 
 
     const handleQuickView = (productId: string) => {
-        const product = Products.productsData.find(p => p.id === productId);
+        const product = productsData.productsData.find(p => p.id === productId);
         if (onQuickView && product && product.categorySlug && product.slug) {
             onQuickView(product.categorySlug, product.slug);
         }
@@ -327,7 +327,7 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
     };
 
     const getCurrentProducts = () => {
-        return Products.productsData.slice(currentIndex, currentIndex + productsPerPage);
+        return productsData.productsData.slice(currentIndex, currentIndex + productsPerPage);
     };
 
     const handleDotClick = (dotIndex: number) => {
@@ -475,7 +475,7 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                                 }
                             }}
                         >
-                            {Products.title}
+                            {productsData.title}
                         </Typography>
                     </Box>
 

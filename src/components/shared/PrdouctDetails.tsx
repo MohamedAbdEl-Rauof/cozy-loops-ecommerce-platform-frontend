@@ -27,10 +27,19 @@ import React, { useState } from 'react';
 import { useAddToCart, useCart, useUpdateCart } from '@/hooks/useCart';
 import { ProductDetailsProps } from '@/types/product';
 
+
+
 const ProductDetails: React.FC<ProductDetailsProps> = ({
+  productData,
+  onToggleFavorite,
+}) => {
+  if (!productData) return <p>No product data available.</p>;
+
+  const {
     _id,
     name,
     images,
+    mainImage,
     rating,
     reviewCount,
     inStock,
@@ -39,14 +48,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     originalPrice,
     colors,
     description,
-    onToggleFavorite,
-    discountPercentage = 0,
-    isFavorite = false,
-    mainImage
-}) => {
-    const [selectedImage, setSelectedImage] = useState(
-        mainImage || images[0]?.url || ''
-    );
+    discountPercentage,
+    isFavorite,
+  } = productData;
+
+  const [selectedImage, setSelectedImage] = useState(
+    mainImage || images[0]?.url || ""
+  );
     const [selectedColor, setSelectedColor] = useState(colors[0]?.value || '');
     const [quantity, setQuantity] = useState(1);
     const { addToCart, isPending: isAddingToCart } = useAddToCart();

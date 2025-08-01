@@ -63,11 +63,11 @@ interface Review {
 }
 
 interface ExisitingCommentsProps {
-    mockComments: Review[];
-    onRefetch: () => void;
+    commentsData: Review[];
+    onRefresh: () => void;
 }
 
-const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) => {
+const ExisitingComments = ({ commentsData, onRefresh }: ExisitingCommentsProps) => {
     const { user } = useAuth();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
@@ -117,7 +117,7 @@ const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) 
             setEditRating(null);
 
             // Refresh the reviews list
-            onRefetch();
+            onRefresh();
 
         } catch (error) {
             console.error('Error updating review:', error);
@@ -133,7 +133,7 @@ const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) 
     };
 
 
-    const reviewsWithOwnership = mockComments.map(review => ({
+    const reviewsWithOwnership = commentsData.map(review => ({
         ...review,
         isOwner: user?.id === review.user._id
     }));
@@ -148,7 +148,7 @@ const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) 
     };
 
     const handleEditClick = () => {
-        const review = mockComments.find(r => r._id === selectedReviewId);
+        const review = commentsData.find(r => r._id === selectedReviewId);
         if (review) {
             setEditComment(review.comment);
             setEditRating(review.rating);
@@ -189,7 +189,7 @@ const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) 
             setSelectedReviewId(null);
 
             // Refresh the reviews list
-            onRefetch();
+            onRefresh();
 
         } catch (error) {
             console.error('Error deleting review:', error);
@@ -257,7 +257,7 @@ const ExisitingComments = ({ mockComments, onRefetch }: ExisitingCommentsProps) 
                 }}
             >
                 <StarIcon sx={{ color: '#F59E0B' }} />
-                Customer Reviews ({mockComments.length})
+                Customer Reviews ({commentsData.length})
             </Typography>
 
             {reviewsWithOwnership.map((comment) => (

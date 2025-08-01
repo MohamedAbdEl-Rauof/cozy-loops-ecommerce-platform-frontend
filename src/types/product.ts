@@ -114,12 +114,12 @@ export interface MakerInfo {
 export interface StoryFeatureProps {
   title: string;
   makerInfo: MakerInfo;
-  buttonText1: string;
-  buttonText2: string;
-  imageSrc: string;
-  imageAlt: string;
-  onButton1Click?: () => void;
-  onButton2Click?: () => void;
+  buttonText1?: string;
+  buttonText2?: string;
+  imageSrc?: string;
+  imageAlt?: string;
+  onShopClick?: () => void;
+  onViewMoreClick?: () => void;
 }
 
 
@@ -135,21 +135,31 @@ export interface ProductColor {
   available: boolean;
 }
 
+export interface ProductImage {
+  url: string;
+}
+
 export interface ProductDetailsProps {
-  id?: string;
-  name: string;
-  images: ProductImage[];
-  rating: number;
-  reviewCount: number;
-  inStock: boolean;
-  stockCount?: number;
-  price: number;
-  originalPrice?: number;
-  colors: ProductColor[];
-  description?: string;
-  onToggleFavorite?: () => void;
-  isFavorite?: boolean;
-  discountPercentage?: number;
-  mainImage: string
-  _id?: string;
+  productData: {
+    _id: string;
+    name: string;
+    images: ProductImage[];
+    mainImage: string;
+    rating: number;
+    reviewCount: number;
+    inStock: boolean;
+    stockCount: number;
+    price: number;
+    originalPrice?: number;
+    colors: Array<{
+      name: string;
+      value: string;
+      available: boolean;
+    }>;
+    description: string;
+    discountPercentage: number;
+    isFavorite: boolean;
+    category: any;
+  } | null;
+  onToggleFavorite: () => void;
 }
