@@ -474,8 +474,8 @@ const AboutMaker = ({
                             />
                         ) : (
                             <Image
-                                src={imageSrc}
-                                alt={imageAlt}
+                                src={imageSrc || '/images/shared/storyFeature.jpg'}
+                                alt={imageAlt || 'Image'}
                                 fill
                                 style={{
                                     objectFit: 'cover',

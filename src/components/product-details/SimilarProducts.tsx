@@ -251,8 +251,9 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
     const { addToWishlist } = useAddToWishlist();
     const { removeFromWishlist } = useRemoveFromWishlist();
 
+    console.log('productsDataproductsData', productsData);
     const productsPerPage = 3;
-    const totalProducts = productsData.productsData.length;
+    const totalProducts = productsData?.productsData?.length || 0;
     const maxIndex = Math.max(0, totalProducts - productsPerPage);
 
 
@@ -327,8 +328,13 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
     };
 
     const getCurrentProducts = () => {
+        if (!productsData?.productsData || !Array.isArray(productsData.productsData)) {
+            return []; 
+        }
+
         return productsData.productsData.slice(currentIndex, currentIndex + productsPerPage);
     };
+
 
     const handleDotClick = (dotIndex: number) => {
         setCurrentIndex(dotIndex);

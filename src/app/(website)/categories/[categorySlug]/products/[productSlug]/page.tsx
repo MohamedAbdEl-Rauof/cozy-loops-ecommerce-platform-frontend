@@ -108,7 +108,7 @@ const ProductPage = () => {
   }
 
   return (
-    <Box component="main" sx={{ bgcolor: '#fafafa' }}>
+    <Box component="main" sx={{ bgcolor: '#fafafa', minHeight: '100vh' }}>
       <SmallNavbar
         category={product.category?.name || "Category"}
         page1={product.category?.name || "Products"}
@@ -194,7 +194,7 @@ const ProductPage = () => {
             title="About The Maker"
             makerInfo={makerInfo}
             imageSrc={makerData?.image || product?.maker?.image || "/images/shared/storyFeature.jpg"}
-            imageAlt={`${makerName} crafting beautiful handmade pieces`}
+            imageAlt={`${makerData?.name} crafting beautiful handmade pieces`}
             onShopClick={handleMakerShopClick}
             onViewMoreClick={handleViewMoreClick}
           />
