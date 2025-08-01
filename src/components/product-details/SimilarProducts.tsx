@@ -1,6 +1,6 @@
 "use client"
-import { useAddToCart, useCart, useUpdateCart } from '@/hooks/useCart';
-import { useAddToWishlist, useRemoveFromWishlist, useWishlist } from '@/hooks/useWishlist';
+import React, { useEffect, useRef, useState } from 'react';
+
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -22,7 +22,10 @@ import {
     Tooltip,
 } from '@mui/material';
 import { styled, keyframes } from '@mui/material/styles';
-import React, { useEffect, useRef, useState } from 'react';
+
+import { useAddToCart, useCart, useUpdateCart } from '@/hooks/useCart';
+import { useAddToWishlist, useRemoveFromWishlist, useWishlist } from '@/hooks/useWishlist';
+
 
 // Enhanced animations
 const slideInUp = keyframes`

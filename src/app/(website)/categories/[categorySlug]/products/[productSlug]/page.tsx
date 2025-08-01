@@ -1,8 +1,10 @@
 'use client'
 
-import { Box, Container, CircularProgress, Alert } from '@mui/material';
-import { useParams } from 'next/navigation';
 import React, { useMemo } from 'react';
+
+import { useParams, useRouter } from 'next/navigation';
+
+import { Box, Container, CircularProgress, Alert } from '@mui/material';
 
 import ExisitingComments from '@/components/about/ExisitingComments';
 import AbountMaker from '@/components/product-details/AbountMaker';
@@ -17,7 +19,6 @@ import { useProductFromCategory } from '@/hooks/useProducts';
 import { useProductsTestimonialsBySlug } from '@/hooks/useTestimonials';
 import { useAddToWishlist, useRemoveFromWishlist, useWishlist } from '@/hooks/useWishlist';
 import { ProductImage } from '@/types/product';
-import { useRouter } from 'next/navigation';
 
 const createImagesArray = (mainImage: string, images: string[] = []): string[] => {
 
