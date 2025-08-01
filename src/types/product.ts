@@ -10,6 +10,7 @@ export interface Maker {
   slug: string;
   location: string;
   image: string;
+  products: Product[];
 }
 
 export interface ProductAttribute {

@@ -2,7 +2,7 @@
 
 import { Box, Container, CircularProgress, Alert } from '@mui/material';
 import { useParams } from 'next/navigation';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import ExisitingComments from '@/components/about/ExisitingComments';
 import AbountMaker from '@/components/product-details/AbountMaker';
@@ -11,12 +11,13 @@ import SimilarProducts from '@/components/product-details/SimilarProducts';
 import FeatureCardsSection from '@/components/shared/FeatureCardsSection';
 import ProductDetails from '@/components/shared/PrdouctDetails';
 import SmallNavbar from '@/components/shared/SmallNavbar';
-import { FeatureCardsSectionData, FeatureCardsSectionData2, similarProductsData } from '@/data/pages/productDetailsPageData';
-import { useMakersBySlug } from '@/hooks/useMakers';
+import { FeatureCardsSectionData, FeatureCardsSectionData2 } from '@/data/pages/productDetailsPageData';
+import { useMakerProducts, useMakersBySlug } from '@/hooks/useMakers';
 import { useProductFromCategory } from '@/hooks/useProducts';
 import { useProductsTestimonialsBySlug } from '@/hooks/useTestimonials';
 import { useAddToWishlist, useRemoveFromWishlist, useWishlist } from '@/hooks/useWishlist';
 import { ProductImage } from '@/types/product';
+import { useRouter } from 'next/navigation';
 
 const createImagesArray = (mainImage: string, images: string[] = []): string[] => {
 
@@ -89,7 +90,7 @@ const ProductPage = () => {
 
   const categorySlug = params.categorySlug as string;
   const productSlug = params.productSlug as string;
-
+  const router = useRouter()
   const {
     data: product,
     isLoading,
@@ -119,6 +120,76 @@ const ProductPage = () => {
 
   const handleCommentSubmitted = () => {
     refetchTestimonials();
+  };
+
+  const { data: makerProductsData } = useMakerProducts(product?.maker?._id || '');
+
+  console.log('makerProductsData', makerProductsData);
+
+  // Move makerName definition before useMemo
+  const makerName = makerData?.name || product?.maker?.name || "Unknown Maker";
+
+
+
+
+  // Add this import at the top with other imports
+
+
+  const similarProductsData = useMemo(() => {
+    if (!makerProductsData?.products || makerProductsData.products.length === 0) {
+      return {
+        title: "Similar Products",
+        productsData: []
+      };
+    }
+
+    const filteredProducts = makerProductsData.products
+      .filter(p => {
+        const isCurrentProduct = p._id === product?._id;
+        return !isCurrentProduct;
+      })
+      .slice(0, 10)
+      .map(p => ({
+        id: p._id,
+        title: p.name,
+        image: p.mainImage || (p.images && p.images[0]) || "/images/shared/featuredCategory.jpg",
+        price: p.price,
+        categoryId: p.category?.slug,
+        categorySlug: p.category?.slug,  
+        slug: p.slug,                    
+        category: p.category?.name || product?.category?.name
+      }));
+
+    return {
+      title: `More from ${makerName}`,
+      productsData: filteredProducts
+    };
+  }, [makerProductsData, product?._id, makerName, categorySlug, product?.category]);
+
+  const handleQuickView = (categorySlug: string, productSlug: string) => {
+    router.push(`/categories/${categorySlug}/products/${productSlug}`);
+  };
+  // Helper function to safely calculate years of experience
+  const calculateYearsOfExperience = (joinDate: string | undefined): number => {
+    if (!joinDate) return 0;
+    try {
+      return new Date().getFullYear() - new Date(joinDate).getFullYear();
+    } catch {
+      return 0;
+    }
+  };
+
+  // Helper function to safely format join date
+  const formatJoinDate = (joinDate: string | undefined): string => {
+    if (!joinDate) return "Unknown";
+    try {
+      return new Date(joinDate).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long'
+      });
+    } catch {
+      return "Unknown";
+    }
   };
 
   if (isLoading) {
@@ -175,31 +246,6 @@ const ProductPage = () => {
       addToWishlist(product._id);
     }
   };
-
-  // Helper function to safely calculate years of experience
-  const calculateYearsOfExperience = (joinDate: string | undefined): number => {
-    if (!joinDate) return 0;
-    try {
-      return new Date().getFullYear() - new Date(joinDate).getFullYear();
-    } catch {
-      return 0;
-    }
-  };
-
-  // Helper function to safely format join date
-  const formatJoinDate = (joinDate: string | undefined): string => {
-    if (!joinDate) return "Unknown";
-    try {
-      return new Date(joinDate).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long'
-      });
-    } catch {
-      return "Unknown";
-    }
-  };
-
-  const makerName = makerData?.name || product?.maker?.name || "Unknown Maker";
 
   return (
     <Box component="main" sx={{ bgcolor: '#fafafa' }}>
@@ -337,7 +383,7 @@ const ProductPage = () => {
         >
           <SimilarProducts
             Products={similarProductsData}
-            onAddToCart={() => console.log("Product added to cart")}
+            onQuickView={handleQuickView}
           />
         </Box>
 
