@@ -74,14 +74,32 @@ export default function VerifyEmailContent() {
         }
     }, [isAuthenticated, authLoading, isUserAuthenticated]);
 
+
     useEffect(() => {
-        if (verificationStatus === 'success' && redirectCountdown > 0) {
+        // Only redirect if verification is successful and user is not authenticated via token
+        if (verificationStatus === 'success' && !token && redirectCountdown > 0) {
             const timer = setTimeout(() => setRedirectCountdown(prev => prev - 1), 1000);
             return () => clearTimeout(timer);
-        } else if (verificationStatus === 'success' && redirectCountdown === 0) {
-            router.push('/');
+        } else if (verificationStatus === 'success' && !token && redirectCountdown === 0) {
+            router.push('/auth/login?verified=true');
         }
-    }, [verificationStatus, redirectCountdown, router]);
+    }, [verificationStatus, redirectCountdown, router, token]);
+
+    // Add a separate effect for handling successful verification with token
+    useEffect(() => {
+        if (verificationStatus === 'success' && token) {
+            // If we have a token and verification is successful, redirect after a short delay
+            const timer = setTimeout(() => {
+                if (isUserAuthenticated()) {
+                    router.push('/'); // Go to dashboard if authenticated
+                } else {
+                    router.push('/auth/login?verified=true'); // Go to login if not authenticated
+                }
+            }, 3000); // 3 second delay to show success message
+
+            return () => clearTimeout(timer);
+        }
+    }, [verificationStatus, token, router, isUserAuthenticated]);
 
     useEffect(() => {
         if (resendCountdown > 0 && isResendDisabled) {
@@ -100,6 +118,9 @@ export default function VerifyEmailContent() {
         });
     }, []);
 
+
+
+
     const handleVerificationSuccess = useCallback(async (authToken?: string) => {
         setVerificationStatus('success');
         setVerificationMessage('Your email has been successfully verified!');
@@ -115,17 +136,56 @@ export default function VerifyEmailContent() {
                         accessToken = tokenData.accessToken;
                         refreshTokenValue = tokenData.refreshToken;
                     }
-                } catch (e) {
-                    console.error('Error parsing token data:', e);
+                } catch {
+                    // authToken is likely just a string token
+                    console.log('Using token as string');
                 }
 
-                await loginWithToken(accessToken, refreshTokenValue);
+                // Attempt auto-login
+                const loginSuccess = await loginWithToken(accessToken, refreshTokenValue);
+
+                if (loginSuccess) {
+                    // Show success message briefly then redirect to home page
+                    showNotification('Email verified and logged in successfully!', 'success');
+                    setTimeout(() => {
+                        router.push('/'); // Go to home page after successful verification and login
+                    }, 2000);
+                    return; // Important: return here to prevent further execution
+                } else {
+                    // Auto-login failed, redirect to login page
+                    showNotification('Email verified! Please log in to continue.', 'info');
+                    setTimeout(() => {
+                        router.push('/auth/login?verified=true');
+                    }, 2000);
+                    return; // Important: return here to prevent further execution
+                }
             }
+
+            // No auth token provided - just verification successful
+            showNotification('Email verified successfully! Please log in to continue.', 'success');
+            setTimeout(() => {
+                router.push('/auth/login?verified=true');
+            }, 2000);
         } catch (error) {
             console.error('Auto-login failed:', error);
-            setTimeout(() => router.push('/auth/login?verified=true'), 2000);
+            showNotification('Email verified! Please log in to continue.', 'info');
+            setTimeout(() => {
+                router.push('/auth/login?verified=true');
+            }, 2000);
         }
-    }, [loginWithToken, router]);
+    }, [loginWithToken, router, showNotification]);
+
+    // Remove the separate useEffect for token-based verification since it's handled in handleVerificationSuccess
+    // Keep only the useEffect for non-token verification
+    useEffect(() => {
+        // Only redirect if verification is successful, no token in URL, and countdown reaches 0
+        if (verificationStatus === 'success' && !token && redirectCountdown > 0) {
+            const timer = setTimeout(() => setRedirectCountdown(prev => prev - 1), 1000);
+            return () => clearTimeout(timer);
+        } else if (verificationStatus === 'success' && !token && redirectCountdown === 0) {
+            router.push('/auth/login?verified=true');
+        }
+    }, [verificationStatus, redirectCountdown, router, token]);
 
     useEffect(() => {
         const verifyToken = async () => {
@@ -146,15 +206,16 @@ export default function VerifyEmailContent() {
                     {
                         method: 'GET',
                         headers: { 'Content-Type': 'application/json' },
-                        redirect: 'manual'
+                        credentials: 'include'
                     }
                 );
 
-                if (response.ok || response.status === 302) {
+                if (response.ok) {
                     localStorage.setItem(tokenKey, 'true');
 
                     try {
                         const data = await response.json();
+                        console.log('Verification response:', data);
 
                         if (data.token && data.refreshToken) {
                             const tokenData = JSON.stringify({
@@ -165,33 +226,58 @@ export default function VerifyEmailContent() {
                         } else if (data.token) {
                             handleVerificationSuccess(data.token);
                         } else {
-                            handleVerificationSuccess(token);
+                            // Verification successful but no tokens returned
+                            handleVerificationSuccess();
                         }
                     } catch (parseError) {
                         console.error('Error parsing response:', parseError);
-                        handleVerificationSuccess(token);
+                        handleVerificationSuccess();
                     }
+                } else if (response.status === 302) {
+                    // Handle redirect response
+                    localStorage.setItem(tokenKey, 'true');
+                    handleVerificationSuccess();
+                } else {
+                    // Verification failed - show error and don't redirect
+                    const errorData = await response.json().catch(() => ({}));
+                    const errorMessage = errorData.message || 'Verification failed';
+
+                    setVerificationStatus('error');
+                    setVerificationMessage(errorMessage);
+                    showNotification(errorMessage, 'error');
+
+                    // Don't redirect on error - let user stay on verification page
+                    return;
                 }
             } catch (error) {
                 console.error('Email verification failed:', error);
-                const errorMessage = error instanceof Error ? error.message : '';
+                const errorMessage = error instanceof Error ? error.message : 'Network error occurred';
 
-                if (errorMessage.includes('already') || errorMessage.includes('used')) {
-                    setVerificationStatus('success');
-                    setVerificationMessage('Your email has already been verified. You can now log in.');
-                    setTimeout(() => router.push('/auth/login?verified=true'), 3000);
-                } else {
-                    setVerificationStatus('error');
-                    setVerificationMessage(errorMessage || 'Failed to verify email. The link may be invalid.');
-                    showNotification(errorMessage || 'Failed to verify email', 'error');
-                }
+                setVerificationStatus('error');
+                setVerificationMessage(errorMessage);
+                showNotification(errorMessage, 'error');
+
+                // Don't redirect on error - let user stay on verification page
             }
         };
 
         if (token) {
             verifyToken();
         }
-    }, [token, handleVerificationSuccess, router, showNotification]);
+    }, [token, handleVerificationSuccess, showNotification]); // Remove router from dependencies
+
+    // Update the redirect useEffect to only work when there's no token
+    useEffect(() => {
+        // Only redirect if verification is successful, no token in URL, and countdown reaches 0
+        if (verificationStatus === 'success' && !token && redirectCountdown > 0) {
+            const timer = setTimeout(() => setRedirectCountdown(prev => prev - 1), 1000);
+            return () => clearTimeout(timer);
+        } else if (verificationStatus === 'success' && !token && redirectCountdown === 0) {
+            router.push('/auth/login?verified=true');
+        }
+    }, [verificationStatus, redirectCountdown, router, token]);
+
+    // Remove the separate effect for token-based verification since it's handled in handleVerificationSuccess
 
     const handleResendVerification = async () => {
         setLoading(true);
