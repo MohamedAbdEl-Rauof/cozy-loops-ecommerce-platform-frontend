@@ -30,19 +30,14 @@ const ProductPage = () => {
   const router = useRouter();
   const categorySlug = params.categorySlug as string;
   const productSlug = params.productSlug as string;
-
-  // Hooks
   const { isInWishlist } = useWishlist();
   const { addToWishlist } = useAddToWishlist();
   const { removeFromWishlist } = useRemoveFromWishlist();
-
-  // Data fetching
   const { data: product, isLoading, error } = useProductFromCategory(categorySlug, productSlug);
   const { data: testimonials, refetch: refetchTestimonials } = useProductsTestimonialsBySlug(productSlug);
   const { data: makerData } = useMakersBySlug(product?.maker?.slug || '');
   const { data: makerProductsData } = useMakerProducts(product?.maker?._id || '');
 
-  // Transformed data
   const productData = useMemo(() =>
     product ? transformProductData(product, testimonials, isInWishlist) : null,
     [product, testimonials, isInWishlist]
@@ -53,17 +48,22 @@ const ProductPage = () => {
     [makerData, product]
   );
 
-  const similarProductsData = useMemo(() =>
-    transformSimilarProducts(makerProductsData, product?._id, makerInfo.name, product?.category?.name),
-    [makerProductsData, product?._id, makerInfo.name, product?.category?.name]
-  );
+  const similarProductsData = useMemo(() => {
+    if (!product?._id) {
+      return { title: "Similar Products", productsData: [] };
+    }
 
-  const commentsData = useMemo(() =>
-    transformCommentsData(testimonials, product?._id),
-    [testimonials, product?._id]
-  );
+    return transformSimilarProducts(makerProductsData, product._id, makerInfo.name, product?.category?.name);
+  }, [makerProductsData, product?._id, makerInfo.name, product?.category?.name]);
 
-  // Event handlers
+  const commentsData = useMemo(() => {
+    if (!product?._id) {
+      return [];
+    }
+
+    return transformCommentsData(testimonials, product._id);
+  }, [testimonials, product?._id]);
+
   const handleToggleFavorite = () => {
     if (!product) return;
     isInWishlist(product._id) ? removeFromWishlist(product._id) : addToWishlist(product._id);
@@ -83,7 +83,6 @@ const ProductPage = () => {
     // router.push(`/products?maker=${makerData?.slug}`);
   };
 
-  // Loading state
   if (isLoading) {
     return (
       <Box component="main" sx={{ bgcolor: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
@@ -92,8 +91,6 @@ const ProductPage = () => {
     );
   }
 
-
-  // Error states
   if (error || !product) {
     const errorMessage = error instanceof Error ? error.message : 'Product not found';
     return (
@@ -108,7 +105,15 @@ const ProductPage = () => {
   }
 
   return (
-    <Box component="main" sx={{ bgcolor: '#fafafa', minHeight: '100vh' }}>
+    <Box
+      component="main"
+      sx={{
+        bgcolor: '#fafafa',
+        minHeight: '100vh',
+        width: '100%',
+        overflow: 'hidden'
+      }}
+    >
       <SmallNavbar
         category={product.category?.name || "Category"}
         page1={product.category?.name || "Products"}
@@ -117,25 +122,20 @@ const ProductPage = () => {
 
       <Container
         maxWidth={false}
+        disableGutters
         sx={{
-          maxWidth: {
-            xs: '100%',
-            sm: '100%',
-            md: '1400px',
-            lg: '1600px',
-            xl: '1850px'
-          },
-          mx: 'auto',
+          width: '100%',
+          maxWidth: 'none',
+          px: { xs: 1, sm: 2, md: 3, lg: 4 },
+          pb: { xs: 4, sm: 6, md: 8 }
         }}
       >
-        {/* Product Details Section */}
+
         <Box
           component="section"
           sx={{
             py: { xs: 4, sm: 6, md: 8 },
-            bgcolor: 'white',
-            borderRadius: { xs: 0, md: '16px 16px 0 0' },
-            boxShadow: { xs: 'none', md: '0 4px 20px rgba(0,0,0,0.08)' }
+            width: '100%'
           }}
         >
           <ProductDetails
@@ -144,50 +144,31 @@ const ProductPage = () => {
           />
         </Box>
 
-        {/* Feature Cards Section */}
         <Box
           component="section"
           sx={{
             mb: { xs: 6, sm: 8, md: 10, lg: 12 },
             mt: { xs: 4, sm: 6, md: 8 },
-            px: { xs: 2, sm: 3, md: 4 }
+            px: { xs: 2, sm: 3, md: 4 },
+            width: '100%'
           }}
         >
-          <FeatureCardsSection
-            sectionTitle={FeatureCardsSectionData.sectionTitle}
-            sectionDescription={FeatureCardsSectionData.sectionDescription}
-            cards={FeatureCardsSectionData.cards}
-          />
+          <Container maxWidth="xl">
+            <FeatureCardsSection
+              sectionTitle={FeatureCardsSectionData.sectionTitle}
+              sectionDescription={FeatureCardsSectionData.sectionDescription}
+              cards={FeatureCardsSectionData.cards}
+            />
+          </Container>
         </Box>
 
-        {/* About The Maker Section */}
         <Box
           component="section"
           sx={{
             py: { xs: 6, sm: 8, md: 10 },
             mb: { xs: 4, sm: 6, md: 8 },
-            bgcolor: 'white',
-            borderRadius: '16px',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.06)',
-            border: '1px solid rgba(0,0,0,0.04)',
             mx: { xs: 1, sm: 2, md: 3 },
-            overflow: 'hidden',
-            position: 'relative',
-            '&::before': {
-              content: '""',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              height: '4px',
-              background: 'linear-gradient(90deg, #1976d2, #42a5f5, #1976d2)',
-              backgroundSize: '200% 100%',
-              animation: 'shimmer 3s ease-in-out infinite',
-            },
-            '@keyframes shimmer': {
-              '0%': { backgroundPosition: '-200% 0' },
-              '100%': { backgroundPosition: '200% 0' }
-            }
+            width: 'calc(100% - 16px)'
           }}
         >
           <AboutMaker
@@ -200,72 +181,49 @@ const ProductPage = () => {
           />
         </Box>
 
-        {/* Comments Section */}
-        <Box
-          component="section"
-          sx={{
-            py: { xs: 6, sm: 8, md: 10 },
-            mb: { xs: 4, sm: 6, md: 8 },
-            bgcolor: 'white',
-            borderRadius: '16px',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.06)',
-            border: '1px solid rgba(0,0,0,0.04)',
-            mx: { xs: 1, sm: 2, md: 3 }
-          }}
-        >
+        <Box component="section" >
           <Comments onCommentSubmitted={() => refetchTestimonials()} />
         </Box>
 
-        {/* Existing Comments Section */}
         <Box
           component="section"
           sx={{
             py: { xs: 6, sm: 8, md: 10 },
             mb: { xs: 4, sm: 6, md: 8 },
-            bgcolor: 'white',
-            borderRadius: '16px',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.06)',
-            border: '1px solid rgba(0,0,0,0.04)',
-            mx: { xs: 1, sm: 2, md: 3 }
+            mx: { xs: 1, sm: 2, md: 3 },
+            width: 'calc(100% - 16px)'
           }}
         >
-          <ExisitingComments commentsData={commentsData} onRefresh={() => refetchTestimonials()} />
+          <Container maxWidth="xl">
+            <ExisitingComments commentsData={commentsData} onRefresh={() => refetchTestimonials()} />
+          </Container>
         </Box>
 
-        {/* Similar Products Section */}
         {similarProductsData.productsData.length > 0 && (
-          <Box
-            component="section"
-            sx={{
-              py: { xs: 6, sm: 8, md: 10 },
-              mb: { xs: 4, sm: 6, md: 8 },
-              bgcolor: 'white',
-              borderRadius: '16px',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.06)',
-              border: '1px solid rgba(0,0,0,0.04)',
-              mx: { xs: 1, sm: 2, md: 3 }
-            }}
-          >
+          <Box component="section" >
             <SimilarProducts
-              productsData={similarProductsData.productsData}
+              productsData={similarProductsData}
               onQuickView={handleQuickView}
             />
           </Box>
         )}
 
-        {/* Second Feature Cards Section */}
         <Box
           component="section"
           sx={{
             mb: { xs: 6, sm: 8, md: 10, lg: 12 },
-            px: { xs: 2, sm: 3, md: 4 }
+            px: { xs: 2, sm: 3, md: 4 },
+            py: { xs: 4, sm: 6, md: 8 },
+            width: '100%'
           }}
         >
-          <FeatureCardsSection
-            sectionTitle={FeatureCardsSectionData2.sectionTitle}
-            sectionDescription={FeatureCardsSectionData2.sectionDescription}
-            cards={FeatureCardsSectionData2.cards}
-          />
+          <Container maxWidth="xl">
+            <FeatureCardsSection
+              sectionTitle={FeatureCardsSectionData2.sectionTitle}
+              sectionDescription={FeatureCardsSectionData2.sectionDescription}
+              cards={FeatureCardsSectionData2.cards}
+            />
+          </Container>
         </Box>
       </Container>
     </Box>

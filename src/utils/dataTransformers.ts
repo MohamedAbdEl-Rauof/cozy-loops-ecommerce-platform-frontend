@@ -1,9 +1,10 @@
+import { MakerProduct, MakerProductsData } from "@/types/maker";
 import { calculateAverageRating, DEFAULT_COLORS, formatJoinDate, getYearsOfExperience, transformProductImages } from "./productHelpers";
 
 export const transformProductData = (product: any, testimonials: any, isInWishlist: (id: string) => boolean) => ({
   _id: product._id,
   name: product.name,
-  images: transformProductImages(product.mainImage, product.images, product.name),
+  images: transformProductImages(product.images, product.name),
   mainImage: product.mainImage,
   rating: calculateAverageRating(testimonials?.reviews),
   reviewCount: testimonials?.reviews?.length || 0,
@@ -20,7 +21,7 @@ export const transformProductData = (product: any, testimonials: any, isInWishli
 
 export const transformMakerData = (makerData: any, product: any) => {
   const makerName = makerData?.name || product?.maker?.name || "Unknown Maker";
-  
+
   return {
     name: makerName,
     location: makerData?.location || product?.maker?.location || "Unknown Location",
@@ -37,15 +38,16 @@ export const transformMakerData = (makerData: any, product: any) => {
   };
 };
 
-export const transformSimilarProducts = (makerProductsData: any, currentProductId: string, makerName: string, categoryName?: string) => {
+
+export const transformSimilarProducts = (makerProductsData: MakerProductsData | undefined, currentProductId: string, makerName: string, categoryName?: string) => {
   if (!makerProductsData?.products?.length) {
     return { title: "Similar Products", productsData: [] };
   }
 
   const filteredProducts = makerProductsData.products
-    .filter((p: any) => p._id !== currentProductId)
+    .filter((p: MakerProduct) => p._id !== currentProductId)
     .slice(0, 10)
-    .map((p: any) => ({
+    .map((p: MakerProduct) => ({
       id: p._id,
       title: p.name,
       image: p.mainImage || p.images?.[0] || "/images/shared/featuredCategory.jpg",

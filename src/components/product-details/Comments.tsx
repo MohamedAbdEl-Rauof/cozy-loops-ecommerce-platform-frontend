@@ -271,9 +271,7 @@ const Comments = ({ onCommentSubmitted }: CommentsProps) => {
                     md: '1200px',
                     lg: '1400px',
                     xl: '1600px'
-                },
-                px: { xs: 2, sm: 3, md: 4 },
-                py: { xs: 4, md: 6 },
+                }
             }}
         >
             <Snackbar

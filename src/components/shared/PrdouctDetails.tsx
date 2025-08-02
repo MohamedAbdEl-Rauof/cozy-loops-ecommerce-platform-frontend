@@ -26,41 +26,46 @@ import React, { useState } from 'react';
 
 import { useAddToCart, useCart, useUpdateCart } from '@/hooks/useCart';
 import { ProductDetailsProps } from '@/types/product';
+import AuthDialog from '@/components/dialogs/AuthDialog';
+import { useAuth } from '@/context/AuthContext';
 
 
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({
-  productData,
-  onToggleFavorite,
+    productData,
+    onToggleFavorite,
 }) => {
-  if (!productData) return <p>No product data available.</p>;
+    if (!productData) return <p>No product data available.</p>;
 
-  const {
-    _id,
-    name,
-    images,
-    mainImage,
-    rating,
-    reviewCount,
-    inStock,
-    stockCount,
-    price,
-    originalPrice,
-    colors,
-    description,
-    discountPercentage,
-    isFavorite,
-  } = productData;
+    const {
+        _id,
+        name,
+        images,
+        mainImage,
+        rating,
+        reviewCount,
+        inStock,
+        stockCount,
+        price,
+        originalPrice,
+        colors,
+        description,
+        discountPercentage,
+        isFavorite,
+    } = productData;
 
-  const [selectedImage, setSelectedImage] = useState(
-    mainImage || images[0]?.url || ""
-  );
+    const [selectedImage, setSelectedImage] = useState(
+        mainImage || images[0]?.url || ""
+    );
     const [selectedColor, setSelectedColor] = useState(colors[0]?.value || '');
     const [quantity, setQuantity] = useState(1);
     const { addToCart, isPending: isAddingToCart } = useAddToCart();
     const { updateCart, isPending: isUpdatingCart } = useUpdateCart();
     const { data: cartData } = useCart();
     const { enqueueSnackbar } = useSnackbar();
+    const [authDialogOpen, setAuthDialogOpen] = useState(false);
+    const [authDialogMessage, setAuthDialogMessage] = useState('');
+    const { user } = useAuth();
 
     const handleQuantityChange = (change: number) => {
         const newQuantity = quantity + change;
@@ -70,6 +75,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     };
 
     const handleAddToCart = async (productId: string) => {
+
+        if (!user) {
+            setAuthDialogMessage('Please log in to add items to your cart.');
+            setAuthDialogOpen(true);
+            return;
+        }
+
         if (isAddingToCart || isUpdatingCart) return;
 
         try {
@@ -125,6 +137,16 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 
             }
         }
+    };
+
+    const handleToggleFavorite = () => {
+        if (!user) {
+            setAuthDialogMessage('Please log in to manage your favorites.');
+            setAuthDialogOpen(true);
+            return;
+        }
+
+        onToggleFavorite();
     };
 
     return (
@@ -456,7 +478,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
 
                     <Box sx={{ display: 'flex', gap: 1 }}>
                         <IconButton
-                            onClick={onToggleFavorite}
+                            onClick={handleToggleFavorite}
                             sx={{
                                 border: '2px solid #e0e0e0',
                                 borderRadius: '12px',
@@ -565,6 +587,12 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
                     </Card>
                 </Box>
             </Box>
+            <AuthDialog
+                open={authDialogOpen}
+                onClose={() => setAuthDialogOpen(false)}
+                title="Login Required"
+                message={authDialogMessage}
+            />
         </Box>
     );
 };

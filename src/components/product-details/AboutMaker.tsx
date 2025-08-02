@@ -75,7 +75,7 @@ const AboutMaker = ({
                 justifyContent: 'center',
                 alignItems: 'center',
                 bgcolor: 'background.paper',
-                p: { xs: 2, sm: 3, md: 4 },
+                // p: { xs: 2, sm: 3, md: 4 },
                 width: '100%'
             }}
         >

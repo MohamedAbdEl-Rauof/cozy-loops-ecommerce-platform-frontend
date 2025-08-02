@@ -8,8 +8,8 @@ export const DEFAULT_COLORS = [
   { name: "Black", value: "#000000", available: true }
 ];
 
-export const transformProductImages = (mainImage: string, images: string[] = [], productName: string): ProductImage[] => {
-  const allImages = [mainImage, ...images].filter(Boolean);
+export const transformProductImages = ( images: string[] = [], productName: string): ProductImage[] => {
+  const allImages = [ ...images].filter(Boolean);
   
   if (allImages.length === 0) {
     return [{ id: '1', url: '/placeholder-product.jpg', alt: productName }];
