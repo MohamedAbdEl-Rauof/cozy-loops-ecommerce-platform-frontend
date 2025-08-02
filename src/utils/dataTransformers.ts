@@ -1,9 +1,13 @@
-import { Testimonial } from "@/types/Testimonial";
+import { ApiReview, ProductTestimonialsResponse } from "@/types/Testimonial";
 import { calculateAverageRating, DEFAULT_COLORS, formatJoinDate, getYearsOfExperience, transformProductImages } from "./productHelpers";
 import { Maker, MakerProduct, MakerProductsData } from "@/types/maker";
 import { Product } from "@/types/product";
 
-export const transformProductData = (product: Product, testimonials: Testimonial, isInWishlist: (id: string) => boolean) => ({
+export const transformProductData = (
+  product: Product,
+  testimonials: ProductTestimonialsResponse | undefined,
+  isInWishlist: (id: string) => boolean
+) => ({
   _id: product._id,
   name: product.name,
   images: transformProductImages(product.images, product.name),
@@ -21,9 +25,9 @@ export const transformProductData = (product: Product, testimonials: Testimonial
   category: product.category
 });
 
-export const transformMakerData = (makerData: Maker, product: MakerProduct) => {
+export const transformMakerData = (makerData: Maker | undefined, product: Product | undefined) => {
   const makerName = makerData?.name || product?.maker?.name || "Unknown Maker";
-  
+
   return {
     name: makerName,
     location: makerData?.location || product?.maker?.location || "Unknown Location",
@@ -40,15 +44,20 @@ export const transformMakerData = (makerData: Maker, product: MakerProduct) => {
   };
 };
 
-export const transformSimilarProducts = (makerProductsData: MakerProductsData, currentProductId: string, makerName: string, categoryName?: string) => {
+export const transformSimilarProducts = (
+  makerProductsData: MakerProductsData | undefined,
+  currentProductId: string,
+  makerName: string,
+  categoryName?: string
+) => {
   if (!makerProductsData?.products?.length) {
     return { title: "Similar Products", productsData: [] };
   }
 
   const filteredProducts = makerProductsData.products
-    .filter((p: any) => p._id !== currentProductId)
+    .filter((p: MakerProduct) => p._id !== currentProductId)
     .slice(0, 10)
-    .map((p: any) => ({
+    .map((p: MakerProduct) => ({
       id: p._id,
       title: p.name,
       image: p.mainImage || p.images?.[0] || "/images/shared/featuredCategory.jpg",
@@ -65,8 +74,11 @@ export const transformSimilarProducts = (makerProductsData: MakerProductsData, c
   };
 };
 
-export const transformCommentsData = (testimonials: Testimonial, productId: string) => {
-  return testimonials?.reviews?.map((review: any) => ({
+export const transformCommentsData = (
+  testimonials: ProductTestimonialsResponse | undefined,
+  productId: string
+) => {
+  return testimonials?.reviews?.map((review: ApiReview) => ({
     _id: review._id || review.id,
     id: review._id || review.id,
     user: {

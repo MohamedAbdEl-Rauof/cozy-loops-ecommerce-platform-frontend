@@ -13,6 +13,7 @@ export interface ProductTestimonialsResponse {
     userReview?: ApiReview;
   };
   message?: string;
+  reviews?: ApiReview[];
 }
 
 export interface ApiError {
@@ -33,11 +34,24 @@ export interface UpdateTestimonialResponse {
 
 export interface ApiReview {
   _id: string;
+  id?:string;
   user: {
     _id: string;
+    id?:string;
     firstName: string;
     lastName: string;
     Avatar: string;
+    avatar?:string;
+    verified?: boolean;
+    name?: string;
+    role?: string;
+    email?: string;
+    phoneNumber?: string;
+    addresses?:string[];
+    emailVerified?: boolean;
+    active?: boolean;
+    createdAt?: string;
+    updatedAt?: string;
   };
   product: string;
   comment: string;
@@ -52,6 +66,9 @@ export interface ApiReview {
   createdAt: string;
   updatedAt: string;
   __v: number;
+  date?: string;
+  dislikes?: number;
+  replies?: number;
 }
 
 export interface Testimonial {
@@ -102,7 +119,7 @@ interface User {
   Avatar: string;
 }
 
-interface Review {
+export interface Review {
   _id: string;
   user: User;
   product: string;
