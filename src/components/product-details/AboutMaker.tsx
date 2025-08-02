@@ -25,7 +25,6 @@ import {
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-
 import { StoryFeatureProps } from '@/types/product';
 
 const AboutMaker = ({
@@ -75,7 +74,6 @@ const AboutMaker = ({
                 justifyContent: 'center',
                 alignItems: 'center',
                 bgcolor: 'background.paper',
-                // p: { xs: 2, sm: 3, md: 4 },
                 width: '100%'
             }}
         >
@@ -123,7 +121,6 @@ const AboutMaker = ({
                         }
                     }}
                 >
-                    {/* Title */}
                     <Typography
                         variant={isXs ? "h5" : isSm ? "h4" : "h3"}
                         component="h2"
@@ -138,7 +135,6 @@ const AboutMaker = ({
                         {title}
                     </Typography>
 
-                    {/* Maker Info Card */}
                     <Box
                         sx={{
                             bgcolor: 'grey.50',
@@ -149,7 +145,6 @@ const AboutMaker = ({
                             borderColor: 'grey.200'
                         }}
                     >
-                        {/* Header with Avatar and Basic Info */}
                         <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 3 }}>
                             <Avatar
                                 src={makerInfo.avatar}
@@ -194,7 +189,6 @@ const AboutMaker = ({
                                     </Typography>
                                 </Box>
 
-                                {/* Rating and Reviews */}
                                 {makerInfo.rating && (
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                         <Rating
@@ -211,7 +205,6 @@ const AboutMaker = ({
                             </Box>
                         </Box>
 
-                        {/* Stats Row */}
                         {(makerInfo.yearsOfExperience || makerInfo.totalProducts || makerInfo.completedOrders) && (
                             <Box sx={{
                                 display: 'flex',
@@ -256,7 +249,6 @@ const AboutMaker = ({
                             </Box>
                         )}
 
-                        {/* Specialties */}
                         {makerInfo.specialties && makerInfo.specialties.length > 0 && (
                             <Box sx={{ mb: 3 }}>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
@@ -292,7 +284,6 @@ const AboutMaker = ({
 
                         <Divider sx={{ my: 2 }} />
 
-                        {/* Mini Bio */}
                         <Box>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                                 <Person sx={{ color: 'primary.main', fontSize: '1.1rem' }} />
@@ -324,7 +315,6 @@ const AboutMaker = ({
                             </Typography>
                         </Box>
 
-                        {/* Joined Date */}
                         {makerInfo.joinedDate && (
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 2 }}>
                                 <CalendarToday sx={{ color: 'text.secondary', fontSize: '1rem' }} />
@@ -341,14 +331,12 @@ const AboutMaker = ({
                         )}
                     </Box>
 
-                    {/* Action Buttons */}
                     <Box sx={{
                         display: 'flex',
                         flexDirection: { xs: 'column', sm: 'row' },
                         gap: { xs: 1.5, sm: 2 },
                         mt: 2
                     }}>
-                        {/* Primary Button (Contained) */}
                         <Button
                             variant="contained"
                             onClick={handleButton1Click}
@@ -374,7 +362,6 @@ const AboutMaker = ({
                             {buttonText1}
                         </Button>
 
-                        {/* Secondary Button (Outlined) */}
                         <Button
                             variant="text"
                             onClick={handleButton2Click}
@@ -398,7 +385,6 @@ const AboutMaker = ({
                         </Button>
                     </Box>
 
-                    {/* Artisan Badge */}
                     <Box sx={{ mt: 3, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                         <Chip
                             label="Verified Artisan"
@@ -427,7 +413,6 @@ const AboutMaker = ({
                     </Box>
                 </Box>
 
-                {/* Image Section */}
                 <Box
                     className={`image-section ${isVisible ? 'visible' : ''}`}
                     sx={{
@@ -490,7 +475,6 @@ const AboutMaker = ({
                             />
                         )}
 
-                        {/* Image Overlay with Gradient */}
                         <Box
                             sx={{
                                 position: 'absolute',

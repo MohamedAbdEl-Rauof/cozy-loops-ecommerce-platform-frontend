@@ -23,39 +23,41 @@ import React, { useState } from 'react';
 
 import { testimonialsService } from '@/services/testimonialsService';
 import { CreateTestimonialData } from '@/types/Testimonial';
+import { useAuth } from '@/context/AuthContext';
+import AuthDialog from '../dialogs/AuthDialog';
 
 
 const slideInUp = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    `;
 
 const pulse = keyframes`
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
-`;
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+    `;
 
 const shimmer = keyframes`
-  0% {
-    background-position: -200px 0;
-  }
-  100% {
-    background-position: calc(200px + 100%) 0;
-  }
-`;
+    0% {
+        background-position: -200px 0;
+    }
+    100% {
+        background-position: calc(200px + 100%) 0;
+    }
+    `;
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
     padding: theme.spacing(4),
@@ -129,7 +131,6 @@ const StyledTextField = styled(TextField)(() => ({
 const RatingContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(2),
     borderRadius: '12px',
-    // background: 'rgba(255, 248, 235, 0.6)',
     border: '1px solid rgba(217, 119, 6, 0.1)',
     transition: 'all 0.3s ease',
     '&:hover': {
@@ -148,7 +149,6 @@ interface CommentsProps {
 }
 
 const Comments = ({ onCommentSubmitted }: CommentsProps) => {
-
     const [formData, setFormData] = useState<CommentFormData>({
         comment: '',
         rating: null
@@ -159,10 +159,9 @@ const Comments = ({ onCommentSubmitted }: CommentsProps) => {
     const [showError, setShowError] = useState(false);
     const [hoveredRating, setHoveredRating] = useState<number | null>(null);
     const params = useParams();
-
     const productSlug = params.productSlug as string;
-
-
+    const [authDialogOpen, setAuthDialogOpen] = useState(false);
+    const { user } = useAuth();
 
     const handleCommentChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         setFormData(prev => ({
@@ -182,6 +181,11 @@ const Comments = ({ onCommentSubmitted }: CommentsProps) => {
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
+
+        if (!user) {
+            setAuthDialogOpen(true);
+            return;
+        }
 
         if (!formData.comment.trim() || !formData.rating) {
             return;
@@ -207,7 +211,6 @@ const Comments = ({ onCommentSubmitted }: CommentsProps) => {
                 onCommentSubmitted();
             }
 
-            // Hide success message after 5 seconds
             setTimeout(() => {
                 setShowSuccess(false);
             }, 5000);
@@ -261,6 +264,16 @@ const Comments = ({ onCommentSubmitted }: CommentsProps) => {
         return labels[value as keyof typeof labels];
     };
 
+    const getDisplayRating = () => {
+        if (hoveredRating !== null && hoveredRating > 0) {
+            return hoveredRating;
+        }
+        if (formData.rating !== null && formData.rating > 0) {
+            return formData.rating;
+        }
+        return null;
+    };
+
     return (
         <Container
             maxWidth={false}
@@ -271,7 +284,8 @@ const Comments = ({ onCommentSubmitted }: CommentsProps) => {
                     md: '1200px',
                     lg: '1400px',
                     xl: '1600px'
-                }
+                },
+                py: { xs: 2, md: 4 }
             }}
         >
             <Snackbar
@@ -285,10 +299,12 @@ const Comments = ({ onCommentSubmitted }: CommentsProps) => {
                     severity="error"
                     sx={{
                         width: '100%',
-                        borderRadius: '12px',
-                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                        border: '1px solid rgba(239, 68, 68, 0.2)',
+                        borderRadius: '16px',
+                        backgroundColor: 'rgba(239, 68, 68, 0.05)',
+                        border: '1px solid rgba(239, 68, 68, 0.15)',
                         color: '#dc2626',
+                        backdropFilter: 'blur(10px)',
+                        boxShadow: '0 8px 32px rgba(239, 68, 68, 0.1)',
                         '& .MuiAlert-icon': {
                             color: '#ef4444',
                         },
@@ -300,67 +316,95 @@ const Comments = ({ onCommentSubmitted }: CommentsProps) => {
 
             <Box
                 sx={{
-                    background: 'white',
-                    borderRadius: '24px',
-                    p: { xs: 3, md: 4 },
-                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-                    border: '1px solid rgba(217, 119, 6, 0.1)',
+                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 248, 235, 0.95) 100%)',
+                    borderRadius: '32px',
+                    p: { xs: 3, sm: 4, md: 6 },
+                    boxShadow: '0 20px 60px rgba(0, 0, 0, 0.08), 0 8px 25px rgba(217, 119, 6, 0.05)',
+                    border: '1px solid rgba(217, 119, 6, 0.08)',
+                    backdropFilter: 'blur(20px)',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        height: '4px',
+                        background: 'linear-gradient(90deg, #D97706 0%, #F59E0B 50%, #D97706 100%)',
+                        borderRadius: '32px 32px 0 0',
+                    }
                 }}
             >
-                {/* Header Section */}
-                <Box sx={{ textAlign: 'center', mb: 6 }}>
-                    <Typography
-                        variant="h3"
-                        component="h2"
+                <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 6 } }}>
+                    <Box
                         sx={{
-                            fontWeight: 800,
-                            fontSize: { xs: '2rem', md: '2.5rem' },
-                            background: 'linear-gradient(135deg, #D97706 0%, #B45309 100%)',
-                            backgroundClip: 'text',
-                            WebkitBackgroundClip: 'text',
-                            WebkitTextFillColor: 'transparent',
-                            mb: 2,
-                            animation: `${slideInUp} 0.8s ease-out`,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 2,
+                            mb: 3,
+                            p: 2,
+                            borderRadius: '20px',
+                            background: 'linear-gradient(135deg, rgba(217, 119, 6, 0.1) 0%, rgba(245, 158, 11, 0.05) 100%)',
+                            border: '1px solid rgba(217, 119, 6, 0.1)',
                         }}
                     >
-                        Share Your Review
-                    </Typography>
+                        <StarIcon sx={{ color: '#F59E0B', fontSize: '2rem' }} />
+                        <Typography
+                            variant="h3"
+                            component="h2"
+                            sx={{
+                                fontWeight: 800,
+                                fontSize: { xs: '1.8rem', md: '2.2rem' },
+                                background: 'linear-gradient(135deg, #D97706 0%, #B45309 100%)',
+                                backgroundClip: 'text',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                animation: `${slideInUp} 0.8s ease-out`,
+                            }}
+                        >
+                            Share Your Review
+                        </Typography>
+                    </Box>
                     <Typography
-                        variant="h6"
+                        variant="body1"
                         sx={{
-                            color: '#92400E',
+                            color: '#6B7280',
                             fontWeight: 500,
-                            maxWidth: '600px',
+                            maxWidth: '500px',
                             mx: 'auto',
                             lineHeight: 1.6,
+                            fontSize: { xs: '1rem', md: '1.1rem' },
                             animation: `${slideInUp} 0.8s ease-out 0.2s both`,
                         }}
                     >
-                        Help others make informed decisions with your experience
+                        Help others make informed decisions with your honest experience
                     </Typography>
                 </Box>
 
-                {/* Success Alert */}
                 <Fade in={showSuccess}>
                     <Alert
                         severity="success"
                         sx={{
                             mb: 4,
-                            borderRadius: '12px',
-                            backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                            border: '1px solid rgba(34, 197, 94, 0.2)',
+                            borderRadius: '20px',
+                            backgroundColor: 'rgba(34, 197, 94, 0.05)',
+                            border: '1px solid rgba(34, 197, 94, 0.15)',
                             color: '#15803d',
+                            backdropFilter: 'blur(10px)',
+                            boxShadow: '0 8px 32px rgba(34, 197, 94, 0.1)',
                             '& .MuiAlert-icon': {
                                 color: '#22c55e',
                             },
                             animation: `${pulse} 0.6s ease-in-out`,
                         }}
                     >
-                        Thank you for your review! Your comment has been submitted successfully.
+                        <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                            Thank you for your review! Your feedback has been submitted successfully.
+                        </Typography>
                     </Alert>
                 </Fade>
 
-                {/* Comment Form */}
                 <Box
                     component="form"
                     onSubmit={handleSubmit}
@@ -368,89 +412,149 @@ const Comments = ({ onCommentSubmitted }: CommentsProps) => {
                         animation: `${slideInUp} 0.8s ease-out 0.4s both`,
                     }}
                 >
-                    <StyledPaper>
-                        <Typography
-                            variant="h5"
-                            sx={{
-                                fontWeight: 700,
-                                mb: 3,
-                                color: '#92400E',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 1,
-                            }}
-                        >
-                            <StarIcon sx={{ color: '#F59E0B' }} />
-                            Write a Review
-                        </Typography>
-
-                        {/* Rating Section */}
-                        <RatingContainer sx={{ mb: 3 }}>
+                    <StyledPaper
+                        sx={{
+                            background: 'rgba(255, 255, 255, 0.8)',
+                            backdropFilter: 'blur(20px)',
+                            border: '1px solid rgba(217, 119, 6, 0.08)',
+                            borderRadius: '24px',
+                            p: { xs: 3, md: 4 },
+                        }}
+                    >
+                        <Box sx={{ mb: 4 }}>
                             <Typography
-                                variant="subtitle1"
+                                variant="h6"
                                 sx={{
-                                    fontWeight: 600,
-                                    mb: 2,
-                                    color: '#92400E',
+                                    fontWeight: 700,
+                                    mb: 3,
+                                    color: '#374151',
+                                    fontSize: { xs: '1.1rem', md: '1.25rem' },
                                 }}
                             >
-                                Rate this product *
+                                How would you rate this product? *
                             </Typography>
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
-                                <Rating
-                                    name="product-rating"
-                                    value={formData.rating}
-                                    onChange={handleRatingChange}
-                                    onChangeActive={(_event, newHover) => {
-                                        setHoveredRating(newHover);
-                                    }}
-                                    size="large"
-                                    sx={{
-                                        fontSize: '2rem',
-                                        '& .MuiRating-iconFilled': {
-                                            color: '#F59E0B',
-                                        },
-                                        '& .MuiRating-iconHover': {
-                                            color: '#D97706',
-                                        },
-                                        '& .MuiRating-iconEmpty': {
-                                            color: 'rgba(217, 119, 6, 0.2)',
-                                        }
-                                    }}
-                                />
-                                {(hoveredRating !== null || formData.rating !== null) && (
-                                    <Chip
-                                        label={getRatingLabel(hoveredRating || formData.rating || 0)}
+                            <RatingContainer
+                                sx={{
+                                    mb: 0,
+                                    background: 'rgba(255, 248, 235, 0.6)',
+                                    border: '1px solid rgba(217, 119, 6, 0.1)',
+                                    borderRadius: '16px',
+                                    p: 3,
+                                    transition: 'all 0.3s ease',
+                                    '&:hover': {
+                                        background: 'rgba(255, 248, 235, 0.9)',
+                                        borderColor: 'rgba(217, 119, 6, 0.2)',
+                                        transform: 'translateY(-2px)',
+                                        boxShadow: '0 8px 25px rgba(217, 119, 6, 0.1)',
+                                    }
+                                }}
+                            >
+                                <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: { xs: 'column', sm: 'row' },
+                                    alignItems: { xs: 'flex-start', sm: 'center' },
+                                    gap: { xs: 2, sm: 3 },
+                                }}>
+                                    <Rating
+                                        name="product-rating"
+                                        value={formData.rating}
+                                        onChange={handleRatingChange}
+                                        onChangeActive={(_event, newHover) => {
+                                            setHoveredRating(newHover);
+                                        }}
+                                        size="large"
                                         sx={{
-                                            background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
-                                            color: 'white',
-                                            fontWeight: 600,
-                                            animation: `${pulse} 0.3s ease-in-out`,
+                                            fontSize: { xs: '2rem', md: '2.5rem' },
+                                            '& .MuiRating-iconFilled': {
+                                                color: '#F59E0B',
+                                                filter: 'drop-shadow(0 2px 4px rgba(245, 158, 11, 0.3))',
+                                            },
+                                            '& .MuiRating-iconHover': {
+                                                color: '#D97706',
+                                                transform: 'scale(1.1)',
+                                                transition: 'all 0.2s ease',
+                                            },
+                                            '& .MuiRating-iconEmpty': {
+                                                color: 'rgba(217, 119, 6, 0.2)',
+                                            }
                                         }}
                                     />
-                                )}
-                            </Box>
-                        </RatingContainer>
+                                    {getDisplayRating() && (
+                                        <Chip
+                                            label={getRatingLabel(getDisplayRating()!)}
+                                            sx={{
+                                                background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
+                                                color: 'white',
+                                                fontWeight: 700,
+                                                fontSize: '0.9rem',
+                                                px: 2,
+                                                py: 1,
+                                                borderRadius: '12px',
+                                                boxShadow: '0 4px 15px rgba(217, 119, 6, 0.3)',
+                                                animation: `${pulse} 0.3s ease-in-out`,
+                                            }}
+                                        />
+                                    )}
+                                </Box>
+                            </RatingContainer>
+                        </Box>
 
-                        {/* Comment Text Area */}
-                        <StyledTextField
-                            fullWidth
-                            multiline
-                            rows={4}
-                            label="Share your thoughts about this product"
-                            placeholder="Tell us about your experience with this product. What did you like? What could be improved?"
-                            value={formData.comment}
-                            onChange={handleCommentChange}
-                            required
-                            sx={{ mb: 3 }}
-                            inputProps={{
-                                maxLength: 1000,
-                            }}
-                            helperText={`${formData.comment.length}/1000 characters`}
-                        />
+                        <Box sx={{ mb: 4 }}>
+                            <Typography
+                                variant="h6"
+                                sx={{
+                                    fontWeight: 700,
+                                    mb: 2,
+                                    color: '#374151',
+                                    fontSize: { xs: '1.1rem', md: '1.25rem' },
+                                }}
+                            >
+                                Share your detailed experience *
+                            </Typography>
+                            <StyledTextField
+                                fullWidth
+                                rows={5}
+                                placeholder="Write your review here..."
+                                value={formData.comment}
+                                onChange={handleCommentChange}
+                                required
+                                inputProps={{
+                                    maxLength: 1000,
+                                }}
+                                helperText={
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
+                                        <Typography variant="caption" sx={{ color: '#6B7280' }}>
+                                            Share your honest thoughts and experiences
+                                        </Typography>
+                                        <Typography
+                                            variant="caption"
+                                            sx={{
+                                                color: formData.comment.length > 900 ? '#EF4444' : '#6B7280',
+                                                fontWeight: 600
+                                            }}
+                                        >
+                                            {formData.comment.length}/1000
+                                        </Typography>
+                                    </Box>
+                                }
+                                sx={{
+                                    '& .MuiOutlinedInput-root': {
+                                        background: 'rgba(255, 255, 255, 0.8)',
+                                        backdropFilter: 'blur(10px)',
+                                        '& textarea': {
+                                            fontSize: '1rem',
+                                            lineHeight: 1.6,
+                                        }
+                                    }
+                                }}
+                            />
+                        </Box>
 
-                        {/* Submit Button */}
-                        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+                        <Box sx={{
+                            display: 'flex',
+                            justifyContent: { xs: 'stretch', sm: 'flex-end' },
+                            gap: 2
+                        }}>
                             <SubmitButton
                                 type="submit"
                                 variant="contained"
@@ -463,20 +567,38 @@ const Comments = ({ onCommentSubmitted }: CommentsProps) => {
                                     )
                                 }
                                 sx={{
-                                    minWidth: '160px',
+                                    minWidth: { xs: '100%', sm: '200px' },
+                                    py: 1.5,
+                                    fontSize: '1.1rem',
+                                    fontWeight: 700,
+                                    borderRadius: '16px',
+                                    textTransform: 'none',
+                                    boxShadow: '0 8px 25px rgba(217, 119, 6, 0.25)',
                                     ...(isSubmitting && {
                                         animation: `${shimmer} 1.5s infinite linear`,
                                         background: 'linear-gradient(90deg, #FED7AA 0%, #FDBA74 50%, #FED7AA 100%)',
                                         backgroundSize: '200px 100%',
-                                    })
+                                    }),
+                                    '&:hover': {
+                                        transform: 'translateY(-3px)',
+                                        boxShadow: '0 12px 35px rgba(217, 119, 6, 0.35)',
+                                    }
                                 }}
                             >
-                                {isSubmitting ? 'Submitting...' : 'Submit Review'}
+                                {isSubmitting ? 'Publishing Review...' : 'Publish Review'}
                             </SubmitButton>
                         </Box>
+
                     </StyledPaper>
                 </Box>
             </Box>
+
+            <AuthDialog
+                open={authDialogOpen}
+                onClose={() => setAuthDialogOpen(false)}
+                title="Sign in to Leave a Review"
+                message="Join our community to share your experience and help other customers make informed decisions."
+            />
         </Container>
     );
 };

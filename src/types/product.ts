@@ -163,3 +163,15 @@ export interface ProductDetailsProps {
   } | null;
   onToggleFavorite: () => void;
 }
+
+export interface CardItem {
+  imageUrl: string;
+  title: string;
+  description: string;
+}
+
+export interface FeatureCardsSectionProps {
+  sectionTitle: string;
+  sectionDescription: string;
+  cards: CardItem[];
+}

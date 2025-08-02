@@ -1,5 +1,6 @@
 'use client';
 
+import { FeatureCardsSectionProps } from '@/types/product';
 import { Box, Container, Typography, Grid, Card, CardContent } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Image from 'next/image';
@@ -50,18 +51,6 @@ const AnimatedCard = styled(StyledCard)(() => ({
     transform: 'translateY(0) scale(1)',
   },
 }));
-
-interface CardItem {
-  imageUrl: string;
-  title: string;
-  description: string;
-}
-
-interface FeatureCardsSectionProps {
-  sectionTitle: string;
-  sectionDescription: string;
-  cards: CardItem[];
-}
 
 const FeatureCardsSection: React.FC<FeatureCardsSectionProps> = ({
   sectionTitle,

@@ -178,6 +178,8 @@ const ProductPage = () => {
             imageAlt={`${makerData?.name} crafting beautiful handmade pieces`}
             onShopClick={handleMakerShopClick}
             onViewMoreClick={handleViewMoreClick}
+            buttonText1={`Visit Artisan Shop`}
+            buttonText2={`View More By ${makerData?.name}`}
           />
         </Box>
 

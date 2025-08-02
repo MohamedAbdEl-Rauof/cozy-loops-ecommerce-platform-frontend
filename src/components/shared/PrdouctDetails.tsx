@@ -27,9 +27,7 @@ import React, { useState } from 'react';
 import { useAddToCart, useCart, useUpdateCart } from '@/hooks/useCart';
 import { ProductDetailsProps } from '@/types/product';
 import AuthDialog from '@/components/dialogs/AuthDialog';
-import { useAuth } from '@/context/AuthContext';
-
-
+import { useAuth } from '@/context/AuthContext'
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({
     productData,

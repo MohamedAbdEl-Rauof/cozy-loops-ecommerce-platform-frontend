@@ -4,7 +4,6 @@
 import React from 'react';
 import {
   Dialog,
-  DialogTitle,
   DialogContent,
   DialogActions,
   Button,
@@ -37,7 +36,6 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
   message
 }) => {
   const router = useRouter();
-  const theme = useTheme();
 
   const handleLogin = () => {
     onClose();
@@ -73,7 +71,6 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
         }
       }}
     >
-      {/* Header with gradient background */}
       <Box
         sx={{
           background: 'linear-gradient(135deg, var(--primary-color) 0%, #667eea 100%)',
