@@ -5,6 +5,7 @@ import {
     Edit as EditIcon,
     Delete as DeleteIcon,
 } from '@mui/icons-material';
+
 import {
     Box,
     Typography,
@@ -26,6 +27,7 @@ import DeleteReviewDialog from '@/components/dialogs/DeleteReviewDialog';
 import EditReviewDialog from '@/components/dialogs/EditReviewDialog';
 import { useAuth } from '@/context/AuthContext';
 import { testimonialsService } from '@/services/testimonialsService';
+import { ExisitingCommentsProps } from '@/types/Testimonial';
 
 const CommentCard = styled(Paper)(({ theme }) => ({
     padding: theme.spacing(3),
@@ -41,32 +43,6 @@ const CommentCard = styled(Paper)(({ theme }) => ({
     }
 }));
 
-interface User {
-    _id: string;
-    firstName: string;
-    lastName: string;
-    Avatar: string;
-}
-
-interface Review {
-    _id: string;
-    user: User;
-    product: string;
-    comment: string;
-    rating: number;
-    likesCount: number;
-    dislikesCount: number;
-    likes: unknown[];
-    createdAt: string;
-    updatedAt: string;
-    isOwner: boolean;
-}
-
-interface ExisitingCommentsProps {
-    commentsData: Review[];
-    onRefresh: () => void;
-}
-
 const ExisitingComments = ({ commentsData, onRefresh }: ExisitingCommentsProps) => {
     const { user } = useAuth();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -75,14 +51,13 @@ const ExisitingComments = ({ commentsData, onRefresh }: ExisitingCommentsProps) 
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [editComment, setEditComment] = useState('');
     const [editRating, setEditRating] = useState<number | null>(null);
-
-    // Add loading and error states
     const [isLoading, setIsLoading] = useState(false);
     const [snackbar, setSnackbar] = useState({
         open: false,
         message: '',
         severity: 'success' as 'success' | 'error' | 'warning' | 'info'
     });
+    const [likingReviewId, setLikingReviewId] = useState<string | null>(null);
 
     const handleEditSave = async () => {
         if (!selectedReviewId || !editComment.trim() || !editRating) {
@@ -103,20 +78,17 @@ const ExisitingComments = ({ commentsData, onRefresh }: ExisitingCommentsProps) 
                 editRating
             );
 
-            // Show success message
             setSnackbar({
                 open: true,
                 message: 'Review updated successfully!',
                 severity: 'success'
             });
 
-            // Close dialog and reset state
             setEditDialogOpen(false);
             setSelectedReviewId(null);
             setEditComment('');
             setEditRating(null);
 
-            // Refresh the reviews list
             onRefresh();
 
         } catch (error) {
@@ -177,18 +149,15 @@ const ExisitingComments = ({ commentsData, onRefresh }: ExisitingCommentsProps) 
         try {
             await testimonialsService.deleteTestimonial(selectedReviewId);
 
-            // Show success message
             setSnackbar({
                 open: true,
                 message: 'Review deleted successfully!',
                 severity: 'success'
             });
 
-            // Close dialog and reset state
             setDeleteDialogOpen(false);
             setSelectedReviewId(null);
 
-            // Refresh the reviews list
             onRefresh();
 
         } catch (error) {
@@ -226,6 +195,33 @@ const ExisitingComments = ({ commentsData, onRefresh }: ExisitingCommentsProps) 
 
     const handleSnackbarClose = () => {
         setSnackbar(prev => ({ ...prev, open: false }));
+    };
+
+    const handleLikeDislike = async (reviewId: string, type: 'like' | 'dislike') => {
+        if (!user) {
+            setSnackbar({
+                open: true,
+                message: 'Please login to react to reviews',
+                severity: 'warning'
+            });
+            return;
+        }
+
+        setLikingReviewId(reviewId);
+
+        try {
+            await testimonialsService.likeDislikeReview(reviewId, type);
+            onRefresh();
+        } catch (error) {
+            console.error(`Error ${type}ing review:`, error);
+            setSnackbar({
+                open: true,
+                message: error instanceof Error ? error.message : `Failed to ${type} review`,
+                severity: 'error'
+            });
+        } finally {
+            setLikingReviewId(null);
+        }
     };
 
     return (
@@ -344,12 +340,17 @@ const ExisitingComments = ({ commentsData, onRefresh }: ExisitingCommentsProps) 
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                                 <Button
                                     size="small"
+                                    onClick={() => handleLikeDislike(comment._id, 'like')}
+                                    disabled={likingReviewId === comment._id}
                                     sx={{
                                         color: '#B45309',
                                         textTransform: 'none',
                                         fontWeight: 500,
                                         '&:hover': {
                                             backgroundColor: 'rgba(217, 119, 6, 0.1)',
+                                        },
+                                        '&:disabled': {
+                                            opacity: 0.6,
                                         }
                                     }}
                                 >
@@ -357,12 +358,17 @@ const ExisitingComments = ({ commentsData, onRefresh }: ExisitingCommentsProps) 
                                 </Button>
                                 <Button
                                     size="small"
+                                    onClick={() => handleLikeDislike(comment._id, 'dislike')}
+                                    disabled={likingReviewId === comment._id}
                                     sx={{
                                         color: '#B45309',
                                         textTransform: 'none',
                                         fontWeight: 500,
                                         '&:hover': {
                                             backgroundColor: 'rgba(217, 119, 6, 0.1)',
+                                        },
+                                        '&:disabled': {
+                                            opacity: 0.6,
                                         }
                                     }}
                                 >
@@ -374,23 +380,83 @@ const ExisitingComments = ({ commentsData, onRefresh }: ExisitingCommentsProps) 
                 </CommentCard>
             ))}
 
-            {/* Menu */}
-           <Menu
+                       <Menu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
                 onClose={handleMenuClose}
+                PaperProps={{
+                    sx: {
+                        borderRadius: '12px',
+                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12)',
+                        border: '1px solid #F3F4F6',
+                        minWidth: '160px',
+                        mt: 1,
+                    }
+                }}
+                transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-                <MenuItem onClick={handleEditClick} disabled={isLoading}>
-                    <EditIcon sx={{ mr: 1 }} />
-                    Edit
+                <MenuItem 
+                    onClick={handleEditClick} 
+                    disabled={isLoading}
+                    sx={{
+                        py: 1.5,
+                        px: 2,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1.5,
+                        color: '#374151',
+                        fontWeight: 500,
+                        '&:hover': {
+                            backgroundColor: '#F59E0B10',
+                            color: '#F59E0B',
+                            '& .MuiSvgIcon-root': {
+                                color: '#F59E0B',
+                            }
+                        },
+                        '&:disabled': {
+                            opacity: 0.5,
+                            cursor: 'not-allowed',
+                        }
+                    }}
+                >
+                    <EditIcon sx={{ fontSize: 18, color: '#6B7280' }} />
+                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                        Edit Review
+                    </Typography>
                 </MenuItem>
-                <MenuItem onClick={handleDeleteClick} sx={{ color: 'error.main' }} disabled={isLoading}>
-                    <DeleteIcon sx={{ mr: 1 }} />
-                    Delete
+                
+                <MenuItem 
+                    onClick={handleDeleteClick} 
+                    disabled={isLoading}
+                    sx={{
+                        py: 1.5,
+                        px: 2,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1.5,
+                        color: '#374151',
+                        fontWeight: 500,
+                        '&:hover': {
+                            backgroundColor: '#FEF2F2',
+                            color: '#EF4444',
+                            '& .MuiSvgIcon-root': {
+                                color: '#EF4444',
+                            }
+                        },
+                        '&:disabled': {
+                            opacity: 0.5,
+                            cursor: 'not-allowed',
+                        }
+                    }}
+                >
+                    <DeleteIcon sx={{ fontSize: 18, color: '#6B7280' }} />
+                    <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                        Delete Review
+                    </Typography>
                 </MenuItem>
             </Menu>
-
-            {/* Edit Review Dialog */}
+            
             <EditReviewDialog
                 open={editDialogOpen}
                 onClose={handleEditDialogClose}
@@ -402,7 +468,6 @@ const ExisitingComments = ({ commentsData, onRefresh }: ExisitingCommentsProps) 
                 isLoading={isLoading}
             />
 
-            {/* Delete Review Dialog */}
             <DeleteReviewDialog
                 open={deleteDialogOpen}
                 onClose={handleDeleteDialogClose}
@@ -410,12 +475,11 @@ const ExisitingComments = ({ commentsData, onRefresh }: ExisitingCommentsProps) 
                 isLoading={isLoading}
             />
 
-            {/* Snackbar for notifications */}
             <Snackbar
                 open={snackbar.open}
                 autoHideDuration={6000}
                 onClose={handleSnackbarClose}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
             >
                 <Alert
                     onClose={handleSnackbarClose}

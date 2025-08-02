@@ -55,6 +55,7 @@ export interface ApiReview {
 }
 
 export interface Testimonial {
+  reviews: ApiReview[];
   id: string;
   user: {
     name: string;
@@ -92,4 +93,30 @@ export interface CreateTestimonialData {
   productSlug: string;
   comment: string;
   rating: number;
+}
+
+interface User {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  Avatar: string;
+}
+
+interface Review {
+  _id: string;
+  user: User;
+  product: string;
+  comment: string;
+  rating: number;
+  likesCount: number;
+  dislikesCount: number;
+  likes: unknown[];
+  createdAt: string;
+  updatedAt: string;
+  isOwner: boolean;
+}
+
+export interface ExisitingCommentsProps {
+  commentsData: Review[];
+  onRefresh: () => void;
 }

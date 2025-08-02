@@ -37,6 +37,8 @@ export interface MakerProduct {
     name: string;
     slug: string;
     location: string;
+    message?: string;
+    image?: string;
   };
   createdAt: string;
   updatedAt: string;

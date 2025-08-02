@@ -214,4 +214,16 @@ export const testimonialsService = {
       throw error;
     }
   },
+
+  likeDislikeReview: async (reviewId: string, type: 'like' | 'dislike') => {
+    try {
+      const response = await apiClient.post(`/api/reviews/${reviewId}/like`, {
+        type
+      });
+      return response.data;
+    } catch (error: any) {
+      console.error('Error liking/disliking review:', error);
+      throw new Error(error.response?.data?.message || 'Failed to update review reaction');
+    }
+  },
 }

@@ -63,7 +63,7 @@ const ProductPage = () => {
 
     return transformCommentsData(testimonials, product._id);
   }, [testimonials, product?._id]);
-
+  
   const handleToggleFavorite = () => {
     if (!product) return;
     isInWishlist(product._id) ? removeFromWishlist(product._id) : addToWishlist(product._id);
@@ -115,7 +115,7 @@ const ProductPage = () => {
       }}
     >
       <SmallNavbar
-        category={product.category?.name || "Category"}
+        category={"Category"}
         page1={product.category?.name || "Products"}
         page2={product.name}
       />
