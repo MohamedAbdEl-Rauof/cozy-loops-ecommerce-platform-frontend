@@ -1,4 +1,5 @@
 "use client"
+
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -20,9 +21,12 @@ import {
     Tooltip,
 } from '@mui/material';
 import { styled, keyframes } from '@mui/material/styles';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 
-// Enhanced animations
+import { useAddToCart, useCart, useUpdateCart } from '@/hooks/useCart';
+import { useAddToWishlist, useRemoveFromWishlist, useWishlist } from '@/hooks/useWishlist';
+
+
 const slideInUp = keyframes`
   from {
     opacity: 0;
@@ -212,6 +216,10 @@ interface Product {
     isNew?: boolean;
     discount?: number;
     category?: string;
+    categoryId?: string;
+    slug?: string;
+    categorySlug?: string
+
 }
 
 interface ProductsData {
@@ -220,54 +228,71 @@ interface ProductsData {
 }
 
 interface SimilarProductsProps {
-    Products: ProductsData;
-    onAddToCart: (productId: string) => void;
-    onAddToWishlist?: (productId: string) => void;
-    onQuickView?: (productId: string) => void;
+    productsData: ProductsData;
+    onQuickView?: (_categoryId: string, _productId: string) => void;
 }
 
 const SimilarProducts: React.FC<SimilarProductsProps> = ({
-    Products,
-    onAddToCart,
-    onAddToWishlist,
+    productsData,
     onQuickView
 }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isVisible, setIsVisible] = useState(false);
     const [visibleProducts, setVisibleProducts] = useState<boolean[]>([]);
-    const [wishlistItems, setWishlistItems] = useState<Set<string>>(new Set());
     const [hoveredProduct, setHoveredProduct] = useState<string | null>(null);
     const sectionRef = useRef<HTMLDivElement>(null);
 
+    const { addToCart, isPending: isAddingToCart } = useAddToCart();
+    const { updateCart, isPending: isUpdatingCart } = useUpdateCart();
+    const { data: cartData } = useCart();
+
+    const { isInWishlist } = useWishlist();
+    const { addToWishlist } = useAddToWishlist();
+    const { removeFromWishlist } = useRemoveFromWishlist();
+
     const productsPerPage = 3;
-    const totalProducts = Products.productsData.length;
+    const totalProducts = productsData?.productsData?.length || 0;
     const maxIndex = Math.max(0, totalProducts - productsPerPage);
 
-    const handleAddToCart = (productId: string) => {
-        if (onAddToCart) {
-            onAddToCart(productId);
-        }
-    };
 
-    const handleWishlistToggle = (productId: string) => {
-        setWishlistItems(prev => {
-            const newSet = new Set(prev);
-            if (newSet.has(productId)) {
-                newSet.delete(productId);
+    const handleAddToCart = async (productId: string) => {
+        if (isAddingToCart || isUpdatingCart) return;
+
+        try {
+            const existingCartItem = cartData?.items?.find((item) =>
+                item.product._id === productId || item.product.id === productId
+            );
+
+            if (existingCartItem) {
+                await updateCart({
+                    productId: productId,
+                    quantity: existingCartItem.quantity + 1,
+                });
             } else {
-                newSet.add(productId);
+                await addToCart({
+                    productId: productId,
+                    quantity: 1,
+                });
             }
-            return newSet;
-        });
-
-        if (onAddToWishlist) {
-            onAddToWishlist(productId);
+        } catch (error) {
+            console.error('Error adding to cart:', error);
         }
     };
+
+
+    const handleToggleFavorite = (productId: string) => {
+        if (isInWishlist(productId)) {
+            removeFromWishlist(productId);
+        } else {
+            addToWishlist(productId);
+        }
+    };
+
 
     const handleQuickView = (productId: string) => {
-        if (onQuickView) {
-            onQuickView(productId);
+        const product = productsData.productsData.find(p => p.id === productId);
+        if (onQuickView && product && product.categorySlug && product.slug) {
+            onQuickView(product.categorySlug, product.slug);
         }
     };
 
@@ -287,8 +312,12 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
         }, 100);
     };
 
-    const triggerProductAnimations = () => {
-        const currentProducts = getCurrentProducts();
+    const triggerProductAnimations = useCallback(() => {
+        if (!productsData?.productsData || !Array.isArray(productsData.productsData)) {
+            return;
+        }
+
+        const currentProducts = productsData.productsData.slice(currentIndex, currentIndex + productsPerPage);
         currentProducts.forEach((_, index) => {
             setTimeout(() => {
                 setVisibleProducts(prev => {
@@ -298,10 +327,14 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                 });
             }, index * 200);
         });
-    };
+    }, [currentIndex, productsData?.productsData, productsPerPage]);
 
     const getCurrentProducts = () => {
-        return Products.productsData.slice(currentIndex, currentIndex + productsPerPage);
+        if (!productsData?.productsData || !Array.isArray(productsData.productsData)) {
+            return [];
+        }
+
+        return productsData.productsData.slice(currentIndex, currentIndex + productsPerPage);
     };
 
     const handleDotClick = (dotIndex: number) => {
@@ -312,27 +345,28 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
         }, 100);
     };
 
+
     useEffect(() => {
         const observer = new IntersectionObserver(
             ([entry]) => {
-                if(entry.isIntersecting) {
+                if (entry.isIntersecting) {
                     setIsVisible(true);
                     triggerProductAnimations();
                 }
             },
-          
         );
 
-        if (sectionRef.current) {
-            observer.observe(sectionRef.current);
+        const currentSectionRef = sectionRef.current;
+        if (currentSectionRef) {
+            observer.observe(currentSectionRef);
         }
 
         return () => {
-            if (sectionRef.current) {
-                observer.unobserve(sectionRef.current);
+            if (currentSectionRef) {
+                observer.unobserve(currentSectionRef);
             }
         };
-    }, [currentIndex]);
+    }, [triggerProductAnimations]);
 
     const currentProducts = getCurrentProducts();
     const totalPages = Math.ceil(totalProducts / productsPerPage);
@@ -449,7 +483,7 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                                 }
                             }}
                         >
-                            {Products.title}
+                            {productsData.title}
                         </Typography>
                     </Box>
 
@@ -599,17 +633,18 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                                                 }}
                                             >
                                                 <Tooltip title="Add to Wishlist" placement="left">
+
                                                     <ActionButton
-                                                        onClick={() => handleWishlistToggle(product.id)}
+                                                        onClick={() => handleToggleFavorite(product.id)}
                                                         sx={{
-                                                            color: wishlistItems.has(product.id) ? '#e74c3c' : '#6c757d',
+                                                            color: isInWishlist(product.id) ? '#e74c3c' : '#6c757d',
                                                             '&:hover': {
-                                                                backgroundColor: wishlistItems.has(product.id) ? 'rgba(231, 76, 60, 0.1)' : 'rgba(255, 255, 255, 0.95)',
-                                                                color: wishlistItems.has(product.id) ? '#e74c3c' : '#6c757d',
+                                                                backgroundColor: isInWishlist(product.id) ? 'rgba(231, 76, 60, 0.1)' : 'rgba(255, 255, 255, 0.95)',
+                                                                color: isInWishlist(product.id) ? '#e74c3c' : '#6c757d',
                                                             }
                                                         }}
                                                     >
-                                                        {wishlistItems.has(product.id) ?
+                                                        {isInWishlist(product.id) ?
                                                             <FavoriteIcon sx={{ fontSize: 20 }} /> :
                                                             <FavoriteBorderIcon sx={{ fontSize: 20 }} />
                                                         }

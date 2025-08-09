@@ -1,4 +1,3 @@
-
 export interface ProductTestimonialsResponse {
   success: boolean;
   data: {
@@ -13,7 +12,22 @@ export interface ProductTestimonialsResponse {
     userReview?: ApiReview;
   };
   message?: string;
+  reviews?: ApiReview[];
 }
+
+export interface TestimonialsData {
+  reviews: ApiReview[];
+  pagination?: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+  userReview?: ApiReview;
+}
+
+export type TestimonialsResponse = ProductTestimonialsResponse | TestimonialsData;
 
 export interface ApiError {
   response?: {
@@ -33,11 +47,24 @@ export interface UpdateTestimonialResponse {
 
 export interface ApiReview {
   _id: string;
+  id?:string;
   user: {
     _id: string;
+    id?:string;
     firstName: string;
     lastName: string;
     Avatar: string;
+    avatar?:string;
+    verified?: boolean;
+    name?: string;
+    role?: string;
+    email?: string;
+    phoneNumber?: string;
+    addresses?:string[];
+    emailVerified?: boolean;
+    active?: boolean;
+    createdAt?: string;
+    updatedAt?: string;
   };
   product: string;
   comment: string;
@@ -52,9 +79,13 @@ export interface ApiReview {
   createdAt: string;
   updatedAt: string;
   __v: number;
+  date?: string;
+  dislikes?: number;
+  replies?: number;
 }
 
 export interface Testimonial {
+  reviews?: ApiReview[];
   id: string;
   user: {
     name: string;
@@ -92,4 +123,30 @@ export interface CreateTestimonialData {
   productSlug: string;
   comment: string;
   rating: number;
+}
+
+interface User {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  Avatar: string;
+}
+
+export interface Review {
+  _id: string;
+  user: User;
+  product: string;
+  comment: string;
+  rating: number;
+  likesCount: number;
+  dislikesCount: number;
+  likes: unknown[];
+  createdAt: string;
+  updatedAt: string;
+  isOwner: boolean;
+}
+
+export interface ExisitingCommentsProps {
+  commentsData: Review[];
+  onRefresh: () => void;
 }

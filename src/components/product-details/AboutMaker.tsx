@@ -28,15 +28,15 @@ import { useState, useEffect } from 'react';
 
 import { StoryFeatureProps } from '@/types/product';
 
-const AbountMaker = ({
+const AboutMaker = ({
     title,
     makerInfo,
     buttonText1,
     buttonText2,
     imageSrc,
     imageAlt,
-    onButton1Click,
-    onButton2Click,
+    onShopClick,
+    onViewMoreClick,
 }: StoryFeatureProps) => {
     const theme = useTheme();
     const [isVisible, setIsVisible] = useState(false);
@@ -53,16 +53,16 @@ const AbountMaker = ({
     }, []);
 
     const handleButton1Click = () => {
-        if (onButton1Click) {
-            onButton1Click();
+        if (onShopClick) {
+            onShopClick();
         } else {
             router.push('/artisan-shop');
         }
     };
 
     const handleButton2Click = () => {
-        if (onButton2Click) {
-            onButton2Click();
+        if (onViewMoreClick) {
+            onViewMoreClick();
         } else {
             router.push('/artisan-products');
         }
@@ -75,7 +75,6 @@ const AbountMaker = ({
                 justifyContent: 'center',
                 alignItems: 'center',
                 bgcolor: 'background.paper',
-                p: { xs: 2, sm: 3, md: 4 },
                 width: '100%'
             }}
         >
@@ -123,7 +122,6 @@ const AbountMaker = ({
                         }
                     }}
                 >
-                    {/* Title */}
                     <Typography
                         variant={isXs ? "h5" : isSm ? "h4" : "h3"}
                         component="h2"
@@ -138,7 +136,6 @@ const AbountMaker = ({
                         {title}
                     </Typography>
 
-                    {/* Maker Info Card */}
                     <Box
                         sx={{
                             bgcolor: 'grey.50',
@@ -149,7 +146,6 @@ const AbountMaker = ({
                             borderColor: 'grey.200'
                         }}
                     >
-                        {/* Header with Avatar and Basic Info */}
                         <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 3 }}>
                             <Avatar
                                 src={makerInfo.avatar}
@@ -194,7 +190,6 @@ const AbountMaker = ({
                                     </Typography>
                                 </Box>
 
-                                {/* Rating and Reviews */}
                                 {makerInfo.rating && (
                                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                         <Rating
@@ -211,7 +206,6 @@ const AbountMaker = ({
                             </Box>
                         </Box>
 
-                        {/* Stats Row */}
                         {(makerInfo.yearsOfExperience || makerInfo.totalProducts || makerInfo.completedOrders) && (
                             <Box sx={{
                                 display: 'flex',
@@ -256,7 +250,6 @@ const AbountMaker = ({
                             </Box>
                         )}
 
-                        {/* Specialties */}
                         {makerInfo.specialties && makerInfo.specialties.length > 0 && (
                             <Box sx={{ mb: 3 }}>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
@@ -292,7 +285,6 @@ const AbountMaker = ({
 
                         <Divider sx={{ my: 2 }} />
 
-                        {/* Mini Bio */}
                         <Box>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                                 <Person sx={{ color: 'primary.main', fontSize: '1.1rem' }} />
@@ -324,7 +316,6 @@ const AbountMaker = ({
                             </Typography>
                         </Box>
 
-                        {/* Joined Date */}
                         {makerInfo.joinedDate && (
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 2 }}>
                                 <CalendarToday sx={{ color: 'text.secondary', fontSize: '1rem' }} />
@@ -341,14 +332,12 @@ const AbountMaker = ({
                         )}
                     </Box>
 
-                    {/* Action Buttons */}
                     <Box sx={{
                         display: 'flex',
                         flexDirection: { xs: 'column', sm: 'row' },
                         gap: { xs: 1.5, sm: 2 },
                         mt: 2
                     }}>
-                        {/* Primary Button (Contained) */}
                         <Button
                             variant="contained"
                             onClick={handleButton1Click}
@@ -374,7 +363,6 @@ const AbountMaker = ({
                             {buttonText1}
                         </Button>
 
-                        {/* Secondary Button (Outlined) */}
                         <Button
                             variant="text"
                             onClick={handleButton2Click}
@@ -398,7 +386,6 @@ const AbountMaker = ({
                         </Button>
                     </Box>
 
-                    {/* Artisan Badge */}
                     <Box sx={{ mt: 3, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                         <Chip
                             label="Verified Artisan"
@@ -427,7 +414,6 @@ const AbountMaker = ({
                     </Box>
                 </Box>
 
-                {/* Image Section */}
                 <Box
                     className={`image-section ${isVisible ? 'visible' : ''}`}
                     sx={{
@@ -457,9 +443,9 @@ const AbountMaker = ({
                         boxShadow: '0 8px 32px rgba(0,0,0,0.12)'
                     }}>
                         {isXs || isSm ? (
-                            <img
-                                src={imageSrc}
-                                alt={imageAlt}
+                            <Image
+                                src={imageSrc || '/images/shared/storyFeature.jpg'}
+                                alt={imageAlt || 'Image'}
                                 style={{
                                     width: '100%',
                                     height: '100%',
@@ -474,8 +460,8 @@ const AbountMaker = ({
                             />
                         ) : (
                             <Image
-                                src={imageSrc}
-                                alt={imageAlt}
+                                src={imageSrc || '/images/shared/storyFeature.jpg'}
+                                alt={imageAlt || 'Image'}
                                 fill
                                 style={{
                                     objectFit: 'cover',
@@ -490,7 +476,6 @@ const AbountMaker = ({
                             />
                         )}
 
-                        {/* Image Overlay with Gradient */}
                         <Box
                             sx={{
                                 position: 'absolute',
@@ -523,4 +508,4 @@ const AbountMaker = ({
     );
 };
 
-export default AbountMaker;
+export default AboutMaker;

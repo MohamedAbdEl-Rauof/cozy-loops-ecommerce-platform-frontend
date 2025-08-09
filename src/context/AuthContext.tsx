@@ -55,9 +55,9 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   error: string | null;
-  login: (email: string, password: string) => Promise<AuthResponse>;
-  loginWithToken: (token: string, refreshTokenValue?: string) => Promise<User>;
-  register: (userData: RegisterData) => Promise<unknown>;
+  login: (_email: string, _password: string) => Promise<AuthResponse>;
+  loginWithToken: (_token: string, _refreshTokenValue?: string) => Promise<User>;
+  register: (_userData: RegisterData) => Promise<unknown>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
   clearError: () => void;

@@ -17,7 +17,6 @@ export const useProductFromCategory = (categorySlug: string, productSlug: string
   
   const product = productsData?.products?.find(
     (p: Product) => {
-      console.log('Checking product:', p.slug, 'against:', productSlug);
       return p.slug === productSlug;
     }
   ) || null;
