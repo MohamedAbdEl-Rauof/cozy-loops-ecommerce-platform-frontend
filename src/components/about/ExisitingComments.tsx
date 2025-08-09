@@ -1,11 +1,11 @@
-"use client"
+'use client'
+
 import {
     Star as StarIcon,
     MoreVert as MoreVertIcon,
     Edit as EditIcon,
     Delete as DeleteIcon,
 } from '@mui/icons-material';
-
 import {
     Box,
     Typography,

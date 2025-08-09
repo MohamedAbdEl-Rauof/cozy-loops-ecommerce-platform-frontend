@@ -1,3 +1,4 @@
+
 import {
     FavoriteBorder,
     Favorite,
@@ -24,22 +25,34 @@ import Image from 'next/image';
 import { useSnackbar } from 'notistack';
 import React, { useState } from 'react';
 
+import AuthDialog from '@/components/dialogs/AuthDialog';
+import { useAuth } from '@/context/AuthContext';
 import { useAddToCart, useCart, useUpdateCart } from '@/hooks/useCart';
 import { ProductDetailsProps } from '@/types/product';
-import AuthDialog from '@/components/dialogs/AuthDialog';
-import { useAuth } from '@/context/AuthContext'
 
 const ProductDetails: React.FC<ProductDetailsProps> = ({
     productData,
     onToggleFavorite,
 }) => {
+    const [selectedImage, setSelectedImage] = useState(
+        productData?.mainImage || productData?.images[0]?.url || ""
+    );
+    const [selectedColor, setSelectedColor] = useState(productData?.colors[0]?.value || '');
+    const [quantity, setQuantity] = useState(1);
+    const { addToCart, isPending: isAddingToCart } = useAddToCart();
+    const { updateCart, isPending: isUpdatingCart } = useUpdateCart();
+    const { data: cartData } = useCart();
+    const { enqueueSnackbar } = useSnackbar();
+    const [authDialogOpen, setAuthDialogOpen] = useState(false);
+    const [authDialogMessage, setAuthDialogMessage] = useState('');
+    const { user } = useAuth();
+
     if (!productData) return <p>No product data available.</p>;
 
     const {
         _id,
         name,
         images,
-        mainImage,
         rating,
         reviewCount,
         inStock,
@@ -51,19 +64,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
         discountPercentage,
         isFavorite,
     } = productData;
-
-    const [selectedImage, setSelectedImage] = useState(
-        mainImage || images[0]?.url || ""
-    );
-    const [selectedColor, setSelectedColor] = useState(colors[0]?.value || '');
-    const [quantity, setQuantity] = useState(1);
-    const { addToCart, isPending: isAddingToCart } = useAddToCart();
-    const { updateCart, isPending: isUpdatingCart } = useUpdateCart();
-    const { data: cartData } = useCart();
-    const { enqueueSnackbar } = useSnackbar();
-    const [authDialogOpen, setAuthDialogOpen] = useState(false);
-    const [authDialogMessage, setAuthDialogMessage] = useState('');
-    const { user } = useAuth();
 
     const handleQuantityChange = (change: number) => {
         const newQuantity = quantity + change;

@@ -1,7 +1,11 @@
-
 'use client';
 
-import React from 'react';
+import {
+  Close as CloseIcon,
+  Login as LoginIcon,
+  PersonAdd as SignUpIcon,
+  Lock as LockIcon
+} from '@mui/icons-material';
 import {
   Dialog,
   DialogContent,
@@ -12,15 +16,9 @@ import {
   IconButton,
   Divider,
   Fade,
-  useTheme
 } from '@mui/material';
-import {
-  Close as CloseIcon,
-  Login as LoginIcon,
-  PersonAdd as SignUpIcon,
-  Lock as LockIcon
-} from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
+import React from 'react';
 
 interface AuthDialogProps {
   open: boolean;
@@ -115,12 +113,12 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
           >
             <LockIcon sx={{ fontSize: 40, color: 'white' }} />
           </Box>
-          
+
           <Typography
             variant="h4"
             component="h2"
-            sx={{ 
-              fontWeight: 700, 
+            sx={{
+              fontWeight: 700,
               color: 'white',
               textAlign: 'center',
               textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
@@ -135,8 +133,8 @@ const AuthDialog: React.FC<AuthDialogProps> = ({
         <Typography
           variant="h6"
           color="text.secondary"
-          sx={{ 
-            mb: 3, 
+          sx={{
+            mb: 3,
             lineHeight: 1.6,
             fontSize: '1.1rem',
             fontWeight: 400

@@ -25,6 +25,7 @@ import {
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
+
 import { StoryFeatureProps } from '@/types/product';
 
 const AboutMaker = ({
@@ -442,9 +443,9 @@ const AboutMaker = ({
                         boxShadow: '0 8px 32px rgba(0,0,0,0.12)'
                     }}>
                         {isXs || isSm ? (
-                            <img
-                                src={imageSrc}
-                                alt={imageAlt}
+                            <Image
+                                src={imageSrc || '/images/shared/storyFeature.jpg'}
+                                alt={imageAlt || 'Image'}
                                 style={{
                                     width: '100%',
                                     height: '100%',

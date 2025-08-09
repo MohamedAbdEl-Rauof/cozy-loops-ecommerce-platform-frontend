@@ -1,4 +1,10 @@
-"use client"
+'use client'
+
+import {
+    Close as CloseIcon,
+    DeleteOutline as DeleteIcon,
+    Warning as WarningIcon,
+} from '@mui/icons-material';
 import {
     Dialog,
     DialogTitle,
@@ -10,11 +16,6 @@ import {
     IconButton,
     CircularProgress,
 } from '@mui/material';
-import {
-    Close as CloseIcon,
-    DeleteOutline as DeleteIcon,
-    Warning as WarningIcon,
-} from '@mui/icons-material';
 import React from 'react';
 
 interface DeleteReviewDialogProps {

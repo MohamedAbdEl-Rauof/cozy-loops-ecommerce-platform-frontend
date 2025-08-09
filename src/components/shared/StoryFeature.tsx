@@ -314,7 +314,7 @@ const StoryFeature = ({
                         }}
                     >
                         {isXs || isSm ? (
-                            <img
+                            <Image
                                 src={imageSrc}
                                 alt={imageAlt}
                                 style={{

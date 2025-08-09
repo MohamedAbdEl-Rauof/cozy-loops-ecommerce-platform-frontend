@@ -159,7 +159,12 @@ export interface ProductDetailsProps {
     description: string;
     discountPercentage: number;
     isFavorite: boolean;
-    category: any;
+    category?: {
+      _id: string;
+      name: string;
+      slug: string;
+      description?: string;
+    };
   } | null;
   onToggleFavorite: () => void;
 }

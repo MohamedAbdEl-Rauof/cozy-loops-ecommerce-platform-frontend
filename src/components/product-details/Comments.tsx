@@ -21,9 +21,10 @@ import { styled, keyframes } from '@mui/material/styles';
 import { useParams } from 'next/navigation';
 import React, { useState } from 'react';
 
+import { useAuth } from '@/context/AuthContext';
 import { testimonialsService } from '@/services/testimonialsService';
 import { CreateTestimonialData } from '@/types/Testimonial';
-import { useAuth } from '@/context/AuthContext';
+
 import AuthDialog from '../dialogs/AuthDialog';
 
 

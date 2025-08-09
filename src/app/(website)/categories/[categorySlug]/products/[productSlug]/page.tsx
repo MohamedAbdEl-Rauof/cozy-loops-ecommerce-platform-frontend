@@ -1,29 +1,27 @@
 'use client'
 
-import React, { useMemo } from 'react';
-import { useParams, useRouter } from 'next/navigation';
 import { Box, Container, CircularProgress, Alert } from '@mui/material';
+import { useParams, useRouter } from 'next/navigation';
+import React, { useMemo } from 'react';
 
 import ExisitingComments from '@/components/about/ExisitingComments';
+import AboutMaker from '@/components/product-details/AboutMaker';
 import Comments from '@/components/product-details/Comments';
 import SimilarProducts from '@/components/product-details/SimilarProducts';
 import FeatureCardsSection from '@/components/shared/FeatureCardsSection';
 import ProductDetails from '@/components/shared/PrdouctDetails';
 import SmallNavbar from '@/components/shared/SmallNavbar';
-
 import { FeatureCardsSectionData, FeatureCardsSectionData2 } from '@/data/pages/productDetailsPageData';
 import { useMakerProducts, useMakersBySlug } from '@/hooks/useMakers';
 import { useProductFromCategory } from '@/hooks/useProducts';
 import { useProductsTestimonialsBySlug } from '@/hooks/useTestimonials';
 import { useAddToWishlist, useRemoveFromWishlist, useWishlist } from '@/hooks/useWishlist';
-
 import {
   transformProductData,
   transformMakerData,
   transformSimilarProducts,
   transformCommentsData
 } from '@/utils/dataTransformers';
-import AboutMaker from '@/components/product-details/AboutMaker';
 
 const ProductPage = () => {
   const params = useParams();
@@ -44,7 +42,7 @@ const ProductPage = () => {
   );
 
   const makerInfo = useMemo(() =>
-    transformMakerData(makerData, product),
+    transformMakerData(makerData, product || undefined),
     [makerData, product]
   );
 
@@ -63,10 +61,15 @@ const ProductPage = () => {
 
     return transformCommentsData(testimonials, product._id);
   }, [testimonials, product?._id]);
-  
+
   const handleToggleFavorite = () => {
     if (!product) return;
-    isInWishlist(product._id) ? removeFromWishlist(product._id) : addToWishlist(product._id);
+    
+    if (isInWishlist(product._id)) {
+      removeFromWishlist(product._id);
+    } else {
+      addToWishlist(product._id);
+    }
   };
 
   const handleQuickView = (categorySlug: string, productSlug: string) => {

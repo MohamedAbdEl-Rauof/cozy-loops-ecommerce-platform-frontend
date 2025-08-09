@@ -1,4 +1,9 @@
 "use client"
+
+import {
+    Close as CloseIcon,
+    Edit as EditIcon,
+} from '@mui/icons-material';
 import {
     Dialog,
     DialogTitle,
@@ -12,10 +17,6 @@ import {
     IconButton,
     CircularProgress,
 } from '@mui/material';
-import {
-    Close as CloseIcon,
-    Edit as EditIcon,
-} from '@mui/icons-material';
 import React from 'react';
 
 interface EditReviewDialogProps {
@@ -24,8 +25,8 @@ interface EditReviewDialogProps {
     onSave: () => void;
     comment: string;
     rating: number | null;
-    onCommentChange: (comment: string) => void;
-    onRatingChange: (rating: number | null) => void;
+    onCommentChange: (_comment: string) => void;
+    onRatingChange: (_rating: number | null) => void;
     isLoading: boolean;
 }
 
@@ -140,6 +141,7 @@ const EditReviewDialog: React.FC<EditReviewDialogProps> = ({
                     </Typography>
                     <TextField
                         fullWidth
+                        multiline
                         rows={4}
                         label="Write your review..."
                         value={comment}

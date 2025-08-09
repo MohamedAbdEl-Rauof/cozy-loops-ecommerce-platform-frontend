@@ -1,10 +1,12 @@
 'use client';
 
-import { FeatureCardsSectionProps } from '@/types/product';
 import { Box, Container, Typography, Grid, Card, CardContent } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
+
+import { FeatureCardsSectionProps } from '@/types/product';
+
 
 const StyledCard = styled(Card)(({ theme }) => ({
   height: '100%',
@@ -81,6 +83,7 @@ const FeatureCardsSection: React.FC<FeatureCardsSectionProps> = ({
     return 'flex-start';
   };
 
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -104,16 +107,17 @@ const FeatureCardsSection: React.FC<FeatureCardsSectionProps> = ({
       }
     );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
+    const currentSectionRef = sectionRef.current;
+    if (currentSectionRef) {
+      observer.observe(currentSectionRef);
     }
 
     return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
+      if (currentSectionRef) {
+        observer.unobserve(currentSectionRef);
       }
     };
-  }, [cards.length]);
+  }, [cards]);
 
   const gridSize = getGridSize(cards.length);
 

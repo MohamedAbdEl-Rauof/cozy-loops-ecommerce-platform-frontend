@@ -1,5 +1,4 @@
 "use client"
-import React, { useEffect, useRef, useState } from 'react';
 
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
@@ -22,12 +21,12 @@ import {
     Tooltip,
 } from '@mui/material';
 import { styled, keyframes } from '@mui/material/styles';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 
 import { useAddToCart, useCart, useUpdateCart } from '@/hooks/useCart';
 import { useAddToWishlist, useRemoveFromWishlist, useWishlist } from '@/hooks/useWishlist';
 
 
-// Enhanced animations
 const slideInUp = keyframes`
   from {
     opacity: 0;
@@ -230,7 +229,7 @@ interface ProductsData {
 
 interface SimilarProductsProps {
     productsData: ProductsData;
-    onQuickView?: (categoryId: string, productId: string) => void;
+    onQuickView?: (_categoryId: string, _productId: string) => void;
 }
 
 const SimilarProducts: React.FC<SimilarProductsProps> = ({
@@ -251,7 +250,6 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
     const { addToWishlist } = useAddToWishlist();
     const { removeFromWishlist } = useRemoveFromWishlist();
 
-    console.log('productsDataproductsData', productsData);
     const productsPerPage = 3;
     const totalProducts = productsData?.productsData?.length || 0;
     const maxIndex = Math.max(0, totalProducts - productsPerPage);
@@ -314,8 +312,12 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
         }, 100);
     };
 
-    const triggerProductAnimations = () => {
-        const currentProducts = getCurrentProducts();
+    const triggerProductAnimations = useCallback(() => {
+        if (!productsData?.productsData || !Array.isArray(productsData.productsData)) {
+            return;
+        }
+
+        const currentProducts = productsData.productsData.slice(currentIndex, currentIndex + productsPerPage);
         currentProducts.forEach((_, index) => {
             setTimeout(() => {
                 setVisibleProducts(prev => {
@@ -325,16 +327,15 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                 });
             }, index * 200);
         });
-    };
+    }, [currentIndex, productsData?.productsData, productsPerPage]);
 
     const getCurrentProducts = () => {
         if (!productsData?.productsData || !Array.isArray(productsData.productsData)) {
-            return []; 
+            return [];
         }
 
         return productsData.productsData.slice(currentIndex, currentIndex + productsPerPage);
     };
-
 
     const handleDotClick = (dotIndex: number) => {
         setCurrentIndex(dotIndex);
@@ -344,6 +345,7 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
         }, 100);
     };
 
+
     useEffect(() => {
         const observer = new IntersectionObserver(
             ([entry]) => {
@@ -352,19 +354,19 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                     triggerProductAnimations();
                 }
             },
-
         );
 
-        if (sectionRef.current) {
-            observer.observe(sectionRef.current);
+        const currentSectionRef = sectionRef.current;
+        if (currentSectionRef) {
+            observer.observe(currentSectionRef);
         }
 
         return () => {
-            if (sectionRef.current) {
-                observer.unobserve(sectionRef.current);
+            if (currentSectionRef) {
+                observer.unobserve(currentSectionRef);
             }
         };
-    }, [currentIndex]);
+    }, [triggerProductAnimations]);
 
     const currentProducts = getCurrentProducts();
     const totalPages = Math.ceil(totalProducts / productsPerPage);

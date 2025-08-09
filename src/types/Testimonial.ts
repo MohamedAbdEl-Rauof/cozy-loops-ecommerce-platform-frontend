@@ -1,4 +1,3 @@
-
 export interface ProductTestimonialsResponse {
   success: boolean;
   data: {
@@ -15,6 +14,20 @@ export interface ProductTestimonialsResponse {
   message?: string;
   reviews?: ApiReview[];
 }
+
+export interface TestimonialsData {
+  reviews: ApiReview[];
+  pagination?: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+  userReview?: ApiReview;
+}
+
+export type TestimonialsResponse = ProductTestimonialsResponse | TestimonialsData;
 
 export interface ApiError {
   response?: {
@@ -72,7 +85,7 @@ export interface ApiReview {
 }
 
 export interface Testimonial {
-  reviews: ApiReview[];
+  reviews?: ApiReview[];
   id: string;
   user: {
     name: string;

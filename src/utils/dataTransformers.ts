@@ -1,29 +1,35 @@
-import { ApiReview, ProductTestimonialsResponse } from "@/types/Testimonial";
-import { calculateAverageRating, DEFAULT_COLORS, formatJoinDate, getYearsOfExperience, transformProductImages } from "./productHelpers";
 import { Maker, MakerProduct, MakerProductsData } from "@/types/maker";
 import { Product } from "@/types/product";
+import { ApiReview, ProductTestimonialsResponse, TestimonialsResponse } from "@/types/Testimonial";
+
+import { calculateAverageRating, DEFAULT_COLORS, formatJoinDate, getYearsOfExperience, transformProductImages } from "./productHelpers";
 
 export const transformProductData = (
   product: Product,
-  testimonials: ProductTestimonialsResponse | undefined,
-  isInWishlist: (id: string) => boolean
-) => ({
-  _id: product._id,
-  name: product.name,
-  images: transformProductImages(product.images, product.name),
-  mainImage: product.mainImage,
-  rating: calculateAverageRating(testimonials?.reviews),
-  reviewCount: testimonials?.reviews?.length || 0,
-  inStock: product.inStock !== false,
-  stockCount: product.stockCount || 10,
-  price: product.price,
-  originalPrice: product.priceBeforeDiscount,
-  colors: DEFAULT_COLORS,
-  description: product.shortDescription || product.description,
-  discountPercentage: product.discountPercentage || 0,
-  isFavorite: isInWishlist(product._id),
-  category: product.category
-});
+  testimonials: TestimonialsResponse | undefined,
+  isInWishlist: (_id: string) => boolean
+) => {
+  const reviews = testimonials?.reviews ||
+    ('data' in (testimonials || {}) ? (testimonials as ProductTestimonialsResponse).data?.reviews : []) ||
+    [];
+  return {
+    _id: product._id,
+    name: product.name,
+    images: transformProductImages(product.images, product.name),
+    mainImage: product.mainImage,
+    rating: calculateAverageRating(reviews),
+    reviewCount: reviews.length || 0,
+    inStock: product.inStock !== false,
+    stockCount: product.stockCount || 10,
+    price: product.price,
+    originalPrice: product.priceBeforeDiscount,
+    colors: DEFAULT_COLORS,
+    description: product.shortDescription || product.description,
+    discountPercentage: product.discountPercentage || 0,
+    isFavorite: isInWishlist(product._id),
+    category: product.category
+  };
+};
 
 export const transformMakerData = (makerData: Maker | undefined, product: Product | undefined) => {
   const makerName = makerData?.name || product?.maker?.name || "Unknown Maker";
@@ -75,12 +81,16 @@ export const transformSimilarProducts = (
 };
 
 export const transformCommentsData = (
-  testimonials: ProductTestimonialsResponse | undefined,
+  testimonials: TestimonialsResponse | undefined,
   productId: string
 ) => {
-  return testimonials?.reviews?.map((review: ApiReview) => ({
-    _id: review._id || review.id,
-    id: review._id || review.id,
+  const reviews = testimonials?.reviews || 
+    ('data' in (testimonials || {}) ? (testimonials as ProductTestimonialsResponse).data?.reviews : []) || 
+    [];
+
+  return reviews.map((review: ApiReview) => ({
+    _id: review._id || review.id || '',
+    id: review._id || review.id || '',
     user: {
       _id: review.user?._id || review.user?.id || '',
       firstName: review.user?.firstName || '',
@@ -104,9 +114,9 @@ export const transformCommentsData = (
     createdAt: review.createdAt || review.date || new Date().toISOString(),
     updatedAt: review.updatedAt || review.createdAt || new Date().toISOString(),
     likes: review.likes || [],
-    likesCount: review.likesCount || review.likes || 0,
-    dislikesCount: review.dislikesCount || review.dislikes || 0,
+    likesCount: typeof review.likesCount === 'number' ? review.likesCount : (Array.isArray(review.likes) ? review.likes.length : 0),
+    dislikesCount: typeof review.dislikesCount === 'number' ? review.dislikesCount : 0,
     replies: review.replies || 0,
     isOwner: false
-  })) || [];
+  }));
 };
