@@ -5,6 +5,9 @@ import { styled } from '@mui/material/styles';
 import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
 
+import { FeatureCardsSectionProps } from '@/types/product';
+
+
 const StyledCard = styled(Card)(({ theme }) => ({
   height: '100%',
   display: 'flex',
@@ -51,18 +54,6 @@ const AnimatedCard = styled(StyledCard)(() => ({
   },
 }));
 
-interface CardItem {
-  imageUrl: string;
-  title: string;
-  description: string;
-}
-
-interface FeatureCardsSectionProps {
-  sectionTitle: string;
-  sectionDescription: string;
-  cards: CardItem[];
-}
-
 const FeatureCardsSection: React.FC<FeatureCardsSectionProps> = ({
   sectionTitle,
   sectionDescription,
@@ -92,6 +83,7 @@ const FeatureCardsSection: React.FC<FeatureCardsSectionProps> = ({
     return 'flex-start';
   };
 
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -115,16 +107,17 @@ const FeatureCardsSection: React.FC<FeatureCardsSectionProps> = ({
       }
     );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
+    const currentSectionRef = sectionRef.current;
+    if (currentSectionRef) {
+      observer.observe(currentSectionRef);
     }
 
     return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
+      if (currentSectionRef) {
+        observer.unobserve(currentSectionRef);
       }
     };
-  }, [cards.length]);
+  }, [cards]);
 
   const gridSize = getGridSize(cards.length);
 

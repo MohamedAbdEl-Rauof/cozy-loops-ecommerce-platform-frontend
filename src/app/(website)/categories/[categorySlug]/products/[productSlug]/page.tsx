@@ -1,174 +1,70 @@
 'use client'
 
 import { Box, Container, CircularProgress, Alert } from '@mui/material';
-import { useParams } from 'next/navigation';
-import React from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import React, { useMemo } from 'react';
 
 import ExisitingComments from '@/components/about/ExisitingComments';
-import AbountMaker from '@/components/product-details/AbountMaker';
+import AboutMaker from '@/components/product-details/AboutMaker';
 import Comments from '@/components/product-details/Comments';
 import SimilarProducts from '@/components/product-details/SimilarProducts';
 import FeatureCardsSection from '@/components/shared/FeatureCardsSection';
 import ProductDetails from '@/components/shared/PrdouctDetails';
 import SmallNavbar from '@/components/shared/SmallNavbar';
-import { FeatureCardsSectionData, FeatureCardsSectionData2, similarProductsData } from '@/data/pages/productDetailsPageData';
-import { useMakersBySlug } from '@/hooks/useMakers';
+import { FeatureCardsSectionData, FeatureCardsSectionData2 } from '@/data/pages/productDetailsPageData';
+import { useMakerProducts, useMakersBySlug } from '@/hooks/useMakers';
 import { useProductFromCategory } from '@/hooks/useProducts';
 import { useProductsTestimonialsBySlug } from '@/hooks/useTestimonials';
 import { useAddToWishlist, useRemoveFromWishlist, useWishlist } from '@/hooks/useWishlist';
-import { ProductImage } from '@/types/product';
-
-const createImagesArray = (mainImage: string, images: string[] = []): string[] => {
-
-  const imageUrls = new Set<string>();
-
-  if (mainImage) {
-    imageUrls.add(mainImage);
-  }
-
-  images.forEach(url => imageUrls.add(url));
-
-  return Array.from(imageUrls);
-};
-
-const transformImages = (images: string[] = [], productName: string): ProductImage[] => {
-  if (!images || images.length === 0) {
-    return [
-      {
-        id: '1',
-        url: '/placeholder-product.jpg',
-        alt: productName
-      }
-    ];
-  }
-
-  return images.map((url, index) => ({
-    id: (index + 1).toString(),
-    url,
-    alt: `${productName} - Image ${index + 1}`
-  }));
-};
-
-const transformColors = (colors: string[] = []) => {
-  if (!colors || colors.length === 0) {
-    return [
-      {
-        name: "Red",
-        value: "#ff6b6b",
-        available: true
-      },
-      {
-        name: "Blue",
-        value: "#45b7d1",
-        available: true
-      },
-      {
-        name: "Green",
-        value: "#96ceb4",
-        available: true
-      },
-      {
-        name: "Yellow",
-        value: "#feca57",
-        available: true
-      },
-      {
-        name: "Black",
-        value: "#000000",
-        available: true
-      }
-    ];
-  }
-};
+import {
+  transformProductData,
+  transformMakerData,
+  transformSimilarProducts,
+  transformCommentsData
+} from '@/utils/dataTransformers';
 
 const ProductPage = () => {
   const params = useParams();
+  const router = useRouter();
+  const categorySlug = params.categorySlug as string;
+  const productSlug = params.productSlug as string;
   const { isInWishlist } = useWishlist();
   const { addToWishlist } = useAddToWishlist();
   const { removeFromWishlist } = useRemoveFromWishlist();
-
-  const categorySlug = params.categorySlug as string;
-  const productSlug = params.productSlug as string;
-
-  const {
-    data: product,
-    isLoading,
-    error,
-  } = useProductFromCategory(categorySlug, productSlug);
-
-  const {
-    data: testimonials,
-    refetch: refetchTestimonials
-  } = useProductsTestimonialsBySlug(productSlug);
-
-  const actualReviewCount = testimonials?.reviews?.length || 0;
-
-  const calculateAverageRating = (testimonials: Array<{ rating?: number }> = []): number => {
-    if (!testimonials || testimonials.length === 0) return 0;
-
-    const totalRating = testimonials.reduce((sum, testimonial) => {
-      return sum + (testimonial.rating || 0);
-    }, 0);
-
-    return Number((totalRating / testimonials.length).toFixed(1));
-  };
-
-  const actualAverageRating = calculateAverageRating(testimonials?.reviews);
-
+  const { data: product, isLoading, error } = useProductFromCategory(categorySlug, productSlug);
+  const { data: testimonials, refetch: refetchTestimonials } = useProductsTestimonialsBySlug(productSlug);
   const { data: makerData } = useMakersBySlug(product?.maker?.slug || '');
+  const { data: makerProductsData } = useMakerProducts(product?.maker?._id || '');
 
-  const handleCommentSubmitted = () => {
-    refetchTestimonials();
-  };
+  const productData = useMemo(() =>
+    product ? transformProductData(product, testimonials, isInWishlist) : null,
+    [product, testimonials, isInWishlist]
+  );
 
-  if (isLoading) {
-    return (
-      <Box
-        component="main"
-        sx={{
-          bgcolor: 'white',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '50vh'
-        }}
-      >
-        <CircularProgress size={60} />
-      </Box>
-    );
-  }
+  const makerInfo = useMemo(() =>
+    transformMakerData(makerData, product || undefined),
+    [makerData, product]
+  );
 
-  if (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Failed to fetch product';
-    return (
-      <Box component="main" sx={{ bgcolor: 'white', p: 4 }}>
-        <Container maxWidth="md">
-          <Alert severity="error" sx={{ mb: 4 }}>
-            {errorMessage}
-          </Alert>
-        </Container>
-      </Box>
-    );
-  }
+  const similarProductsData = useMemo(() => {
+    if (!product?._id) {
+      return { title: "Similar Products", productsData: [] };
+    }
 
-  if (!product) {
-    return (
-      <Box component="main" sx={{ bgcolor: 'white', p: 4 }}>
-        <Container maxWidth="md">
-          <Alert severity="warning" sx={{ mb: 4 }}>
-            Product not found
-          </Alert>
-        </Container>
-      </Box>
-    );
-  }
+    return transformSimilarProducts(makerProductsData, product._id, makerInfo.name, product?.category?.name);
+  }, [makerProductsData, product?._id, makerInfo.name, product?.category?.name]);
 
-  // Create images array with mainImage first, then other images
-  const allImages = createImagesArray(product.mainImage, product.images);
-  const transformedImages = transformImages(allImages, product.name);
-  const transformedColors = transformColors(product.colors);
+  const commentsData = useMemo(() => {
+    if (!product?._id) {
+      return [];
+    }
+
+    return transformCommentsData(testimonials, product._id);
+  }, [testimonials, product?._id]);
 
   const handleToggleFavorite = () => {
+    if (!product) return;
+    
     if (isInWishlist(product._id)) {
       removeFromWishlist(product._id);
     } else {
@@ -176,245 +72,163 @@ const ProductPage = () => {
     }
   };
 
-  // Helper function to safely calculate years of experience
-  const calculateYearsOfExperience = (joinDate: string | undefined): number => {
-    if (!joinDate) return 0;
-    try {
-      return new Date().getFullYear() - new Date(joinDate).getFullYear();
-    } catch {
-      return 0;
-    }
+  const handleQuickView = (categorySlug: string, productSlug: string) => {
+    router.push(`/categories/${categorySlug}/products/${productSlug}`);
   };
 
-  // Helper function to safely format join date
-  const formatJoinDate = (joinDate: string | undefined): string => {
-    if (!joinDate) return "Unknown";
-    try {
-      return new Date(joinDate).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long'
-      });
-    } catch {
-      return "Unknown";
-    }
+  const handleMakerShopClick = () => {
+    console.log(`Navigate to ${makerInfo.name}'s artisan shop`);
+    // router.push(`/makers/${makerData?.slug}`);
   };
 
-  const makerName = makerData?.name || product?.maker?.name || "Unknown Maker";
+  const handleViewMoreClick = () => {
+    console.log(`View more products by ${makerInfo.name}`);
+    // router.push(`/products?maker=${makerData?.slug}`);
+  };
+
+  if (isLoading) {
+    return (
+      <Box component="main" sx={{ bgcolor: 'white', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}>
+        <CircularProgress size={60} />
+      </Box>
+    );
+  }
+
+  if (error || !product) {
+    const errorMessage = error instanceof Error ? error.message : 'Product not found';
+    return (
+      <Box component="main" sx={{ bgcolor: 'white', p: 4 }}>
+        <Container maxWidth="md">
+          <Alert severity={error ? "error" : "warning"} sx={{ mb: 4 }}>
+            {errorMessage}
+          </Alert>
+        </Container>
+      </Box>
+    );
+  }
 
   return (
-    <Box component="main" sx={{ bgcolor: '#fafafa' }}>
+    <Box
+      component="main"
+      sx={{
+        bgcolor: '#fafafa',
+        minHeight: '100vh',
+        width: '100%',
+        overflow: 'hidden'
+      }}
+    >
       <SmallNavbar
-        category={product.category?.name || "Category"}
+        category={"Category"}
         page1={product.category?.name || "Products"}
         page2={product.name}
       />
 
       <Container
         maxWidth={false}
+        disableGutters
         sx={{
-          maxWidth: {
-            xs: '100%',
-            sm: '100%',
-            md: '1400px',
-            lg: '1600px',
-            xl: '1850px'
-          },
-          mx: 'auto',
+          width: '100%',
+          maxWidth: 'none',
+          px: { xs: 1, sm: 2, md: 3, lg: 4 },
+          pb: { xs: 4, sm: 6, md: 8 }
         }}
       >
+
         <Box
           component="section"
           sx={{
             py: { xs: 4, sm: 6, md: 8 },
-            bgcolor: 'white',
-            borderRadius: { xs: 0, md: '16px 16px 0 0' },
-            boxShadow: { xs: 'none', md: '0 4px 20px rgba(0,0,0,0.08)' }
+            width: '100%'
           }}
         >
           <ProductDetails
-            _id={product._id}
-            name={product.name}
-            images={transformedImages}
-            mainImage={product.mainImage}
-            rating={actualAverageRating}
-            reviewCount={actualReviewCount}
-            inStock={product.inStock !== false}
-            stockCount={product.stockCount || 10}
-            price={product.price}
-            originalPrice={product.priceBeforeDiscount}
-            colors={transformedColors || []}
-            description={product.shortDescription || product.description}
-            discountPercentage={product.discountPercentage || 0}
+            productData={productData}
             onToggleFavorite={handleToggleFavorite}
-            isFavorite={isInWishlist(product._id)}
           />
         </Box>
 
-        {/* Feature Cards Section */}
         <Box
           component="section"
           sx={{
             mb: { xs: 6, sm: 8, md: 10, lg: 12 },
             mt: { xs: 4, sm: 6, md: 8 },
-            px: { xs: 2, sm: 3, md: 4 }
+            px: { xs: 2, sm: 3, md: 4 },
+            width: '100%'
           }}
         >
-          <FeatureCardsSection
-            sectionTitle={FeatureCardsSectionData.sectionTitle}
-            sectionDescription={FeatureCardsSectionData.sectionDescription}
-            cards={FeatureCardsSectionData.cards}
-          />
+          <Container maxWidth="xl">
+            <FeatureCardsSection
+              sectionTitle={FeatureCardsSectionData.sectionTitle}
+              sectionDescription={FeatureCardsSectionData.sectionDescription}
+              cards={FeatureCardsSectionData.cards}
+            />
+          </Container>
         </Box>
 
-        {/* About The Maker Section */}
         <Box
           component="section"
           sx={{
             py: { xs: 6, sm: 8, md: 10 },
             mb: { xs: 4, sm: 6, md: 8 },
-            bgcolor: 'white',
-            borderRadius: '16px',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.06)',
-            border: '1px solid rgba(0,0,0,0.04)',
             mx: { xs: 1, sm: 2, md: 3 },
-            overflow: 'hidden',
-            position: 'relative',
-            '&::before': {
-              content: '""',
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              height: '4px',
-              background: 'linear-gradient(90deg, #1976d2, #42a5f5, #1976d2)',
-              backgroundSize: '200% 100%',
-              animation: 'shimmer 3s ease-in-out infinite',
-            },
-            '@keyframes shimmer': {
-              '0%': { backgroundPosition: '-200% 0' },
-              '100%': { backgroundPosition: '200% 0' }
-            }
+            width: 'calc(100% - 16px)'
           }}
         >
-          <AbountMaker
+          <AboutMaker
             title="About The Maker"
-            makerInfo={{
-              name: makerName,
-              location: makerData?.location || product?.maker?.location || "Unknown Location",
-              miniBio: makerData?.aboutMe || product?.maker?.message || "Passionate artisan creating beautiful handcrafted pieces.",
-              avatar: makerData?.image || product?.maker?.image || "/images/makers/default-maker.jpg",
-              joinedDate: formatJoinDate(makerData?.joinDate),
-              rating: makerData?.rating || 4.5,
-              totalReviews: 127,
-              specialties: makerData?.specialties || ["Handcrafted", "Artisan"],
-              yearsOfExperience: calculateYearsOfExperience(makerData?.joinDate),
-              isVerified: true,
-              totalProducts: 45,
-              completedOrders: 320
-            }}
-            buttonText1="Visit Artisan Shop"
-            buttonText2={`View More by ${makerName}`}
+            makerInfo={makerInfo}
             imageSrc={makerData?.image || product?.maker?.image || "/images/shared/storyFeature.jpg"}
-            imageAlt={`${makerName} crafting beautiful handmade pieces`}
-            onButton1Click={() => {
-              console.log(`Navigate to ${makerName}'s artisan shop`);
-              // router.push(`/makers/${makerData?.slug}`);
-            }}
-            onButton2Click={() => {
-              console.log(`View more products by ${makerName}`);
-              // router.push(`/products?maker=${makerData?.slug}`);
-            }}
+            imageAlt={`${makerData?.name} crafting beautiful handmade pieces`}
+            onShopClick={handleMakerShopClick}
+            onViewMoreClick={handleViewMoreClick}
+            buttonText1={`Visit Artisan Shop`}
+            buttonText2={`View More By ${makerData?.name}`}
           />
         </Box>
 
-        {/* Similar Products Section */}
+        <Box component="section" >
+          <Comments onCommentSubmitted={() => refetchTestimonials()} />
+        </Box>
+
         <Box
           component="section"
           sx={{
-            mb: { xs: 6, sm: 8, md: 10 },
-            px: { xs: 2, sm: 3, md: 4 }
+            py: { xs: 6, sm: 8, md: 10 },
+            mb: { xs: 4, sm: 6, md: 8 },
+            mx: { xs: 1, sm: 2, md: 3 },
+            width: 'calc(100% - 16px)'
           }}
         >
-          <SimilarProducts
-            Products={similarProductsData}
-            onAddToCart={() => console.log("Product added to cart")}
-          />
+          <Container maxWidth="xl">
+            <ExisitingComments commentsData={commentsData} onRefresh={() => refetchTestimonials()} />
+          </Container>
         </Box>
 
-        {/* Comments Section */}
-        <Box
-          component="section"
-          sx={{
-            mb: { xs: 6, sm: 8, md: 10 },
-            px: { xs: 2, sm: 3, md: 4 }
-          }}
-        >
-          <Comments onCommentSubmitted={handleCommentSubmitted} />
-        </Box>
+        {similarProductsData.productsData.length > 0 && (
+          <Box component="section" >
+            <SimilarProducts
+              productsData={similarProductsData}
+              onQuickView={handleQuickView}
+            />
+          </Box>
+        )}
 
-        {/* Existing Comments Section */}
-        <Box
-          component="section"
-          sx={{
-            mb: { xs: 6, sm: 8, md: 10 },
-            px: { xs: 2, sm: 3, md: 4 }
-          }}
-        >
-
-
-
-          <ExisitingComments
-            /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-            mockComments={testimonials?.reviews?.map((review: any) => ({
-              _id: review._id || review.id,
-              id: review._id || review.id,
-              user: {
-                _id: review.user?._id || review.user?.id || '',
-                firstName: review.user?.firstName || '',
-                lastName: review.user?.lastName || '',
-                name: `${review.user?.firstName || ''} ${review.user?.lastName || ''}`.trim() || 'Anonymous',
-                Avatar: review.user?.Avatar || review.user?.avatar || '/images/default-avatar.jpg', // Capital A for Avatar
-                verified: review.user?.verified || false,
-                email: review.user?.email || '',
-                role: review.user?.role || 'user',
-                phoneNumber: review.user?.phoneNumber || '',
-                addresses: review.user?.addresses || [],
-                emailVerified: review.user?.emailVerified || false,
-                active: review.user?.active !== false,
-                createdAt: review.user?.createdAt || new Date().toISOString(),
-                updatedAt: review.user?.updatedAt || new Date().toISOString()
-              },
-              product: review.product || product._id,
-              rating: review.rating,
-              comment: review.comment,
-              date: review.createdAt || review.date || new Date().toISOString(),
-              createdAt: review.createdAt || review.date || new Date().toISOString(),
-              updatedAt: review.updatedAt || review.createdAt || new Date().toISOString(),
-              likes: review.likes || [],
-              likesCount: review.likesCount || review.likes || 0,
-              dislikesCount: review.dislikesCount || review.dislikes || 0,
-              replies: review.replies || 0,
-              isOwner: false // This will be set properly inside ExisitingComments component
-            })) || []}
-            onRefetch={refetchTestimonials}
-          />
-
-        </Box>
-
-        {/* Second Feature Cards Section */}
         <Box
           component="section"
           sx={{
             mb: { xs: 6, sm: 8, md: 10, lg: 12 },
-            mt: { xs: 4, sm: 6, md: 8 },
-            px: { xs: 2, sm: 3, md: 4 }
+            px: { xs: 2, sm: 3, md: 4 },
+            py: { xs: 4, sm: 6, md: 8 },
+            width: '100%'
           }}
         >
-          <FeatureCardsSection
-            sectionTitle={FeatureCardsSectionData2.sectionTitle}
-            sectionDescription={FeatureCardsSectionData2.sectionDescription}
-            cards={FeatureCardsSectionData2.cards}
-          />
+          <Container maxWidth="xl">
+            <FeatureCardsSection
+              sectionTitle={FeatureCardsSectionData2.sectionTitle}
+              sectionDescription={FeatureCardsSectionData2.sectionDescription}
+              cards={FeatureCardsSectionData2.cards}
+            />
+          </Container>
         </Box>
       </Container>
     </Box>

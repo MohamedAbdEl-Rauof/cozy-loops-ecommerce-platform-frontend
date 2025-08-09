@@ -214,4 +214,23 @@ export const testimonialsService = {
       throw error;
     }
   },
+
+  
+  likeDislikeReview: async (reviewId: string, type: 'like' | 'dislike') => {
+    try {
+      const response = await apiClient.post(`/api/reviews/${reviewId}/like`, {
+        type
+      });
+      return response.data;
+    } catch (error: unknown) {
+      console.error('Error liking/disliking review:', error);
+      
+      if (error && typeof error === 'object' && 'response' in error) {
+        const apiError = error as ApiError;
+        throw new Error(apiError.response?.data?.message || 'Failed to update review reaction');
+      }
+      
+      throw new Error('Failed to update review reaction');
+    }
+  },
 }

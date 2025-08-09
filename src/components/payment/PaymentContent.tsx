@@ -1,7 +1,7 @@
 "use client"
 import { Container, Typography, Alert, CircularProgress, Box, Paper, Grid, Divider } from '@mui/material';
 import { useSearchParams } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import StripeCheckout from '@/components/payment/StripeCheckout';
 import ProtectedRoute from '@/provider/ProtectedRoute';
@@ -31,7 +31,7 @@ const PaymentContent: React.FC = () => {
     const [isProcessing, setIsProcessing] = useState(false);
     const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
-    const handleCreatePaymentIntent = async () => {
+    const handleCreatePaymentIntent = useCallback(async () => {
         if (!orderId) {
             setCheckoutError('Order ID is required');
             return;
@@ -51,7 +51,7 @@ const PaymentContent: React.FC = () => {
         } finally {
             setIsProcessing(false);
         }
-    };
+    }, [orderId]);
 
     const handlePaymentStatusChange = (status: 'processing' | 'completed' | 'failed') => {
         switch (status) {
@@ -73,7 +73,7 @@ const PaymentContent: React.FC = () => {
         if (orderId && !checkoutData && !isProcessing) {
             handleCreatePaymentIntent();
         }
-    }, [orderId]); 
+    }, [orderId, checkoutData, isProcessing, handleCreatePaymentIntent]);
 
     if (!orderId) {
         return (
