@@ -3,37 +3,19 @@ import { ApiReview, Testimonial, ApiResponse, CreateTestimonialData, ApiError, U
 
 const getAccessToken = () => {
   if (typeof window !== 'undefined') {
-    console.log('=== TOKEN DEBUG ===');
 
     // Check localStorage
     const localToken = localStorage.getItem('accessToken');
-    console.log('localStorage accessToken:', localToken);
 
     // Check sessionStorage
     const sessionToken = sessionStorage.getItem('accessToken');
-    console.log('sessionStorage accessToken:', sessionToken);
-
-    // Check all cookies
-    console.log('All cookies:', document.cookie);
 
     // Check for accessToken cookie specifically
     const cookies = document.cookie.split(';');
-    console.log('Parsed cookies:', cookies);
 
     const tokenCookie = cookies.find(cookie =>
       cookie.trim().startsWith('accessToken')
     );
-    console.log('Found accessToken cookie:', tokenCookie);
-
-    // Try different cookie names
-    const altTokenCookie = cookies.find(cookie =>
-      cookie.trim().startsWith('access_token') ||
-      cookie.trim().startsWith('token') ||
-      cookie.trim().startsWith('authToken')
-    );
-    console.log('Found alternative token cookie:', altTokenCookie);
-
-    console.log('=== END TOKEN DEBUG ===');
 
     // Try localStorage first
     if (localToken) {
@@ -61,7 +43,6 @@ export const testimonialsService = {
   getTestimonials: async (): Promise<Testimonial[]> => {
     try {
       const response = await apiClient.get<ApiResponse>('api/reviews/user?sort=-createdAt');
-      console.log('responseresponseresponse', response);
       const reviews: ApiReview[] = response.data.data;
 
       const transformedItems: Testimonial[] = reviews.map((review) => ({

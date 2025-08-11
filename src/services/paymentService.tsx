@@ -1,31 +1,42 @@
 import apiClient from '@/lib/apiClient';
 
-interface CreatePaymentIntentData {
-  orderId: string;
-}
-
-interface VerifyPaymentData {
-  paymentIntentId: string;
+interface ApiError {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+  message?: string;
 }
 
 export const paymentService = {
-  createPaymentIntent: async (data: CreatePaymentIntentData) => {
+  getOrderForPayment: async (orderId: string) => {
     try {
-      const response = await apiClient.post('/api/payment/checkout', data);
-      return response.data.data;
-    } catch (error) {
-      console.error('Payment intent creation failed:', error);
-      throw new Error('Failed to create payment intent');
+      const response = await apiClient.get(`/api/orders/${orderId}/payment`);
+      return response.data;
+    } catch (error: unknown) {
+      const apiError = error as ApiError;
+      throw new Error(apiError.response?.data?.message || 'Failed to fetch order for payment');
     }
   },
 
-  verifyPayment: async (data: VerifyPaymentData) => {
+  createPaymentIntent: async (data: { orderId: string }) => {
+    try {
+      const response = await apiClient.post('/api/payment/create-intent', data);
+      return response.data.data; 
+    } catch (error: unknown) {
+      const apiError = error as ApiError;
+      throw new Error(apiError.response?.data?.message || 'Failed to create payment intent');
+    }
+  },
+
+  verifyPayment: async (data: { paymentIntentId: string }) => {
     try {
       const response = await apiClient.post('/api/payment/verify', data);
       return response.data;
-    } catch (error) {
-      console.error('Payment verification failed:', error);
-      throw new Error('Failed to verify payment');
+    } catch (error: unknown) {
+      const apiError = error as ApiError;
+      throw new Error(apiError.response?.data?.message || 'Failed to verify payment');
     }
   }
 };
