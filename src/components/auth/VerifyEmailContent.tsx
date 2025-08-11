@@ -138,7 +138,7 @@ export default function VerifyEmailContent() {
                     }
                 } catch {
                     // authToken is likely just a string token
-                    console.log('Using token as string');
+                    console.error('Using token as string');
                 }
 
                 // Attempt auto-login
@@ -215,7 +215,6 @@ export default function VerifyEmailContent() {
 
                     try {
                         const data = await response.json();
-                        console.log('Verification response:', data);
 
                         if (data.token && data.refreshToken) {
                             const tokenData = JSON.stringify({

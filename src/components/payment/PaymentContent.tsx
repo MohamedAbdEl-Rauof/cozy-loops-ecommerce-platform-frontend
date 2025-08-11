@@ -41,12 +41,46 @@ const PaymentContent: React.FC = () => {
             setIsProcessing(true);
             setCheckoutError(null);
 
-            const response = await paymentService.createPaymentIntent({
-                orderId: orderId
-            });
+            // First, try to get existing order details
+            try {
+                const orderResponse = await paymentService.getOrderForPayment(orderId);
 
-            setCheckoutData(response);
+                if (orderResponse.success && orderResponse.order) {
+                    const order = orderResponse.order;
+
+                    // If order is completed, redirect to success
+                    if (order.paymentStatus === 'completed') {
+                        window.location.href = '/payment/success';
+                        return;
+                    }
+
+                    // If order is failed, show error
+                    if (order.paymentStatus === 'failed') {
+                        setCheckoutError('This order payment has failed. Please try again or contact support.');
+                        return;
+                    }
+
+                    // If order can be paid (pending or processing), create/get payment intent
+                    if (order.canPay) {
+                        const response = await paymentService.createPaymentIntent({
+                            orderId: orderId
+                        });
+                        setCheckoutData(response);
+                        return;
+                    }
+
+                    // For any other status
+                    setCheckoutError(`Order cannot be paid. Current status: ${order.paymentStatus}`);
+                    return;
+                }
+            } catch (orderError) {
+                console.error('Order not found, this might be a new checkout flow:', orderError);
+                setCheckoutError('Order not found. Please go back to cart and try again.');
+                return;
+            }
+
         } catch (error) {
+            console.error('Payment setup error:', error);
             setCheckoutError(error instanceof Error ? error.message : 'An error occurred during payment setup');
         } finally {
             setIsProcessing(false);
