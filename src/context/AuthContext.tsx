@@ -57,6 +57,8 @@ interface AuthContextType {
   error: string | null;
   login: (_email: string, _password: string) => Promise<AuthResponse>;
   loginWithToken: (_token: string, _refreshTokenValue?: string) => Promise<User>;
+  loginWithGoogle: (_token: string) => Promise<AuthResponse>;
+  loginWithInstagram: (_code: string) => Promise<AuthResponse>; // Fixed: added missing closing parenthesis
   register: (_userData: RegisterData) => Promise<unknown>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
@@ -77,6 +79,8 @@ export const AuthContext = createContext<AuthContextType>({
   error: null,
   login: async () => ({ accessToken: '', refreshToken: '', user: {} as User }),
   loginWithToken: async () => ({} as User),
+  loginWithGoogle: async () => ({ accessToken: '', refreshToken: '', user: {} as User }),
+  loginWithInstagram: async () => ({ accessToken: '', refreshToken: '', user: {} as User }),
   register: async () => ({}),
   logout: async () => { },
   isAuthenticated: false,
@@ -311,6 +315,116 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const loginWithGoogle = async (token: string): Promise<AuthResponse> => {
+    try {
+      clearError();
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/google`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ token }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Google authentication failed');
+      }
+
+      // Store tokens using cookies (consistent with your existing auth flow)
+      Cookies.set('accessToken', data.accessToken, {
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        expires: 1
+      });
+
+      Cookies.set('refreshToken', data.refreshToken, {
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        expires: 7
+      });
+
+      // Update auth state
+      setIsAuthenticated(true);
+      await refetchUserQuery();
+
+      // Redirect based on user role
+      setTimeout(() => {
+        if (data.user.role === 'admin') {
+          router.push('/admin/dashboard');
+        } else {
+          router.push('/');
+        }
+      }, 100);
+
+      return data;
+    } catch (error: unknown) {
+      console.error('Google login error:', error);
+      const authError = error as AuthError;
+      const errorMessage = authError?.message || 'Google authentication failed';
+      setError(errorMessage);
+      throw error;
+    }
+  };
+
+  const loginWithInstagram = async (code: string): Promise<AuthResponse> => {
+    try {
+      clearError();
+
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/instagram`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ code }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Instagram authentication failed');
+      }
+
+      // Store tokens using cookies (consistent with your existing auth flow)
+      Cookies.set('accessToken', data.accessToken, {
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        expires: 1
+      });
+
+      Cookies.set('refreshToken', data.refreshToken, {
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        expires: 7
+      });
+
+      // Update auth state
+      setIsAuthenticated(true);
+      await refetchUserQuery();
+
+      // Redirect based on user role
+      setTimeout(() => {
+        if (data.user.role === 'admin') {
+          router.push('/admin/dashboard');
+        } else {
+          router.push('/');
+        }
+      }, 100);
+
+      return data;
+    } catch (error: unknown) {
+      console.error('Instagram login error:', error);
+      const authError = error as AuthError;
+      const errorMessage = authError?.message || 'Instagram authentication failed';
+      setError(errorMessage);
+      throw error;
+    }
+  };
+
   const refetchUser = useCallback(async (): Promise<void> => {
     try {
       await refetchUserQuery();
@@ -325,6 +439,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     error: error || loginMutation.error?.message || registerMutation.error?.message || null,
     login: handleLogin,
     loginWithToken,
+    loginWithGoogle,
+    loginWithInstagram,
     register: handleRegister,
     logout: handleLogout,
     isAuthenticated,

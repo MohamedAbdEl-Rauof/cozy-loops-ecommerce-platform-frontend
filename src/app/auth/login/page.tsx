@@ -40,11 +40,14 @@ const loginSchema = z.object({
 
 type FormData = z.infer<typeof loginSchema>
 
+
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [hasStartedTypingPassword, setHasStartedTypingPassword] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [forgetPasswordOpen, setForgetPasswordOpen] = useState(false)
+  const [loginInProgress, setLoginInProgress] = useState(false)
+  const [hasAttemptedLogin, setHasAttemptedLogin] = useState(false) // New flag
   const [snackbar, setSnackbar] = useState({
     open: false, message: '', severity: 'error' as 'error' | 'warning' | 'info' | 'success'
   });
@@ -88,15 +91,17 @@ export default function LoginPage() {
     },
   })
 
-
+  // Only check authentication on initial load, never after login attempt
   useEffect(() => {
-    if (isUserAuthenticated() && !showSuccessAnimation && !isSubmitting) {
+    if (!hasAttemptedLogin && !loading && isUserAuthenticated()) {
       setShowAuthenticatedMessage(true);
     }
-  }, [isAuthenticated, loading, isUserAuthenticated, showSuccessAnimation, isSubmitting]);
+  }, [hasAttemptedLogin, loading, isUserAuthenticated]);
 
   const onSubmit = async (data: FormData): Promise<void> => {
     setIsSubmitting(true);
+    setLoginInProgress(true);
+    setHasAttemptedLogin(true); // Set this to prevent future auth checks
     setShowAuthenticatedMessage(false);
 
     try {
@@ -104,6 +109,8 @@ export default function LoginPage() {
       setShowSuccessAnimation(true);
     } catch (error: unknown) {
       console.error("Login error:", error);
+      setLoginInProgress(false); // Reset on error
+      // Don't reset hasAttemptedLogin - keep it true to prevent auth check
 
       const err = error as { response?: { status: number; data: { emailVerified?: boolean; message?: string } }; message?: string };
 
@@ -146,7 +153,8 @@ export default function LoginPage() {
     setSnackbar(prev => ({ ...prev, open: false }));
   };
 
-  if (showAuthenticatedMessage && !showSuccessAnimation) {
+  // Only show authenticated message if no login attempt has been made
+  if (showAuthenticatedMessage && !hasAttemptedLogin) {
     return (
       <CountdownRedirect
         message="You are already authenticated!"
@@ -155,6 +163,8 @@ export default function LoginPage() {
       />
     );
   }
+
+  // Rest of your component remains the same...
 
   return (
     <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: { xs: "column", lg: "row" } }}>

@@ -6,6 +6,7 @@ import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
 import { AuthProvider } from "@/context/AuthContext";
 import QueryProvider from "@/provider/QueryProvider";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 export default function ClientLayout({
   children,
@@ -14,7 +15,7 @@ export default function ClientLayout({
 }) {
   return (
     <QueryProvider>
-      <SnackbarProvider 
+      <SnackbarProvider
         maxSnack={3}
         anchorOrigin={{
           vertical: 'top',
@@ -23,7 +24,9 @@ export default function ClientLayout({
       >
         <AuthProvider>
           <Navbar />
-          {children}
+          <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
+            {children}
+          </GoogleOAuthProvider>
           <Footer />
         </AuthProvider>
       </SnackbarProvider>
