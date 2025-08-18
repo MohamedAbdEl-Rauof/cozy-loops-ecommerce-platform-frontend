@@ -74,9 +74,9 @@ export const containerConfig: ContainerConfig = {
   maxWidth: {
     xs: '100%',
     sm: '100%',
-    md: '1400px',
-    lg: '1600px',
-    xl: '1850px'
+    md: '1300px',
+    lg: '1400px',
+    xl: '1600px'
   },
   px: { xs: 2, sm: 3, md: 4, lg: 6 },
 };

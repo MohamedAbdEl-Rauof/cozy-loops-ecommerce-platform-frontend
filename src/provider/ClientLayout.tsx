@@ -1,5 +1,6 @@
 "use client";
 
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { SnackbarProvider } from "notistack";
 
 import Footer from "@/components/shared/Footer";
@@ -14,7 +15,7 @@ export default function ClientLayout({
 }) {
   return (
     <QueryProvider>
-      <SnackbarProvider 
+      <SnackbarProvider
         maxSnack={3}
         anchorOrigin={{
           vertical: 'top',
@@ -23,7 +24,9 @@ export default function ClientLayout({
       >
         <AuthProvider>
           <Navbar />
-          {children}
+          <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
+            {children}
+          </GoogleOAuthProvider>
           <Footer />
         </AuthProvider>
       </SnackbarProvider>

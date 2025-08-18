@@ -49,7 +49,6 @@ export default function Home() {
 
   return (
     <Box component="main" sx={{ bgcolor: 'white' }}>
-
       <Box
         sx={{
           width: '100%',
@@ -72,6 +71,9 @@ export default function Home() {
         sx={{
           ...containerConfig,
           mx: 'auto',
+          gap: '1.5rem',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
         <Box
@@ -129,39 +131,38 @@ export default function Home() {
             <ShopByCraft craftCategories={craftCategories} />
           )}
         </Box>
-
-        <Box
-          component="section"
-          sx={{ py: sectionPadding }}
-          aria-labelledby="testimonials-title"
-        >
-          {testimonialsLoading ? (
-            <Box sx={{ textAlign: 'center', py: 8 }}>
-              <CircularProgress size={40} sx={{ color: '#FF7043' }} />
-              <Typography variant="body1" sx={{ mt: 2, color: '#5D4037' }}>
-                Loading testimonials...
-              </Typography>
-            </Box>
-          ) : testimonialsError ? (
-            <Box sx={{ textAlign: 'center', py: 8 }}>
-              <Alert
-                severity="info"
-                sx={{
-                  maxWidth: 400,
-                  mx: 'auto',
-                  '& .MuiAlert-message': {
-                    textAlign: 'center'
-                  }
-                }}
-              >
-                Testimonials are temporarily unavailable.
-              </Alert>
-            </Box>
-          ) : (
-            <Testimonials testimonialsData={testimonialsWithItems} />
-          )}
-        </Box>
       </Container>
+      <Box
+        component="section"
+        sx={{ py: sectionPadding }}
+        aria-labelledby="testimonials-title"
+      >
+        {testimonialsLoading ? (
+          <Box sx={{ textAlign: 'center', py: 8 }}>
+            <CircularProgress size={40} sx={{ color: '#FF7043' }} />
+            <Typography variant="body1" sx={{ mt: 2, color: '#5D4037' }}>
+              Loading testimonials...
+            </Typography>
+          </Box>
+        ) : testimonialsError ? (
+          <Box sx={{ textAlign: 'center', py: 8 }}>
+            <Alert
+              severity="info"
+              sx={{
+                maxWidth: 400,
+                mx: 'auto',
+                '& .MuiAlert-message': {
+                  textAlign: 'center'
+                }
+              }}
+            >
+              Testimonials are temporarily unavailable.
+            </Alert>
+          </Box>
+        ) : (
+          <Testimonials testimonialsData={testimonialsWithItems} />
+        )}
+      </Box>
     </Box>
   );
 }

@@ -24,13 +24,11 @@ const ShopByCraft = ({ craftCategories }: ShopByCraftProps) => {
             sx={{
                 bgcolor: theme.palette.background.default,
                 width: '100%',
-                py: { xs: 6, md: 8 }
             }}
         >
             <Box
                 sx={{
-                    px: { xs: 2, sm: 4 },
-                    py: { xs: 2, sm: 3 },
+
                     maxWidth: '1200px',
                     mx: 'auto',
                 }}
@@ -224,18 +222,22 @@ const ShopByCraft = ({ craftCategories }: ShopByCraftProps) => {
                                         position: 'absolute',
                                         bottom: -5,
                                         left: 0,
-                                        maxWidth: { xs: '70%', sm: '60%', md: '50%', lg: '40%' },
-                                        maxHeight: { xs: '50%', sm: '45%', md: '40%' },
+                                        right: { xs: '25%', sm: '30%', md: '45%', lg: '55%' },
+                                        maxHeight: { xs: '60%', sm: '55%', md: '50%' },
                                         bgcolor: 'rgba(255, 255, 255, 0.95)',
                                         borderRadius: '0 50px 3px 30px',
                                         padding: {
-                                            xs: '12px 16px',
-                                            sm: '15px 18px',
-                                            md: '17px 20px'
+                                            xs: '10px 14px',
+                                            sm: '12px 16px',
+                                            md: '14px 18px',
+                                            lg: '16px 20px'
                                         },
                                         transition: 'all 0.3s ease',
                                         transform: hoveredIndex === index ? 'translateY(-5px)' : 'translateY(0)',
                                         overflow: 'hidden',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        justifyContent: 'center',
                                     }}
                                 >
                                     <Typography
@@ -243,19 +245,20 @@ const ShopByCraft = ({ craftCategories }: ShopByCraftProps) => {
                                         fontWeight="bold"
                                         sx={{
                                             color: 'text.primary',
-                                            mb: { xs: 0.3, sm: 0.4, md: 0.5 },
+                                            mb: { xs: 0.2, sm: 0.3, md: 0.4 },
                                             fontSize: {
-                                                xs: '0.875rem',
-                                                sm: '1rem',
-                                                md: '1.1rem',
-                                                lg: '1.25rem'
+                                                xs: '0.8rem',
+                                                sm: '0.9rem',
+                                                md: '1rem',
+                                                lg: '1.1rem'
                                             },
-                                            lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 },
+                                            lineHeight: { xs: 1.1, sm: 1.2, md: 1.3 },
                                             display: '-webkit-box',
-                                            WebkitLineClamp: { xs: 1, sm: 2 },
+                                            WebkitLineClamp: { xs: 1, sm: 1, md: 2 },
                                             WebkitBoxOrient: 'vertical',
                                             overflow: 'hidden',
-                                            textOverflow: 'ellipsis'
+                                            textOverflow: 'ellipsis',
+                                            wordBreak: 'break-word',
                                         }}
                                     >
                                         {category.name}
@@ -265,17 +268,18 @@ const ShopByCraft = ({ craftCategories }: ShopByCraftProps) => {
                                         sx={{
                                             color: 'text.secondary',
                                             fontSize: {
-                                                xs: '0.7rem',
-                                                sm: '0.75rem',
-                                                md: '0.8rem',
-                                                lg: '0.875rem'
+                                                xs: '0.65rem',
+                                                sm: '0.7rem',
+                                                md: '0.75rem',
+                                                lg: '0.8rem'
                                             },
-                                            lineHeight: { xs: 1.2, sm: 1.3, md: 1.4 },
+                                            lineHeight: { xs: 1.1, sm: 1.2, md: 1.3 },
                                             display: '-webkit-box',
-                                            WebkitLineClamp: { xs: 2, sm: 2, md: 3 },
+                                            WebkitLineClamp: { xs: 2, sm: 2, md: 2, lg: 3 },
                                             WebkitBoxOrient: 'vertical',
                                             overflow: 'hidden',
-                                            textOverflow: 'ellipsis'
+                                            textOverflow: 'ellipsis',
+                                            wordBreak: 'break-word',
                                         }}
                                     >
                                         {category.description}
