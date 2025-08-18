@@ -1,12 +1,12 @@
-
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useAuth } from '@/context/AuthContext';
 import { Box, CircularProgress, Typography } from '@mui/material';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState, Suspense } from 'react';
 
-export default function InstagramCallback() {
+import { useAuth } from '@/context/AuthContext';
+
+function InstagramCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { loginWithInstagram } = useAuth();
@@ -77,5 +77,31 @@ export default function InstagramCallback() {
         Completing Instagram authentication...
       </Typography>
     </Box>
+  );
+}
+
+function LoadingFallback() {
+  return (
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      minHeight="100vh"
+      gap={2}
+    >
+      <CircularProgress />
+      <Typography variant="h6">
+        Loading...
+      </Typography>
+    </Box>
+  );
+}
+
+export default function InstagramCallback() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <InstagramCallbackContent />
+    </Suspense>
   );
 }

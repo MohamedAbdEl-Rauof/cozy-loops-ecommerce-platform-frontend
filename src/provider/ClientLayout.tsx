@@ -1,12 +1,12 @@
 "use client";
 
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { SnackbarProvider } from "notistack";
 
 import Footer from "@/components/shared/Footer";
 import Navbar from "@/components/shared/Navbar";
 import { AuthProvider } from "@/context/AuthContext";
 import QueryProvider from "@/provider/QueryProvider";
-import { GoogleOAuthProvider } from "@react-oauth/google";
 
 export default function ClientLayout({
   children,

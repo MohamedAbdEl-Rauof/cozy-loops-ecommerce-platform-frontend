@@ -46,12 +46,11 @@ export default function LoginPage() {
   const [hasStartedTypingPassword, setHasStartedTypingPassword] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [forgetPasswordOpen, setForgetPasswordOpen] = useState(false)
-  const [loginInProgress, setLoginInProgress] = useState(false)
-  const [hasAttemptedLogin, setHasAttemptedLogin] = useState(false) // New flag
+  const [hasAttemptedLogin, setHasAttemptedLogin] = useState(false) 
   const [snackbar, setSnackbar] = useState({
     open: false, message: '', severity: 'error' as 'error' | 'warning' | 'info' | 'success'
   });
-  const { login, isAuthenticated, loading, isUserAuthenticated } = useAuth();
+  const { login, loading, isUserAuthenticated } = useAuth();
   const [showAuthenticatedMessage, setShowAuthenticatedMessage] = useState(false);
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
   const router = useRouter();
@@ -100,7 +99,6 @@ export default function LoginPage() {
 
   const onSubmit = async (data: FormData): Promise<void> => {
     setIsSubmitting(true);
-    setLoginInProgress(true);
     setHasAttemptedLogin(true); // Set this to prevent future auth checks
     setShowAuthenticatedMessage(false);
 
@@ -109,7 +107,6 @@ export default function LoginPage() {
       setShowSuccessAnimation(true);
     } catch (error: unknown) {
       console.error("Login error:", error);
-      setLoginInProgress(false); // Reset on error
       // Don't reset hasAttemptedLogin - keep it true to prevent auth check
 
       const err = error as { response?: { status: number; data: { emailVerified?: boolean; message?: string } }; message?: string };

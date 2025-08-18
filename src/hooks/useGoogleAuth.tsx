@@ -1,7 +1,44 @@
+
 import { useState } from 'react';
 
 interface GoogleUser {
   credential: string;
+}
+
+interface GoogleNotification {
+  isNotDisplayed: () => boolean;
+  isSkippedMoment: () => boolean;
+}
+
+interface GoogleTokenResponse {
+  access_token: string;
+}
+
+interface GoogleTokenClient {
+  requestAccessToken: () => void;
+}
+
+interface GoogleAccounts {
+  id: {
+    initialize: (_config: {
+      client_id: string;
+      callback: (_response: GoogleUser) => void;
+      error_callback: () => void;
+    }) => void;
+    prompt: (_callback: (_notification: GoogleNotification) => void) => void;
+    renderButton: (_element: HTMLElement, _config: {
+      theme: string;
+      size: string;
+      type: string;
+    }) => void;
+  };
+  oauth2: {
+    initTokenClient: (_config: {
+      client_id: string;
+      scope: string;
+      callback: (_response: GoogleTokenResponse) => void;
+    }) => GoogleTokenClient;
+  };
 }
 
 interface UseGoogleAuthReturn {
@@ -50,7 +87,7 @@ export const useGoogleAuth = (): UseGoogleAuthReturn => {
           }
         });
 
-        window.google.accounts.id.prompt((notification: any) => {
+        window.google.accounts.id.prompt((notification: GoogleNotification) => {
           if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
             // Fallback to popup if prompt is not displayed
             window.google.accounts.id.renderButton(
@@ -66,7 +103,7 @@ export const useGoogleAuth = (): UseGoogleAuthReturn => {
             window.google.accounts.oauth2.initTokenClient({
               client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!,
               scope: 'email profile',
-              callback: (response: any) => {
+              callback: (response: GoogleTokenResponse) => {
                 setIsLoading(false);
                 resolve(response.access_token);
               },
@@ -87,6 +124,8 @@ export const useGoogleAuth = (): UseGoogleAuthReturn => {
 // Extend Window interface for TypeScript
 declare global {
   interface Window {
-    google: any;
+    google: {
+      accounts: GoogleAccounts;
+    };
   }
 }

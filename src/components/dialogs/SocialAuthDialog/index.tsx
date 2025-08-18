@@ -1,15 +1,15 @@
-
 import { Google, Apple, Instagram, Info, Close } from '@mui/icons-material';
 import { Box, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, CircularProgress } from '@mui/material';
+import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
 import React, { useState } from 'react';
+
 import { useAuth } from '@/context/AuthContext';
-import { GoogleLogin } from '@react-oauth/google';
 
 const SocialAuthDialog = () => {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [selectedProvider, setSelectedProvider] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const { loginWithGoogle, loginWithInstagram } = useAuth();
+    const { loginWithGoogle } = useAuth();
 
     const handleSocialClick = (providerName: string) => {
         if (providerName === 'Google') {
@@ -24,13 +24,17 @@ const SocialAuthDialog = () => {
         setDialogOpen(true);
     };
 
-    const handleGoogleSuccess = async (credentialResponse: any) => {
+    const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
         try {
             setIsLoading(true);
-            await loginWithGoogle(credentialResponse.credential);
+            // Add null check since credential can be undefined
+            if (credentialResponse.credential) {
+                await loginWithGoogle(credentialResponse.credential);
+            } else {
+                throw new Error('No credential received from Google');
+            }
         } catch (error) {
             console.error('Google login failed:', error);
-            // You might want to show an error message here
         } finally {
             setIsLoading(false);
         }

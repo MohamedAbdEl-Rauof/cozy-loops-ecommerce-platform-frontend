@@ -2,7 +2,6 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import {
   Box,
-  Container,
   Typography,
   Stack,
   IconButton,
@@ -83,9 +82,9 @@ const HeroSection: React.FC = () => {
           background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 100%)',
           filter: 'blur(20px)',
           animation: 'float 20s infinite ease-in-out',
-          display: { xs: 'block', sm: 'block' }, 
+          display: { xs: 'block', sm: 'block' },
           zIndex: 1,
-          opacity: { xs: 0.5, md: 0.7 }, 
+          opacity: { xs: 0.5, md: 0.7 },
         }}
       />
 
@@ -100,9 +99,9 @@ const HeroSection: React.FC = () => {
           background: 'linear-gradient(135deg, rgba(249,115,22,0.2) 0%, rgba(249,115,22,0.05) 100%)',
           filter: 'blur(15px)',
           animation: 'float2 15s infinite ease-in-out',
-          display: { xs: 'block', sm: 'block' }, 
+          display: { xs: 'block', sm: 'block' },
           zIndex: 1,
-          opacity: { xs: 0.5, md: 0.7 }, 
+          opacity: { xs: 0.5, md: 0.7 },
           '@keyframes float': {
             '0%, 100%': { transform: 'translateY(0) translateX(0)' },
             '50%': { transform: 'translateY(-20px) translateX(20px)' },
@@ -135,8 +134,7 @@ const HeroSection: React.FC = () => {
         }}
       />
 
-      <Container
-        maxWidth="xl"
+      <Box
         sx={{
           position: 'relative',
           zIndex: 10,
@@ -145,7 +143,7 @@ const HeroSection: React.FC = () => {
           alignItems: 'center',
           justifyContent: 'space-between',
           gap: { xs: 4, sm: 6, lg: 4 },
-          pt: { xs: 8, sm: 6, md: 0 }, 
+          pt: { xs: 8, sm: 6, md: 0 },
           pb: { xs: 12, sm: 10, md: 0 },
           height: { md: '85vh' },
           maxHeight: { md: '900px' },
@@ -154,14 +152,13 @@ const HeroSection: React.FC = () => {
 
         <Box
           sx={{
-            width: { xs: '100%', lg: '90%' }, 
-            mb: { xs: 2, sm: 0 }, 
+            mb: { xs: 2, sm: 0 },
           }}
         >
           <Box
             sx={{
               textAlign: { xs: 'center', lg: 'left' },
-              maxWidth: { xs: '100%', lg: '100%' }, 
+              maxWidth: { xs: '100%', lg: '100%' },
               order: { xs: 1, lg: 1 },
               px: { xs: 2, md: 4 },
             }}
@@ -195,7 +192,7 @@ const HeroSection: React.FC = () => {
                 fontFamily: '"DM Sans", sans-serif',
                 fontSize: { xs: '2.5rem', sm: '3rem', md: '3.75rem', lg: '4.5rem' },
                 fontWeight: 700,
-                lineHeight: { xs: 1.2, md: 1.1 }, 
+                lineHeight: { xs: 1.2, md: 1.1 },
                 letterSpacing: '-0.1rem',
                 color: '#1A2E35',
                 mb: 3,
@@ -267,11 +264,10 @@ const HeroSection: React.FC = () => {
                   background: 'linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%)',
                   color: 'white',
                   borderRadius: '30px',
-                  py: { xs: 1.5, sm: 2 },
-                  px: { xs: 5, sm: 6 },
+                  px: { xs: 5 },
                   minWidth: { xs: '200px', sm: '220px' },
                   height: { xs: '48px', sm: '56px' },
-                  fontSize: { xs: '0.7rem', sm: '0.85rem' ,md: '1.05rem' },
+                  fontSize: { xs: '0.7rem', sm: '0.85rem', md: '1.05rem' },
                   fontWeight: 600,
                   letterSpacing: '0.5px',
                   boxShadow: '0 10px 25px -5px rgba(249, 115, 22, 0.4), 0 8px 10px -6px rgba(249, 115, 22, 0.2)',
@@ -540,7 +536,7 @@ const HeroSection: React.FC = () => {
             ))}
           </Stack>
         </Box>
-      </Container>
+      </Box>
 
       <Box
         sx={{

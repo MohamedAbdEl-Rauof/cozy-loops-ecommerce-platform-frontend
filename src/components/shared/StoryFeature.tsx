@@ -64,8 +64,7 @@ const StoryFeature = ({
                 justifyContent: 'center',
                 alignItems: 'center',
                 bgcolor: brandColors.background,
-                py: { xs: 4, sm: 6, md: 8, lg: 10 },
-                px: { xs: 2, sm: 3, md: 4 },
+
                 width: '100%',
                 minHeight: { xs: 'auto', md: '70vh' },
             }}
@@ -78,7 +77,6 @@ const StoryFeature = ({
                 sx={{
                     position: 'relative',
                     width: '100%',
-                    maxWidth: '1400px',
                     display: 'flex',
                     flexDirection: { 
                         xs: 'column', 
@@ -214,7 +212,7 @@ const StoryFeature = ({
                             fontWeight: 500,
                             fontSize: { xs: '0.6rem', sm: '1rem', md: '1.125rem' },
                             px: { xs: 1, sm: 5, md: 6 },
-                            py: { xs: 0.1, sm: 2, md: 2.5 },
+                            py: { xs: 0.1, sm: 1 },
                             borderRadius: '9999px !important',
                             textTransform: 'none',
                             boxShadow: `0 8px 24px rgba(255, 112, 67, 0.3)`,
@@ -317,6 +315,7 @@ const StoryFeature = ({
                             <Image
                                 src={imageSrc}
                                 alt={imageAlt}
+                                fill
                                 style={{
                                     width: '100%',
                                     height: '100%',
