@@ -105,7 +105,7 @@ const MainAboutSection = () => {
                         }}
                     >
                         <Image
-                            src="/images/about/mainAbout.png"
+                            src="/images/about/mainAbout.jpg"
                             alt="About Cozy Loops hero"
                             fill
                             style={{

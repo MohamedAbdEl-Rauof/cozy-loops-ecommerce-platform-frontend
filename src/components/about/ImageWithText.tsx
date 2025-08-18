@@ -1,16 +1,16 @@
 'use client';
 
-import { Box, Typography, Fade, Slide, Button, useTheme, useMediaQuery } from '@mui/material';
+import { Box, Fade, Slide, Button, useTheme, useMediaQuery } from '@mui/material';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect, useRef } from 'react';
 
-import {ImageWithTextProps } from '@/types/about';
+import { ImageWithTextProps } from '@/types/about';
 
 const ImageWithText = ({
-    dataContent
-}: ImageWithTextProps) => {
-    const { title, description, imageSrc, imageAlt, flipContent, imageWidth, imageHeight, buttonText, buttonLink, onButtonClick } = dataContent
+                           dataContent
+                       }: ImageWithTextProps) => {
+    const { title, description, imageSrc, imageAlt, flipContent, imageWidth, imageHeight, buttonText, buttonLink, onButtonClick } = dataContent;
     const [isVisible, setIsVisible] = useState(false);
     const [imageLoaded, setImageLoaded] = useState(false);
     const [isInView, setIsInView] = useState(false);
@@ -107,67 +107,7 @@ const ImageWithText = ({
                 transition: 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
             }}
         >
-            <Slide
-                direction={isMobile ? "up" : (flipContent ? "left" : "right")}
-                in={isVisible}
-                timeout={1000}
-                style={{ transitionDelay: '200ms' }}
-            >
-                <Box
-                    sx={{
-                        flex: { xs: 'none', md: 0.8 },
-                        position: 'relative',
-                        width: imageWidth || defaultWidth,
-                        height: imageHeight || defaultHeight,
-                        maxWidth: {
-                            xs: '320px',
-                            sm: '380px',
-                            md: '520px',
-                            lg: '580px',
-                            xl: '640px'
-                        },
-                        borderRadius: {
-                            xs: '16px',
-                            sm: '20px',
-                            md: '24px',
-                            lg: '28px'
-                        },
-                        overflow: 'hidden',
-                        transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                        mx: { xs: 'auto', md: 0 },
-                        '&:hover': {
-                            transform: {
-                                xs: 'scale(1.02)',
-                                md: 'translateY(-8px) scale(1.02)'
-                            }
-                        },
-                        '&::before': {
-                            content: '""',
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                        }
-                    }}
-                >
-                    <Image
-                        src={imageSrc}
-                        alt={imageAlt}
-                        fill
-                        priority={false}
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        style={{
-                            objectFit: 'cover',
-                            objectPosition: 'center',
-                            transition: 'all 0.4s ease',
-                            opacity: imageLoaded ? 1 : 0,
-                        }}
-                        onLoad={handleImageLoad}
-                    />
-                </Box>
-            </Slide>
-
+            {/* Text Content - Now comes first in DOM */}
             <Fade
                 in={isVisible}
                 timeout={1200}
@@ -197,8 +137,7 @@ const ImageWithText = ({
                         height: '100%'
                     }}
                 >
-                    <Typography
-                        variant="h1"
+                    <Box
                         component="h1"
                         sx={{
                             fontWeight: { xs: 800, md: 900 },
@@ -211,11 +150,13 @@ const ImageWithText = ({
                                 xl: '4rem'
                             },
                             lineHeight: { xs: 1.2, sm: 1.3, md: 1.2 },
-                            color: 'var(--text-primary)',
-                            background: 'linear-gradient(135deg, var(--text-primary), var(--primary-color))',
+                            background: '#162E3F',
                             backgroundClip: 'text',
                             WebkitBackgroundClip: 'text',
                             WebkitTextFillColor: 'transparent',
+                            textAlign: {
+                                xs: 'start',
+                            },
                             animation: isInView ? 'fadeInUp 1s ease-out' : 'none',
                             '@keyframes fadeInUp': {
                                 '0%': {
@@ -230,10 +171,9 @@ const ImageWithText = ({
                         }}
                     >
                         {title}
-                    </Typography>
+                    </Box>
 
-                    <Typography
-                        variant="body1"
+                    <Box
                         sx={{
                             fontSize: {
                                 xs: '1rem',
@@ -243,11 +183,12 @@ const ImageWithText = ({
                                 xl: '1.5rem'
                             },
                             lineHeight: { xs: 1.6, sm: 1.7, md: 1.8 },
-                            color: 'var(--text-secondary)',
+                            color: '#162E3F',
                             mb: buttonText ? { xs: 3, sm: 3.5, md: 4, lg: 5 } : 0,
+                            textAlign: {
+                                xs: 'start',
+                            },
                             maxWidth: { xs: '100%', md: '90%', lg: '85%' },
-                            mx: { xs: 'auto', md: flipContent ? 'auto' : 0 },
-                            ml: { md: flipContent ? 'auto' : 0 },
                             animation: isInView ? 'fadeInUp 1s ease-out 0.2s both' : 'none',
                             '@keyframes fadeInUp': {
                                 '0%': {
@@ -262,7 +203,7 @@ const ImageWithText = ({
                         }}
                     >
                         {description}
-                    </Typography>
+                    </Box>
 
                     {buttonText && (
                         <Box
@@ -343,6 +284,68 @@ const ImageWithText = ({
                     )}
                 </Box>
             </Fade>
+
+            {/* Image - Now comes second in DOM */}
+            <Slide
+                direction={isMobile ? "up" : (flipContent ? "left" : "right")}
+                in={isVisible}
+                timeout={1000}
+                style={{ transitionDelay: '200ms' }}
+            >
+                <Box
+                    sx={{
+                        flex: { xs: 'none', md: 0.8 },
+                        position: 'relative',
+                        width: imageWidth || defaultWidth,
+                        height: imageHeight || defaultHeight,
+                        maxWidth: {
+                            xs: '320px',
+                            sm: '380px',
+                            md: '520px',
+                            lg: '580px',
+                            xl: '640px'
+                        },
+                        borderRadius: {
+                            xs: '16px',
+                            sm: '20px',
+                            md: '24px',
+                            lg: '28px'
+                        },
+                        overflow: 'hidden',
+                        transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                        mx: { xs: 'auto', md: 0 },
+                        '&:hover': {
+                            transform: {
+                                xs: 'scale(1.02)',
+                                md: 'translateY(-8px) scale(1.02)'
+                            }
+                        },
+                        '&::before': {
+                            content: '""',
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                        }
+                    }}
+                >
+                    <Image
+                        src={imageSrc}
+                        alt={imageAlt}
+                        fill
+                        priority={false}
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        style={{
+                            objectFit: 'cover',
+                            objectPosition: 'center',
+                            transition: 'all 0.4s ease',
+                            opacity: imageLoaded ? 1 : 0,
+                        }}
+                        onLoad={handleImageLoad}
+                    />
+                </Box>
+            </Slide>
         </Box>
     );
 };
