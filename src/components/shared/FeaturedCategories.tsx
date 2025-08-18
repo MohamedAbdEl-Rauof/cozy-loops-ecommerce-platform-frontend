@@ -224,7 +224,7 @@ const FeaturedCategories = ({
                             background: 'linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%)',
                             color: 'white',
                             fontWeight: 600,
-                            fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' },
+                            fontSize: { xs: '0.7rem', sm: '0.9rem', md: '1.125rem' },
                             px: { xs: 4, sm: 5, md: 6 },
                             py: { xs: 1.5, sm: 2, md: 2.5 },
                             minWidth: { xs: '160px', sm: '180px', md: '200px' },
