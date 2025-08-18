@@ -25,7 +25,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
 }));
 
 const ImageContainer = styled(Box)({
-  width: '96px',
+  width: '80px',
   height: '96px',
   position: 'relative',
   marginBottom: '16px',
@@ -83,7 +83,6 @@ const FeatureCardsSection: React.FC<FeatureCardsSectionProps> = ({
     return 'flex-start';
   };
 
-
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -125,9 +124,6 @@ const FeatureCardsSection: React.FC<FeatureCardsSectionProps> = ({
     <Box
       ref={sectionRef}
       component="section"
-      sx={{
-        backgroundColor: '#fafafa',
-      }}
     >
       <Container
         maxWidth={false}
