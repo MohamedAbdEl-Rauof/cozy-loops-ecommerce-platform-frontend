@@ -10,7 +10,7 @@ import { ImageWithTextProps } from '@/types/about';
 const ImageWithText = ({
                            dataContent
                        }: ImageWithTextProps) => {
-    const { title, description, imageSrc, imageAlt, flipContent, imageWidth, imageHeight, buttonText, buttonLink, onButtonClick } = dataContent;
+    const { title, description, imageSrc, imageAlt, flipContent, imageHeight, buttonText, buttonLink, onButtonClick } = dataContent;
     const [isVisible, setIsVisible] = useState(false);
     const [imageLoaded, setImageLoaded] = useState(false);
     const [isInView, setIsInView] = useState(false);
@@ -93,13 +93,6 @@ const ImageWithText = ({
                     xl: 10
                 },
                 mx: 'auto',
-                maxWidth: {
-                    xs: '100%',
-                    sm: '600px',
-                    md: '100%',
-                    lg: '1200px',
-                    xl: '1400px'
-                },
                 px: { xs: 2, sm: 3, md: 4 },
                 py: { xs: 3, sm: 4, md: 6 },
                 opacity: isVisible ? 1 : 0,
@@ -212,7 +205,7 @@ const ImageWithText = ({
                                 display: 'flex',
                                 justifyContent: {
                                     xs: 'center',
-                                    md: flipContent ? 'flex-end' : 'flex-start'
+                                    md: 'flex-start'
                                 },
                                 '@keyframes fadeInUp': {
                                     '0%': {
@@ -296,7 +289,7 @@ const ImageWithText = ({
                     sx={{
                         flex: { xs: 'none', md: 0.8 },
                         position: 'relative',
-                        width: imageWidth || defaultWidth,
+                        width:  defaultWidth,
                         height: imageHeight || defaultHeight,
                         maxWidth: {
                             xs: '320px',
