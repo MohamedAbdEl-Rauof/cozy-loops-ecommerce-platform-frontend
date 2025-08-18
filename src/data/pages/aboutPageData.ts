@@ -33,7 +33,7 @@ export const missionData: ImageWithTextData = {
     imageSrc: "/images/shared/ImageWithText1.jpg",
     imageAlt: "Our Mission",
     flipContent: true,
-    imageWidth: { xs: '100%', sm: '80%', md: '90%', lg: '100%' },
+    imageWidth: { xs: '100%', sm: '90%', md: '80%', lg: '75%' },
     imageHeight: { xs: '300px', sm: '400px', md: '500px', lg: '600px' }
 };
 
@@ -43,9 +43,9 @@ export const madeInEgyptData: ImageWithTextData = {
     imageSrc: "/images/shared/ImageWithText2.jpg",
     imageAlt: "Made in Egypt",
     flipContent: false,
-    imageWidth: { xs: '100%', sm: '80%', md: '65%', lg: '70%' },
+    imageWidth: { xs: '100%', sm: '90%', md: '80%', lg: '75%' },
     imageHeight: { xs: '300px', sm: '400px', md: '500px', lg: '600px' }
- };
+};
 
 export const storyFeatureData: StoryFeatureData = {
     title: "Meet the Makers",

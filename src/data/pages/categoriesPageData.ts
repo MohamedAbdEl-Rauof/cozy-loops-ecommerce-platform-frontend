@@ -21,26 +21,14 @@ export interface FeaturedCategoriesData {
     buttonLink: string;
 }
 
-export interface CategoriesPageMetadata {
-    title: string;
-    description: string;
-    keywords: string[];
-}
-
-export const categoriesPageMetadata: CategoriesPageMetadata = {
-    title: "Handmade Categories - Cozy Loops",
-    description: "Explore our diverse collection of handmade crafts across various categories. Find unique, artisan-made items that tell their own story.",
-    keywords: ["handmade", "crafts", "categories", "artisan", "handcrafted", "unique gifts"]
-};
-
 export const heroSectionData: ImageWithTextData = {
     title: "Find Your Favorite Craft",
     description: "Browse through a world of handmade wonders, each with its own texture, soul, and story. Discover unique pieces crafted by talented artisans from around the world.",
-    imageSrc: "/images/shared/mainCategoriesImage.png",
+    imageSrc: "/images/shared/mainCategoriesImage.jpg",
     imageAlt: "Find Your Favorite Craft - Handmade Items Collection",
-    flipContent: false,
+    flipContent: true,
     imageWidth: { xs: '100%', sm: '80%', md: '90%', lg: '100%' },
-    imageHeight: { xs: '500px', sm: '600px', md: '750px', lg: '850px' },
+    imageHeight: { xs: '300px', sm: '400px', md: '550px', lg: '650px' },
     buttonText: "Explore All Categories"
 };
 
@@ -49,7 +37,7 @@ export const featuredCategoriesData: FeaturedCategoriesData = {
     isTitleCenter: false,
     description: "Discover the stories behind our talented makers. Each artisan brings their unique cultural heritage and personal touch to every handcrafted piece.",
     ctaText: "Featured Maker",
-    image: "/images/shared/featuredCategory.jpg",
+    image: "/images/shared/featuredCategories.jpg",
     buttonText: "View Profile",
     buttonLink: "#"
 };
