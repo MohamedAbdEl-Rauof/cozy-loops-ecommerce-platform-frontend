@@ -199,7 +199,7 @@ export default function LoginPage() {
         }}
       >
         <Image
-          src="/images/auth/login.webp"
+          src="/images/auth/login.jpg"
           quality={100}
           priority
           alt="Hands holding a heart with craft materials"
