@@ -11,11 +11,11 @@ import ProductsOfCategory from '@/components/shared/ProductsOfCategory';
 import SmallNavbar from '@/components/shared/SmallNavbar';
 import StoryFeature from '@/components/shared/StoryFeature';
 import Testimonials from '@/components/shared/Testimonials';
-import { 
-  createCategoriesData, 
-  createFeaturedCategoriesData, 
-  createTestimonialsData, 
-  createProductsConfig 
+import {
+  createCategoriesData,
+  createFeaturedCategoriesData,
+  createTestimonialsData,
+  createProductsConfig
 } from '@/data/pages/categoryProductPageData';
 import { useCategoryBySlug } from '@/hooks/useCategories';
 import { useProductsByCategorySlug } from '@/hooks/useProducts';
@@ -108,11 +108,10 @@ export default function CategoryPage() {
     );
   }
 
-// Create data using utility functions
-const categoriesData = createCategoriesData(selectedCategory, productsData);
-const featuredCategories = createFeaturedCategoriesData(selectedCategory, categoriesData);
-const testimonialsData = createTestimonialsData(selectedCategory, testimonialsItems);
-const productsConfig = createProductsConfig(selectedCategory, slug, productsData);
+  const categoriesData = createCategoriesData(selectedCategory, productsData);
+  const featuredCategories = createFeaturedCategoriesData(selectedCategory, categoriesData);
+  const testimonialsData = createTestimonialsData(selectedCategory, testimonialsItems);
+  const productsConfig = createProductsConfig(selectedCategory, slug, productsData);
 
   return (
     <Box component="main" sx={{ bgcolor: '#fafafa', minHeight: '100vh' }}>
@@ -156,8 +155,7 @@ const productsConfig = createProductsConfig(selectedCategory, slug, productsData
               lg: '1600px',
               xl: '1850px'
             },
-            px: { xs: 2, sm: 3, md: 4, lg: 6 },
-            py: { xs: 4, sm: 6, md: 16 },
+            px: { xs: 2, sm: 3, md: 4, lg: 4 },
             mx: 'auto',
           }}
         >
@@ -170,19 +168,18 @@ const productsConfig = createProductsConfig(selectedCategory, slug, productsData
             totalArtisans={categoriesData.categories?.length || 0}
             rating={4.8}
           />
-        </Container>
 
-        <Box
-          id="products-section"
-          ref={productsGridRef}
-          sx={{
-            py: { xs: 6, sm: 8, md: 10 },
-            bgcolor: 'white',
-            borderTop: '1px solid #e0e0e0',
-          }}
-        >
-          <ProductsOfCategory Products={productsConfig} />
-        </Box>
+          <Box
+            id="products-section"
+            ref={productsGridRef}
+            sx={{
+              py: { xs: 6, sm: 8, md: 10 },
+              bgcolor: 'white'
+            }}
+          >
+            <ProductsOfCategory Products={productsConfig} />
+          </Box>
+        </Container>
 
         <Box
           sx={{
@@ -203,9 +200,8 @@ const productsConfig = createProductsConfig(selectedCategory, slug, productsData
           <Box
             component="section"
             sx={{
-              py: { xs: 6, md: 8 },
-              bgcolor: '#f8f9fa',
-              borderTop: '1px solid #e0e0e0',
+              py: { xs: 2, md: 4 },
+              bgcolor: '#f8f9fa'
             }}
           >
             <Testimonials testimonialsData={testimonialsData} />

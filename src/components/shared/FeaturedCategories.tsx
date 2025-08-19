@@ -45,6 +45,7 @@ const FeaturedCategories = ({
                 justifyContent: 'center',
                 alignItems: 'center',
                 width: '100%',
+                px: { xs: 2, sm: 0 }
             }}
         >
             <Paper
