@@ -225,14 +225,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       await refetchUserQuery();
 
-      setTimeout(() => {
-        if (response.user.role === 'admin') {
-          router.push('/admin/dashboard');
-        } else {
-          router.push('/');
-        }
-      }, 100);
-
       return response;
     } catch (error: unknown) {
       const authError = error as AuthError;

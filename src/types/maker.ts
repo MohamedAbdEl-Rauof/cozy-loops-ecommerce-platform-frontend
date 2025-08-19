@@ -65,3 +65,24 @@ export interface MakerProductsResponse {
   success: boolean;
   data: MakerProductsData;
 }
+
+export interface MakerCategory {
+  _id: string;
+  id: string;
+  name: string;
+  title: string;
+  slug: string;
+  description: string;
+  image: string;
+  isMaker: boolean;
+  buttonText: string;
+  buttonLink: string;
+  parent: null;
+  level: number;
+  isActive: boolean;
+  featured: boolean;
+  sortOrder: number;
+  productCount: number;
+  createdAt: string;
+  updatedAt: string;
+}

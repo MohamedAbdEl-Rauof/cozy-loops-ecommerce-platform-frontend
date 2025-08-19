@@ -10,11 +10,14 @@ import {
     Fade
 } from '@mui/material';
 import { useRouter } from 'next/navigation';
-import React from 'react';
+import React, { useState } from 'react';
 
+import { useAuth } from '@/context/AuthContext';
 import { useAddToCart, useCart, useUpdateCart } from '@/hooks/useCart';
 import { CartItem } from '@/types/cart';
 import { ProductsOfCategoryProps } from '@/types/category';
+
+import AuthDialog from '../dialogs/AuthDialog';
 
 const ProductsOfCategory: React.FC<ProductsOfCategoryProps> = ({
     Products,
@@ -24,27 +27,36 @@ const ProductsOfCategory: React.FC<ProductsOfCategoryProps> = ({
     const { addToCart, isPending: isAddingToCart } = useAddToCart();
     const { updateCart, isPending: isUpdatingCart } = useUpdateCart();
     const { data: cartData } = useCart();
+    const [authDialogOpen, setAuthDialogOpen] = useState(false);
+    const [authDialogMessage, setAuthDialogMessage] = useState('');
+    const { user } = useAuth();
 
-  const handleAddToCart = (productId: string) => {
-    if (isAddingToCart || isUpdatingCart) return;
+    const handleAddToCart = (productId: string) => {
+        if (isAddingToCart || isUpdatingCart) return;
 
-    const product = Products.productsData.find(item => item.id === productId);
+        const product = Products.productsData.find(item => item.id === productId);
 
-    if (product) {
-        const existingCartItem = cartData?.items?.find((item: CartItem) => item.product._id === productId);
-        if (existingCartItem) {
-            updateCart({
-                productId: productId,
-                quantity: existingCartItem.quantity + 1,
-            });
-        } else {
-            addToCart({
-                productId: productId,
-                quantity: 1,
-            });
+        if (product) {
+            const existingCartItem = cartData?.items?.find((item: CartItem) => item.product._id === productId);
+            if (!user) {
+                setAuthDialogMessage('Please log in to add items to your cart.');
+                setAuthDialogOpen(true);
+                return;
+            }
+
+            if (existingCartItem) {
+                updateCart({
+                    productId: productId,
+                    quantity: existingCartItem.quantity + 1,
+                });
+            } else {
+                addToCart({
+                    productId: productId,
+                    quantity: 1,
+                });
+            }
         }
-    }
-};
+    };
     const handleOnClick = (productSlug: string) => {
         router.push(`/categories/${Products.mainSlug}/products/${productSlug}`);
     }
@@ -285,6 +297,12 @@ const ProductsOfCategory: React.FC<ProductsOfCategoryProps> = ({
                     </Box>
                 )}
             </Container>
+            <AuthDialog
+                open={authDialogOpen}
+                onClose={() => setAuthDialogOpen(false)}
+                title="Login Required"
+                message={authDialogMessage}
+            />
         </Box>
     );
 };
