@@ -1,13 +1,11 @@
-import { Google, Apple, Instagram, Info, Close } from '@mui/icons-material';
-import { Box, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, CircularProgress } from '@mui/material';
+import { Google, LinkedIn } from '@mui/icons-material';
+import { Box, IconButton, CircularProgress } from '@mui/material';
 import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
 import React, { useState } from 'react';
 
 import { useAuth } from '@/context/AuthContext';
 
 const SocialAuthDialog = () => {
-    const [dialogOpen, setDialogOpen] = useState(false);
-    const [selectedProvider, setSelectedProvider] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const { loginWithGoogle } = useAuth();
 
@@ -16,12 +14,43 @@ const SocialAuthDialog = () => {
             // Don't open dialog for Google, handle authentication directly
             return;
         }
-        if (providerName === 'Instagram') {
-            handleInstagramLogin();
+
+        if (providerName === 'LinkedIn') {
+            handleLinkedInLogin();
             return;
         }
-        setSelectedProvider(providerName);
-        setDialogOpen(true);
+    };
+
+
+    // Update the handleLinkedInLogin function
+    const handleLinkedInLogin = () => {
+        try {
+            const state = crypto.randomUUID();
+            const timestamp = Date.now();
+            const redirectUrl = window.location.pathname;
+
+            // Store state data as a JSON object
+            const stateData = {
+                state,
+                timestamp,
+                redirectUrl
+            };
+
+            localStorage.setItem('linkedin_oauth_state', JSON.stringify(stateData));
+            localStorage.setItem('linkedin_oauth_timestamp', timestamp.toString());
+
+            const linkedInAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?` +
+                `response_type=code&` +
+                `client_id=${process.env.NEXT_PUBLIC_LINKEDIN_CLIENT_ID}&` +
+                `redirect_uri=${encodeURIComponent(process.env.NEXT_PUBLIC_LINKEDIN_REDIRECT_URI!)}&` +
+                `state=${state}&` +
+                `scope=openid%20profile%20email`;
+
+            console.log('Redirecting to LinkedIn with state:', state);
+            window.location.href = linkedInAuthUrl;
+        } catch (error) {
+            console.error('LinkedIn login error:', error);
+        }
     };
 
     const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
@@ -45,38 +74,12 @@ const SocialAuthDialog = () => {
         // You might want to show an error message here
     };
 
-
-    const handleInstagramLogin = async () => {
-        try {
-            setIsLoading(true);
-
-            // Instagram OAuth flow - redirect to Instagram authorization
-            const clientId = process.env.NEXT_PUBLIC_INSTAGRAM_CLIENT_ID;
-            const redirectUri = encodeURIComponent(`${window.location.origin}/auth/instagram/callback`);
-            const scope = 'user_profile,user_media';
-
-            const instagramAuthUrl = `https://api.instagram.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&response_type=code`;
-
-            // Redirect to Instagram authorization page
-            window.location.href = instagramAuthUrl;
-
-        } catch (error) {
-            console.error('Instagram login failed:', error);
-            setIsLoading(false);
-        }
-    };
-
-    const handleCloseDialog = () => {
-        setDialogOpen(false);
-    };
-
     return (
         <Box sx={{ textAlign: 'center', mb: 4 }}>
             <Box sx={{ display: "flex", justifyContent: "center", gap: 2, mb: 3 }}>
                 {[
                     { icon: <Google />, color: "#4285F4", name: "Google" },
-                    { icon: <Apple />, color: "#000", name: "Apple" },
-                    { icon: <Instagram />, color: "#E4405F", name: "Instagram" },
+                    { icon: <LinkedIn />, color: "#0077B5", name: "LinkedIn" },
                 ].map((social, index) => (
                     social.name === 'Google' ? (
                         <Box key={index} sx={{ position: 'relative' }}>
@@ -148,67 +151,8 @@ const SocialAuthDialog = () => {
                     <CircularProgress size={24} />
                 </Box>
             )}
-
-            {/* Coming Soon Dialog for other providers */}
-            <Dialog
-                open={dialogOpen}
-                onClose={handleCloseDialog}
-                PaperProps={{
-                    sx: {
-                        borderRadius: 2,
-                        maxWidth: 550,
-                        p: 1
-                    }
-                }}
-            >
-                <IconButton
-                    onClick={handleCloseDialog}
-                    sx={{
-                        position: 'absolute',
-                        right: 8,
-                        top: 8,
-                        color: 'text.secondary'
-                    }}
-                >
-                    <Close fontSize="small" />
-                </IconButton>
-                <DialogTitle sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1,
-                    pb: 1
-                }}>
-                    <Info color="info" />
-                    <Typography variant="h6" component="div">
-                        Coming Soon
-                    </Typography>
-                </DialogTitle>
-                <DialogContent>
-                    <Typography variant="body1">
-                        {`Sign in with ${selectedProvider} will be available soon. `}
-                    </Typography>
-                    <Typography variant="body1">
-                        {`We're working on adding this feature to enhance your experience.`}
-                    </Typography>
-                </DialogContent>
-                <DialogActions sx={{ p: 2, pt: 1 }}>
-                    <Button
-                        onClick={handleCloseDialog}
-                        variant="contained"
-                        sx={{
-                            backgroundColor: 'var(--primary-color)',
-                            color: "white",
-                            "&:hover": {
-                                backgroundColor: 'var(--primary-hover)',
-                            }
-                        }}
-                    >
-                        Got it
-                    </Button>
-                </DialogActions>
-            </Dialog>
         </Box>
     );
-}
+};
 
 export default SocialAuthDialog;

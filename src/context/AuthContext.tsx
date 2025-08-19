@@ -50,7 +50,6 @@ interface AuthError {
   message?: string;
 }
 
-
 interface AuthContextType {
   user: User | null;
   loading: boolean;
@@ -58,7 +57,7 @@ interface AuthContextType {
   login: (_email: string, _password: string) => Promise<AuthResponse>;
   loginWithToken: (_token: string, _refreshTokenValue?: string) => Promise<User>;
   loginWithGoogle: (_token: string) => Promise<AuthResponse>;
-  loginWithInstagram: (_code: string) => Promise<AuthResponse>; // Fixed: added missing closing parenthesis
+  loginWithLinkedIn: (_code?: string) => Promise<AuthResponse>;
   register: (_userData: RegisterData) => Promise<unknown>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
@@ -80,7 +79,7 @@ export const AuthContext = createContext<AuthContextType>({
   login: async () => ({ accessToken: '', refreshToken: '', user: {} as User }),
   loginWithToken: async () => ({} as User),
   loginWithGoogle: async () => ({ accessToken: '', refreshToken: '', user: {} as User }),
-  loginWithInstagram: async () => ({ accessToken: '', refreshToken: '', user: {} as User }),
+  loginWithLinkedIn: async () => ({ accessToken: '', refreshToken: '', user: {} as User }),
   register: async () => ({}),
   logout: async () => { },
   isAuthenticated: false,
@@ -370,60 +369,115 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const loginWithInstagram = async (code: string): Promise<AuthResponse> => {
-    try {
-      clearError();
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/instagram`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ code }),
-      });
 
-      const data = await response.json();
+const loginWithLinkedIn = async (code?: string): Promise<AuthResponse> => {
+  try {
+    clearError();
 
-      if (!response.ok) {
-        throw new Error(data.message || 'Instagram authentication failed');
+    // If no code is provided, initiate the OAuth flow
+    if (!code) {
+      console.log('Initiating LinkedIn OAuth flow...');
+      
+      const clientId = process.env.NEXT_PUBLIC_LINKEDIN_CLIENT_ID;
+      const redirectUri = encodeURIComponent(
+        process.env.NEXT_PUBLIC_LINKEDIN_REDIRECT_URI ||
+        `${window.location.origin}/auth/linkedin/callback`
+      );
+
+      if (!clientId) {
+        throw new Error('LinkedIn Client ID not configured');
       }
 
-      // Store tokens using cookies (consistent with your existing auth flow)
-      Cookies.set('accessToken', data.accessToken, {
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        expires: 1
-      });
+      // Generate a secure state parameter
+      const state = crypto.randomUUID ? 
+        crypto.randomUUID() : 
+        Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
-      Cookies.set('refreshToken', data.refreshToken, {
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        expires: 7
-      });
+      const scope = encodeURIComponent('openid profile email');
 
-      // Update auth state
-      setIsAuthenticated(true);
-      await refetchUserQuery();
+      // Store state with multiple methods for reliability
+      const stateData = {
+        state,
+        timestamp: Date.now(),
+        redirectUri: process.env.NEXT_PUBLIC_LINKEDIN_REDIRECT_URI || `${window.location.origin}/auth/linkedin/callback`
+      };
 
-      // Redirect based on user role
-      setTimeout(() => {
-        if (data.user.role === 'admin') {
-          router.push('/admin/dashboard');
-        } else {
-          router.push('/');
-        }
-      }, 100);
+      // Store in multiple ways
+      localStorage.setItem('linkedin_oauth_state', JSON.stringify(stateData));
+      localStorage.setItem('linkedin_oauth_state_simple', state);
+      localStorage.setItem('linkedin_oauth_timestamp', Date.now().toString());
+      sessionStorage.setItem('linkedin_oauth_state', JSON.stringify(stateData));
 
-      return data;
-    } catch (error: unknown) {
-      console.error('Instagram login error:', error);
-      const authError = error as AuthError;
-      const errorMessage = authError?.message || 'Instagram authentication failed';
-      setError(errorMessage);
-      throw error;
+      console.log('Generated state data:', stateData);
+
+      const linkedInAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${state}`;
+
+      console.log('Redirecting to LinkedIn:', linkedInAuthUrl);
+
+      // Redirect to LinkedIn
+      window.location.href = linkedInAuthUrl;
+
+      return new Promise(() => { });
     }
-  };
+
+    // If code is provided, complete the authentication
+    console.log('Completing LinkedIn authentication with code:', code);
+
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/linkedin/callback`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({ code }),
+    });
+
+    const data = await response.json();
+
+    console.log('LinkedIn auth response:', { 
+      ok: response.ok, 
+      status: response.status,
+      success: data.success 
+    });
+
+    if (!response.ok || !data.success) {
+      throw new Error(data.message || 'LinkedIn authentication failed');
+    }
+
+    // Store tokens using cookies
+    Cookies.set('accessToken', data.accessToken, {
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      expires: 1
+    });
+
+    Cookies.set('refreshToken', data.refreshToken, {
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      expires: 7
+    });
+
+    // Update auth state
+    setIsAuthenticated(true);
+    
+    // Refetch user data
+    await refetchUserQuery();
+
+    console.log('LinkedIn authentication completed successfully');
+
+    // Note: Don't redirect here, let the callback page handle it
+    // The callback page will handle the redirect after this function completes
+
+    return data;
+  } catch (error: unknown) {
+    console.error('LinkedIn login error:', error);
+    const authError = error as AuthError;
+    const errorMessage = authError?.message || 'LinkedIn authentication failed';
+    setError(errorMessage);
+    throw error;
+  }
+};
 
   const refetchUser = useCallback(async (): Promise<void> => {
     try {
@@ -440,7 +494,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login: handleLogin,
     loginWithToken,
     loginWithGoogle,
-    loginWithInstagram,
+    loginWithLinkedIn,
     register: handleRegister,
     logout: handleLogout,
     isAuthenticated,
