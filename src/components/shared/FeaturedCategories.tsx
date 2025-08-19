@@ -172,7 +172,7 @@ const FeaturedCategories = ({
                             fontWeight: 800,
                             mb: { xs: 1.5, sm: 2, md: 2.5, lg: 3 },
                             textAlign: isTitleCenter ? 'center' : 'left',
-                            color: '#000',
+                            color: '#182630ff',
                             fontSize: {
                                 xs: '1.75rem',
                                 sm: '2.25rem',
@@ -197,7 +197,7 @@ const FeaturedCategories = ({
                             textAlign: isTitleCenter ? 'center' : 'left',
                             maxWidth: { xs: '95%', sm: '90%', md: '85%', lg: '80%' },
                             mb: { xs: 2, sm: 2.5, md: 3, lg: 3.5 },
-                            color: '#000',
+                            color: '#192731ff',
                             fontSize: {
                                 xs: '0.95rem',
                                 sm: '1.1rem',

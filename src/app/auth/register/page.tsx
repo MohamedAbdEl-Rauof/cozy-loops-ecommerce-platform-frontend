@@ -27,11 +27,10 @@ import { Dialog, DialogContent, Fade, Grow } from "@mui/material";
 import axios from "axios"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { z } from "zod"
 
-import { CountdownRedirect } from "@/components/auth/CountdownRedirect"
 import SocialAuthDialog from "@/components/dialogs/SocialAuthDialog"
 import { useAuth } from "@/context/AuthContext"
 
@@ -74,16 +73,26 @@ export default function RegistrationPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
-  const { register, isAuthenticated, isUserAuthenticated, loading } = useAuth();
+  const { register, isUserAuthenticated, loading } = useAuth();
   const [registeredEmail, setRegisteredEmail] = useState<string>("");
   const router = useRouter();
-  const [showAuthenticatedMessage, setShowAuthenticatedMessage] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const hasCheckedAuth = useRef(false);
 
+  // Handle initial authentication check - only once
   useEffect(() => {
-    if (isUserAuthenticated()) {
-      setShowAuthenticatedMessage(true);
+    if (!hasCheckedAuth.current && !loading) {
+      hasCheckedAuth.current = true
+      
+      if (isUserAuthenticated()) {
+        setIsRedirecting(true)
+        // Small delay to prevent flash
+        setTimeout(() => {
+          router.push('/')
+        }, 100)
+      }
     }
-  }, [isAuthenticated, loading, isUserAuthenticated]);
+  }, [loading, isUserAuthenticated, router])
 
   const {
     control,
@@ -116,7 +125,6 @@ export default function RegistrationPage() {
     length: (password || "").length >= 8,
   }
 
-
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     setError(null);
@@ -136,7 +144,6 @@ export default function RegistrationPage() {
       console.error("Error submitting form:", error);
 
       if (axios.isAxiosError(error)) {
-
         const errorMessage = error.response?.data?.message ||
           error.response?.data?.error ||
           "Registration failed. Please try again later.";
@@ -253,13 +260,18 @@ export default function RegistrationPage() {
     );
   };
 
-  if (showAuthenticatedMessage || (!loading && isUserAuthenticated())) {
+  // Show loading state while checking authentication
+  if (loading || isRedirecting) {
     return (
-      <CountdownRedirect
-        message="You are already authenticated!"
-        redirectPath="/"
-        seconds={5}
-      />
+      <Box sx={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#f5f5f5"
+      }}>
+        <CircularProgress size={40} />
+      </Box>
     );
   }
 

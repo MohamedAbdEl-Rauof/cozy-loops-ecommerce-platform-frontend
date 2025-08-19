@@ -1,4 +1,3 @@
-
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,11 +23,10 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { CountdownRedirect } from "@/components/auth/CountdownRedirect";
 import ForgotPasswordDialog from "@/components/dialogs/ForgetPasswordDialog";
 import SocialAuthDialog from "@/components/dialogs/SocialAuthDialog";
 import { useAuth } from "@/context/AuthContext";
@@ -40,42 +38,25 @@ const loginSchema = z.object({
 
 type FormData = z.infer<typeof loginSchema>
 
-
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [hasStartedTypingPassword, setHasStartedTypingPassword] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [forgetPasswordOpen, setForgetPasswordOpen] = useState(false)
-  const [hasAttemptedLogin, setHasAttemptedLogin] = useState(false) 
+  const [hasAttemptedLogin, setHasAttemptedLogin] = useState(false)
+  const [loginInProgress, setLoginInProgress] = useState(false)
+  const [showSuccessAnimation, setShowSuccessAnimation] = useState(false)
+  const [progressValue, setProgressValue] = useState(0)
+  const [isRedirecting, setIsRedirecting] = useState(false)
+  const hasCheckedAuth = useRef(false)
   const [snackbar, setSnackbar] = useState({
-    open: false, message: '', severity: 'error' as 'error' | 'warning' | 'info' | 'success'
-  });
-  const { login, loading, isUserAuthenticated } = useAuth();
-  const [showAuthenticatedMessage, setShowAuthenticatedMessage] = useState(false);
-  const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
-  const router = useRouter();
-  const [progressValue, setProgressValue] = useState(0);
+    open: false,
+    message: "",
+    severity: "success" as "success" | "error" | "warning" | "info",
+  })
 
-  useEffect(() => {
-    if (showSuccessAnimation) {
-      const totalTime = 3000;
-      const interval = 50;
-      const steps = totalTime / interval;
-      let currentStep = 0;
-
-      const timer = setInterval(() => {
-        currentStep += 1;
-        setProgressValue((currentStep / steps) * 100);
-
-        if (currentStep >= steps) {
-          clearInterval(timer);
-          router.push('/');
-        }
-      }, interval);
-
-      return () => clearInterval(timer);
-    }
-  }, [showSuccessAnimation, router]);
+  const router = useRouter()
+  const { login, loading, isUserAuthenticated } = useAuth()
 
   const {
     control,
@@ -90,26 +71,82 @@ export default function LoginPage() {
     },
   })
 
-  // Only check authentication on initial load, never after login attempt
+  // Handle initial authentication check - only once
   useEffect(() => {
-    if (!hasAttemptedLogin && !loading && isUserAuthenticated()) {
-      setShowAuthenticatedMessage(true);
+    if (!hasCheckedAuth.current && !loading && !hasAttemptedLogin && !loginInProgress) {
+      hasCheckedAuth.current = true
+      
+      if (isUserAuthenticated()) {
+        setIsRedirecting(true)
+        // Small delay to prevent flash
+        setTimeout(() => {
+          router.push('/')
+        }, 100)
+      }
     }
-  }, [hasAttemptedLogin, loading, isUserAuthenticated]);
+  }, [loading, hasAttemptedLogin, loginInProgress, isUserAuthenticated, router])
+
+  // Handle success animation progress
+  useEffect(() => {
+    if (showSuccessAnimation) {
+      const totalTime = 3000
+      const interval = 50
+      const steps = totalTime / interval
+      let currentStep = 0
+
+      const timer = setInterval(() => {
+        currentStep += 1
+        setProgressValue((currentStep / steps) * 100)
+
+        if (currentStep >= steps) {
+          clearInterval(timer)
+          setIsRedirecting(true)
+          router.push('/')
+        }
+      }, interval)
+
+      return () => clearInterval(timer)
+    }
+  }, [showSuccessAnimation, router])
+
+  // Handle URL parameters for email verification
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search)
+    const verified = searchParams.get('verified')
+
+    if (verified === 'true') {
+      setSnackbar({
+        open: true,
+        message: 'Email verified successfully! You can now log in.',
+        severity: 'success'
+      })
+      // Clean up URL
+      const newUrl = window.location.pathname
+      window.history.replaceState({}, document.title, newUrl)
+    }
+  }, [])
 
   const onSubmit = async (data: FormData): Promise<void> => {
-    setIsSubmitting(true);
-    setHasAttemptedLogin(true); // Set this to prevent future auth checks
-    setShowAuthenticatedMessage(false);
+    setIsSubmitting(true)
+    setHasAttemptedLogin(true)
+    setLoginInProgress(true)
 
     try {
-      await login(data.email, data.password);
-      setShowSuccessAnimation(true);
+      await login(data.email, data.password)
+      setShowSuccessAnimation(true)
     } catch (error: unknown) {
-      console.error("Login error:", error);
-      // Don't reset hasAttemptedLogin - keep it true to prevent auth check
+      console.error("Login error:", error)
 
-      const err = error as { response?: { status: number; data: { emailVerified?: boolean; message?: string } }; message?: string };
+      const err = error as { 
+        response?: { 
+          status: number
+          data: { 
+            emailVerified?: boolean
+            message?: string 
+          } 
+        }
+        message?: string 
+      }
 
       if (err.response && err.response.status === 403 &&
         err.response.data && err.response.data.emailVerified === false) {
@@ -117,51 +154,39 @@ export default function LoginPage() {
           open: true,
           message: 'Email not verified. Please check your inbox for verification email.',
           severity: 'warning'
-        });
+        })
       } else {
         setSnackbar({
           open: true,
           message: err.response?.data?.message || err.message || 'Login failed. Please try again.',
           severity: 'error'
-        });
+        })
       }
-      return;
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
+      setLoginInProgress(false)
     }
-  };
-
-  useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const verified = searchParams.get('verified');
-
-    if (verified === 'true') {
-      setSnackbar({
-        open: true,
-        message: 'Email verified successfully! You can now log in.',
-        severity: 'success'
-      });
-      const newUrl = window.location.pathname;
-      window.history.replaceState({}, document.title, newUrl);
-    }
-  }, []);
-
-  const handleCloseSnackbar = () => {
-    setSnackbar(prev => ({ ...prev, open: false }));
-  };
-
-  // Only show authenticated message if no login attempt has been made
-  if (showAuthenticatedMessage && !hasAttemptedLogin) {
-    return (
-      <CountdownRedirect
-        message="You are already authenticated!"
-        redirectPath="/"
-        seconds={5}
-      />
-    );
   }
 
-  // Rest of your component remains the same...
+  const handleCloseSnackbar = () => {
+    setSnackbar(prev => ({ ...prev, open: false }))
+  }
+
+  // Show loading or redirect if user is already authenticated
+  if (isRedirecting || (!hasCheckedAuth.current && loading)) {
+    return (
+      <Box 
+        sx={{ 
+          minHeight: "100vh", 
+          display: "flex", 
+          alignItems: "center", 
+          justifyContent: "center" 
+        }}
+      >
+        <CircularProgress size={40} />
+      </Box>
+    )
+  }
 
   return (
     <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: { xs: "column", lg: "row" } }}>
@@ -212,8 +237,8 @@ export default function LoginPage() {
             <Box
               component="form"
               onSubmit={(e) => {
-                e.preventDefault();
-                handleSubmit(onSubmit)(e);
+                e.preventDefault()
+                handleSubmit(onSubmit)(e)
               }}
               sx={{ mt: 3 }}
               noValidate
@@ -254,9 +279,9 @@ export default function LoginPage() {
                     error={!!errors.password}
                     helperText={errors.password?.message}
                     onChange={(e) => {
-                      field.onChange(e);
+                      field.onChange(e)
                       if (!hasStartedTypingPassword && e.target.value) {
-                        setHasStartedTypingPassword(true);
+                        setHasStartedTypingPassword(true)
                       }
                     }}
                     InputProps={{
@@ -280,10 +305,17 @@ export default function LoginPage() {
               />
 
               <Box sx={{ textAlign: "left", mb: 3 }}>
-                <MuiLink sx={{ color: 'var(--primary-color)', cursor: 'pointer' }} underline="hover" onClick={() => setForgetPasswordOpen(true)}>
+                <MuiLink 
+                  sx={{ color: 'var(--primary-color)', cursor: 'pointer' }} 
+                  underline="hover" 
+                  onClick={() => setForgetPasswordOpen(true)}
+                >
                   Forgot password?
                 </MuiLink>
-                <ForgotPasswordDialog open={forgetPasswordOpen} onClose={() => setForgetPasswordOpen(false)} />
+                <ForgotPasswordDialog 
+                  open={forgetPasswordOpen} 
+                  onClose={() => setForgetPasswordOpen(false)} 
+                />
               </Box>
 
               <Button
@@ -325,115 +357,65 @@ export default function LoginPage() {
                 </Link>
               </Typography>
             </Box>
+
           </Box>
         </Container>
       </Box>
 
-      {
-        showSuccessAnimation && (
-          <Dialog
-            open={showSuccessAnimation}
-            maxWidth="md"
-            fullWidth
-            PaperProps={{
-              elevation: 8,
-              sx: {
-                borderRadius: '16px',
-                overflow: 'hidden',
-                backgroundColor: 'white',
-                height: 'auto',
-                minHeight: '400px',
-                maxHeight: '80vh',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center'
-              }
-            }}
-            TransitionComponent={Fade}
-            TransitionProps={{ timeout: 500 }}
-          >
-            <DialogContent
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '3rem 2rem',
-                position: 'relative',
-                height: '100%',
-              }}
-            >
-              <Box
-                sx={{
-                  backgroundColor: 'rgba(var(--primary-color-rgb), 0.1)',
-                  borderRadius: '50%',
-                  padding: '1.5rem',
-                  animation: 'ripple 1.5s infinite ease-in-out',
-                  '@keyframes ripple': {
-                    '0%': { boxShadow: '0 0 0 0 rgba(var(--primary-color-rgb), 0.3)' },
-                    '70%': { boxShadow: '0 0 0 15px rgba(var(--primary-color-rgb), 0)' },
-                    '100%': { boxShadow: '0 0 0 0 rgba(var(--primary-color-rgb), 0)' }
-                  }
-                }}
-              >
-                <CheckCircleIcon
-                  sx={{
-                    fontSize: 180,
-                    color: 'var(--primary-color)',
-                    animation: 'pulse 1.5s infinite',
-                    '@keyframes pulse': {
-                      '0%': { transform: 'scale(0.95)' },
-                      '70%': { transform: 'scale(1)' },
-                      '100%': { transform: 'scale(0.95)' }
-                    }
-                  }}
-                />
-              </Box>
-              <Typography
-                variant="h5"
-                sx={{
-                  fontWeight: 600,
-                  color: '#333',
-                  textAlign: 'center',
-                  marginBottom: '0.75rem',
-                  animation: 'fadeInDown 0.6s ease-out',
-                  '@keyframes fadeInDown': {
-                    '0%': { opacity: 0, transform: 'translateY(-10px)' },
-                    '100%': { opacity: 1, transform: 'translateY(0)' }
-                  }
-                }}
-              >
+      {/* Success Animation Dialog */}
+      <Dialog
+        open={showSuccessAnimation}
+        PaperProps={{
+          sx: {
+            borderRadius: 3,
+            p: 4,
+            textAlign: 'center',
+            minWidth: 300,
+          }
+        }}
+      >
+        <DialogContent>
+          <Fade in={showSuccessAnimation} timeout={500}>
+            <Box>
+              <CheckCircleIcon 
+                sx={{ 
+                  fontSize: 80, 
+                  color: 'var(--primary-color)', 
+                  mb: 2 
+                }} 
+              />
+              <Typography variant="h5" sx={{ mb: 2, fontWeight: 600 }}>
                 Login Successful!
               </Typography>
+              <Typography variant="body1" sx={{ mb: 3, color: '#666' }}>
+                Redirecting you to the homepage...
+              </Typography>
+              <LinearProgress 
+                variant="determinate" 
+                value={progressValue} 
+                sx={{ 
+                  height: 8, 
+                  borderRadius: 4,
+                  backgroundColor: '#f0f0f0',
+                  '& .MuiLinearProgress-bar': {
+                    backgroundColor: 'var(--primary-color)',
+                  }
+                }} 
+              />
+            </Box>
+          </Fade>
+        </DialogContent>
+      </Dialog>
 
-              <Box sx={{ width: '100%', mt: 1 }}>
-                <LinearProgress
-                  variant="determinate"
-                  value={progressValue}
-                  sx={{
-                    height: 6,
-                    borderRadius: 3,
-                    backgroundColor: 'rgba(var(--primary-color-rgb), 0.1)',
-                    '& .MuiLinearProgress-bar': {
-                      borderRadius: 3,
-                      backgroundColor: 'var(--primary-color)'
-                    }
-                  }}
-                />
-              </Box>
-            </DialogContent>
-          </Dialog>
-        )
-      }
-
+      {/* Snackbar for notifications */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        <Alert
-          onClose={handleCloseSnackbar}
+        <Alert 
+          onClose={handleCloseSnackbar} 
           severity={snackbar.severity}
           sx={{ width: '100%' }}
         >
@@ -441,5 +423,5 @@ export default function LoginPage() {
         </Alert>
       </Snackbar>
     </Box>
-  )
+  ) 
 }
