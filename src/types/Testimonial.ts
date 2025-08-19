@@ -82,22 +82,23 @@ export interface ApiReview {
   date?: string;
   dislikes?: number;
   replies?: number;
+  isOwner?: boolean;
 }
 
 export interface Testimonial {
   reviews?: ApiReview[];
   id: string;
   user: {
-    name: string;
-    avatar: string;
-    verified: boolean;
+    name?: string;
+    avatar?: string;
+    verified?: boolean;
   };
-  rating: number;
-  comment: string;
-  date: string;
-  likes: number;
-  dislikes: number;
-  replies: number;
+  rating?: number;
+  comment?: string;
+  date?: string;
+  likes?: number;
+  dislikes?: number;
+  replies?: number;
 }
 
 export interface TestimonialsProps {

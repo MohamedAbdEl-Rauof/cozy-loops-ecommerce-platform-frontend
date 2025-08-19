@@ -6,11 +6,12 @@ export interface Category {
 
 export interface Maker {
   _id: string;
-  name: string;
-  slug: string;
-  location: string;
-  image: string;
-  products: Product[];
+  name?: string;
+  slug?: string;
+  location?: string;
+  image?: string;
+  products?: Product[];
+  message?: string;
 }
 
 export interface ProductAttribute {

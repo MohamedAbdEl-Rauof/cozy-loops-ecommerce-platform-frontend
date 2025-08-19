@@ -44,8 +44,8 @@ const CategoriesGrid: React.FC<CategoriesGridProps> = ({categoriesData}) => {
                 opacity: isVisible ? 1 : 0,
                 transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
                 transition: 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                py: {xs: 4, sm: 6, md: 8},
-                px: {xs: 2, sm: 3, md: 4},
+                py: {xs: 4},
+                px: {xs: 2, sm: 3, md: 9},
             }}
         >
             <Box
@@ -97,7 +97,7 @@ const CategoriesGrid: React.FC<CategoriesGridProps> = ({categoriesData}) => {
             </Box>
 
             <Grid container spacing={{xs: 2, sm: 3, md: 3.5, lg: 4}}>
-                {categories.map((category, index) => (
+                {categories?.map((category, index) => (
                     <Grid size={{xs: 12, sm: 6, lg: 4}} key={category.id}>
                         <Box
                             sx={{
@@ -387,7 +387,7 @@ const CategoriesGrid: React.FC<CategoriesGridProps> = ({categoriesData}) => {
                 ))}
             </Grid>
 
-            {categories.length === 0 && (
+            {categories?.length === 0 && (
                 <Grid container spacing={{xs: 2, sm: 3, md: 3.5, lg: 4}}>
                     {[1, 2, 3].map((index) => (
                         <Grid size={{xs: 12, sm: 6, lg: 4}} key={index}>

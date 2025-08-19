@@ -265,7 +265,9 @@ const StoryFeature = ({
                             lg: '600px'
                         },
                         minHeight: { xs: '250px', sm: '350px' },
-                        width: '100%',
+                        width: '100',
+                        mx: { xs: 2, sm: 3, md: 0 },
+                        px: { xs: 1, sm: 2, md: 0 },
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -314,83 +316,6 @@ const StoryFeature = ({
                             }}
                         />
                     </Box>
-
-                    <Box
-                        sx={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            backgroundColor: 'rgba(245, 245, 245, 0.8)',
-                            zIndex: 1,
-                            opacity: 0,
-                            transition: 'opacity 0.3s ease',
-                        }}
-                    >
-                        <Typography
-                            variant="body2"
-                            sx={{
-                                color: brandColors.textSecondary,
-                                fontWeight: 500,
-                            }}
-                        >
-                            Loading...
-                        </Typography>
-                    </Box>
-
-                    <Box
-                        sx={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            background: `linear-gradient(135deg, 
-                                rgba(255, 229, 184, 0.1) 0%, 
-                                rgba(255, 112, 67, 0.05) 50%, 
-                                transparent 100%)`,
-                            opacity: isHovered ? 0.7 : 0.3,
-                            transition: 'opacity 0.3s ease',
-                            borderRadius: 'inherit',
-                            pointerEvents: 'none',
-                            zIndex: 2,
-                        }}
-                    />
-
-                    <Box
-                        sx={{
-                            position: 'absolute',
-                            bottom: { xs: 20, sm: 30, md: 40, lg: 60 },
-                            left: { xs: 15, sm: 20, md: 30, lg: 40 },
-                            width: { xs: 30, sm: 40, md: 60, lg: 80 },
-                            height: { xs: 30, sm: 40, md: 60, lg: 80 },
-                            borderRadius: '50%',
-                            background: `radial-gradient(circle, 
-                                rgba(255, 112, 67, 0.6) 0%, 
-                                rgba(255, 112, 67, 0.3) 50%, 
-                                transparent 100%)`,
-                            opacity: isVisible ? 0.5 : 0,
-                            transform: isVisible
-                                ? 'translateY(0) scale(1)'
-                                : 'translateY(20px) scale(0.8)',
-                            transition: 'all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                            transitionDelay: '1s',
-                            animation: isVisible ? 'floatReverse 8s ease-in-out infinite' : 'none',
-                            zIndex: 3,
-                            '@keyframes floatReverse': {
-                                '0%, 100%': {
-                                    transform: 'translateY(0px) scale(1)',
-                                },
-                                '50%': {
-                                    transform: 'translateY(8px) scale(1.1)',
-                                }
-                            }
-                        }}
-                    />
                 </Box>
             </Paper>
         </Box>

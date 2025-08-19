@@ -11,6 +11,12 @@ import ProductsOfCategory from '@/components/shared/ProductsOfCategory';
 import SmallNavbar from '@/components/shared/SmallNavbar';
 import StoryFeature from '@/components/shared/StoryFeature';
 import Testimonials from '@/components/shared/Testimonials';
+import {
+  createCategoriesData,
+  createFeaturedCategoriesData,
+  createTestimonialsData,
+  createProductsConfig
+} from '@/data/pages/categoryProductPageData';
 import { useCategoryBySlug } from '@/hooks/useCategories';
 import { useProductsByCategorySlug } from '@/hooks/useProducts';
 import { useTestimonials } from '@/hooks/useTestimonials';
@@ -63,8 +69,8 @@ export default function CategoryPage() {
       categoryError instanceof Error
         ? categoryError.message
         : productsError instanceof Error
-        ? productsError.message
-        : 'Failed to fetch category data';
+          ? productsError.message
+          : 'Failed to fetch category data';
 
     return (
       <Box component="main" sx={{ bgcolor: '#fafafa', minHeight: '100vh', py: 8 }}>
@@ -102,106 +108,10 @@ export default function CategoryPage() {
     );
   }
 
-  interface MakerCategory {
-    _id: string;
-    id: string;
-    name: string;
-    title: string;
-    slug: string;
-    description: string;
-    image: string;
-    isMaker: boolean;
-    buttonText: string;
-    buttonLink: string;
-    parent: null;
-    level: number;
-    isActive: boolean;
-    featured: boolean;
-    sortOrder: number;
-    productCount: number;
-    createdAt: string;
-    updatedAt: string;
-  }
-
-  const categoriesData = {
-    title: `Meet the ${selectedCategory.name} Artisans`,
-    description:
-      'Discover the talented creators behind every handcrafted piece, each bringing their unique story and artistic vision to life.',
-    categories:
-      productsData?.products?.reduce((uniqueMakers: MakerCategory[], product: {
-        maker?: {
-          _id: string;
-          name: string;
-          location?: string;
-          message?: string;
-          image?: string;
-          slug: string;
-        }
-      }) => {
-        if (!product.maker) return uniqueMakers;
-
-        const existingMaker = uniqueMakers.find((maker) => maker.id === product.maker!._id);
-        if (!existingMaker) {
-          const makerCategory: MakerCategory = {
-            _id: product.maker._id,
-            id: product.maker._id,
-            name: product.maker.name,
-            title: `${product.maker.name}${product.maker.location ? ` from ${product.maker.location}` : ''}`,
-            slug: product.maker.slug,
-            description:
-              product.maker.message ||
-              `Creating beautiful ${selectedCategory.name.toLowerCase()} with passion and dedication.`,
-            image: product.maker.image || '/images/shared/makers/defaultMaker.png',
-            isMaker: true,
-            buttonText: 'View Profile',
-            buttonLink: '#',
-            parent: null,
-            level: 0,
-            isActive: true,
-            featured: false,
-            sortOrder: 0,
-            productCount: 0,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          };
-          uniqueMakers.push(makerCategory);
-        }
-        return uniqueMakers;
-      }, []) || [],
-  };
-
-  const featuredCategories = {
-    title: `Featured ${selectedCategory.name} Artisan`,
-    isTitleCenter: false,
-    description: 'Discover the story behind the craft',
-    image: '/images/shared/productImage.jpg',
-    ctaText: 'Explore More',
-    buttonText: 'View Profile',
-    buttonLink: categoriesData.categories[0]?.buttonLink || '#',
-  };
-
-  const testimonialsData = {
-    title: 'What Our Community Says',
-    description: `Real experiences from customers who love our ${selectedCategory.name.toLowerCase()} collection.`,
-    items: testimonialsItems,
-  };
-
-  const productsConfig = {
-    title: `Best in ${selectedCategory.name}`,
-    mainSlug: slug,
-    productsData:
-      productsData?.products?.map((product) => ({
-        id: product._id,
-        title: product.name,
-        image: product.mainImage || product.images?.[0] || '/images/categories.png',
-        price: product.price,
-        originalPrice: product.priceBeforeDiscount,
-        discount: product.discountPercentage,
-        slug: product.slug,
-        rating: product.averageRating,
-        reviewCount: product.numReviews,
-      })) || [],
-  };
+  const categoriesData = createCategoriesData(selectedCategory, productsData);
+  const featuredCategories = createFeaturedCategoriesData(selectedCategory, categoriesData);
+  const testimonialsData = createTestimonialsData(selectedCategory, testimonialsItems);
+  const productsConfig = createProductsConfig(selectedCategory, slug, productsData);
 
   return (
     <Box component="main" sx={{ bgcolor: '#fafafa', minHeight: '100vh' }}>
@@ -235,27 +145,41 @@ export default function CategoryPage() {
           badge="Featured Collection"
         />
 
-        <CategoryStatsCard
-          categoryName={selectedCategory.name}
-          description={
-            selectedCategory.description || `Explore our curated collection of handcrafted ${selectedCategory.name.toLowerCase()}`
-          }
-          totalProducts={productsData?.pagination?.totalItems || 0}
-          totalArtisans={categoriesData.categories.length}
-          rating={4.8}
-        />
-
-        <Box
-          id="products-section"
-          ref={productsGridRef}
+        <Container
+          maxWidth={false}
           sx={{
-            py: { xs: 6, sm: 8, md: 10 },
-            bgcolor: 'white',
-            borderTop: '1px solid #e0e0e0',
+            maxWidth: {
+              xs: '100%',
+              sm: '100%',
+              md: '1400px',
+              lg: '1600px',
+              xl: '1850px'
+            },
+            px: { xs: 2, sm: 3, md: 4, lg: 4 },
+            mx: 'auto',
           }}
         >
-          <ProductsOfCategory Products={productsConfig} />
-        </Box>
+          <CategoryStatsCard
+            categoryName={selectedCategory.name}
+            description={
+              selectedCategory.description || `Explore our curated collection of handcrafted ${selectedCategory.name.toLowerCase()}`
+            }
+            totalProducts={productsData?.pagination?.totalItems || 0}
+            totalArtisans={categoriesData.categories?.length || 0}
+            rating={4.8}
+          />
+
+          <Box
+            id="products-section"
+            ref={productsGridRef}
+            sx={{
+              py: { xs: 6, sm: 8, md: 10 },
+              bgcolor: 'white'
+            }}
+          >
+            <ProductsOfCategory Products={productsConfig} />
+          </Box>
+        </Container>
 
         <Box
           sx={{
@@ -266,8 +190,8 @@ export default function CategoryPage() {
           <CategoriesGrid categoriesData={categoriesData} />
         </Box>
 
-        {categoriesData.categories.length > 0 && (
-          <Box>
+        {categoriesData.categories && categoriesData.categories.length > 0 && (
+          <Box sx={{ py: { xs: 6, md: 12 } }}>
             <FeaturedCategories featuredCategories={featuredCategories} />
           </Box>
         )}
@@ -276,9 +200,8 @@ export default function CategoryPage() {
           <Box
             component="section"
             sx={{
-              py: { xs: 6, md: 8 },
-              bgcolor: '#f8f9fa',
-              borderTop: '1px solid #e0e0e0',
+              py: { xs: 2, md: 4 },
+              bgcolor: '#f8f9fa'
             }}
           >
             <Testimonials testimonialsData={testimonialsData} />
