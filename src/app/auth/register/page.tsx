@@ -334,14 +334,14 @@ export default function RegistrationPage() {
             xs: "250px",
             sm: "280px",
             md: "320px",
-            lg: "120vh"
+            lg: "100vh"
           },
           position: "relative",
           flexShrink: 0,
         }}
       >
         <Image
-          src="/images/auth/register.webp"
+          src="/images/auth/register.jpg"
           quality={100}
           priority
           alt="Hands holding a heart with craft materials"

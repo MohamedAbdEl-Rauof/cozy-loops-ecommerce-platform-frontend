@@ -11,7 +11,6 @@ const SocialAuthDialog = () => {
 
     const handleSocialClick = (providerName: string) => {
         if (providerName === 'Google') {
-            // Don't open dialog for Google, handle authentication directly
             return;
         }
 
@@ -21,15 +20,12 @@ const SocialAuthDialog = () => {
         }
     };
 
-
-    // Update the handleLinkedInLogin function
     const handleLinkedInLogin = () => {
         try {
             const state = crypto.randomUUID();
             const timestamp = Date.now();
             const redirectUrl = window.location.pathname;
 
-            // Store state data as a JSON object
             const stateData = {
                 state,
                 timestamp,
@@ -56,7 +52,6 @@ const SocialAuthDialog = () => {
     const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
         try {
             setIsLoading(true);
-            // Add null check since credential can be undefined
             if (credentialResponse.credential) {
                 await loginWithGoogle(credentialResponse.credential);
             } else {
@@ -71,7 +66,6 @@ const SocialAuthDialog = () => {
 
     const handleGoogleError = () => {
         console.error('Google login failed');
-        // You might want to show an error message here
     };
 
     return (
@@ -82,19 +76,29 @@ const SocialAuthDialog = () => {
                     { icon: <LinkedIn />, color: "#0077B5", name: "LinkedIn" },
                 ].map((social, index) => (
                     social.name === 'Google' ? (
-                        <Box key={index} sx={{ position: 'relative' }}>
+                        <Box
+                            key={index}
+                            sx={{
+                                position: 'relative',
+                                borderRadius: '50%',
+                                transition: 'transform 0.2s, background-color 0.2s',
+                                "&:hover": {
+                                    transform: 'scale(1.1)',
+                                    '& .google-icon-button': {
+                                        backgroundColor: "#e0e0e0",
+                                    }
+                                },
+                            }}
+                        >
                             <IconButton
                                 aria-label="Sign in with Google"
                                 disabled={isLoading}
+                                className="google-icon-button"
                                 sx={{
                                     width: 40,
                                     height: 40,
                                     backgroundColor: "#f5f5f5",
-                                    transition: 'transform 0.2s, background-color 0.2s',
-                                    "&:hover": {
-                                        backgroundColor: "#e0e0e0",
-                                        transform: 'scale(1.1)'
-                                    },
+                                    transition: 'background-color 0.2s',
                                 }}
                             >
                                 <Box component="span" sx={{ color: social.color }}>
@@ -115,7 +119,8 @@ const SocialAuthDialog = () => {
                                         left: 0,
                                         opacity: 0,
                                         width: '40px',
-                                        height: '40px'
+                                        height: '40px',
+                                        cursor: 'pointer'
                                     }
                                 }}
                             />
@@ -145,7 +150,6 @@ const SocialAuthDialog = () => {
                 ))}
             </Box>
 
-            {/* Loading indicator */}
             {isLoading && (
                 <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
                     <CircularProgress size={24} />

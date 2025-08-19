@@ -47,7 +47,6 @@ export default function LoginPage() {
   const [loginInProgress, setLoginInProgress] = useState(false)
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false)
   const [progressValue, setProgressValue] = useState(0)
-  const [isRedirecting, setIsRedirecting] = useState(false)
   const hasCheckedAuth = useRef(false)
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -75,10 +74,8 @@ export default function LoginPage() {
   useEffect(() => {
     if (!hasCheckedAuth.current && !loading && !hasAttemptedLogin && !loginInProgress) {
       hasCheckedAuth.current = true
-      
+
       if (isUserAuthenticated()) {
-        setIsRedirecting(true)
-        // Small delay to prevent flash
         setTimeout(() => {
           router.push('/')
         }, 100)
@@ -89,7 +86,7 @@ export default function LoginPage() {
   // Handle success animation progress
   useEffect(() => {
     if (showSuccessAnimation) {
-      const totalTime = 3000
+      const totalTime = 4000
       const interval = 50
       const steps = totalTime / interval
       let currentStep = 0
@@ -100,7 +97,6 @@ export default function LoginPage() {
 
         if (currentStep >= steps) {
           clearInterval(timer)
-          setIsRedirecting(true)
           router.push('/')
         }
       }, interval)
@@ -137,15 +133,15 @@ export default function LoginPage() {
     } catch (error: unknown) {
       console.error("Login error:", error)
 
-      const err = error as { 
-        response?: { 
+      const err = error as {
+        response?: {
           status: number
-          data: { 
+          data: {
             emailVerified?: boolean
-            message?: string 
-          } 
+            message?: string
+          }
         }
-        message?: string 
+        message?: string
       }
 
       if (err.response && err.response.status === 403 &&
@@ -172,22 +168,6 @@ export default function LoginPage() {
     setSnackbar(prev => ({ ...prev, open: false }))
   }
 
-  // Show loading or redirect if user is already authenticated
-  if (isRedirecting || (!hasCheckedAuth.current && loading)) {
-    return (
-      <Box 
-        sx={{ 
-          minHeight: "100vh", 
-          display: "flex", 
-          alignItems: "center", 
-          justifyContent: "center" 
-        }}
-      >
-        <CircularProgress size={40} />
-      </Box>
-    )
-  }
-
   return (
     <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: { xs: "column", lg: "row" } }}>
       <Box
@@ -199,7 +179,7 @@ export default function LoginPage() {
         }}
       >
         <Image
-          src="/images/auth/login.webp"
+          src="/images/auth/login.jpg"
           quality={100}
           priority
           alt="Hands holding a heart with craft materials"
@@ -305,16 +285,16 @@ export default function LoginPage() {
               />
 
               <Box sx={{ textAlign: "left", mb: 3 }}>
-                <MuiLink 
-                  sx={{ color: 'var(--primary-color)', cursor: 'pointer' }} 
-                  underline="hover" 
+                <MuiLink
+                  sx={{ color: 'var(--primary-color)', cursor: 'pointer' }}
+                  underline="hover"
                   onClick={() => setForgetPasswordOpen(true)}
                 >
                   Forgot password?
                 </MuiLink>
-                <ForgotPasswordDialog 
-                  open={forgetPasswordOpen} 
-                  onClose={() => setForgetPasswordOpen(false)} 
+                <ForgotPasswordDialog
+                  open={forgetPasswordOpen}
+                  onClose={() => setForgetPasswordOpen(false)}
                 />
               </Box>
 
@@ -370,19 +350,35 @@ export default function LoginPage() {
             borderRadius: 3,
             p: 4,
             textAlign: 'center',
-            minWidth: 300,
+            minWidth: 600,
+            minHeight: 350
           }
+        }}
+        TransitionProps={{
+          timeout: 800
         }}
       >
         <DialogContent>
-          <Fade in={showSuccessAnimation} timeout={500}>
+          <Fade in={showSuccessAnimation} timeout={1000}>
             <Box>
-              <CheckCircleIcon 
-                sx={{ 
-                  fontSize: 80, 
-                  color: 'var(--primary-color)', 
-                  mb: 2 
-                }} 
+              <CheckCircleIcon
+                sx={{
+                  fontSize: 80,
+                  color: 'var(--primary-color)',
+                  mb: 2,
+                  '@keyframes pulse': {
+                    '0%': {
+                      transform: 'scale(1)',
+                    },
+                    '50%': {
+                      transform: 'scale(1.1)',
+                    },
+                    '100%': {
+                      transform: 'scale(1)',
+                    },
+                  },
+                  animation: 'pulse 2s infinite',
+                }}
               />
               <Typography variant="h5" sx={{ mb: 2, fontWeight: 600 }}>
                 Login Successful!
@@ -390,17 +386,18 @@ export default function LoginPage() {
               <Typography variant="body1" sx={{ mb: 3, color: '#666' }}>
                 Redirecting you to the homepage...
               </Typography>
-              <LinearProgress 
-                variant="determinate" 
-                value={progressValue} 
-                sx={{ 
-                  height: 8, 
+              <LinearProgress
+                variant="determinate"
+                value={progressValue}
+                sx={{
+                  height: 10,
                   borderRadius: 4,
                   backgroundColor: '#f0f0f0',
                   '& .MuiLinearProgress-bar': {
                     backgroundColor: 'var(--primary-color)',
+                    transition: 'transform 0.1s ease-in-out',
                   }
-                }} 
+                }}
               />
             </Box>
           </Fade>
@@ -414,8 +411,8 @@ export default function LoginPage() {
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
-        <Alert 
-          onClose={handleCloseSnackbar} 
+        <Alert
+          onClose={handleCloseSnackbar}
           severity={snackbar.severity}
           sx={{ width: '100%' }}
         >
@@ -423,5 +420,5 @@ export default function LoginPage() {
         </Alert>
       </Snackbar>
     </Box>
-  ) 
+  )
 }

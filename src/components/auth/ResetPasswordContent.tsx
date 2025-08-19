@@ -351,7 +351,7 @@ const ResetPasswordContent = () => {
                 }}
             >
                 <Image
-                    src="/images/auth/resentPassword.webp"
+                    src="/images/auth/resentPassword.jpg"
                     quality={100}
                     priority
                     alt="Hands holding a heart with craft materials"

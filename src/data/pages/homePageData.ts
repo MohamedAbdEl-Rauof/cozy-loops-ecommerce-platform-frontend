@@ -1,4 +1,6 @@
-import { FeaturedCategoriesData, StoryFeatureData, TestimonialsData } from "@/types/home";
+import { StoryFeatureData, TestimonialsData } from "@/types/home";
+
+import { FeaturedCategoriesData } from "./categoriesPageData";
 
 export const featuredCategoriesData: FeaturedCategoriesData = {
   title: "Need a gift? Make it personal.",

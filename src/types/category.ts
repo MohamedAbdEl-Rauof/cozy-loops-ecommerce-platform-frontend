@@ -1,3 +1,5 @@
+import { MakerCategory } from "./maker";
+
 export interface Category {
   _id: string;
   name: string;
@@ -39,7 +41,7 @@ export interface CategoryState {
 export interface CategoriesData {
   title: string;
   description: string;
-  categories: Category[];
+  categories?: Category[] | MakerCategory[];
 }
 
 export interface CategoriesGridProps {
@@ -60,6 +62,10 @@ export interface Product {
   image: string;
   price: number;
   slug: string;
+  originalPrice?: number;
+  discount?: number;
+  rating?: number;
+  reviewCount?: number;
 }
 
 export interface ProductsData {

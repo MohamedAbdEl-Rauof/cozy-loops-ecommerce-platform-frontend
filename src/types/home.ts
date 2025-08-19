@@ -1,15 +1,9 @@
-export interface FeaturedCategoriesData {
-  title: string;
-  isTitleCenter: boolean;
-  description: string;
-  image: string;
-  ctaText: string;
-  buttonText: string;
-  buttonLink: string;
-}
+import { Testimonial } from "./Testimonial";
+
+import type { FeaturedCategoriesData } from "@/data/pages/categoriesPageData";
 
 export interface FeaturedCategoriesProps {
-    featuredCategories: FeaturedCategoriesData;
+  featuredCategories: FeaturedCategoriesData;
 }
 
 export interface StoryFeatureData {
@@ -23,22 +17,10 @@ export interface StoryFeatureData {
   reverse?: boolean;
 }
 
-export interface TestimonialItem {
-  id: string | number;
-  comment: string;
-  rating: number;
-  date?: string;
-
-  user?: {
-    name: string;
-    avatar?: string;
-  };
-}
-
 export interface TestimonialsData {
   title: string;
   description: string;
-  items: TestimonialItem[];
+  items: Testimonial[];
 }
 
 export interface CraftCategory {
