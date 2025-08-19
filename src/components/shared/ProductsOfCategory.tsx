@@ -437,7 +437,7 @@ const ProductsOfCategory: React.FC<ProductsOfCategoryProps> = ({
                                     mx: 'auto'
                                 }}
                             >
-                                We're working hard to bring you amazing products. Check back soon for new arrivals in this category!
+                                We&apos;re working hard to bring you amazing products. Check back soon for new arrivals in this category!
                             </Typography>
                         </Box>
                     </Fade>

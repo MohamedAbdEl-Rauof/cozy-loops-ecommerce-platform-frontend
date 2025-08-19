@@ -1,7 +1,7 @@
 'use client';
 
-import { Card, CardContent, Chip, Typography, Grid, Box } from '@mui/material';
 import { Star, People, Inventory } from '@mui/icons-material';
+import { Card, CardContent, Chip, Typography, Grid, Box } from '@mui/material';
 
 import { CategoryStatsCardProps } from '@/types/category';
 
