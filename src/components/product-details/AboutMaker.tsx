@@ -74,7 +74,6 @@ const AboutMaker = ({
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                bgcolor: 'background.paper',
                 width: '100%'
             }}
         >
