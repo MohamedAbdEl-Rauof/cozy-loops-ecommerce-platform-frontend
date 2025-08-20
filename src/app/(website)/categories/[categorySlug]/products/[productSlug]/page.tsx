@@ -64,7 +64,7 @@ const ProductPage = () => {
 
   const handleToggleFavorite = () => {
     if (!product) return;
-    
+
     if (isInWishlist(product._id)) {
       removeFromWishlist(product._id);
     } else {
@@ -156,7 +156,7 @@ const ProductPage = () => {
             width: '100%'
           }}
         >
-          <Container maxWidth="xl">
+          <Container maxWidth={false} sx={{ maxWidth: '97%' }}>
             <FeatureCardsSection
               sectionTitle={FeatureCardsSectionData.sectionTitle}
               sectionDescription={FeatureCardsSectionData.sectionDescription}
@@ -216,9 +216,8 @@ const ProductPage = () => {
         <Box
           component="section"
           sx={{
-            mb: { xs: 6, sm: 8, md: 10, lg: 12 },
             px: { xs: 2, sm: 3, md: 4 },
-            py: { xs: 4, sm: 6, md: 8 },
+            py: { xs: 4, sm: 6 },
             width: '100%'
           }}
         >

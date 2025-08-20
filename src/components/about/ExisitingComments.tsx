@@ -380,7 +380,7 @@ const ExisitingComments = ({ commentsData, onRefresh }: ExisitingCommentsProps) 
                 </CommentCard>
             ))}
 
-                       <Menu
+            <Menu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
                 onClose={handleMenuClose}
@@ -396,8 +396,8 @@ const ExisitingComments = ({ commentsData, onRefresh }: ExisitingCommentsProps) 
                 transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-                <MenuItem 
-                    onClick={handleEditClick} 
+                <MenuItem
+                    onClick={handleEditClick}
                     disabled={isLoading}
                     sx={{
                         py: 1.5,
@@ -425,9 +425,9 @@ const ExisitingComments = ({ commentsData, onRefresh }: ExisitingCommentsProps) 
                         Edit Review
                     </Typography>
                 </MenuItem>
-                
-                <MenuItem 
-                    onClick={handleDeleteClick} 
+
+                <MenuItem
+                    onClick={handleDeleteClick}
                     disabled={isLoading}
                     sx={{
                         py: 1.5,
@@ -456,7 +456,7 @@ const ExisitingComments = ({ commentsData, onRefresh }: ExisitingCommentsProps) 
                     </Typography>
                 </MenuItem>
             </Menu>
-            
+
             <EditReviewDialog
                 open={editDialogOpen}
                 onClose={handleEditDialogClose}
