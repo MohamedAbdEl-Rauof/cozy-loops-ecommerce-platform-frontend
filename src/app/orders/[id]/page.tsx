@@ -8,19 +8,9 @@ import {
     Home as HomeIcon,
     Print as PrintIcon,
     Download as DownloadIcon,
-    Cancel as CancelIcon,
-    CheckCircle as CheckCircleIcon,
-    Schedule as ScheduleIcon,
-    LocalShippingOutlined as TrackingIcon,
+    Cancel as CancelIcon
 } from '@mui/icons-material'
-import {
-    Timeline,
-    TimelineItem,
-    TimelineSeparator,
-    TimelineDot,
-    TimelineConnector,
-    TimelineContent,
-} from '@mui/lab'
+
 import {
     Container,
     Typography,
@@ -50,6 +40,7 @@ const OrderDetailsPage: React.FC = () => {
     const [order, setOrder] = useState<Order | null>(null)
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const isMobile = window.innerWidth < 600
 
     const orderId = params.id as string
 
@@ -184,13 +175,40 @@ const OrderDetailsPage: React.FC = () => {
 
                     <Grid container spacing={3}>
                         <Grid size={{ xs: 12, lg: 8 }}>
-                            <Paper elevation={3} sx={{ p: 4, borderRadius: 3, mb: 3 }}>
-                                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 3 }}>
-                                    <Box>
-                                        <Typography variant="h5" fontWeight="600" gutterBottom>
+
+                            <Paper elevation={3} sx={{
+                                p: { xs: 2, sm: 3, md: 4 },
+                                borderRadius: 3,
+                                mb: 3
+                            }}>
+                                <Box sx={{
+                                    display: 'flex',
+                                    flexDirection: { xs: 'column', sm: 'row' },
+                                    justifyContent: { xs: 'flex-start', sm: 'space-between' },
+                                    alignItems: { xs: 'flex-start', sm: 'flex-start' },
+                                    mb: 3,
+                                    gap: { xs: 2, sm: 0 }
+                                }}>
+                                    <Box sx={{ flex: 1, minWidth: 0 }}>
+                                        <Typography
+                                            variant="h5"
+                                            fontWeight="600"
+                                            gutterBottom
+                                            sx={{
+                                                fontSize: { xs: '1.25rem', sm: '1.5rem' },
+                                                wordBreak: 'break-word'
+                                            }}
+                                        >
                                             Order #{order.orderNumber}
                                         </Typography>
-                                        <Typography variant="body1" color="text.secondary">
+                                        <Typography
+                                            variant="body1"
+                                            color="text.secondary"
+                                            sx={{
+                                                fontSize: { xs: '0.875rem', sm: '1rem' },
+                                                lineHeight: 1.5
+                                            }}
+                                        >
                                             Placed on {new Date(order.createdAt).toLocaleDateString('en-US', {
                                                 year: 'numeric',
                                                 month: 'long',
@@ -200,13 +218,28 @@ const OrderDetailsPage: React.FC = () => {
                                             })}
                                         </Typography>
                                     </Box>
-                                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+
+                                    <Box sx={{
+                                        display: 'flex',
+                                        gap: { xs: 0.5, sm: 1 },
+                                        flexWrap: 'wrap',
+                                        justifyContent: { xs: 'flex-start', sm: 'flex-end' },
+                                        alignItems: 'center',
+                                        width: { xs: '100%', sm: 'auto' },
+                                        flexShrink: 0
+                                    }}>
                                         <Chip
                                             label={order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1)}
                                             sx={{
                                                 bgcolor: getOrderStatusColor(order.orderStatus),
                                                 color: 'white',
-                                                fontWeight: 600
+                                                fontWeight: 600,
+                                                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                                                height: { xs: 28, sm: 32 },
+                                                minWidth: { xs: 'auto', sm: 80 },
+                                                '& .MuiChip-label': {
+                                                    px: { xs: 1, sm: 1.5 }
+                                                }
                                             }}
                                         />
                                         <Chip
@@ -214,22 +247,54 @@ const OrderDetailsPage: React.FC = () => {
                                             sx={{
                                                 bgcolor: getPaymentStatusColor(order.paymentStatus),
                                                 color: 'white',
-                                                fontWeight: 600
+                                                fontWeight: 600,
+                                                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                                                height: { xs: 28, sm: 32 },
+                                                minWidth: { xs: 'auto', sm: 100 },
+                                                '& .MuiChip-label': {
+                                                    px: { xs: 1, sm: 1.5 }
+                                                }
                                             }}
                                         />
                                     </Box>
                                 </Box>
 
                                 {order.orderStatus !== 'cancelled' && (
-                                    <Box sx={{ mt: 3 }}>
-                                        <Typography variant="h6" fontWeight="600" gutterBottom>
+                                    <Box sx={{ mt: { xs: 2, sm: 3 } }}>
+                                        <Typography
+                                            variant="h6"
+                                            fontWeight="600"
+                                            gutterBottom
+                                            sx={{
+                                                fontSize: { xs: '1rem', sm: '1.25rem' },
+                                                mb: { xs: 1.5, sm: 2 }
+                                            }}
+                                        >
                                             Order Progress
                                         </Typography>
-                                        <Stepper activeStep={currentStatusIndex} alternativeLabel>
+                                        <Stepper
+                                            activeStep={currentStatusIndex}
+                                            alternativeLabel={!isMobile}
+                                            orientation={isMobile ? 'vertical' : 'horizontal'}
+                                            sx={{
+                                                '& .MuiStepLabel-label': {
+                                                    fontSize: { xs: '0.75rem', sm: '0.875rem' }
+                                                },
+                                                '& .MuiStepConnector-line': {
+                                                    borderTopWidth: { xs: 2, sm: 1 }
+                                                }
+                                            }}
+                                        >
                                             {steps.map((step, index) => (
                                                 <Step key={step.label} completed={index <= currentStatusIndex}>
                                                     <StepLabel>
-                                                        <Typography variant="body2">
+                                                        <Typography
+                                                            variant="body2"
+                                                            sx={{
+                                                                fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                                                                fontWeight: index <= currentStatusIndex ? 600 : 400
+                                                            }}
+                                                        >
                                                             {step.label}
                                                         </Typography>
                                                     </StepLabel>
@@ -306,110 +371,6 @@ const OrderDetailsPage: React.FC = () => {
                                     </Box>
                                 </Paper>
                             )}
-                            <Paper elevation={3} sx={{ p: 4, borderRadius: 3, mb: 3 }}>
-                                <Typography variant="h6" fontWeight="600" gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                    <ScheduleIcon />
-                                    Order Timeline
-                                </Typography>
-                                <Timeline>
-                                    <TimelineItem>
-                                        <TimelineSeparator>
-                                            <TimelineDot sx={{ bgcolor: '#4caf50' }}>
-                                                <CheckCircleIcon sx={{ fontSize: 16 }} />
-                                            </TimelineDot>
-                                            {order.orderStatus !== 'pending' && <TimelineConnector />}
-                                        </TimelineSeparator>
-                                        <TimelineContent>
-                                            <Typography variant="body1" fontWeight="600">
-                                                Order Placed
-                                            </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                {new Date(order.createdAt).toLocaleDateString('en-US', {
-                                                    year: 'numeric',
-                                                    month: 'short',
-                                                    day: 'numeric',
-                                                    hour: '2-digit',
-                                                    minute: '2-digit'
-                                                })}
-                                            </Typography>
-                                        </TimelineContent>
-                                    </TimelineItem>
-
-                                    {order.orderStatus !== 'pending' && order.orderStatus !== 'cancelled' && (
-                                        <TimelineItem>
-                                            <TimelineSeparator>
-                                                <TimelineDot sx={{ bgcolor: currentStatusIndex >= 1 ? '#4caf50' : '#e0e0e0' }}>
-                                                    <CheckCircleIcon sx={{ fontSize: 16 }} />
-                                                </TimelineDot>
-                                                {order.orderStatus !== 'processing' && <TimelineConnector />}
-                                            </TimelineSeparator>
-                                            <TimelineContent>
-                                                <Typography variant="body1" fontWeight="600">
-                                                    Order Processing
-                                                </Typography>
-                                                <Typography variant="body2" color="text.secondary">
-                                                    Your order is being prepared
-                                                </Typography>
-                                            </TimelineContent>
-                                        </TimelineItem>
-                                    )}
-
-                                    {(order.orderStatus === 'shipped' || order.orderStatus === 'delivered') && (
-                                        <TimelineItem>
-                                            <TimelineSeparator>
-                                                <TimelineDot sx={{ bgcolor: currentStatusIndex >= 2 ? '#4caf50' : '#e0e0e0' }}>
-                                                    <TrackingIcon sx={{ fontSize: 16 }} />
-                                                </TimelineDot>
-                                                {order.orderStatus !== 'shipped' && <TimelineConnector />}
-                                            </TimelineSeparator>
-                                            <TimelineContent>
-                                                <Typography variant="body1" fontWeight="600">
-                                                    Order Shipped
-                                                </Typography>
-                                                <Typography variant="body2" color="text.secondary">
-                                                    Your order is on its way
-                                                </Typography>
-                                            </TimelineContent>
-                                        </TimelineItem>
-                                    )}
-
-                                    {order.orderStatus === 'delivered' && (
-                                        <TimelineItem>
-                                            <TimelineSeparator>
-                                                <TimelineDot sx={{ bgcolor: '#4caf50' }}>
-                                                    <CheckCircleIcon sx={{ fontSize: 16 }} />
-                                                </TimelineDot>
-                                            </TimelineSeparator>
-                                            <TimelineContent>
-                                                <Typography variant="body1" fontWeight="600">
-                                                    Order Delivered
-                                                </Typography>
-                                                <Typography variant="body2" color="text.secondary">
-                                                    Your order has been delivered
-                                                </Typography>
-                                            </TimelineContent>
-                                        </TimelineItem>
-                                    )}
-
-                                    {order.orderStatus === 'cancelled' && (
-                                        <TimelineItem>
-                                            <TimelineSeparator>
-                                                <TimelineDot sx={{ bgcolor: '#f44336' }}>
-                                                    <CancelIcon sx={{ fontSize: 16 }} />
-                                                </TimelineDot>
-                                            </TimelineSeparator>
-                                            <TimelineContent>
-                                                <Typography variant="body1" fontWeight="600">
-                                                    Order Cancelled
-                                                </Typography>
-                                                <Typography variant="body2" color="text.secondary">
-                                                    This order has been cancelled
-                                                </Typography>
-                                            </TimelineContent>
-                                        </TimelineItem>
-                                    )}
-                                </Timeline>
-                            </Paper>
                         </Grid>
 
                         <Grid size={{ xs: 12, lg: 4 }}>

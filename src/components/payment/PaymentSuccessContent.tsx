@@ -11,12 +11,14 @@ import React, { useEffect, useState } from 'react'
 
 import ProtectedRoute from '@/provider/ProtectedRoute'
 import { paymentService } from '@/services/paymentService'
+import { useQueryClient } from '@tanstack/react-query'
 
 const PaymentSuccessContent: React.FC = () => {
     const searchParams = useSearchParams()
     const router = useRouter()
     const [isProcessing, setIsProcessing] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const queryClient = useQueryClient()
 
     const paymentIntentId = searchParams.get('payment_intent')
     const redirectStatus = searchParams.get('redirect_status')
@@ -35,8 +37,10 @@ const PaymentSuccessContent: React.FC = () => {
                 })
 
                 if (response.success) {
+                    await queryClient.invalidateQueries({ queryKey: ['cart'] })
+
                     window.history.replaceState({}, '', '/payment/success')
-                    
+
                     if (response.redirectUrl) {
                         router.push(response.redirectUrl)
                     } else {

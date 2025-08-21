@@ -240,16 +240,6 @@ const OrdersPage = () => {
                             ))}
                         </Grid>
                     )}
-
-                    <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
-                        <Pagination
-                            count={totalPages}
-                            page={currentPage}
-                            onChange={handlePageChange}
-                            color="primary"
-                            shape="rounded"
-                        />
-                    </Box>
                 </Container>
             </Box>
         </ProtectedRoute>

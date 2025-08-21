@@ -384,7 +384,7 @@ export default function LoginPage() {
                 Login Successful!
               </Typography>
               <Typography variant="body1" sx={{ mb: 3, color: '#666' }}>
-                Redirecting you to the homepage...
+                Redirecting You To The Home Page...
               </Typography>
               <LinearProgress
                 variant="determinate"

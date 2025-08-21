@@ -747,7 +747,7 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                                                         }
                                                     }}
                                                 >
-                                                    {isAddingToCart || isUpdatingCart ? 'Adding...' : 'Add to Cart'}
+                                                    Add to Cart
                                                 </Button>
                                             </Box>
                                         </Box>
@@ -868,54 +868,6 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                     </Box>
                 )}
 
-                {/* Loading State */}
-                {(isAddingToCart || isUpdatingCart) && (
-                    <Box
-                        sx={{
-                            position: 'fixed',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            backgroundColor: 'rgba(0, 0, 0, 0.1)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            zIndex: 9999,
-                            backdropFilter: 'blur(2px)',
-                        }}
-                    >
-                        <Box
-                            sx={{
-                                backgroundColor: 'white',
-                                borderRadius: '16px',
-                                p: 4,
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                gap: 2,
-                                boxShadow: '0 20px 60px rgba(0, 0, 0, 0.1)',
-                                border: '1px solid rgba(255, 255, 255, 0.2)',
-                            }}
-                        >
-                            <CircularProgress
-                                size={40}
-                                sx={{
-                                    color: '#3b82f6',
-                                }}
-                            />
-                            <Typography
-                                variant="body2"
-                                sx={{
-                                    color: '#64748b',
-                                    fontWeight: 500,
-                                }}
-                            >
-                                Adding to cart...
-                            </Typography>
-                        </Box>
-                    </Box>
-                )}
             </Container>
         </Box>
     );

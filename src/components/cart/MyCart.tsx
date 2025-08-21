@@ -121,12 +121,13 @@ const MyCart: React.FC<MyCartProps> = ({
     onUpdateQuantity,
     onRemoveItem,
     onProceedToCheckout,
-    shippingCost = 0,
+    shippingCost = 10,
     isCheckoutLoading
 }) => {
     const cartItems = items;
     const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const total = subtotal + shippingCost;
+    const finalShippingCost = subtotal >= 500 ? 0 : shippingCost;
+    const total = subtotal + finalShippingCost;
 
     const handleQuantityChange = (itemId: string, change: number) => {
         const currentItem = cartItems.find(item => item.id === itemId);
@@ -560,7 +561,7 @@ const MyCart: React.FC<MyCartProps> = ({
                                             fontSize: { xs: '1rem', sm: '1.1rem' },
                                         }}
                                     >
-                                        {shippingCost === 0 ? 'Free' : `${shippingCost.toFixed(2)} EGP`}
+                                        {subtotal >= 500 ? 'Free' : `${shippingCost.toFixed(2)} EGP`}
                                     </Typography>
                                 </Box>
 

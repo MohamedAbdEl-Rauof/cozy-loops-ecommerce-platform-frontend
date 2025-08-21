@@ -453,6 +453,7 @@ const AboutMaker = ({
                                     display: 'block',
                                     borderRadius: '20px'
                                 }}
+                                fill
                                 onError={() => {
                                     console.error("Image failed to load:", imageSrc);
                                 }}
