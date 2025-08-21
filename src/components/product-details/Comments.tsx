@@ -11,7 +11,6 @@ import {
     Rating,
     Paper,
     Container,
-    Fade,
     Alert,
     CircularProgress,
     Chip,
@@ -289,35 +288,8 @@ const Comments = ({ onCommentSubmitted }: CommentsProps) => {
                 py: { xs: 2, md: 4 }
             }}
         >
-            <Snackbar
-                open={showError}
-                autoHideDuration={6000}
-                onClose={handleCloseError}
-                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-            >
-                <Alert
-                    onClose={handleCloseError}
-                    severity="error"
-                    sx={{
-                        width: '100%',
-                        borderRadius: '16px',
-                        backgroundColor: 'rgba(239, 68, 68, 0.05)',
-                        border: '1px solid rgba(239, 68, 68, 0.15)',
-                        color: '#dc2626',
-                        backdropFilter: 'blur(10px)',
-                        boxShadow: '0 8px 32px rgba(239, 68, 68, 0.1)',
-                        '& .MuiAlert-icon': {
-                            color: '#ef4444',
-                        },
-                    }}
-                >
-                    {error}
-                </Alert>
-            </Snackbar>
-
             <Box
                 sx={{
-                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 248, 235, 0.95) 100%)',
                     borderRadius: '32px',
                     p: { xs: 3, sm: 4, md: 6 },
                     boxShadow: '0 20px 60px rgba(0, 0, 0, 0.08), 0 8px 25px rgba(217, 119, 6, 0.05)',
@@ -383,29 +355,6 @@ const Comments = ({ onCommentSubmitted }: CommentsProps) => {
                     </Typography>
                 </Box>
 
-                <Fade in={showSuccess}>
-                    <Alert
-                        severity="success"
-                        sx={{
-                            mb: 4,
-                            borderRadius: '20px',
-                            backgroundColor: 'rgba(34, 197, 94, 0.05)',
-                            border: '1px solid rgba(34, 197, 94, 0.15)',
-                            color: '#15803d',
-                            backdropFilter: 'blur(10px)',
-                            boxShadow: '0 8px 32px rgba(34, 197, 94, 0.1)',
-                            '& .MuiAlert-icon': {
-                                color: '#22c55e',
-                            },
-                            animation: `${pulse} 0.6s ease-in-out`,
-                        }}
-                    >
-                        <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                            Thank you for your review! Your feedback has been submitted successfully.
-                        </Typography>
-                    </Alert>
-                </Fade>
-
                 <Box
                     component="form"
                     onSubmit={handleSubmit}
@@ -437,7 +386,6 @@ const Comments = ({ onCommentSubmitted }: CommentsProps) => {
                             <RatingContainer
                                 sx={{
                                     mb: 0,
-                                    background: 'rgba(255, 248, 235, 0.6)',
                                     border: '1px solid rgba(217, 119, 6, 0.1)',
                                     borderRadius: '16px',
                                     p: 3,
@@ -600,6 +548,59 @@ const Comments = ({ onCommentSubmitted }: CommentsProps) => {
                 title="Sign in to Leave a Review"
                 message="Join our community to share your experience and help other customers make informed decisions."
             />
+
+            <Snackbar
+                open={showError}
+                autoHideDuration={6000}
+                onClose={handleCloseError}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert
+                    onClose={handleCloseError}
+                    severity="error"
+                    sx={{
+                        width: '100%',
+                        borderRadius: '16px',
+                        backgroundColor: 'rgba(239, 68, 68, 0.05)',
+                        border: '1px solid rgba(239, 68, 68, 0.15)',
+                        color: '#dc2626',
+                        backdropFilter: 'blur(10px)',
+                        boxShadow: '0 8px 32px rgba(239, 68, 68, 0.1)',
+                        '& .MuiAlert-icon': {
+                            color: '#ef4444',
+                        },
+                    }}
+                >
+                    {error}
+                </Alert>
+            </Snackbar>
+            <Snackbar
+                open={showSuccess}
+                autoHideDuration={6000}
+                onClose={() => setShowSuccess(false)}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert
+                    severity="success"
+                    sx={{
+                        mb: 4,
+                        borderRadius: '20px',
+                        backgroundColor: 'rgba(34, 197, 94, 0.05)',
+                        border: '1px solid rgba(34, 197, 94, 0.15)',
+                        color: '#15803d',
+                        backdropFilter: 'blur(10px)',
+                        boxShadow: '0 8px 32px rgba(34, 197, 94, 0.1)',
+                        '& .MuiAlert-icon': {
+                            color: '#22c55e',
+                        },
+                        animation: `${pulse} 0.6s ease-in-out`,
+                    }}
+                >
+                    <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                        Thank you for your review! Your feedback has been submitted successfully.
+                    </Typography>
+                </Alert>
+            </Snackbar>
         </Container>
     );
 };

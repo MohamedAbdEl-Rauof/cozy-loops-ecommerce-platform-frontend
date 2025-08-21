@@ -74,7 +74,6 @@ const AboutMaker = ({
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                bgcolor: 'background.paper',
                 width: '100%'
             }}
         >
@@ -454,6 +453,7 @@ const AboutMaker = ({
                                     display: 'block',
                                     borderRadius: '20px'
                                 }}
+                                fill
                                 onError={() => {
                                     console.error("Image failed to load:", imageSrc);
                                 }}

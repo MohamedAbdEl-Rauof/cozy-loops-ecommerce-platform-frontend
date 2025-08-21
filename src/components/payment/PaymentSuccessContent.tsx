@@ -6,6 +6,7 @@ import {
     CircularProgress,
     Alert
 } from '@mui/material'
+import { useQueryClient } from '@tanstack/react-query'
 import { useSearchParams, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
@@ -17,6 +18,7 @@ const PaymentSuccessContent: React.FC = () => {
     const router = useRouter()
     const [isProcessing, setIsProcessing] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const queryClient = useQueryClient()
 
     const paymentIntentId = searchParams.get('payment_intent')
     const redirectStatus = searchParams.get('redirect_status')
@@ -35,8 +37,10 @@ const PaymentSuccessContent: React.FC = () => {
                 })
 
                 if (response.success) {
+                    await queryClient.invalidateQueries({ queryKey: ['cart'] })
+
                     window.history.replaceState({}, '', '/payment/success')
-                    
+
                     if (response.redirectUrl) {
                         router.push(response.redirectUrl)
                     } else {
@@ -61,7 +65,7 @@ const PaymentSuccessContent: React.FC = () => {
         }
 
         verifyAndRedirect()
-    }, [paymentIntentId, redirectStatus, router])
+    }, [ paymentIntentId, redirectStatus, router])
 
     return (
         <ProtectedRoute>

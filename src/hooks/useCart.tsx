@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
 import { useEffect } from 'react';
 
-import { socket } from '@/lib/cartSocket'; 
+import { socket } from '@/lib/cartSocket';
 import { cartService } from '@/services/cartServices';
 import { CartUpdateData } from '@/types/cart';
 
@@ -18,16 +18,22 @@ export const useCart = () => {
       queryClient.invalidateQueries({ queryKey: ['cart'] });
     };
 
+    const handleCartCheckedOut = () => {
+      queryClient.invalidateQueries({ queryKey: ['cart'] });
+    };
+
     socket.on('cartUpdated', handleCartUpdate);
     socket.on('cartItemAdded', handleCartItemAdded);
     socket.on('cartItemRemoved', handleCartItemAdded);
     socket.on('cartCleared', handleCartItemAdded);
+    socket.on('cartCheckedOut', handleCartCheckedOut);
 
     return () => {
       socket.off('cartUpdated', handleCartUpdate);
       socket.off('cartItemAdded', handleCartItemAdded);
       socket.off('cartItemRemoved', handleCartItemAdded);
       socket.off('cartCleared', handleCartItemAdded);
+      socket.off('cartCheckedOut', handleCartCheckedOut);
     };
   }, [queryClient]);
 
@@ -46,7 +52,7 @@ export const useCart = () => {
 export const useAddToCart = () => {
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
-  
+
   const mutation = useMutation({
     mutationFn: cartService.addToCart,
     onSuccess: () => {
@@ -67,7 +73,7 @@ export const useAddToCart = () => {
 export const useUpdateCart = () => {
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
-  
+
   const mutation = useMutation({
     mutationFn: cartService.updateCart,
     onSuccess: () => {
@@ -88,7 +94,7 @@ export const useUpdateCart = () => {
 export const useRemoveFromCart = () => {
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
-  
+
   const mutation = useMutation({
     mutationFn: cartService.deleteItemFromCart,
     onSuccess: () => {
@@ -109,7 +115,7 @@ export const useRemoveFromCart = () => {
 export const useClearCart = () => {
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
-  
+
   const mutation = useMutation({
     mutationFn: cartService.clearCart,
     onSuccess: () => {
