@@ -6,12 +6,12 @@ import {
     CircularProgress,
     Alert
 } from '@mui/material'
+import { useQueryClient } from '@tanstack/react-query'
 import { useSearchParams, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
 import ProtectedRoute from '@/provider/ProtectedRoute'
 import { paymentService } from '@/services/paymentService'
-import { useQueryClient } from '@tanstack/react-query'
 
 const PaymentSuccessContent: React.FC = () => {
     const searchParams = useSearchParams()
@@ -65,7 +65,7 @@ const PaymentSuccessContent: React.FC = () => {
         }
 
         verifyAndRedirect()
-    }, [paymentIntentId, redirectStatus, router])
+    }, [ paymentIntentId, redirectStatus, router])
 
     return (
         <ProtectedRoute>

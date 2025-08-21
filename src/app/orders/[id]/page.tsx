@@ -1,4 +1,5 @@
 'use client'
+
 import {
     ArrowBack as ArrowBackIcon,
     LocalShipping as ShippingIcon,
@@ -10,7 +11,6 @@ import {
     Download as DownloadIcon,
     Cancel as CancelIcon
 } from '@mui/icons-material'
-
 import {
     Container,
     Typography,

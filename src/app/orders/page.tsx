@@ -18,7 +18,6 @@ import {
     Card,
     CardContent,
     Chip,
-    Pagination,
     TextField,
     InputAdornment,
     Divider,
@@ -35,8 +34,6 @@ const OrdersPage = () => {
     const [orders, setOrders] = useState<Order[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
-    const [currentPage, setCurrentPage] = useState(1)
-    const [totalPages, setTotalPages] = useState(1)
     const [totalOrders, setTotalOrders] = useState(0)
     const [searchTerm, setSearchTerm] = useState('')
     const [filteredOrders, setFilteredOrders] = useState<Order[]>([])
@@ -46,11 +43,10 @@ const OrdersPage = () => {
     const fetchOrders = useCallback(async () => {
         try {
             setIsLoading(true)
-            const response = await orderService.getUserOrders(currentPage, ordersPerPage)
+            const response = await orderService.getUserOrders(ordersPerPage)
 
             if (response.success) {
                 setOrders(response.orders)
-                setTotalPages(response.totalPages)
                 setTotalOrders(response.totalOrders)
             } else {
                 throw new Error('Failed to fetch orders')
@@ -61,7 +57,7 @@ const OrdersPage = () => {
         } finally {
             setIsLoading(false)
         }
-    }, [currentPage, ordersPerPage])
+    }, [ordersPerPage])
 
     useEffect(() => {
         fetchOrders()
@@ -90,10 +86,6 @@ const OrdersPage = () => {
             case 'cancelled': return '#f44336'
             default: return '#757575'
         }
-    }
-
-    const handlePageChange = (_event: React.ChangeEvent<unknown>, page: number) => {
-        setCurrentPage(page)
     }
 
     const handleViewOrder = (orderId: string) => {
