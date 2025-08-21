@@ -141,7 +141,6 @@ const EditReviewDialog: React.FC<EditReviewDialogProps> = ({
                     </Typography>
                     <TextField
                         fullWidth
-                        multiline
                         rows={4}
                         label="Write your review..."
                         value={comment}

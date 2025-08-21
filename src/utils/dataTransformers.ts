@@ -84,11 +84,17 @@ export const transformCommentsData = (
   testimonials: TestimonialsResponse | undefined,
   productId: string
 ) => {
-  const reviews = testimonials?.reviews || 
-    ('data' in (testimonials || {}) ? (testimonials as ProductTestimonialsResponse).data?.reviews : []) || 
-    [];
+  let reviews: ApiReview[] = [];
 
-  return reviews.map((review: ApiReview) => ({
+  if (Array.isArray(testimonials)) {
+    reviews = testimonials;
+  } else if (testimonials?.reviews) {
+    reviews = testimonials.reviews;
+  } else if ('data' in (testimonials || {}) && (testimonials as ProductTestimonialsResponse).data?.reviews) {
+    reviews = (testimonials as ProductTestimonialsResponse).data.reviews;
+  }
+
+  const transformedData = reviews.map((review: ApiReview) => ({
     _id: review._id || review.id || '',
     id: review._id || review.id || '',
     user: {
@@ -119,4 +125,6 @@ export const transformCommentsData = (
     replies: review.replies || 0,
     isOwner: false
   }));
+
+  return transformedData;
 };

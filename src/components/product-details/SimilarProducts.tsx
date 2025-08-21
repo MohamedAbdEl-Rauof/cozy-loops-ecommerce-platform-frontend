@@ -4,7 +4,6 @@ import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import {
@@ -16,9 +15,9 @@ import {
     Container,
     Fade,
     Chip,
-    Rating,
     Button,
-    Tooltip,
+    CircularProgress,
+    CardContent,
 } from '@mui/material';
 import { styled, keyframes } from '@mui/material/styles';
 import React, { useEffect, useRef, useState, useCallback } from 'react';
@@ -193,17 +192,6 @@ const PaginationDot = styled(Box)<{ active: boolean }>(({ active }) => ({
         transform: 'scale(1.2)',
     }
 }));
-
-const GradientOverlay = styled(Box)({
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: '50%',
-    background: 'linear-gradient(transparent, rgba(0,0,0,0.7))',
-    opacity: 0,
-    transition: 'opacity 0.3s ease',
-});
 
 interface Product {
     id: string;
@@ -414,8 +402,7 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
             ref={sectionRef}
             component="section"
             sx={{
-                py: { xs: 4, md: 8 },
-                background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+                py: { xs: 6, md: 10 },
                 position: 'relative',
                 overflow: 'hidden',
                 '&::before': {
@@ -425,8 +412,8 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    background: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="2"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
-                    opacity: 0.3,
+                    background: 'radial-gradient(circle at 20% 50%, rgba(120, 119, 198, 0.03) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 107, 107, 0.03) 0%, transparent 50%)',
+                    pointerEvents: 'none',
                 }
             }}
         >
@@ -446,7 +433,6 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                     zIndex: 2,
                 }}
             >
-                {/* Enhanced Title Section */}
                 <AnimatedSection
                     className={isVisible ? 'animate-in' : ''}
                     sx={{
@@ -456,54 +442,50 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                         mx: 'auto'
                     }}
                 >
-                    <Box sx={{ position: 'relative', display: 'inline-block' }}>
-                        <Typography
-                            variant="h3"
-                            component="h2"
-                            sx={{
-                                fontWeight: 800,
-                                mb: 3,
-                                fontSize: { xs: '2.2rem', sm: '2.8rem', md: '3.5rem' },
-                                lineHeight: 1.1,
-                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                backgroundClip: 'text',
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent',
-                                position: 'relative',
-                                '&::after': {
-                                    content: '""',
-                                    position: 'absolute',
-                                    bottom: -8,
-                                    left: '50%',
-                                    transform: 'translateX(-50%)',
-                                    width: '80px',
-                                    height: '4px',
-                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                    borderRadius: '2px',
-                                }
-                            }}
-                        >
-                            {productsData.title}
-                        </Typography>
-                    </Box>
+                    <Typography
+                        variant="h3"
+                        component="h2"
+                        sx={{
+                            fontWeight: 700,
+                            mb: 3,
+                            fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
+                            lineHeight: 1.2,
+                            color: '#1e293b',
+                            position: 'relative',
+                            '&::after': {
+                                content: '""',
+                                position: 'absolute',
+                                bottom: -12,
+                                left: '50%',
+                                transform: 'translateX(-50%)',
+                                width: '60px',
+                                height: '3px',
+                                background: 'linear-gradient(90deg, #D97706 0%, #F59E0B 50%, #D97706 100%)',
+                                borderRadius: '2px',
+                            }
+                        }}
+                    >
+                        {productsData.title}
+                    </Typography>
 
                     <Typography
                         variant="body1"
                         sx={{
-                            color: '#6c757d',
+                            color: '#64748b',
                             fontSize: '1.1rem',
                             maxWidth: '600px',
                             mx: 'auto',
-                            lineHeight: 1.6
+                            lineHeight: 1.6,
+                            fontWeight: 400,
                         }}
                     >
                         Discover handpicked products that complement your style and preferences
                     </Typography>
                 </AnimatedSection>
 
-                {/* Enhanced Products Carousel */}
+                {/* Products Carousel */}
                 <Box sx={{ position: 'relative', overflow: 'visible' }}>
-                    {/* Enhanced Navigation Arrows */}
+                    {/* Navigation Arrows */}
                     {totalProducts > productsPerPage && (
                         <>
                             <NavigationButton
@@ -511,10 +493,23 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                                 disabled={currentIndex === 0}
                                 sx={{
                                     left: { xs: -15, sm: -25, md: -35 },
+                                    background: 'rgba(255, 255, 255, 0.95)',
+                                    backdropFilter: 'blur(10px)',
+                                    border: '1px solid rgba(0, 0, 0, 0.08)',
+                                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+                                    '&:hover': {
+                                        background: 'rgba(255, 255, 255, 1)',
+                                        transform: 'translateY(-2px)',
+                                        boxShadow: '0 8px 30px rgba(0, 0, 0, 0.15)',
+                                    },
+                                    '&:disabled': {
+                                        opacity: 0.4,
+                                        cursor: 'not-allowed',
+                                    }
                                 }}
                                 aria-label="Previous products"
                             >
-                                <ArrowBackIosIcon sx={{ fontSize: 24, ml: 0.5 }} />
+                                <ArrowBackIosIcon sx={{ fontSize: 20, ml: 0.5, color: '#475569' }} />
                             </NavigationButton>
 
                             <NavigationButton
@@ -522,18 +517,31 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                                 disabled={currentIndex >= maxIndex}
                                 sx={{
                                     right: { xs: -15, sm: -25, md: -35 },
+                                    background: 'rgba(255, 255, 255, 0.95)',
+                                    backdropFilter: 'blur(10px)',
+                                    border: '1px solid rgba(0, 0, 0, 0.08)',
+                                    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+                                    '&:hover': {
+                                        background: 'rgba(255, 255, 255, 1)',
+                                        transform: 'translateY(-2px)',
+                                        boxShadow: '0 8px 30px rgba(0, 0, 0, 0.15)',
+                                    },
+                                    '&:disabled': {
+                                        opacity: 0.4,
+                                        cursor: 'not-allowed',
+                                    }
                                 }}
                                 aria-label="Next products"
                             >
-                                <ArrowForwardIosIcon sx={{ fontSize: 24 }} />
+                                <ArrowForwardIosIcon sx={{ fontSize: 20, color: '#475569' }} />
                             </NavigationButton>
                         </>
                     )}
 
-                    {/* Enhanced Products Grid */}
+                    {/* Products Grid */}
                     <Grid
                         container
-                        spacing={{ xs: 3, sm: 4, md: 6 }}
+                        spacing={{ xs: 3, sm: 4, md: 5 }}
                         sx={{
                             justifyContent: currentProducts.length < 3 ? 'center' : 'flex-start',
                         }}
@@ -549,9 +557,9 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                             >
                                 <Fade
                                     in={visibleProducts[index] || false}
-                                    timeout={800}
+                                    timeout={600}
                                     style={{
-                                        transitionDelay: `${index * 200}ms`
+                                        transitionDelay: `${index * 150}ms`
                                     }}
                                 >
                                     <ProductCard
@@ -560,38 +568,51 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                                         sx={{
                                             maxWidth: currentProducts.length === 1 ? '450px' : 'none',
                                             mx: currentProducts.length === 1 ? 'auto' : 'initial',
+                                            background: 'rgba(255, 255, 255, 0.8)',
+                                            backdropFilter: 'blur(20px)',
+                                            border: '1px solid rgba(255, 255, 255, 0.2)',
+                                            borderRadius: '16px',
+                                            overflow: 'hidden',
+                                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                            '&:hover': {
+                                                transform: 'translateY(-8px)',
+                                                boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
+                                                border: '1px solid rgba(59, 130, 246, 0.2)',
+                                            }
                                         }}
                                     >
-                                        {/* Enhanced Product Image Section */}
+                                        {/* Product Image Section */}
                                         <Box sx={{ position: 'relative', overflow: 'hidden' }}>
-                                            {/* Floating Badges */}
-                                            <Box sx={{ position: 'absolute', top: 16, left: 16, zIndex: 2 }}>
+                                            {/* Badges */}
+                                            <Box sx={{ position: 'absolute', top: 12, left: 12, zIndex: 2 }}>
                                                 {product.isNew && (
                                                     <Chip
                                                         label="NEW"
-                                                        className="floating-badge"
+                                                        size="small"
                                                         sx={{
-                                                            background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                                                            background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
                                                             color: 'white',
-                                                            fontWeight: 700,
-                                                            fontSize: '0.75rem',
-                                                            height: 28,
-                                                            mb: 1,
-                                                            boxShadow: '0 4px 15px rgba(79, 172, 254, 0.4)',
+                                                            fontWeight: 600,
+                                                            fontSize: '0.7rem',
+                                                            height: 24,
+                                                            mb: 0.5,
+                                                            boxShadow: '0 2px 8px rgba(59, 130, 246, 0.3)',
+                                                            border: 'none',
                                                         }}
                                                     />
                                                 )}
                                                 {product.discount && (
                                                     <Chip
                                                         label={`-${product.discount}%`}
-                                                        className="floating-badge"
+                                                        size="small"
                                                         sx={{
-                                                            background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+                                                            background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
                                                             color: 'white',
-                                                            fontWeight: 700,
-                                                            fontSize: '0.75rem',
-                                                            height: 28,
-                                                            boxShadow: '0 4px 15px rgba(250, 112, 154, 0.4)',
+                                                            fontWeight: 600,
+                                                            fontSize: '0.7rem',
+                                                            height: 24,
+                                                            boxShadow: '0 2px 8px rgba(239, 68, 68, 0.3)',
+                                                            border: 'none',
                                                         }}
                                                     />
                                                 )}
@@ -599,106 +620,130 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
 
                                             <CardMedia
                                                 component="img"
-                                                height="320"
+                                                height="280"
                                                 image={product.image}
                                                 alt={product.title}
-                                                className="product-image"
                                                 sx={{
                                                     objectFit: 'cover',
-                                                    transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                    filter: hoveredProduct === product.id ? 'brightness(1.1)' : 'brightness(1)',
+                                                    transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                    transform: hoveredProduct === product.id ? 'scale(1.05)' : 'scale(1)',
                                                 }}
                                             />
 
-                                            <GradientOverlay
-                                                sx={{
-                                                    opacity: hoveredProduct === product.id ? 1 : 0,
-                                                }}
-                                            />
-
-                                            {/* Enhanced Action Buttons */}
+                                            {/* Overlay */}
                                             <Box
-                                                className="action-buttons"
                                                 sx={{
                                                     position: 'absolute',
-                                                    top: 16,
-                                                    right: 16,
+                                                    top: 0,
+                                                    left: 0,
+                                                    right: 0,
+                                                    bottom: 0,
+                                                    background: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.1) 100%)',
+                                                    opacity: hoveredProduct === product.id ? 1 : 0,
+                                                    transition: 'opacity 0.3s ease',
+                                                }}
+                                            />
+
+                                            {/* Action Buttons */}
+                                            <Box
+                                                sx={{
+                                                    position: 'absolute',
+                                                    top: 12,
+                                                    right: 12,
                                                     display: 'flex',
                                                     flexDirection: 'column',
                                                     gap: 1,
-                                                    opacity: 0,
-                                                    transform: 'translateY(-20px)',
-                                                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                    zIndex: 2,
+                                                    opacity: hoveredProduct === product.id ? 1 : 0,
+                                                    transform: hoveredProduct === product.id ? 'translateY(0)' : 'translateY(-10px)',
+                                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                    zIndex: 3,
                                                 }}
+                                                className="action-buttons"
                                             >
-                                                <Tooltip title="Add to Wishlist" placement="left">
-
-                                                    <ActionButton
-                                                        onClick={() => handleToggleFavorite(product.id)}
-                                                        sx={{
-                                                            color: isInWishlist(product.id) ? '#e74c3c' : '#6c757d',
-                                                            '&:hover': {
-                                                                backgroundColor: isInWishlist(product.id) ? 'rgba(231, 76, 60, 0.1)' : 'rgba(255, 255, 255, 0.95)',
-                                                                color: isInWishlist(product.id) ? '#e74c3c' : '#6c757d',
-                                                            }
-                                                        }}
-                                                    >
-                                                        {isInWishlist(product.id) ?
-                                                            <FavoriteIcon sx={{ fontSize: 20 }} /> :
-                                                            <FavoriteBorderIcon sx={{ fontSize: 20 }} />
+                                                <ActionButton
+                                                    onClick={() => handleToggleFavorite(product.id)}
+                                                    sx={{
+                                                        backgroundColor: isInWishlist(product.id)
+                                                            ? 'rgba(239, 68, 68, 0.1)'
+                                                            : 'rgba(255, 255, 255, 0.9)',
+                                                        color: isInWishlist(product.id) ? '#ef4444' : '#64748b',
+                                                        '&:hover': {
+                                                            backgroundColor: isInWishlist(product.id)
+                                                                ? 'rgba(239, 68, 68, 0.2)'
+                                                                : 'rgba(255, 255, 255, 1)',
+                                                            color: '#ef4444',
+                                                            transform: 'scale(1.1)',
                                                         }
-                                                    </ActionButton>
-                                                </Tooltip>
+                                                    }}
+                                                    aria-label="Add to wishlist"
+                                                >
+                                                    {isInWishlist(product.id) ? (
+                                                        <FavoriteIcon sx={{ fontSize: 18 }} />
+                                                    ) : (
+                                                        <FavoriteBorderIcon sx={{ fontSize: 18 }} />
+                                                    )}
+                                                </ActionButton>
 
-                                                <Tooltip title="Quick View" placement="left">
-                                                    <ActionButton
-                                                        onClick={() => handleQuickView(product.id)}
-                                                        sx={{
-                                                            color: '#6c757d',
-                                                            '&:hover': {
-                                                                backgroundColor: 'rgba(103, 126, 234, 0.1)',
-                                                                color: '#677eea',
-                                                            }
-                                                        }}
-                                                    >
-                                                        <VisibilityIcon sx={{ fontSize: 20 }} />
-                                                    </ActionButton>
-                                                </Tooltip>
+                                                <ActionButton
+                                                    onClick={() => handleQuickView(product.id)}
+                                                    sx={{
+                                                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                                        color: '#64748b',
+                                                        '&:hover': {
+                                                            backgroundColor: 'rgba(255, 255, 255, 1)',
+                                                            color: '#3b82f6',
+                                                            transform: 'scale(1.1)',
+                                                        }
+                                                    }}
+                                                    aria-label="Quick view"
+                                                >
+                                                    <VisibilityIcon sx={{ fontSize: 18 }} />
+                                                </ActionButton>
                                             </Box>
 
-                                            {/* Enhanced Quick Add to Cart Button */}
+                                            {/* Add to Cart Button */}
                                             <Box
                                                 sx={{
                                                     position: 'absolute',
                                                     bottom: 16,
-                                                    left: '50%',
-                                                    transform: 'translateX(-50%)',
+                                                    left: 16,
+                                                    right: 16,
                                                     opacity: hoveredProduct === product.id ? 1 : 0,
-                                                    transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                                                    zIndex: 2,
+                                                    transform: hoveredProduct === product.id ? 'translateY(0)' : 'translateY(10px)',
+                                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                                    zIndex: 3,
                                                 }}
                                             >
                                                 <Button
+                                                    fullWidth
                                                     variant="contained"
-                                                    startIcon={<ShoppingCartIcon />}
                                                     onClick={() => handleAddToCart(product.id)}
+                                                    disabled={isAddingToCart || isUpdatingCart}
+                                                    startIcon={
+                                                        isAddingToCart || isUpdatingCart ? (
+                                                            <CircularProgress size={16} color="inherit" />
+                                                        ) : (
+                                                            <ShoppingCartIcon />
+                                                        )
+                                                    }
                                                     sx={{
-                                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                                        bgcolor: 'var(--primary-color)',
                                                         color: 'white',
-                                                        borderRadius: '25px',
-                                                        px: 3,
-                                                        py: 1.5,
                                                         fontWeight: 600,
-                                                        fontSize: '0.9rem',
+                                                        py: 1.5,
+                                                        borderRadius: '30px !important',
                                                         textTransform: 'none',
-                                                        boxShadow: '0 8px 25px rgba(102, 126, 234, 0.4)',
-                                                        backdropFilter: 'blur(20px)',
-                                                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                                                        fontSize: '0.9rem',
+                                                        boxShadow: '0 4px 20px rgba(59, 130, 246, 0.3)',
+                                                        border: 'none',
                                                         '&:hover': {
-                                                            background: 'linear-gradient(135deg, #5a67d8 0%, #667eea 100%)',
+                                                            bgcolor: 'var(--primary-color-dark)',
                                                             transform: 'translateY(-2px)',
-                                                            boxShadow: '0 12px 35px rgba(102, 126, 234, 0.6)',
+                                                            boxShadow: '0 6px 20px rgba(0,0,0,0.15)'
+                                                        },
+                                                        '&:disabled': {
+                                                            background: 'rgba(148, 163, 184, 0.5)',
+                                                            color: 'rgba(255, 255, 255, 0.7)',
                                                         }
                                                     }}
                                                 >
@@ -707,26 +752,32 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                                             </Box>
                                         </Box>
 
-                                        {/* Enhanced Product Details */}
-                                        <Box sx={{ p: 3, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                                            {/* Category Tag */}
+                                        {/* Product Info */}
+                                        <CardContent
+                                            sx={{
+                                                p: 3,
+                                                flexGrow: 1,
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                background: 'rgba(255, 255, 255, 0.8)',
+                                                backdropFilter: 'blur(10px)',
+                                            }}
+                                        >
+                                            {/* Category */}
                                             {product.category && (
-                                                <Chip
-                                                    label={product.category}
-                                                    size="small"
+                                                <Typography
+                                                    variant="caption"
                                                     sx={{
-                                                        alignSelf: 'flex-start',
-                                                        mb: 2,
-                                                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                                                        color: '#667eea',
+                                                        color: 'var(--primary-color)',
                                                         fontWeight: 600,
+                                                        textTransform: 'uppercase',
+                                                        letterSpacing: '0.5px',
+                                                        mb: 1,
                                                         fontSize: '0.75rem',
-                                                        height: 24,
-                                                        '& .MuiChip-label': {
-                                                            px: 1.5,
-                                                        }
                                                     }}
-                                                />
+                                                >
+                                                    {product.category}
+                                                </Typography>
                                             )}
 
                                             {/* Product Title */}
@@ -734,121 +785,57 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                                                 variant="h6"
                                                 component="h3"
                                                 sx={{
-                                                    fontWeight: 700,
+                                                    fontWeight: 600,
+                                                    mb: 2,
+                                                    color: '#1e293b',
                                                     fontSize: '1.1rem',
                                                     lineHeight: 1.3,
-                                                    mb: 2,
-                                                    color: '#2c3e50',
                                                     display: '-webkit-box',
                                                     WebkitLineClamp: 2,
                                                     WebkitBoxOrient: 'vertical',
                                                     overflow: 'hidden',
                                                     minHeight: '2.6rem',
-                                                    transition: 'color 0.3s ease',
-                                                    '&:hover': {
-                                                        color: '#667eea',
-                                                        cursor: 'pointer',
-                                                    }
                                                 }}
                                             >
                                                 {product.title}
                                             </Typography>
 
-                                            {/* Rating Section */}
-                                            {product.rating && (
-                                                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                                                    <Rating
-                                                        value={product.rating}
-                                                        precision={0.1}
-                                                        readOnly
-                                                        size="small"
-                                                        sx={{
-                                                            color: '#ffc107',
-                                                            '& .MuiRating-iconEmpty': {
-                                                                color: 'rgba(0,0,0,0.1)',
-                                                            }
-                                                        }}
-                                                    />
-                                                    {product.reviewCount && (
-                                                        <Typography
-                                                            variant="body2"
-                                                            sx={{
-                                                                ml: 1,
-                                                                color: '#6c757d',
-                                                                fontSize: '0.85rem',
-                                                                fontWeight: 500,
-                                                            }}
-                                                        >
-                                                            ({product.reviewCount})
-                                                        </Typography>
-                                                    )}
-                                                </Box>
-                                            )}
-
-                                            {/* Enhanced Price Section */}
+                                            {/* Price */}
                                             <Box
-                                                className="price-tag"
                                                 sx={{
-                                                    mt: 'auto',
                                                     display: 'flex',
                                                     alignItems: 'center',
-                                                    gap: 1.5,
-                                                    flexWrap: 'wrap'
+                                                    gap: 1,
+                                                    mt: 'auto',
                                                 }}
+                                                className="price-tag"
                                             >
                                                 <Typography
                                                     variant="h6"
                                                     component="span"
                                                     sx={{
-                                                        fontWeight: 800,
-                                                        fontSize: '1.4rem',
-                                                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                                        backgroundClip: 'text',
-                                                        WebkitBackgroundClip: 'text',
-                                                        WebkitTextFillColor: 'transparent',
+                                                        fontWeight: 700,
+                                                        color: '#1e293b',
+                                                        fontSize: '1.25rem',
                                                     }}
                                                 >
                                                     ${product.price.toFixed(2)}
                                                 </Typography>
-
                                                 {product.originalPrice && product.originalPrice > product.price && (
-                                                    <>
-                                                        <Typography
-                                                            variant="body2"
-                                                            component="span"
-                                                            sx={{
-                                                                textDecoration: 'line-through',
-                                                                color: '#6c757d',
-                                                                fontSize: '1rem',
-                                                                fontWeight: 500,
-                                                            }}
-                                                        >
-                                                            ${product.originalPrice.toFixed(2)}
-                                                        </Typography>
-
-                                                        <Chip
-                                                            label={`Save $${(product.originalPrice - product.price).toFixed(2)}`}
-                                                            size="small"
-                                                            icon={<LocalOfferIcon sx={{ fontSize: 14 }} />}
-                                                            sx={{
-                                                                background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-                                                                color: 'white',
-                                                                fontWeight: 600,
-                                                                fontSize: '0.7rem',
-                                                                height: 24,
-                                                                '& .MuiChip-icon': {
-                                                                    color: 'white',
-                                                                    fontSize: 14,
-                                                                },
-                                                                '& .MuiChip-label': {
-                                                                    px: 1,
-                                                                }
-                                                            }}
-                                                        />
-                                                    </>
+                                                    <Typography
+                                                        variant="body2"
+                                                        component="span"
+                                                        sx={{
+                                                            textDecoration: 'line-through',
+                                                            color: '#94a3b8',
+                                                            fontSize: '0.9rem',
+                                                        }}
+                                                    >
+                                                        ${product.originalPrice.toFixed(2)}
+                                                    </Typography>
                                                 )}
                                             </Box>
-                                        </Box>
+                                        </CardContent>
                                     </ProductCard>
                                 </Fade>
                             </Grid>
@@ -856,7 +843,7 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                     </Grid>
                 </Box>
 
-                {/* Enhanced Pagination Dots */}
+                {/* Pagination Dots */}
                 {totalPages > 1 && (
                     <Box
                         sx={{
@@ -865,7 +852,6 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                             alignItems: 'center',
                             gap: 1.5,
                             mt: 6,
-                            py: 2,
                         }}
                     >
                         {Array.from({ length: totalPages }, (_, index) => (
@@ -873,11 +859,15 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                                 key={index}
                                 active={Math.floor(currentIndex / productsPerPage) === index}
                                 onClick={() => handleDotClick(index * productsPerPage)}
-                                aria-label={`Go to page ${index + 1}`}
+                                sx={{
+                                    cursor: 'pointer',
+                                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                                }}
                             />
                         ))}
                     </Box>
                 )}
+
             </Container>
         </Box>
     );

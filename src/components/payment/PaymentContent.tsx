@@ -44,7 +44,7 @@ const PaymentContent: React.FC = () => {
             // First, try to get existing order details
             try {
                 const orderResponse = await paymentService.getOrderForPayment(orderId);
-
+                
                 if (orderResponse.success && orderResponse.order) {
                     const order = orderResponse.order;
 
