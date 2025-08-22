@@ -59,12 +59,10 @@ const Navbar = ({
     const isAuthPage = pathname?.startsWith("/auth");
     const router = useRouter();
     const { user, logout } = useAuth();
+
     const { data: cart, isLoading: cartLoading } = useCart();
-
     const { wishlistItems, isLoading: wishlistLoading } = useWishlist();
-
     const wishlistCount = wishlistLoading ? 0 : wishlistItems?.length || 0;
-
 
     if (isAuthPage) return null
 
@@ -483,7 +481,6 @@ const Navbar = ({
                             padding: "0 !important",
                             height: { xs: '64px', md: '72px' }
                         }}>
-                            {/* Logo */}
                             <Box
                                 component="div"
                                 sx={{
@@ -510,10 +507,8 @@ const Navbar = ({
                                 </Link>
                             </Box>
 
-                            {/* Desktop Navigation */}
                             {!isMobile && renderDesktopNav()}
 
-                            {/* Search Bar */}
                             <Box
                                 sx={{
                                     display: 'flex',
@@ -543,11 +538,9 @@ const Navbar = ({
                                 />
                             </Box>
 
-                            {/* User Section & Mobile Menu Button */}
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, md: 2 } }}>
                                 {renderUserSection()}
 
-                                {/* Mobile Menu Button - Now on the right */}
                                 {isMobile && (
                                     <IconButton
                                         edge="end"
@@ -570,7 +563,6 @@ const Navbar = ({
                 </Container>
             </NavbarContainer>
 
-            {/* Mobile Menu */}
             {renderMobileMenu()}
         </>
     )

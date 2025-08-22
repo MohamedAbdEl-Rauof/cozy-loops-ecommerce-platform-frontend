@@ -41,10 +41,10 @@ const EditReviewDialog: React.FC<EditReviewDialogProps> = ({
     isLoading
 }) => {
     return (
-        <Dialog 
-            open={open} 
+        <Dialog
+            open={open}
             onClose={!isLoading ? onClose : undefined}
-            maxWidth="sm" 
+            maxWidth="sm"
             fullWidth
             PaperProps={{
                 sx: {
@@ -53,8 +53,8 @@ const EditReviewDialog: React.FC<EditReviewDialogProps> = ({
                 }
             }}
         >
-            <DialogTitle 
-                sx={{ 
+            <DialogTitle
+                sx={{
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
@@ -68,11 +68,11 @@ const EditReviewDialog: React.FC<EditReviewDialogProps> = ({
                         Edit Review
                     </Typography>
                 </Box>
-                <IconButton 
+                <IconButton
                     onClick={onClose}
                     disabled={isLoading}
                     size="small"
-                    sx={{ 
+                    sx={{
                         color: '#6B7280',
                         '&:hover': {
                             backgroundColor: '#F3F4F6',
@@ -84,11 +84,10 @@ const EditReviewDialog: React.FC<EditReviewDialogProps> = ({
             </DialogTitle>
 
             <DialogContent sx={{ pt: 3, pb: 2 }}>
-                {/* Rating Section */}
                 <Box sx={{ mb: 3 }}>
-                    <Typography 
-                        variant="subtitle1" 
-                        sx={{ 
+                    <Typography
+                        variant="subtitle1"
+                        sx={{
                             fontWeight: 600,
                             color: '#374151',
                             mb: 1.5,
@@ -114,9 +113,9 @@ const EditReviewDialog: React.FC<EditReviewDialogProps> = ({
                             }}
                         />
                         {rating && (
-                            <Typography 
-                                variant="body2" 
-                                sx={{ 
+                            <Typography
+                                variant="body2"
+                                sx={{
                                     color: '#6B7280',
                                     fontWeight: 500,
                                 }}
@@ -127,11 +126,10 @@ const EditReviewDialog: React.FC<EditReviewDialogProps> = ({
                     </Box>
                 </Box>
 
-                {/* Comment Section */}
                 <Box>
-                    <Typography 
-                        variant="subtitle1" 
-                        sx={{ 
+                    <Typography
+                        variant="subtitle1"
+                        sx={{
                             fontWeight: 600,
                             color: '#374151',
                             mb: 1.5,
@@ -164,9 +162,9 @@ const EditReviewDialog: React.FC<EditReviewDialogProps> = ({
                             },
                         }}
                     />
-                    <Typography 
-                        variant="caption" 
-                        sx={{ 
+                    <Typography
+                        variant="caption"
+                        sx={{
                             color: '#9CA3AF',
                             mt: 1,
                             display: 'block',
@@ -178,15 +176,15 @@ const EditReviewDialog: React.FC<EditReviewDialogProps> = ({
                 </Box>
             </DialogContent>
 
-            <DialogActions 
-                sx={{ 
+            <DialogActions
+                sx={{
                     px: 3,
                     pb: 3,
                     pt: 1,
                     gap: 2,
                 }}
             >
-                <Button 
+                <Button
                     onClick={onClose}
                     disabled={isLoading}
                     variant="outlined"
@@ -205,7 +203,7 @@ const EditReviewDialog: React.FC<EditReviewDialogProps> = ({
                 >
                     Cancel
                 </Button>
-                <Button 
+                <Button
                     onClick={onSave}
                     disabled={isLoading || !comment.trim() || !rating}
                     variant="contained"

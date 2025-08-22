@@ -70,7 +70,6 @@ export default function LoginPage() {
     },
   })
 
-  // Handle initial authentication check - only once
   useEffect(() => {
     if (!hasCheckedAuth.current && !loading && !hasAttemptedLogin && !loginInProgress) {
       hasCheckedAuth.current = true
@@ -83,7 +82,6 @@ export default function LoginPage() {
     }
   }, [loading, hasAttemptedLogin, loginInProgress, isUserAuthenticated, router])
 
-  // Handle success animation progress
   useEffect(() => {
     if (showSuccessAnimation) {
       const totalTime = 4000
@@ -105,7 +103,6 @@ export default function LoginPage() {
     }
   }, [showSuccessAnimation, router])
 
-  // Handle URL parameters for email verification
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search)
     const verified = searchParams.get('verified')
@@ -116,7 +113,6 @@ export default function LoginPage() {
         message: 'Email verified successfully! You can now log in.',
         severity: 'success'
       })
-      // Clean up URL
       const newUrl = window.location.pathname
       window.history.replaceState({}, document.title, newUrl)
     }
@@ -342,7 +338,6 @@ export default function LoginPage() {
         </Container>
       </Box>
 
-      {/* Success Animation Dialog */}
       <Dialog
         open={showSuccessAnimation}
         PaperProps={{
@@ -404,7 +399,6 @@ export default function LoginPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Snackbar for notifications */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}

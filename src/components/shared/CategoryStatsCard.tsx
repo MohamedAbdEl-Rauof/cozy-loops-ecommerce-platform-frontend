@@ -34,12 +34,10 @@ export default function CategoryStatsCard({
             md: '0 16px 48px rgba(0,0,0,0.15)'
           }
         },
-        // Add responsive margins
         mx: { xs: 1, sm: 2, md: 0 },
         my: { xs: 2, sm: 3, md: 4 }
       }}
     >
-      {/* Decorative gradient overlay */}
       <Box
         sx={{
           position: 'absolute',
@@ -332,7 +330,6 @@ export default function CategoryStatsCard({
           </Grid>
         </Grid>
 
-        {/* Additional decorative elements for larger screens */}
         <Box
           sx={{
             display: { xs: 'none', md: 'block' },
@@ -364,7 +361,6 @@ export default function CategoryStatsCard({
         />
       </CardContent>
 
-      {/* Add keyframes for animations */}
       <style jsx>{`
         @keyframes pulse {
           0%, 100% {

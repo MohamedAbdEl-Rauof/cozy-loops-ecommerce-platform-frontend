@@ -34,10 +34,10 @@ export const useAddToWishlist = () => {
             queryClient.invalidateQueries({ queryKey: ['wishlist'] });
             enqueueSnackbar('Added to wishlist!', { variant: 'success' });
         },
-       
+
         onError: (error: unknown) => {
-            const errorMessage = error instanceof Error && 'response' in error 
-                ? (error as { response?: { data?: { message?: string } } }).response?.data?.message 
+            const errorMessage = error instanceof Error && 'response' in error
+                ? (error as { response?: { data?: { message?: string } } }).response?.data?.message
                 : 'Failed to add to wishlist';
             enqueueSnackbar(errorMessage || 'Failed to add to wishlist', { variant: 'error' });
         }
@@ -59,10 +59,10 @@ export const useRemoveFromWishlist = () => {
             queryClient.invalidateQueries({ queryKey: ['wishlist'] });
             enqueueSnackbar('Removed from wishlist', { variant: 'info' });
         },
-        
+
         onError: (error: unknown) => {
-            const errorMessage = error instanceof Error && 'response' in error 
-                ? (error as { response?: { data?: { message?: string } } }).response?.data?.message 
+            const errorMessage = error instanceof Error && 'response' in error
+                ? (error as { response?: { data?: { message?: string } } }).response?.data?.message
                 : 'Failed to remove from wishlist';
             enqueueSnackbar(errorMessage || 'Failed to remove from wishlist', { variant: 'error' });
         }
@@ -85,8 +85,8 @@ export const useClearWishlist = () => {
             enqueueSnackbar('Wishlist cleared', { variant: 'warning' });
         },
         onError: (error: unknown) => {
-            const errorMessage = error instanceof Error && 'response' in error 
-                ? (error as { response?: { data?: { message?: string } } }).response?.data?.message 
+            const errorMessage = error instanceof Error && 'response' in error
+                ? (error as { response?: { data?: { message?: string } } }).response?.data?.message
                 : 'Failed to clear wishlist';
             enqueueSnackbar(errorMessage || 'Failed to clear wishlist', { variant: 'error' });
         }

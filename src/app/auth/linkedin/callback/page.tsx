@@ -53,7 +53,6 @@ function LinkedInCallbackContent() {
     useEffect(() => {
         const handleLinkedInCallback = async () => {
             if (hasProcessed.current || isProcessing) {
-                console.log('Already processing or processed, skipping...');
                 return;
             }
 
@@ -66,9 +65,6 @@ function LinkedInCallbackContent() {
                 const error = searchParams.get('error');
                 const errorDescription = searchParams.get('error_description');
 
-                console.log('Callback params:', { code, state, error, errorDescription });
-
-                // Handle LinkedIn errors
                 if (error) {
                     let errorMessage = 'LinkedIn authentication failed';
 
@@ -103,15 +99,8 @@ function LinkedInCallbackContent() {
                     return;
                 }
 
-                // Verify state parameter (CSRF protection)
                 const storedState = localStorage.getItem('linkedin_oauth_state');
                 const storedStateValue = storedState ? JSON.parse(storedState)?.state : null;
-
-                console.log('State verification:', {
-                    receivedState: state,
-                    storedStateValue,
-                    hasStoredData: !!storedState
-                });
 
                 if (storedStateValue && state !== storedStateValue) {
                     const errorMsg = 'Invalid state parameter. Possible CSRF attack.';
@@ -123,15 +112,10 @@ function LinkedInCallbackContent() {
                     return;
                 }
 
-                // Clean up stored state
                 localStorage.removeItem('linkedin_oauth_state');
 
-                console.log('State validation successful, proceeding with LinkedIn login...');
-
-                // Complete LinkedIn authentication
                 const result = await loginWithLinkedIn(code);
 
-                // Check if login was successful
                 if (result && result.user) {
                     showSnackbar('Successfully logged in with LinkedIn!', 'success');
 
@@ -150,7 +134,6 @@ function LinkedInCallbackContent() {
 
                 let errorMessage = 'LinkedIn authentication failed';
 
-                // Type guard for error handling
                 const linkedInError = error as LinkedInError;
 
                 if (linkedInError.response?.data?.message) {
@@ -159,7 +142,6 @@ function LinkedInCallbackContent() {
                     errorMessage = linkedInError.message;
                 }
 
-                // Handle specific error codes
                 if (linkedInError.response?.data?.error === 'LINKEDIN_AUTH_CODE_INVALID') {
                     errorMessage = 'Authorization code has expired. Please try logging in again.';
                 } else if (linkedInError.response?.data?.error === 'LINKEDIN_AUTH_CODE_EXPIRED') {
@@ -330,7 +312,6 @@ function LinkedInCallbackContent() {
     );
 }
 
-// Loading fallback component
 function LoadingFallback() {
     return (
         <Box
@@ -380,7 +361,6 @@ function LoadingFallback() {
     );
 }
 
-// Main component with Suspense boundary
 export default function LinkedInCallbackPage() {
     return (
         <Suspense fallback={<LoadingFallback />}>

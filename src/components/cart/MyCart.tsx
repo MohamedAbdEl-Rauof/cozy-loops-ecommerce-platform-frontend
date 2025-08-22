@@ -121,7 +121,7 @@ const MyCart: React.FC<MyCartProps> = ({
     onUpdateQuantity,
     onRemoveItem,
     onProceedToCheckout,
-    shippingCost = 10,
+    shippingCost = 0,
     isCheckoutLoading
 }) => {
     const cartItems = items;
@@ -190,7 +190,6 @@ const MyCart: React.FC<MyCartProps> = ({
             </Container>
         );
     }
-
 
     return (
         <Container maxWidth={false} sx={{ py: { xs: 2, sm: 3, md: 4 }, maxWidth: '1350px', px: { xs: 2, sm: 3, md: 4 } }}>

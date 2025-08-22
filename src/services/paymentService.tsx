@@ -23,7 +23,7 @@ export const paymentService = {
   createPaymentIntent: async (data: { orderId: string }) => {
     try {
       const response = await apiClient.post('/api/payment/create-intent', data);
-      return response.data.data; 
+      return response.data.data;
     } catch (error: unknown) {
       const apiError = error as ApiError;
       throw new Error(apiError.response?.data?.message || 'Failed to create payment intent');

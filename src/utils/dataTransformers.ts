@@ -33,7 +33,6 @@ export const transformProductData = (
 
 export const transformMakerData = (makerData: Maker | undefined, product: Product | undefined) => {
   const makerName = makerData?.name || product?.maker?.name || "Unknown Maker";
-
   return {
     name: makerName,
     location: makerData?.location || product?.maker?.location || "Unknown Location",

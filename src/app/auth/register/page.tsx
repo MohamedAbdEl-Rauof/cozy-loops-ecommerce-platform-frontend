@@ -34,7 +34,6 @@ import { z } from "zod"
 import SocialAuthDialog from "@/components/dialogs/SocialAuthDialog"
 import { useAuth } from "@/context/AuthContext"
 
-// Zod validation schema
 const registrationSchema = z
   .object({
     email: z.string().email({ message: "Please enter a valid email address" }),
@@ -79,14 +78,12 @@ export default function RegistrationPage() {
   const [isRedirecting, setIsRedirecting] = useState(false);
   const hasCheckedAuth = useRef(false);
 
-  // Handle initial authentication check - only once
   useEffect(() => {
     if (!hasCheckedAuth.current && !loading) {
       hasCheckedAuth.current = true
-      
+
       if (isUserAuthenticated()) {
         setIsRedirecting(true)
-        // Small delay to prevent flash
         setTimeout(() => {
           router.push('/')
         }, 100)
@@ -260,7 +257,6 @@ export default function RegistrationPage() {
     );
   };
 
-  // Show loading state while checking authentication
   if (loading || isRedirecting) {
     return (
       <Box sx={{

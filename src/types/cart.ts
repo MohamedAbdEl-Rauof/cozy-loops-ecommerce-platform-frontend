@@ -1,5 +1,4 @@
-
-import {ApiReview} from './Testimonial';
+import { ApiReview } from './Testimonial';
 
 export interface CartItem {
   _id: string;
@@ -154,4 +153,19 @@ export interface CartUpdateData {
   cart: unknown;
   action: string;
   item?: unknown;
+}
+
+export interface CheckoutResponse {
+  clientSecret: string;
+  paymentIntentId: string;
+  orderId: string;
+  orderNumber: string;
+  amount: number;
+  breakdown: {
+    subtotal: number;
+    shipping: number;
+    tax: number;
+    total: number;
+  };
+  publishableKey: string;
 }
