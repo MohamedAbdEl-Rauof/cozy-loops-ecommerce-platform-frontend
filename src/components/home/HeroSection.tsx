@@ -244,7 +244,7 @@ const HeroSection: React.FC = () => {
 
             <Stack
               direction={{ xs: 'column', sm: 'row' }}
-              spacing={{ xs: 3, sm: 4 }}
+              spacing={{ xs: 2, sm: 4 }}
               justifyContent={{ xs: 'center', lg: 'flex-start' }}
               alignItems="center"
               sx={{
@@ -252,6 +252,7 @@ const HeroSection: React.FC = () => {
                 opacity: 0,
                 animation: 'fadeInUp 0.8s forwards',
                 animationDelay: '0.8s',
+                width: { xs: '100%', sm: 'auto' },
               }}
             >
               <MuiLink
@@ -264,10 +265,12 @@ const HeroSection: React.FC = () => {
                   background: 'linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%)',
                   color: 'white',
                   borderRadius: '30px',
-                  px: { xs: 5 },
-                  minWidth: { xs: '200px', sm: '220px' },
+                  px: { xs: 4, sm: 5 },
+                  width: { xs: '100%', sm: 'auto' },
+                  minWidth: { xs: 'unset', sm: '220px' },
+                  maxWidth: { xs: '280px', sm: 'none' },
                   height: { xs: '48px', sm: '56px' },
-                  fontSize: { xs: '0.9rem', sm: '0.95rem', md: '1.05rem' },
+                  fontSize: { xs: '0.85rem', sm: '0.95rem', md: '1.05rem' },
                   fontWeight: 600,
                   letterSpacing: '0.5px',
                   boxShadow: '0 10px 25px -5px rgba(249, 115, 22, 0.4), 0 8px 10px -6px rgba(249, 115, 22, 0.2)',
@@ -301,7 +304,7 @@ const HeroSection: React.FC = () => {
                   }
                 }}
               >
-                Shop the Collection
+                Shop The Collection
                 <ArrowForwardIcon sx={{ ml: 1, fontSize: '1.2rem' }} />
               </MuiLink>
               <MuiLink
@@ -316,10 +319,12 @@ const HeroSection: React.FC = () => {
                   border: '2px solid rgba(203, 213, 225, 0.5)',
                   borderRadius: '30px',
                   py: { xs: 1.5, sm: 2 },
-                  px: { xs: 5, sm: 6 },
-                  minWidth: { xs: '200px', sm: '220px' },
+                  px: { xs: 4, sm: 6 },
+                  width: { xs: '100%', sm: 'auto' },
+                  minWidth: { xs: 'unset', sm: '220px' },
+                  maxWidth: { xs: '280px', sm: 'none' },
                   height: { xs: '48px', sm: '56px' },
-                  fontSize: { xs: '0.95rem', sm: '1.05rem' },
+                  fontSize: { xs: '0.85rem', sm: '1.05rem' },
                   fontWeight: 600,
                   letterSpacing: '0.5px',
                   textDecoration: 'none',

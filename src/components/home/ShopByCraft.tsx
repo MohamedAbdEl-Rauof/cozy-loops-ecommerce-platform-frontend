@@ -226,7 +226,7 @@ const ShopByCraft = ({ craftCategories }: ShopByCraftProps) => {
                                         bgcolor: 'rgba(255, 255, 255, 0.95)',
                                         borderRadius: '0 50px 3px 30px',
                                         padding: {
-                                            xs: '10px 14px',
+                                            xs: '16px 20px',
                                             sm: '12px 16px',
                                             md: '14px 18px',
                                             lg: '16px 20px'
