@@ -33,7 +33,6 @@ interface VerifyOtpResponse {
   resetToken?: string;
 }
 
-// Request deduplication for refresh token
 let refreshTokenPromise: Promise<LoginResponse> | null = null;
 
 export const login = async (email: string, password: string): Promise<LoginResponse> => {
@@ -65,7 +64,6 @@ export const logout = async (refreshTokenValue: string): Promise<void> => {
 };
 
 export const refreshToken = async (refreshTokenValue: string): Promise<LoginResponse> => {
-  // Deduplicate refresh token requests
   if (refreshTokenPromise) {
     return refreshTokenPromise;
   }
@@ -78,7 +76,6 @@ export const refreshToken = async (refreshTokenValue: string): Promise<LoginResp
       console.error('Error refreshing token:', error);
       throw error;
     } finally {
-      // Clear the promise after completion
       refreshTokenPromise = null;
     }
   })();

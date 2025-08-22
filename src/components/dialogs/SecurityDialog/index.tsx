@@ -106,40 +106,40 @@ const SecurityDialog: React.FC<SecurityDialogProps> = ({
                     <Close />
                 </IconButton>
             </DialogTitle>
-            
+
             <DialogContent sx={{ textAlign: 'center', pt: 0 }}>
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <WarningIcon />
-                    
-                    <Typography 
-                        variant="h5" 
-                        sx={{ 
-                            fontWeight: 700, 
-                            color: '#333', 
-                            mb: 2 
+
+                    <Typography
+                        variant="h5"
+                        sx={{
+                            fontWeight: 700,
+                            color: '#333',
+                            mb: 2
                         }}
                         id="security-dialog-title"
                     >
                         Security Alert
                     </Typography>
-                    
-                    <Typography 
-                        variant="body1" 
-                        sx={{ 
-                            color: '#666', 
+
+                    <Typography
+                        variant="body1"
+                        sx={{
+                            color: '#666',
                             mb: 2,
                             lineHeight: 1.6
                         }}
                         id="security-dialog-description"
                     >
-                        Too many password change attempts detected. For your account security, 
+                        Too many password change attempts detected. For your account security,
                         you will be redirected to the login page.
                     </Typography>
-                    
-                    <Typography 
-                        variant="body2" 
-                        sx={{ 
-                            color: '#888', 
+
+                    <Typography
+                        variant="body2"
+                        sx={{
+                            color: '#888',
                             fontStyle: 'italic',
                             mb: 2
                         }}
@@ -147,32 +147,31 @@ const SecurityDialog: React.FC<SecurityDialogProps> = ({
                         If you believe this is an error or need assistance, please contact our support team.
                     </Typography>
 
-                    {/* Countdown Box */}
                     <CountdownBox>
-                        <Typography 
-                            variant="h4" 
-                            sx={{ 
-                                fontWeight: 700, 
+                        <Typography
+                            variant="h4"
+                            sx={{
+                                fontWeight: 700,
                                 color: '#FF7043',
                                 mb: 1
                             }}
                         >
                             {countdown}
                         </Typography>
-                        <Typography 
-                            variant="body2" 
-                            sx={{ 
+                        <Typography
+                            variant="body2"
+                            sx={{
                                 color: '#666',
                                 mb: 2
                             }}
                         >
-                            {isCountdownStarted 
+                            {isCountdownStarted
                                 ? `Redirecting to login page in ${countdown} second${countdown !== 1 ? 's' : ''}`
                                 : 'Preparing to redirect...'
                             }
                         </Typography>
-                        <LinearProgress 
-                            variant="determinate" 
+                        <LinearProgress
+                            variant="determinate"
                             value={isCountdownStarted ? progress : 100}
                             sx={{
                                 height: 8,

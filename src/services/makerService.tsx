@@ -1,4 +1,3 @@
-
 import apiClient from '@/lib/apiClient';
 import { Maker, MakerProductsData, MakerProductsResponse, MakerResponse } from '@/types/maker';
 

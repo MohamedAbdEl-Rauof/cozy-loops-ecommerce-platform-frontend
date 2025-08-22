@@ -8,8 +8,8 @@ import { useState, useEffect, useRef } from 'react';
 import { ImageWithTextProps } from '@/types/about';
 
 const ImageWithText = ({
-                           dataContent
-                       }: ImageWithTextProps) => {
+    dataContent
+}: ImageWithTextProps) => {
     const { title, description, imageSrc, imageAlt, flipContent, imageHeight, buttonText, buttonLink, onButtonClick } = dataContent;
     const [isVisible, setIsVisible] = useState(false);
     const [imageLoaded, setImageLoaded] = useState(false);
@@ -100,7 +100,6 @@ const ImageWithText = ({
                 transition: 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
             }}
         >
-            {/* Text Content - Now comes first in DOM */}
             <Fade
                 in={isVisible}
                 timeout={1200}
@@ -278,7 +277,6 @@ const ImageWithText = ({
                 </Box>
             </Fade>
 
-            {/* Image - Now comes second in DOM */}
             <Slide
                 direction={isMobile ? "up" : (flipContent ? "left" : "right")}
                 in={isVisible}
@@ -289,7 +287,7 @@ const ImageWithText = ({
                     sx={{
                         flex: { xs: 'none', md: 0.8 },
                         position: 'relative',
-                        width:  defaultWidth,
+                        width: defaultWidth,
                         height: imageHeight || defaultHeight,
                         maxWidth: {
                             xs: '320px',

@@ -3,15 +3,7 @@ import Cookies from 'js-cookie';
 
 import { login, register, logout, refreshToken } from '@/services/authService';
 import { getUser } from '@/services/userServices';
-
-interface RegisterData {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber?: string;
-}
-
+import { RegisterData } from '@/types/user';
 
 export const USER_QUERY_KEYS = {
   user: ['user'] as const,
@@ -23,17 +15,17 @@ export const useUserQuery = (enabled: boolean = true) => {
     queryKey: USER_QUERY_KEYS.user,
     queryFn: getUser,
     enabled,
-    staleTime: 10 * 60 * 1000, 
-    gcTime: 15 * 60 * 1000, 
-    refetchOnWindowFocus: false, 
-    refetchOnMount: false, 
-    refetchInterval: false, 
+    staleTime: 10 * 60 * 1000,
+    gcTime: 15 * 60 * 1000,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchInterval: false,
     retry: (failureCount, error: unknown) => {
       const errorResponse = error as { response?: { status?: number } };
       if (errorResponse?.response?.status === 401) {
         return false;
       }
-      return failureCount < 1; 
+      return failureCount < 1;
     },
   });
 };
@@ -88,7 +80,7 @@ export const useLogoutMutation = () => {
     onSettled: () => {
       Cookies.remove('accessToken');
       Cookies.remove('refreshToken');
-      queryClient.clear(); 
+      queryClient.clear();
     },
   });
 };

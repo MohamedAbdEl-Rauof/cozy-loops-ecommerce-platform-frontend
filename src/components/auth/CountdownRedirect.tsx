@@ -78,12 +78,12 @@ export function CountdownRedirect({ message, redirectPath, seconds }: CountdownR
           >
             {message}
           </Typography>
-          
-          <Box sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            bgcolor: 'rgba(255, 0, 0, 0.05)', 
-            p: 2, 
+
+          <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
+            bgcolor: 'rgba(255, 0, 0, 0.05)',
+            p: 2,
             borderRadius: 2,
             mt: 2,
             border: '1px solid rgba(255, 0, 0, 0.2)'

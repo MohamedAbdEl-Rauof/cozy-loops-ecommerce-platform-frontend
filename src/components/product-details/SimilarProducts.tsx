@@ -24,7 +24,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 
 import { useAddToCart, useCart, useUpdateCart } from '@/hooks/useCart';
 import { useAddToWishlist, useRemoveFromWishlist, useWishlist } from '@/hooks/useWishlist';
-
+import { SimilarProductsProps } from '@/types/product';
 
 const slideInUp = keyframes`
   from {
@@ -193,33 +193,6 @@ const PaginationDot = styled(Box)<{ active: boolean }>(({ active }) => ({
     }
 }));
 
-interface Product {
-    id: string;
-    title: string;
-    image: string;
-    price: number;
-    originalPrice?: number;
-    rating?: number;
-    reviewCount?: number;
-    isNew?: boolean;
-    discount?: number;
-    category?: string;
-    categoryId?: string;
-    slug?: string;
-    categorySlug?: string
-
-}
-
-interface ProductsData {
-    title: string;
-    productsData: Product[];
-}
-
-interface SimilarProductsProps {
-    productsData: ProductsData;
-    onQuickView?: (_categoryId: string, _productId: string) => void;
-}
-
 const SimilarProducts: React.FC<SimilarProductsProps> = ({
     productsData,
     onQuickView
@@ -241,7 +214,6 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
     const productsPerPage = 3;
     const totalProducts = productsData?.productsData?.length || 0;
     const maxIndex = Math.max(0, totalProducts - productsPerPage);
-
 
     const handleAddToCart = async (productId: string) => {
         if (isAddingToCart || isUpdatingCart) return;
@@ -267,7 +239,6 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
         }
     };
 
-
     const handleToggleFavorite = (productId: string) => {
         if (isInWishlist(productId)) {
             removeFromWishlist(productId);
@@ -275,7 +246,6 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
             addToWishlist(productId);
         }
     };
-
 
     const handleQuickView = (productId: string) => {
         const product = productsData.productsData.find(p => p.id === productId);
@@ -332,7 +302,6 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
             triggerProductAnimations();
         }, 100);
     };
-
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -483,9 +452,7 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                     </Typography>
                 </AnimatedSection>
 
-                {/* Products Carousel */}
                 <Box sx={{ position: 'relative', overflow: 'visible' }}>
-                    {/* Navigation Arrows */}
                     {totalProducts > productsPerPage && (
                         <>
                             <NavigationButton
@@ -538,7 +505,6 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                         </>
                     )}
 
-                    {/* Products Grid */}
                     <Grid
                         container
                         spacing={{ xs: 3, sm: 4, md: 5 }}
@@ -581,9 +547,7 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                                             }
                                         }}
                                     >
-                                        {/* Product Image Section */}
                                         <Box sx={{ position: 'relative', overflow: 'hidden' }}>
-                                            {/* Badges */}
                                             <Box sx={{ position: 'absolute', top: 12, left: 12, zIndex: 2 }}>
                                                 {product.isNew && (
                                                     <Chip
@@ -630,7 +594,6 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                                                 }}
                                             />
 
-                                            {/* Overlay */}
                                             <Box
                                                 sx={{
                                                     position: 'absolute',
@@ -644,7 +607,6 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                                                 }}
                                             />
 
-                                            {/* Action Buttons */}
                                             <Box
                                                 sx={{
                                                     position: 'absolute',
@@ -701,7 +663,6 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                                                 </ActionButton>
                                             </Box>
 
-                                            {/* Add to Cart Button */}
                                             <Box
                                                 sx={{
                                                     position: 'absolute',
@@ -752,7 +713,6 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                                             </Box>
                                         </Box>
 
-                                        {/* Product Info */}
                                         <CardContent
                                             sx={{
                                                 p: 3,
@@ -763,7 +723,6 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                                                 backdropFilter: 'blur(10px)',
                                             }}
                                         >
-                                            {/* Category */}
                                             {product.category && (
                                                 <Typography
                                                     variant="caption"
@@ -780,7 +739,6 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                                                 </Typography>
                                             )}
 
-                                            {/* Product Title */}
                                             <Typography
                                                 variant="h6"
                                                 component="h3"
@@ -800,7 +758,6 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                                                 {product.title}
                                             </Typography>
 
-                                            {/* Price */}
                                             <Box
                                                 sx={{
                                                     display: 'flex',
@@ -843,7 +800,6 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                     </Grid>
                 </Box>
 
-                {/* Pagination Dots */}
                 {totalPages > 1 && (
                     <Box
                         sx={{
@@ -867,7 +823,6 @@ const SimilarProducts: React.FC<SimilarProductsProps> = ({
                         ))}
                     </Box>
                 )}
-
             </Container>
         </Box>
     );

@@ -32,10 +32,10 @@ const DeleteReviewDialog: React.FC<DeleteReviewDialogProps> = ({
     isLoading
 }) => {
     return (
-        <Dialog 
-            open={open} 
+        <Dialog
+            open={open}
             onClose={!isLoading ? onClose : undefined}
-            maxWidth="xs" 
+            maxWidth="xs"
             fullWidth
             PaperProps={{
                 sx: {
@@ -44,8 +44,8 @@ const DeleteReviewDialog: React.FC<DeleteReviewDialogProps> = ({
                 }
             }}
         >
-            <DialogTitle 
-                sx={{ 
+            <DialogTitle
+                sx={{
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
@@ -59,11 +59,11 @@ const DeleteReviewDialog: React.FC<DeleteReviewDialogProps> = ({
                         Delete Review
                     </Typography>
                 </Box>
-                <IconButton 
+                <IconButton
                     onClick={onClose}
                     disabled={isLoading}
                     size="small"
-                    sx={{ 
+                    sx={{
                         color: '#6B7280',
                         '&:hover': {
                             backgroundColor: '#F3F4F6',
@@ -76,18 +76,18 @@ const DeleteReviewDialog: React.FC<DeleteReviewDialogProps> = ({
 
             <DialogContent sx={{ pt: 3, pb: 2 }}>
                 <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-                    <WarningIcon 
-                        sx={{ 
-                            color: '#F59E0B', 
+                    <WarningIcon
+                        sx={{
+                            color: '#F59E0B',
                             fontSize: 24,
                             mt: 0.5,
                             flexShrink: 0,
-                        }} 
+                        }}
                     />
                     <Box>
-                        <Typography 
-                            variant="body1" 
-                            sx={{ 
+                        <Typography
+                            variant="body1"
+                            sx={{
                                 color: '#374151',
                                 fontWeight: 500,
                                 mb: 1,
@@ -95,9 +95,9 @@ const DeleteReviewDialog: React.FC<DeleteReviewDialogProps> = ({
                         >
                             Are you sure you want to delete this review?
                         </Typography>
-                        <Typography 
-                            variant="body2" 
-                            sx={{ 
+                        <Typography
+                            variant="body2"
+                            sx={{
                                 color: '#6B7280',
                                 lineHeight: 1.5,
                             }}
@@ -108,15 +108,15 @@ const DeleteReviewDialog: React.FC<DeleteReviewDialogProps> = ({
                 </Box>
             </DialogContent>
 
-            <DialogActions 
-                sx={{ 
+            <DialogActions
+                sx={{
                     px: 3,
                     pb: 3,
                     pt: 1,
                     gap: 2,
                 }}
             >
-                <Button 
+                <Button
                     onClick={onClose}
                     disabled={isLoading}
                     variant="outlined"
@@ -135,7 +135,7 @@ const DeleteReviewDialog: React.FC<DeleteReviewDialogProps> = ({
                 >
                     Cancel
                 </Button>
-                <Button 
+                <Button
                     onClick={onConfirm}
                     disabled={isLoading}
                     variant="contained"

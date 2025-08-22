@@ -15,7 +15,7 @@ const SmallNavbar: React.FC<SmallNavbarProps> = ({
     page1,
     page2
 }) => {
-     const params = useParams();
+    const params = useParams();
     const categorySlug = params.categorySlug as string;
     return (
         <Box
@@ -76,7 +76,7 @@ const SmallNavbar: React.FC<SmallNavbarProps> = ({
                                 }}
                                 aria-hidden="true"
                             />
-                            <Link href={`/categories/${categorySlug}`} style={{ textDecoration: 'none' , color: 'inherit' }}>
+                            <Link href={`/categories/${categorySlug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                                 <Typography
                                     variant="body2"
                                     sx={{

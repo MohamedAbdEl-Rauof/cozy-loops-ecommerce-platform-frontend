@@ -445,11 +445,11 @@ const WishlistCard: React.FC = () => {
                                                     sx={{
                                                         width: 40,
                                                         height: 40,
-                                                        backgroundColor: 'rgba(244, 67, 54, 0.95)', // Increased opacity
+                                                        backgroundColor: 'rgba(244, 67, 54, 0.95)',
                                                         backdropFilter: 'blur(10px)',
                                                         color: 'white',
-                                                        border: '1px solid rgba(255, 255, 255, 0.2)', // Add border for better visibility
-                                                        boxShadow: '0 4px 12px rgba(244, 67, 54, 0.3)', // Add shadow
+                                                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                                                        boxShadow: '0 4px 12px rgba(244, 67, 54, 0.3)',
                                                         transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                                         '&:hover': {
                                                             backgroundColor: '#f44336',

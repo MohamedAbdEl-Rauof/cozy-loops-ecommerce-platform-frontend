@@ -1,7 +1,6 @@
 import apiClient from '@/lib/apiClient';
 import { AddToCartData, Cart, CartApiResponse, RemoveFromCartData, UpdateCartData } from '@/types/cart';
 
-
 export const cartService = {
     getCart: async (): Promise<Cart> => {
         try {

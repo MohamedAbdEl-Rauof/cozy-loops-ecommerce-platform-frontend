@@ -1,142 +1,301 @@
 # Cozy Loops E-commerce Frontend
 
-This is a modern e-commerce platform built with [Next.js](https://nextjs.org), featuring a comprehensive shopping experience with secure authentication, product browsing, and checkout functionality.
+A modern, full-featured e-commerce platform built with Next.js 15, TypeScript, and Material-UI, designed for artisans and craft makers to showcase and sell their unique handmade products.
 
-## Getting Started
+## 🚀 Technology Stack
 
-First, run the development server:
+### Core Framework
+- **Next.js 15.3.3** - React framework for production
+- **React 19** - Latest React with Server Components
+- **TypeScript 5** - Type-safe development
+- **Tailwind CSS 4** - Utility-first CSS framework
 
-```bash
-npm run dev
-```
+### UI & Styling
+- **Material-UI (MUI) 7.1.2** - React component library
+- **@emotion/react & styled** - CSS-in-JS styling
+- **Tailwind CSS** - Additional styling utilities
 
-```bash
-yarn dev
-```
+### State Management & Data Fetching
+- **TanStack Query 5.82.0** - Server state management
+- **React Hook Form 7.58.1** - Form handling with validation
+- **Zod 3.25.67** - Schema validation
 
-```bash
-pnpm dev
-```
+### Authentication & Security
+- **NextAuth.js** - Authentication solution
+- **Google OAuth** - Social authentication
+- **js-cookie 3.0.5** - Cookie management
+- **JWT tokens** - Secure session management
 
-```bash
-bun dev
-```
+### Payment & Commerce
+- **Stripe 18.3.0** - Payment processing
+- **@stripe/react-stripe-js 3.8.0** - Stripe React components
+- **Socket.io-client 4.8.1** - Real-time cart updates
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
+### File Upload & Media
+- **Cloudinary 2.7.0** - Image storage and optimization
+- **Google Cloud Local Auth** - Google services integration
 
-## Features
+### Development Tools
+- **ESLint** - Code linting
+- **TypeScript Compiler** - Type checking
+- **Depcheck** - Unused dependency detection
 
-### Authentication System
-
-Our platform implements a secure authentication flow with the following features:
-
-- **Login Page** (`/auth/login`)
-  - Authenticated users are automatically redirected to the homepage
-  - Secure credential validation with error handling
-  - "Remember me" functionality
-
-- **Registration Page** (`/auth/register`)
-  - Authenticated users are automatically redirected to the homepage
-  - Real-time form validation
-  - Password strength requirements
-
-- **Password Reset** (`/auth/reset-password`)
-  - Requires email parameter in URL
-  - Authenticated users without reset credentials are redirected to homepage
-  - Secure OTP verification process
-  - Password strength validation
-
-- **Email Verification** (`/auth/verify-email`)
-  - Requires email parameter in URL
-  - Authenticated users are redirected to homepage
-  - OTP verification with resend capability
-  - Countdown timer for OTP resending
-
-### Shopping Experience
-
-- Product browsing with filtering and search
-- Detailed product pages with specifications and reviews
-- Shopping cart with quantity management
-- Secure checkout process
-- Order history and tracking
-
-## Project Structure
+## 📁 Project Structure
 
 ```
-frontend/
-├── public/                  # Static files
-├── src/
-│   ├── app/                 # App router structure
-│   │   ├── auth/            # Auth pages
-│   │   │   ├── login/       # Login page with redirect for authenticated users
-│   │   │   ├── register/    # Registration page with redirect for authenticated users
-│   │   │   ├── reset-password/ # Password reset (requires email param)
-│   │   │   └── verify-email/   # Email verification (requires email param)
-│   │   ├── products/        # Product pages
-│   │   ├── cart/            # Cart page
-│   │   ├── checkout/        # Checkout page
-│   │   ├── profile/         # User profile page
-│   │   ├── layout.tsx       # Root layout
-│   │   └── page.tsx         # Home page
-│   ├── components/          # Reusable components
-│   │   ├── auth/            # Auth components
-│   │   ├── common/          # Shared components
-│   │   ├── layout/          # Layout components
-│   │   └── product/         # Product-related components
-│   ├── context/             # React context
-│   ├── hooks/               # Custom hooks
-│   ├── lib/                 # Utility libraries
-│   ├── services/            # Service layer
-│   └── utils/               # Utility functions
-├── middleware.ts            # Next.js middleware for auth protection
-├── .env.local               # Environment variables
-└── package.json             # Dependencies
+cozy-loops-ecommerce/
+├── 📁 public/                    # Static assets
+│   ├── images/                   # Image assets
+│   │   ├── about/               # About page images
+│   │   ├── auth/                # Authentication images
+│   │   ├── home/                # Homepage assets
+│   │   └── shared/             # Shared images
+│   └── favicon.ico
+│
+├── 📁 src/                       # Source code
+│   ├── 📁 app/                   # Next.js App Router
+│   │   ├── api/                  # API routes
+│   │   │   └── uploadUserImage/
+│   │   ├── auth/                 # Authentication pages
+│   │   │   ├── login/
+│   │   │   ├── register/
+│   │   │   ├── reset-password/
+│   │   │   └── verify-email/
+│   │   ├── orders/               # Order management
+│   │   ├── payment/              # Payment pages
+│   │   ├── globals.css          # Global styles
+│   │   ├── layout.tsx           # Root layout
+│   │   └── page.tsx             # Homepage
+│   │
+│   ├── 📁 components/            # React components
+│   │   ├── about/               # About page components
+│   │   ├── account/             # User account components
+│   │   ├── auth/                # Authentication components
+│   │   ├── cart/                # Shopping cart components
+│   │   ├── dialogs/             # Modal dialogs
+│   │   ├── home/                # Homepage components
+│   │   ├── order/               # Order components
+│   │   ├── payment/             # Payment components
+│   │   ├── product-details/     # Product detail components
+│   │   ├── shared/              # Shared components
+│   │   └── wishlist/            # Wishlist components
+│   │
+│   ├── 📁 context/               # React contexts
+│   │   └── AuthContext.tsx      # Authentication context
+│   │
+│   ├── 📁 data/                 # Static data
+│   │   └── pages/               # Page-specific data
+│   │       ├── aboutPageData.ts
+│   │       ├── homePageData.ts
+│   │       └── productDetailsPageData.ts
+│   │
+│   ├── 📁 hooks/                # Custom React hooks
+│   │   ├── useCart.tsx          # Cart management
+│   │   ├── useCategories.tsx    # Categories data
+│   │   ├── useProducts.tsx      # Products data
+│   │   ├── useUser.tsx         # User data
+│   │   └── useWishlist.tsx     # Wishlist management
+│   │
+│   ├── 📁 lib/                  # Utility libraries
+│   │   ├── apiClient.ts        # API client configuration
+│   │   └── cartSocket.ts       # Cart socket connection
+│   │
+│   ├── 📁 provider/             # Context providers
+│   │   ├── ClientLayout.tsx     # Client-side layout
+│   │   ├── ProtectedRoute.tsx   # Route protection
+│   │   └── QueryProvider.tsx    # React Query provider
+│   │
+│   ├── 📁 services/             # API services
+│   │   ├── authService.ts       # Authentication
+│   │   ├── cartServices.tsx    # Cart management
+│   │   ├── orderService.tsx     # Orders
+│   │   ├── paymentService.tsx   # Payments
+│   │   ├── productService.tsx   # Products
+│   │   └── userServices.tsx    # User management
+│   │
+│   ├── 📁 types/                # TypeScript types
+│   │   ├── auth.ts             # Authentication types
+│   │   ├── cart.ts             # Cart types
+│   │   ├── order.ts            # Order types
+│   │   ├── product.ts          # Product types
+│   │   └── user.ts             # User types
+│   │
+│   └── 📁 utils/                # Utility functions
+│       ├── dataTransformers.ts # Data transformation
+│       └── productHelpers.ts   # Product utilities
+│
+├── 📄 middleware.ts              # Next.js middleware
+├── 📄 next.config.ts            # Next.js configuration
+├── 📄 package.json              # Dependencies
+├── 📄 tsconfig.json            # TypeScript configuration
+└── 📄 tailwind.config.js       # Tailwind configuration
 ```
 
-## Development Tools
+## 🎯 Key Features
 
-We've included several utility scripts to maintain code quality:
+### 🔐 Authentication System
+- **Multi-provider authentication** (Email, Google OAuth, Linkedin)
+- **Secure password reset** with email verification
+- **JWT-based session management**
+- **Protected routes** with automatic redirects
+- **Email verification** with OTP
 
-1. **TypeScript Check**: Identify unused variables and parameters
+### 🛍️ Shopping Experience
+- **Product catalog** with categories and filtering
+- **Product reviews** and ratings
+- **Related products** recommendations
+- **Wishlist** functionality
+
+### 🛒 Cart & Checkout
+- **Real-time cart updates** with Socket.io
+- **Persistent cart** across sessions
+- **Multi-step checkout** process
+- **Guest checkout** support
+- **Order tracking** and history
+
+### 💳 Payment Processing
+- **Stripe integration** for secure payments
+- **Multiple payment methods** support
+- **Payment confirmation** and receipts
+- **Failed payment** handling
+- **Refund processing**
+
+### 👤 User Management
+- **User profiles** 
+- **Address management**
+- **Order history**
+- **Account settings**
+- **Email preferences**
+
+### 🎨 Design & UX
+- **Responsive design** for all devices
+- **Error boundaries** and fallbacks
+- **Accessibility** features
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 18+ 
+- npm package manager
+- Stripe account (for payments)
+- Cloudinary account (for images)
+
+### Installation
+
+1. **Clone the repository**
    ```bash
-   npm run ts:check
+   git clone https://github.com/MohamedAbdEl-Rauof/cozy-loops-ecommerce-platform-frontend.git
+   cd cozy-loops-ecommerce
    ```
 
-2. **ESLint Strict Mode**: Run ESLint with zero tolerance for warnings
+2. **Install dependencies**
    ```bash
-   npm run lint:strict
+   npm install
    ```
 
-3. **Strict Build**: Fail the build if there are any ESLint errors
-   ```bash
-   npm run build:strict
+3. **Set up environment variables**
+   Create a `.env.local` file:
+   ```env
+   NEXT_PUBLIC_API_URL=your_api_url
+   NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_key
+   NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your_cloudinary_name
    ```
 
-4. **Find Unused Dependencies**: Detect unused packages in your project
+4. **Run development server**
    ```bash
-   npm run find:unused
+   npm run dev
    ```
 
-## Authentication Flow
+5. **Open in browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
 
-Our authentication system implements several security measures:
+## 🧪 Development Commands
 
-1. **Route Protection**: Authenticated users cannot access login, register, reset password, or email verification pages
-2. **Parameter Validation**: Reset password and email verification pages require valid email parameters
-3. **Automatic Redirects**: Users are redirected to appropriate pages based on their authentication status
-4. **Secure Token Handling**: JWT tokens are securely stored and managed
-5. **Session Expiration**: Automatic handling of expired sessions
+```bash
+# Development
+npm dev          # Start development server
+npm build        # Build for production
+npm start        # Start production server
 
-## Learn More
+# Code Quality
+npm lint         # Run ESLint
+npm lint:strict  # Strict linting (zero warnings)
+npm ts:check     # TypeScript checking
+npm build:strict # Strict build with checks
+npm find:unused  # Find unused dependencies
+```
 
-To learn more about the technologies used in this project:
+## 🌐 Environment Variables
 
-- [Next.js Documentation](https://nextjs.org/docs)
-- [React Documentation](https://reactjs.org/docs/getting-started.html)
-- [Material UI Documentation](https://mui.com/getting-started/usage/)
+Required environment variables for full functionality:
 
-## Deployment
+```bash
+# API Configuration
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Authentication
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=your-secret-key
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Payment
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+STRIPE_SECRET_KEY=sk_test_...
+
+# Cloud Storage
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
+
+# Google OAuth
+GOOGLE_CLIENT_ID=your-client-id
+GOOGLE_CLIENT_SECRET=your-client-secret
+```
+
+## 📱 Responsive Design
+
+The application is fully responsive with breakpoints:
+- **Mobile**: 320px - 768px
+- **Tablet**: 768px - 1024px  
+- **Desktop**: 1024px+
+
+## 🔒 Security Features
+
+- **HTTPS enforcement** in production
+- **Input validation** with Zod schemas
+- **XSS protection** with React
+- **CSRF protection** on API calls
+- **Rate limiting** on authentication endpoints
+- **Secure cookie** configuration
+
+## 📊 Performance Optimizations
+
+- **Image optimization** with Next.js Image component
+- **Code splitting** with dynamic imports
+- **Bundle optimization** with tree shaking
+- **Lazy loading** for images and components
+- **Caching strategies** with React Query
+- **CDN integration** for static assets
+
+## 🚀 Deployment
+
+### Vercel (Recommended)
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy
+vercel --prod
+```
+
+### Docker
+```bash
+# Build image
+docker build -t cozy-loops .
+
+# Run container
+docker run -p 3000:3000 cozy-loops
+```
+
+## 📞 Support
+
+For support, email mohamedabdelrauof112@gmail.com or join our Slack channel.

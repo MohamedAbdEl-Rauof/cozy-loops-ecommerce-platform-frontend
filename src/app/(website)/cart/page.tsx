@@ -62,7 +62,7 @@ const Page = () => {
     setIsCheckoutLoading(true);
     try {
       const checkoutData: CheckoutData = {
-        shippingCost: 10.0,
+        shippingCost: 0,
         shippingAddress: {
           street: "123 Main St",
           city: "New York",

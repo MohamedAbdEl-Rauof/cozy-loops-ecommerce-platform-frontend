@@ -10,12 +10,9 @@ import StripeCheckoutForm from './StripeCheckoutForm'
 
 import type { Stripe } from '@stripe/stripe-js'
 
-
-
-
-const StripeCheckout: React.FC<StripeCheckoutProps> = ({ 
-    clientSecret, 
-    publishableKey, 
+const StripeCheckout: React.FC<StripeCheckoutProps> = ({
+    clientSecret,
+    publishableKey,
     orderData,
     onPaymentStatusChange,
 }) => {
@@ -98,10 +95,10 @@ const StripeCheckout: React.FC<StripeCheckoutProps> = ({
 
     if (isLoading) {
         return (
-            <Box sx={{ 
-                display: 'flex', 
-                justifyContent: 'center', 
-                alignItems: 'center', 
+            <Box sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
                 minHeight: '200px',
                 flexDirection: 'column',
                 gap: 2
@@ -116,9 +113,9 @@ const StripeCheckout: React.FC<StripeCheckoutProps> = ({
 
     if (error) {
         return (
-            <Alert 
-                severity="error" 
-                sx={{ 
+            <Alert
+                severity="error"
+                sx={{
                     borderRadius: 2,
                     '& .MuiAlert-message': {
                         fontSize: '16px'
@@ -141,9 +138,9 @@ const StripeCheckout: React.FC<StripeCheckoutProps> = ({
     return (
         <Box sx={{ width: '100%' }}>
             <Elements stripe={stripePromise} options={options}>
-                <StripeCheckoutForm 
+                <StripeCheckoutForm
                     orderData={orderData}
-                    onPaymentStatusChange={onPaymentStatusChange} 
+                    onPaymentStatusChange={onPaymentStatusChange}
                 />
             </Elements>
         </Box>

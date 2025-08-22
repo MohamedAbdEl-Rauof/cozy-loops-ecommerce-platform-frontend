@@ -27,7 +27,8 @@ import { useRouter } from 'next/navigation'
 import React, { useEffect, useState, useCallback } from 'react'
 
 import ProtectedRoute from '@/provider/ProtectedRoute'
-import { orderService, type Order } from '@/services/orderService'
+import { orderService } from '@/services/orderService'
+import { Order } from '@/types/order'
 
 const OrdersPage = () => {
     const router = useRouter()

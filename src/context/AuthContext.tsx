@@ -3,7 +3,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
-import React, { createContext, useState, useEffect, ReactNode, useContext, useCallback, useRef } from 'react';
+import React, { createContext, useState, useEffect, useContext, useCallback, useRef } from 'react';
 
 import {
   useUserQuery,
@@ -13,64 +13,7 @@ import {
   useRefreshTokenMutation,
   USER_QUERY_KEYS
 } from '@/hooks/useUser';
-
-interface User {
-  id: string;
-  email: string;
-  firstName?: string;
-  lastName?: string;
-  role?: string;
-  emailVerified?: boolean;
-  avatar?: string;
-  phone?: string;
-  [key: string]: unknown;
-}
-
-interface AuthResponse {
-  accessToken: string;
-  refreshToken: string;
-  user: User;
-}
-
-interface RegisterData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  [key: string]: unknown;
-}
-
-interface AuthError {
-  response?: {
-    data?: {
-      message?: string;
-    };
-    status?: number;
-  };
-  message?: string;
-}
-
-interface AuthContextType {
-  user: User | null;
-  loading: boolean;
-  error: string | null;
-  login: (_email: string, _password: string) => Promise<AuthResponse>;
-  loginWithToken: (_token: string, _refreshTokenValue?: string) => Promise<User>;
-  loginWithGoogle: (_token: string) => Promise<AuthResponse>;
-  loginWithLinkedIn: (_code?: string) => Promise<AuthResponse>;
-  register: (_userData: RegisterData) => Promise<unknown>;
-  logout: () => Promise<void>;
-  isAuthenticated: boolean;
-  clearError: () => void;
-  checkAuthStatus: () => Promise<boolean>;
-  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
-  isUserAuthenticated: () => boolean;
-  refetchUser: () => Promise<void>;
-}
-
-interface AuthProviderProps {
-  children: ReactNode;
-}
+import { AuthContextType, AuthError, AuthProviderProps, AuthResponse, RegisterData, User } from '@/types/user';
 
 export const AuthContext = createContext<AuthContextType>({
   user: null,
@@ -325,7 +268,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         throw new Error(data.message || 'Google authentication failed');
       }
 
-      // Store tokens using cookies (consistent with your existing auth flow)
       Cookies.set('accessToken', data.accessToken, {
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
@@ -338,11 +280,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         expires: 7
       });
 
-      // Update auth state
       setIsAuthenticated(true);
       await refetchUserQuery();
 
-      // Redirect based on user role
       setTimeout(() => {
         if (data.user.role === 'admin') {
           router.push('/admin/dashboard');
@@ -361,115 +301,86 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const loginWithLinkedIn = async (code?: string): Promise<AuthResponse> => {
+    try {
+      clearError();
 
+      if (!code) {
 
-const loginWithLinkedIn = async (code?: string): Promise<AuthResponse> => {
-  try {
-    clearError();
+        const clientId = process.env.NEXT_PUBLIC_LINKEDIN_CLIENT_ID;
+        const redirectUri = encodeURIComponent(
+          process.env.NEXT_PUBLIC_LINKEDIN_REDIRECT_URI ||
+          `${window.location.origin}/auth/linkedin/callback`
+        );
 
-    // If no code is provided, initiate the OAuth flow
-    if (!code) {
-      console.log('Initiating LinkedIn OAuth flow...');
-      
-      const clientId = process.env.NEXT_PUBLIC_LINKEDIN_CLIENT_ID;
-      const redirectUri = encodeURIComponent(
-        process.env.NEXT_PUBLIC_LINKEDIN_REDIRECT_URI ||
-        `${window.location.origin}/auth/linkedin/callback`
-      );
+        if (!clientId) {
+          throw new Error('LinkedIn Client ID not configured');
+        }
 
-      if (!clientId) {
-        throw new Error('LinkedIn Client ID not configured');
+        const state = crypto.randomUUID ?
+          crypto.randomUUID() :
+          Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+        const scope = encodeURIComponent('openid profile email');
+
+        const stateData = {
+          state,
+          timestamp: Date.now(),
+          redirectUri: process.env.NEXT_PUBLIC_LINKEDIN_REDIRECT_URI || `${window.location.origin}/auth/linkedin/callback`
+        };
+
+        localStorage.setItem('linkedin_oauth_state', JSON.stringify(stateData));
+        localStorage.setItem('linkedin_oauth_state_simple', state);
+        localStorage.setItem('linkedin_oauth_timestamp', Date.now().toString());
+        sessionStorage.setItem('linkedin_oauth_state', JSON.stringify(stateData));
+
+        const linkedInAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${state}`;
+
+        window.location.href = linkedInAuthUrl;
+
+        return new Promise(() => { });
       }
 
-      // Generate a secure state parameter
-      const state = crypto.randomUUID ? 
-        crypto.randomUUID() : 
-        Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/linkedin/callback`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ code }),
+      });
 
-      const scope = encodeURIComponent('openid profile email');
+      const data = await response.json();
 
-      // Store state with multiple methods for reliability
-      const stateData = {
-        state,
-        timestamp: Date.now(),
-        redirectUri: process.env.NEXT_PUBLIC_LINKEDIN_REDIRECT_URI || `${window.location.origin}/auth/linkedin/callback`
-      };
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'LinkedIn authentication failed');
+      }
 
-      // Store in multiple ways
-      localStorage.setItem('linkedin_oauth_state', JSON.stringify(stateData));
-      localStorage.setItem('linkedin_oauth_state_simple', state);
-      localStorage.setItem('linkedin_oauth_timestamp', Date.now().toString());
-      sessionStorage.setItem('linkedin_oauth_state', JSON.stringify(stateData));
+      Cookies.set('accessToken', data.accessToken, {
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        expires: 1
+      });
 
-      console.log('Generated state data:', stateData);
+      Cookies.set('refreshToken', data.refreshToken, {
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        expires: 7
+      });
 
-      const linkedInAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${state}`;
+      setIsAuthenticated(true);
 
-      console.log('Redirecting to LinkedIn:', linkedInAuthUrl);
+      await refetchUserQuery();
 
-      // Redirect to LinkedIn
-      window.location.href = linkedInAuthUrl;
-
-      return new Promise(() => { });
+      return data;
+    } catch (error: unknown) {
+      console.error('LinkedIn login error:', error);
+      const authError = error as AuthError;
+      const errorMessage = authError?.message || 'LinkedIn authentication failed';
+      setError(errorMessage);
+      throw error;
     }
-
-    // If code is provided, complete the authentication
-    console.log('Completing LinkedIn authentication with code:', code);
-
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/linkedin/callback`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-      body: JSON.stringify({ code }),
-    });
-
-    const data = await response.json();
-
-    console.log('LinkedIn auth response:', { 
-      ok: response.ok, 
-      status: response.status,
-      success: data.success 
-    });
-
-    if (!response.ok || !data.success) {
-      throw new Error(data.message || 'LinkedIn authentication failed');
-    }
-
-    // Store tokens using cookies
-    Cookies.set('accessToken', data.accessToken, {
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      expires: 1
-    });
-
-    Cookies.set('refreshToken', data.refreshToken, {
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      expires: 7
-    });
-
-    // Update auth state
-    setIsAuthenticated(true);
-    
-    // Refetch user data
-    await refetchUserQuery();
-
-    console.log('LinkedIn authentication completed successfully');
-
-    // Note: Don't redirect here, let the callback page handle it
-    // The callback page will handle the redirect after this function completes
-
-    return data;
-  } catch (error: unknown) {
-    console.error('LinkedIn login error:', error);
-    const authError = error as AuthError;
-    const errorMessage = authError?.message || 'LinkedIn authentication failed';
-    setError(errorMessage);
-    throw error;
-  }
-};
+  };
 
   const refetchUser = useCallback(async (): Promise<void> => {
     try {
