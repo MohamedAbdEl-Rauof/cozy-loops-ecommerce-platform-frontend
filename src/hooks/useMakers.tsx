@@ -1,9 +1,8 @@
-
 import { useQuery } from '@tanstack/react-query';
 
 import { makerService } from '@/services/makerService';
 
-export const useMakersBySlug = (slug: string) => {  
+export const useMakersBySlug = (slug: string) => {
   return useQuery({
     queryKey: ['maker', slug],
     queryFn: async () => {
@@ -11,7 +10,7 @@ export const useMakersBySlug = (slug: string) => {
         const result = await makerService.getMakerById(slug);
         return result;
       } catch (error) {
-        console.error('❌ Maker fetch failed:', error);
+        console.error('Maker fetch failed:', error);
         throw error;
       }
     },
@@ -31,7 +30,7 @@ export const useMakerProducts = (slug: string) => {
         const result = await makerService.getMakerProducts(slug);
         return result;
       } catch (error) {
-        console.error('❌ Maker products fetch failed:', error);
+        console.error('Maker products fetch failed:', error);
         throw error;
       }
     },

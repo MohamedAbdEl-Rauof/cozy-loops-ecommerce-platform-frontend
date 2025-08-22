@@ -3,31 +3,21 @@ import { ApiReview, Testimonial, ApiResponse, CreateTestimonialData, ApiError, U
 
 const getAccessToken = () => {
   if (typeof window !== 'undefined') {
-
-    // Check localStorage
     const localToken = localStorage.getItem('accessToken');
-
-    // Check sessionStorage
     const sessionToken = sessionStorage.getItem('accessToken');
-
-    // Check for accessToken cookie specifically
     const cookies = document.cookie.split(';');
-
     const tokenCookie = cookies.find(cookie =>
       cookie.trim().startsWith('accessToken')
     );
 
-    // Try localStorage first
     if (localToken) {
       return localToken;
     }
 
-    // Try sessionStorage as fallback
     if (sessionToken) {
       return sessionToken;
     }
 
-    // Try to extract from cookies
     if (tokenCookie) {
       return tokenCookie.split('=')[1];
     }
@@ -38,8 +28,6 @@ const getAccessToken = () => {
 };
 
 export const testimonialsService = {
-
-
   getTestimonials: async (): Promise<Testimonial[]> => {
     try {
       const response = await apiClient.get<ApiResponse>('api/reviews/user?sort=-createdAt');
@@ -66,7 +54,6 @@ export const testimonialsService = {
       throw error;
     }
   },
-
 
   getProductsTestimonials: async (productSlug: string): Promise<ProductTestimonialsResponse['data']> => {
     try {
@@ -100,7 +87,6 @@ export const testimonialsService = {
     }
   },
 
-
   createTestimonial: async (data: CreateTestimonialData): Promise<void> => {
     try {
       const accessToken = getAccessToken();
@@ -129,7 +115,6 @@ export const testimonialsService = {
       throw error;
     }
   },
-
 
   updateTestimonial: async (testimonialId: string, comment: string, rating: number): Promise<void> => {
     try {
@@ -196,7 +181,6 @@ export const testimonialsService = {
     }
   },
 
-  
   likeDislikeReview: async (reviewId: string, type: 'like' | 'dislike') => {
     try {
       const response = await apiClient.post(`/api/reviews/${reviewId}/like`, {
@@ -205,12 +189,12 @@ export const testimonialsService = {
       return response.data;
     } catch (error: unknown) {
       console.error('Error liking/disliking review:', error);
-      
+
       if (error && typeof error === 'object' && 'response' in error) {
         const apiError = error as ApiError;
         throw new Error(apiError.response?.data?.message || 'Failed to update review reaction');
       }
-      
+
       throw new Error('Failed to update review reaction');
     }
   },

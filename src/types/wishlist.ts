@@ -1,4 +1,3 @@
-
 export interface WishlistItem {
   _id: string;
   product: {
@@ -12,8 +11,8 @@ export interface WishlistItem {
     stock: number;
     category: string;
     slug: string;
-    priceBeforeDiscount?: number; 
-    discountPercentage?: number; 
+    priceBeforeDiscount?: number;
+    discountPercentage?: number;
     sizes?: string[];
     colors?: string[];
   };

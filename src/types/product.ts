@@ -181,3 +181,30 @@ export interface FeatureCardsSectionProps {
   sectionDescription: string;
   cards: CardItem[];
 }
+
+interface Products {
+  id: string;
+  title: string;
+  image: string;
+  price: number;
+  originalPrice?: number;
+  rating?: number;
+  reviewCount?: number;
+  isNew?: boolean;
+  discount?: number;
+  category?: string;
+  categoryId?: string;
+  slug?: string;
+  categorySlug?: string
+
+}
+
+interface ProductsData {
+  title: string;
+  productsData: Products[];
+}
+
+export interface SimilarProductsProps {
+  productsData: ProductsData;
+  onQuickView?: (_categoryId: string, _productId: string) => void;
+}

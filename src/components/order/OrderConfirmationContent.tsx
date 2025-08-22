@@ -102,7 +102,6 @@ const OrderConfirmationContent: React.FC = () => {
     return (
         <Box sx={{ bgcolor: '#f5f5f5', minHeight: '100vh', py: 4 }}>
             <Container maxWidth="md">
-                {/* ... rest of your existing JSX stays exactly the same ... */}
                 <Paper elevation={3} sx={{ p: 4, textAlign: 'center', borderRadius: 3, mb: 3 }}>
                     <CheckCircleIcon
                         sx={{ fontSize: 80, color: '#4caf50', mb: 2 }}

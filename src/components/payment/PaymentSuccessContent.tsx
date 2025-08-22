@@ -65,7 +65,7 @@ const PaymentSuccessContent: React.FC = () => {
         }
 
         verifyAndRedirect()
-    }, [ paymentIntentId, redirectStatus, router])
+    }, [paymentIntentId, redirectStatus, router])
 
     return (
         <ProtectedRoute>

@@ -1,4 +1,3 @@
-
 import {
     FavoriteBorder,
     Favorite,
@@ -73,7 +72,6 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({
     };
 
     const handleAddToCart = async (productId: string) => {
-
         if (!user) {
             setAuthDialogMessage('Please log in to add items to your cart.');
             setAuthDialogOpen(true);

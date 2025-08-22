@@ -194,7 +194,6 @@ const ProductsOfCategory: React.FC<ProductsOfCategoryProps> = ({
                                             }}
                                         />
 
-                                        {/* Gradient overlay */}
                                         <Box
                                             className="product-overlay"
                                             sx={{
@@ -242,7 +241,6 @@ const ProductsOfCategory: React.FC<ProductsOfCategoryProps> = ({
                                             <AddIcon sx={{ fontSize: { xs: 20, md: 24 } }} />
                                         </IconButton>
 
-                                        {/* Price badge */}
                                         <Box
                                             sx={{
                                                 position: 'absolute',

@@ -1,15 +1,15 @@
 'use client';
 
 import CallMadeIcon from '@mui/icons-material/CallMade';
-import {Box, Typography, Button, Grid, IconButton, Skeleton} from '@mui/material';
+import { Box, Typography, Button, Grid, IconButton, Skeleton } from '@mui/material';
 import Image from 'next/image';
-import {useRouter} from 'next/navigation';
-import {useState, useEffect, useRef} from 'react';
+import { useRouter } from 'next/navigation';
+import { useState, useEffect, useRef } from 'react';
 
-import {CategoriesGridProps} from '@/types/category';
+import { CategoriesGridProps } from '@/types/category';
 
-const CategoriesGrid: React.FC<CategoriesGridProps> = ({categoriesData}) => {
-    const {title, description, categories} = categoriesData;
+const CategoriesGrid: React.FC<CategoriesGridProps> = ({ categoriesData }) => {
+    const { title, description, categories } = categoriesData;
     const [isVisible, setIsVisible] = useState(false);
     const [hoveredCard, setHoveredCard] = useState<string | null>(null);
     const [imageLoaded, setImageLoaded] = useState<Set<string>>(new Set());
@@ -44,14 +44,14 @@ const CategoriesGrid: React.FC<CategoriesGridProps> = ({categoriesData}) => {
                 opacity: isVisible ? 1 : 0,
                 transform: isVisible ? 'translateY(0)' : 'translateY(30px)',
                 transition: 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-                py: {xs: 4},
-                px: {xs: 2, sm: 3, md: 9},
+                py: { xs: 4 },
+                px: { xs: 2, sm: 3, md: 9 },
             }}
         >
             <Box
                 sx={{
                     textAlign: 'center',
-                    mb: {xs: 4, sm: 6, md: 8},
+                    mb: { xs: 4, sm: 6, md: 8 },
                     opacity: isVisible ? 1 : 0,
                     transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
                     transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
@@ -63,7 +63,7 @@ const CategoriesGrid: React.FC<CategoriesGridProps> = ({categoriesData}) => {
                     component="h2"
                     sx={{
                         fontWeight: 800,
-                        mb: {xs: 2, sm: 3},
+                        mb: { xs: 2, sm: 3 },
                         fontSize: {
                             xs: '1.75rem',
                             sm: '2.25rem',
@@ -96,9 +96,9 @@ const CategoriesGrid: React.FC<CategoriesGridProps> = ({categoriesData}) => {
                 </Typography>
             </Box>
 
-            <Grid container spacing={{xs: 2, sm: 3, md: 3.5, lg: 4}}>
+            <Grid container spacing={{ xs: 2, sm: 3, md: 3.5, lg: 4 }}>
                 {categories?.map((category, index) => (
-                    <Grid size={{xs: 12, sm: 6, lg: 4}} key={category.id}>
+                    <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={category.id}>
                         <Box
                             sx={{
                                 height: '100%',
@@ -135,7 +135,7 @@ const CategoriesGrid: React.FC<CategoriesGridProps> = ({categoriesData}) => {
                                         md: 380,
                                         lg: 420
                                     },
-                                    mb: {xs: 2.5, sm: 3, md: 3.5},
+                                    mb: { xs: 2.5, sm: 3, md: 3.5 },
                                     borderRadius: '24px !important',
                                     overflow: 'hidden',
                                     boxShadow: hoveredCard === category.id
@@ -214,7 +214,7 @@ const CategoriesGrid: React.FC<CategoriesGridProps> = ({categoriesData}) => {
                                             },
                                         }}
                                     >
-                                        <CallMadeIcon fontSize="small"/>
+                                        <CallMadeIcon fontSize="small" />
                                     </IconButton>
                                 </Box>
 
@@ -239,7 +239,7 @@ const CategoriesGrid: React.FC<CategoriesGridProps> = ({categoriesData}) => {
                                     flexGrow: 1,
                                     display: 'flex',
                                     flexDirection: 'column',
-                                    px: {xs: 1, sm: 1.5},
+                                    px: { xs: 1, sm: 1.5 },
                                     transform: hoveredCard === category.id ? 'translateY(-4px)' : 'translateY(0)',
                                     transition: 'all 0.3s ease',
                                 }}
@@ -249,7 +249,7 @@ const CategoriesGrid: React.FC<CategoriesGridProps> = ({categoriesData}) => {
                                     component="h3"
                                     sx={{
                                         fontWeight: 700,
-                                        mb: {xs: 1.5, sm: 2},
+                                        mb: { xs: 1.5, sm: 2 },
                                         fontSize: {
                                             xs: '1.1rem',
                                             sm: '1.25rem',
@@ -270,7 +270,7 @@ const CategoriesGrid: React.FC<CategoriesGridProps> = ({categoriesData}) => {
                                     variant="body2"
                                     sx={{
                                         color: 'var(--text-secondary)',
-                                        mb: {xs: 2.5, sm: 3, md: 3.5},
+                                        mb: { xs: 2.5, sm: 3, md: 3.5 },
                                         flexGrow: 1,
                                         lineHeight: 1.6,
                                         fontSize: {
@@ -297,7 +297,7 @@ const CategoriesGrid: React.FC<CategoriesGridProps> = ({categoriesData}) => {
                                         ...(category.isMaker ? {
                                             color: 'var(--primary-color)',
                                             backgroundColor: 'transparent',
-                                            py: {xs: 1, sm: 1.25},
+                                            py: { xs: 1, sm: 1.25 },
                                             px: 0,
                                             textDecoration: 'underline',
                                             textUnderlineOffset: '6px',
@@ -337,8 +337,8 @@ const CategoriesGrid: React.FC<CategoriesGridProps> = ({categoriesData}) => {
                                         } : {
                                             backgroundColor: 'var(--primary-color)',
                                             color: 'white',
-                                            py: {xs: 1.5, sm: 1.75},
-                                            px: {xs: 3, sm: 3.5},
+                                            py: { xs: 1.5, sm: 1.75 },
+                                            px: { xs: 3, sm: 3.5 },
                                             borderRadius: '50px !important',
                                             textTransform: 'none',
                                             fontWeight: 600,
@@ -388,9 +388,9 @@ const CategoriesGrid: React.FC<CategoriesGridProps> = ({categoriesData}) => {
             </Grid>
 
             {categories?.length === 0 && (
-                <Grid container spacing={{xs: 2, sm: 3, md: 3.5, lg: 4}}>
+                <Grid container spacing={{ xs: 2, sm: 3, md: 3.5, lg: 4 }}>
                     {[1, 2, 3].map((index) => (
-                        <Grid size={{xs: 12, sm: 6, lg: 4}} key={index}>
+                        <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={index}>
                             <Box
                                 sx={{
                                     maxWidth: {
@@ -410,10 +410,10 @@ const CategoriesGrid: React.FC<CategoriesGridProps> = ({categoriesData}) => {
                                         mb: 3,
                                     }}
                                 />
-                                <Skeleton variant="text" height={32} sx={{mb: 1}}/>
-                                <Skeleton variant="text" height={20} sx={{mb: 2}}/>
-                                <Skeleton variant="text" height={20} sx={{mb: 3}}/>
-                                <Skeleton variant="rectangular" height={48} sx={{borderRadius: '50px'}}/>
+                                <Skeleton variant="text" height={32} sx={{ mb: 1 }} />
+                                <Skeleton variant="text" height={20} sx={{ mb: 2 }} />
+                                <Skeleton variant="text" height={20} sx={{ mb: 3 }} />
+                                <Skeleton variant="rectangular" height={48} sx={{ borderRadius: '50px' }} />
                             </Box>
                         </Grid>
                     ))}

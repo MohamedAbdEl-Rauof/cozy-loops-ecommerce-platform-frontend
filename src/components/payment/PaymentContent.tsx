@@ -6,23 +6,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import StripeCheckout from '@/components/payment/StripeCheckout';
 import ProtectedRoute from '@/provider/ProtectedRoute';
 import { paymentService } from '@/services/paymentService';
+import { CheckoutResponse } from '@/types/cart';
 
 export const dynamic = 'force-dynamic'
-
-interface CheckoutResponse {
-    clientSecret: string;
-    paymentIntentId: string;
-    orderId: string;
-    orderNumber: string;
-    amount: number;
-    breakdown: {
-        subtotal: number;
-        shipping: number;
-        tax: number;
-        total: number;
-    };
-    publishableKey: string;
-}
 
 const PaymentContent: React.FC = () => {
     const searchParams = useSearchParams();
@@ -41,26 +27,22 @@ const PaymentContent: React.FC = () => {
             setIsProcessing(true);
             setCheckoutError(null);
 
-            // First, try to get existing order details
             try {
                 const orderResponse = await paymentService.getOrderForPayment(orderId);
-                
+
                 if (orderResponse.success && orderResponse.order) {
                     const order = orderResponse.order;
 
-                    // If order is completed, redirect to success
                     if (order.paymentStatus === 'completed') {
                         window.location.href = '/payment/success';
                         return;
                     }
 
-                    // If order is failed, show error
                     if (order.paymentStatus === 'failed') {
                         setCheckoutError('This order payment has failed. Please try again or contact support.');
                         return;
                     }
 
-                    // If order can be paid (pending or processing), create/get payment intent
                     if (order.canPay) {
                         const response = await paymentService.createPaymentIntent({
                             orderId: orderId
@@ -69,7 +51,6 @@ const PaymentContent: React.FC = () => {
                         return;
                     }
 
-                    // For any other status
                     setCheckoutError(`Order cannot be paid. Current status: ${order.paymentStatus}`);
                     return;
                 }

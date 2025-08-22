@@ -42,7 +42,6 @@ const SocialAuthDialog = () => {
                 `state=${state}&` +
                 `scope=openid%20profile%20email`;
 
-            console.log('Redirecting to LinkedIn with state:', state);
             window.location.href = linkedInAuthUrl;
         } catch (error) {
             console.error('LinkedIn login error:', error);

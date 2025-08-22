@@ -21,7 +21,7 @@ import {
 import { styled } from '@mui/material/styles';
 import React, { useState } from 'react';
 
-import {useAuth} from "@/context/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 
 import AddressSection from './AddressSection';
 import PaymentSection from './PaymentSection';
@@ -66,7 +66,7 @@ const NavItem = styled(ListItem)<{ active?: boolean }>(({ active }) => ({
 
 const AccountPage: React.FC = () => {
     const [activeSection, setActiveSection] = useState('profile');
-    const {logout} = useAuth();
+    const { logout } = useAuth();
     const menuItems = [
         { id: 'profile', label: 'Profile', icon: Person },
         { id: 'addresses', label: 'Addresses', icon: LocationOn },
@@ -139,7 +139,7 @@ const AccountPage: React.FC = () => {
                     </SidebarPaper>
                 </Grid>
 
-                <Grid  size={{ xs: 12, md: 9 }}>
+                <Grid size={{ xs: 12, md: 9 }}>
                     <ContentPaper>
                         {renderContent()}
                     </ContentPaper>

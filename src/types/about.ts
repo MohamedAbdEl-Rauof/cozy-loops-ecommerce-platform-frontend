@@ -1,4 +1,3 @@
-
 export interface FeatureCard {
     imageUrl: string;
     title: string;
