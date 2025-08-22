@@ -501,8 +501,9 @@ const Comments = ({ onCommentSubmitted }: CommentsProps) => {
 
                         <Box sx={{
                             display: 'flex',
-                            justifyContent: { xs: 'stretch', sm: 'flex-end' },
-                            gap: 2
+                            justifyContent: { xs: 'center', sm: 'flex-end' },
+                            gap: 2,
+                            width: '100%'
                         }}>
                             <SubmitButton
                                 type="submit"
@@ -516,13 +517,46 @@ const Comments = ({ onCommentSubmitted }: CommentsProps) => {
                                     )
                                 }
                                 sx={{
-                                    minWidth: { xs: '100%', sm: '200px' },
-                                    py: 1.5,
-                                    fontSize: '1.1rem',
+                                    minWidth: {
+                                        xs: '100%',
+                                        sm: '280px',
+                                        md: '320px',
+                                        lg: '350px'
+                                    },
+                                    maxWidth: {
+                                        xs: '100%',
+                                        sm: '400px'
+                                    },
+                                    py: {
+                                        xs: 2,
+                                        sm: 1.8,
+                                        md: 2
+                                    },
+                                    px: {
+                                        xs: 3,
+                                        sm: 4,
+                                        md: 5
+                                    },
+                                    fontSize: {
+                                        xs: '1rem',
+                                        sm: '1.05rem',
+                                        md: '1.1rem',
+                                        lg: '1.15rem'
+                                    },
                                     fontWeight: 700,
-                                    borderRadius: '16px',
+                                    borderRadius: {
+                                        xs: '12px',
+                                        sm: '14px',
+                                        md: '16px'
+                                    },
                                     textTransform: 'none',
                                     boxShadow: '0 8px 25px rgba(217, 119, 6, 0.25)',
+                                    height: {
+                                        xs: '48px',
+                                        sm: '52px',
+                                        md: '56px',
+                                        lg: '60px'
+                                    },
                                     ...(isSubmitting && {
                                         animation: `${shimmer} 1.5s infinite linear`,
                                         background: 'linear-gradient(90deg, #FED7AA 0%, #FDBA74 50%, #FED7AA 100%)',
@@ -531,10 +565,26 @@ const Comments = ({ onCommentSubmitted }: CommentsProps) => {
                                     '&:hover': {
                                         transform: 'translateY(-3px)',
                                         boxShadow: '0 12px 35px rgba(217, 119, 6, 0.35)',
+                                    },
+                                    '& .MuiButton-startIcon': {
+                                        marginRight: { xs: 1, sm: 1.5 },
+                                        '& svg': {
+                                            fontSize: { xs: '1.2rem', sm: '1.3rem', md: '1.4rem' }
+                                        }
                                     }
                                 }}
                             >
-                                {isSubmitting ? 'Publishing Review...' : 'Publish Review'}
+                                <Typography
+                                    component="span"
+                                    sx={{
+                                        fontSize: 'inherit',
+                                        fontWeight: 'inherit',
+                                        display: { xs: 'block', sm: 'inline' },
+                                        textAlign: 'center'
+                                    }}
+                                >
+                                    {isSubmitting ? 'Publishing Review...' : 'Publish Review'}
+                                </Typography>
                             </SubmitButton>
                         </Box>
 

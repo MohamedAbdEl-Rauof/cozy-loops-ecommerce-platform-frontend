@@ -154,12 +154,17 @@ export default function CategoryStatsCard({
                 }
               }}
             >
-              <Box sx={{ display: { xs: 'flex', sm: 'block' }, alignItems: 'center', gap: 1 }}>
+              <Box sx={{ display: { xs: 'flex' }, alignItems: 'center', gap: 1 }}>
                 <Inventory
                   sx={{
-                    display: { xs: 'block', sm: 'none' },
                     color: 'var(--primary-color)',
-                    fontSize: '1.2rem'
+                    fontSize: {
+                      xs: '1.2rem',
+                      sm: '1.3rem',
+                      md: '1.4rem',
+                      lg: '1.6rem'
+                    },
+                    mb: { xs: 0, sm: 0.5 }
                   }}
                 />
                 <Typography
@@ -214,12 +219,17 @@ export default function CategoryStatsCard({
                 }
               }}
             >
-              <Box sx={{ display: { xs: 'flex', sm: 'block' }, alignItems: 'center', gap: 1 }}>
+              <Box sx={{ display: { xs: 'flex' }, alignItems: 'center', gap: 1 }}>
                 <People
                   sx={{
-                    display: { xs: 'block', sm: 'none' },
                     color: 'var(--primary-color)',
-                    fontSize: '1.2rem'
+                    fontSize: {
+                      xs: '1.2rem',
+                      sm: '1.3rem',
+                      md: '1.4rem',
+                      lg: '1.6rem'
+                    },
+                    mb: { xs: 0, sm: 0.5 }
                   }}
                 />
                 <Typography

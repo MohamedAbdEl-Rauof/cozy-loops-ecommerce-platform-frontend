@@ -47,17 +47,21 @@ const SmallNavbar: React.FC<SmallNavbarProps> = ({
                         px: { xs: 2, sm: 3, md: 6 },
                         display: 'flex',
                         alignItems: 'center',
-                        gap: 1
+                        gap: { xs: 0.5, sm: 1 },
+                        flexWrap: 'nowrap',
+                        overflow: 'hidden',
+                        width: '100%'
                     }}
                 >
-                    <Link href="/categories">
+                    <Link href="/categories" style={{ flexShrink: 0 }}>
                         <Typography
                             variant="body2"
                             sx={{
                                 color: 'white',
                                 fontWeight: 500,
-                                fontSize: '0.875rem',
+                                fontSize: { xs: '0.75rem', sm: '0.875rem' },
                                 cursor: 'pointer',
+                                whiteSpace: 'nowrap',
                                 '&:hover': {
                                     color: 'var(--primary-color)',
                                 }
@@ -72,18 +76,33 @@ const SmallNavbar: React.FC<SmallNavbarProps> = ({
                             <PlayArrowIcon
                                 sx={{
                                     color: 'white',
-                                    fontSize: '1rem',
+                                    fontSize: { xs: '0.7rem', sm: '0.8rem', md: '1rem' },
+                                    flexShrink: 0,
+                                    mx: { xs: 0.25, sm: 0.5 }
                                 }}
                                 aria-hidden="true"
                             />
-                            <Link href={`/categories/${categorySlug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                            <Link
+                                href={`/categories/${categorySlug}`}
+                                style={{
+                                    textDecoration: 'none',
+                                    color: 'inherit',
+                                    flexShrink: 1,
+                                    minWidth: 0,
+                                    overflow: 'hidden'
+                                }}
+                            >
                                 <Typography
                                     variant="body2"
                                     sx={{
                                         color: page2 ? 'white' : 'var(--primary-color)',
                                         fontWeight: page2 ? 500 : 600,
-                                        fontSize: '0.875rem',
+                                        fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.875rem' },
                                         cursor: 'pointer',
+                                        whiteSpace: 'nowrap',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        display: 'block',
                                         '&:hover': {
                                             color: 'var(--primary-color)',
                                         }
@@ -100,7 +119,9 @@ const SmallNavbar: React.FC<SmallNavbarProps> = ({
                             <PlayArrowIcon
                                 sx={{
                                     color: 'white',
-                                    fontSize: '1rem',
+                                    fontSize: { xs: '0.7rem', sm: '0.8rem', md: '1rem' },
+                                    flexShrink: 0,
+                                    mx: { xs: 0.25, sm: 0.5 }
                                 }}
                                 aria-hidden="true"
                             />
@@ -110,7 +131,12 @@ const SmallNavbar: React.FC<SmallNavbarProps> = ({
                                 sx={{
                                     color: 'var(--primary-color)',
                                     fontWeight: 600,
-                                    fontSize: '0.875rem',
+                                    fontSize: { xs: '0.7rem', sm: '0.75rem', md: '0.875rem' },
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    flexShrink: 1,
+                                    minWidth: 0
                                 }}
                             >
                                 {page2}
