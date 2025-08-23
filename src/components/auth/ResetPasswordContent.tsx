@@ -342,19 +342,31 @@ const ResetPasswordContent = () => {
     }
 
     return (
-        <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: { xs: "column", lg: "row" } }}>
+        <Box sx={{
+            minHeight: "100vh",
+            display: "flex",
+            flexDirection: { xs: "column", lg: "row" },
+            overflow: "hidden"
+        }}>
             <Box
                 sx={{
-                    display: { xs: "none", lg: "flex" },
-                    width: { lg: "50%" },
+                    display: "flex",
+                    width: { xs: "100%", lg: "50%" },
+                    height: {
+                        xs: "250px",
+                        sm: "280px",
+                        md: "320px",
+                        lg: "100vh"
+                    },
                     position: "relative",
+                    flexShrink: 0,
                 }}
             >
                 <Image
                     src="/images/auth/resentPassword.jpg"
                     quality={100}
                     priority
-                    alt="Hands holding a heart with craft materials"
+                    alt="Reset password illustration"
                     fill
                     style={{ objectFit: "cover" }}
                 />
@@ -364,13 +376,21 @@ const ResetPasswordContent = () => {
                 sx={{
                     width: { xs: "100%", lg: "50%" },
                     display: "flex",
-                    alignItems: "center",
+                    alignItems: "flex-start",
                     justifyContent: "center",
                     p: 3,
                     backgroundColor: "white",
+                    minHeight: {
+                        xs: "calc(100vh - 250px)",
+                        sm: "calc(100vh - 280px)",
+                        md: "calc(100vh - 320px)",
+                        lg: "100vh"
+                    },
+                    overflowY: "auto",
+                    flexShrink: 0,
                 }}
             >
-                <Container maxWidth="sm">
+                <Container maxWidth="sm" sx={{ width: "100%", py: { xs: 2, lg: 4 } }}>
                     <Box sx={{ width: "100%", maxWidth: 400, mx: "auto" }}>
                         {showRedirectMessage && (
                             <Box sx={{
