@@ -191,7 +191,7 @@ export default function RegistrationPage() {
       </Typography>
     </Box>
   )
-
+ 
   const CountdownDialog = () => {
     const [countdown, setCountdown] = useState(5);
 
@@ -224,13 +224,14 @@ export default function RegistrationPage() {
         flexDirection: 'column',
         alignItems: 'center',
         textAlign: 'center',
-        py: 2,
+        py: { xs: 1, sm: 2 },
+        px: { xs: 0.5, sm: 0 },
         justifyContent: 'center'
       }}>
-        <Box sx={{ position: 'relative', mb: 4 }}>
+        <Box sx={{ position: 'relative', mb: { xs: 2, sm: 3, md: 4 } }}>
           <Fade in={true} timeout={1000}>
             <CheckCircle sx={{
-              fontSize: 230,
+              fontSize: { xs: 80, sm: 120, md: 180, lg: 230 },
               color: '#4caf50',
               animation: 'pulse 1.5s infinite',
               '@keyframes pulse': {
@@ -242,15 +243,29 @@ export default function RegistrationPage() {
           </Fade>
         </Box>
 
-        <Typography variant="h4" sx={{ fontWeight: 600, mb: 2 }}>
+        <Typography variant="h4" sx={{ 
+          fontWeight: 600, 
+          mb: { xs: 1, sm: 2 },
+          fontSize: { xs: '1.25rem', sm: '1.75rem', md: '2.125rem' }
+        }}>
           Registration Successful!
         </Typography>
 
-        <Typography variant="body1" sx={{ mb: 2, color: '#666', fontSize: '1.2rem', maxWidth: 600 }}>
+        <Typography variant="body1" sx={{ 
+          mb: { xs: 1, sm: 2 }, 
+          color: '#666', 
+          fontSize: { xs: '0.875rem', sm: '1rem', md: '1.2rem' }, 
+          maxWidth: { xs: '100%', sm: 500, md: 600 },
+          lineHeight: { xs: 1.4, sm: 1.5 }
+        }}>
           Please check your email to confirm your account. We&apos;ve sent a verification link to your email address.
         </Typography>
 
-        <Typography variant="body2" sx={{ mb: 4, color: '#666' }}>
+        <Typography variant="body2" sx={{ 
+          mb: { xs: 2, sm: 4 }, 
+          color: '#666',
+          fontSize: { xs: '0.75rem', sm: '0.875rem' }
+        }}>
           This dialog will close in <strong>{countdown}</strong> seconds.
         </Typography>
       </Box>
@@ -277,22 +292,31 @@ export default function RegistrationPage() {
       display: "flex",
       flexDirection: { xs: "column", lg: "row" },
       overflow: "hidden"
-    }}>
+    }}>u
       <Dialog
         open={showSuccess}
         TransitionComponent={Grow}
         transitionDuration={700}
+        maxWidth="sm"
+        fullWidth
         PaperProps={{
           sx: {
-            borderRadius: 2,
-            maxWidth: 800,
+            borderRadius: { xs: 1, sm: 2 },
+            maxWidth: { xs: '90vw', sm: '600px', md: '800px' },
             width: '100%',
-            minHeight: 400,
-            p: 3
+            minHeight: { xs: '300px', sm: '400px' },
+            maxHeight: { xs: '80vh', sm: '90vh' },
+            p: { xs: 1.5, sm: 2, md: 3 },
+            m: { xs: 1, sm: 2 }
           }
         }}
       >
-        <DialogContent>
+        <DialogContent sx={{ 
+          p: { xs: 1, sm: 2, md: 3 },
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center'
+        }}>
           <CountdownDialog />
         </DialogContent>
       </Dialog>
