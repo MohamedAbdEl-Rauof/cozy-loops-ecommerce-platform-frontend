@@ -39,12 +39,10 @@ const OrdersPage = () => {
     const [searchTerm, setSearchTerm] = useState('')
     const [filteredOrders, setFilteredOrders] = useState<Order[]>([])
 
-    const ordersPerPage = 10
-
     const fetchOrders = useCallback(async () => {
         try {
             setIsLoading(true)
-            const response = await orderService.getUserOrders(ordersPerPage)
+            const response = await orderService.getUserOrders()
 
             if (response.success) {
                 setOrders(response.orders)
@@ -58,7 +56,7 @@ const OrdersPage = () => {
         } finally {
             setIsLoading(false)
         }
-    }, [ordersPerPage])
+    }, [])
 
     useEffect(() => {
         fetchOrders()

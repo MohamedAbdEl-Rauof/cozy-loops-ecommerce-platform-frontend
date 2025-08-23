@@ -292,7 +292,7 @@ export default function RegistrationPage() {
       display: "flex",
       flexDirection: { xs: "column", lg: "row" },
       overflow: "hidden"
-    }}>u
+    }}>
       <Dialog
         open={showSuccess}
         TransitionComponent={Grow}
