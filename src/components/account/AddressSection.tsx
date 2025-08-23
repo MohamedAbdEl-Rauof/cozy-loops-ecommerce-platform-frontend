@@ -203,7 +203,14 @@ const AddressSection: React.FC = () => {
         </Box>
       ) : (
         <>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+          <Box sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: { xs: 'flex-start', sm: 'center' },
+            flexDirection: { xs: 'column', sm: 'row' },
+            gap: { xs: 2, sm: 0 },
+            mb: 3
+          }}>
             <Typography variant="h5" sx={{ fontWeight: 600, color: '#333' }}>
               Address Book
             </Typography>
@@ -213,10 +220,20 @@ const AddressSection: React.FC = () => {
               onClick={() => setShowForm(true)}
               sx={{
                 backgroundColor: '#FF7043',
-                '&:hover': { backgroundColor: '#FF5722' }
+                '&:hover': { backgroundColor: '#FF5722' },
+                fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                px: { xs: 2, sm: 3 },
+                py: { xs: 1, sm: 1.5 },
+                minWidth: { xs: 'auto', sm: '140px' },
+                width: { xs: '100%', sm: 'auto' }
               }}
             >
-              Add Address
+              <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+                Add Address
+              </Box>
+              <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>
+                Add
+              </Box>
             </Button>
           </Box>
 
@@ -229,7 +246,12 @@ const AddressSection: React.FC = () => {
 
                 <Grid container spacing={3}>
                   <Grid size={{ xs: 12 }}>
-                    <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+                    <Box sx={{
+                      display: 'flex',
+                      gap: { xs: 1, sm: 2 },
+                      mb: 2,
+                      flexDirection: { xs: 'column', sm: 'row' }
+                    }}>
                       <Button
                         variant={formData.type === 'shipping' ? 'contained' : 'outlined'}
                         onClick={() => handleInputChange('type', 'shipping')}
@@ -237,6 +259,11 @@ const AddressSection: React.FC = () => {
                           backgroundColor: formData.type === 'shipping' ? '#FF7043' : 'transparent',
                           borderColor: '#FF7043',
                           color: formData.type === 'shipping' ? 'white' : '#FF7043',
+                          fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                          px: { xs: 2, sm: 3 },
+                          py: { xs: 1, sm: 1.5 },
+                          flex: { xs: 1, sm: 'none' },
+                          minWidth: { sm: '140px' }
                         }}
                       >
                         Shipping Address
@@ -248,6 +275,11 @@ const AddressSection: React.FC = () => {
                           backgroundColor: formData.type === 'billing' ? '#FF7043' : 'transparent',
                           borderColor: '#FF7043',
                           color: formData.type === 'billing' ? 'white' : '#FF7043',
+                          fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                          px: { xs: 2, sm: 3 },
+                          py: { xs: 1, sm: 1.5 },
+                          flex: { xs: 1, sm: 'none' },
+                          minWidth: { sm: '140px' }
                         }}
                       >
                         Billing Address
@@ -301,8 +333,22 @@ const AddressSection: React.FC = () => {
                   </Grid>
                 </Grid>
 
-                <Box sx={{ mt: 3, display: 'flex', gap: 2 }}>
-                  <SaveButton onClick={handleSave}>
+                <Box sx={{
+                  mt: 3,
+                  display: 'flex',
+                  gap: { xs: 1, sm: 2 },
+                  flexDirection: { xs: 'column', sm: 'row' }
+                }}>
+                  <SaveButton
+                    onClick={handleSave}
+                    sx={{
+                      fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                      px: { xs: 2, sm: 4 },
+                      py: { xs: 1.5, sm: 1.5 },
+                      flex: { xs: 1, sm: 'none' },
+                      minWidth: { sm: '140px' }
+                    }}
+                  >
                     {editingAddress ? 'Update Address' : 'Save Address'}
                   </SaveButton>
                   <Button
@@ -311,6 +357,11 @@ const AddressSection: React.FC = () => {
                     sx={{
                       borderColor: '#ccc',
                       color: '#666',
+                      fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                      px: { xs: 2, sm: 4 },
+                      py: { xs: 1.5, sm: 1.5 },
+                      flex: { xs: 1, sm: 'none' },
+                      minWidth: { sm: '120px' }
                     }}
                   >
                     Cancel
@@ -552,11 +603,15 @@ const AddressSection: React.FC = () => {
                 onClick={() => setShowForm(true)}
                 sx={{
                   backgroundColor: '#FF7043',
-                  '&:hover': { backgroundColor: '#FF5722' }
+                  '&:hover': { backgroundColor: '#FF5722' },
+                  fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                  px: { xs: 3, sm: 4 },
+                  py: { xs: 1.5, sm: 2 },
+                  minWidth: { xs: '200px', sm: '220px' }
                 }}
               >
                 Add Your First Address
-              </Button>
+              </Button> 
             </Box>
           )}
         </>

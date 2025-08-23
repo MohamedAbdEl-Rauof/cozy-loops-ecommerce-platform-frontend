@@ -92,15 +92,27 @@ const FeaturedCategories = ({
                             position: 'absolute',
                             inset: 0,
                             background: `linear-gradient(
-                                    135deg,
-                                    rgba(255, 229, 184, 0.3) 0%,
-                                    rgba(255, 229, 184, 0.1) 40%,
-                                    rgba(255, 112, 67, 0.05) 100%
-                                )`,
+                                135deg,
+                                rgba(248, 241, 229, 0.6) 0%,
+                                rgba(248, 241, 229, 0.5) 40%,
+                                rgba(248, 241, 229, 0.4) 100%
+                            )`,
                             zIndex: 2,
                             transition: 'opacity 0.6s ease',
-                            opacity: isHovered ? 0.8 : 0.5,
+                            opacity: isHovered ? 0.75 : 0.65, 
+                        },
+                        '&::after': {
+                            content: '""',
+                            position: 'absolute',
+                            inset: 0,
+                            background: isTitleCenter
+                                ? `radial-gradient(circle at center, rgba(248, 241, 229, 0.2) 0%, rgba(248, 241, 229, 0.5) 70%)`
+                                : `linear-gradient(to top, rgba(248, 241, 229, 0.6) 0%, rgba(248, 241, 229, 0.4) 50%, rgba(248, 241, 229, 0.2) 100%)`,
+                            zIndex: 3,
+                            transition: 'opacity 0.6s ease',
+                            opacity: 0.9, 
                         }
+
                     }}
                 >
                     <Image
@@ -116,7 +128,6 @@ const FeaturedCategories = ({
                             filter: isHovered ? 'brightness(1.1) contrast(1.05)' : 'brightness(1) contrast(1)',
                         }}
                     />
-
                 </Box>
 
                 <Box
@@ -138,7 +149,7 @@ const FeaturedCategories = ({
                         opacity: isVisible ? 1 : 0,
                         transition: 'all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                         transitionDelay: '0.05s',
-                        zIndex: 3,
+                        zIndex: 4,
                     }}
                 >
                     {ctaText && (

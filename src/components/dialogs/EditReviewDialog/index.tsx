@@ -178,10 +178,12 @@ const EditReviewDialog: React.FC<EditReviewDialogProps> = ({
 
             <DialogActions
                 sx={{
-                    px: 3,
-                    pb: 3,
+                    px: { xs: 2, sm: 3 },
+                    pb: { xs: 2, sm: 3 },
                     pt: 1,
-                    gap: 2,
+                    gap: { xs: 1.5, sm: 2 },
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    alignItems: { xs: 'stretch', sm: 'center' },
                 }}
             >
                 <Button
@@ -191,10 +193,14 @@ const EditReviewDialog: React.FC<EditReviewDialogProps> = ({
                     sx={{
                         borderColor: '#D1D5DB',
                         color: '#6B7280',
-                        borderRadius: '8px',
-                        px: 3,
+                        borderRadius: { xs: '6px', sm: '8px' },
+                        px: { xs: 2, sm: 3, md: 4 },
+                        py: { xs: 1.2, sm: 1.5 },
+                        fontSize: { xs: '0.9rem', sm: '1rem' },
                         textTransform: 'none',
                         fontWeight: 500,
+                        minHeight: { xs: '44px', sm: '48px' },
+                        order: { xs: 2, sm: 1 },
                         '&:hover': {
                             borderColor: '#9CA3AF',
                             backgroundColor: '#F9FAFB',
@@ -209,10 +215,15 @@ const EditReviewDialog: React.FC<EditReviewDialogProps> = ({
                     variant="contained"
                     sx={{
                         backgroundColor: '#F59E0B',
-                        borderRadius: '8px',
-                        px: 4,
+                        borderRadius: { xs: '6px', sm: '8px' },
+                        px: { xs: 3, sm: 4, md: 5 },
+                        py: { xs: 1.2, sm: 1.5 },
+                        fontSize: { xs: '0.9rem', sm: '1rem' },
                         textTransform: 'none',
                         fontWeight: 600,
+                        minHeight: { xs: '44px', sm: '48px' },
+                        minWidth: { xs: '100%', sm: 'auto' },
+                        order: { xs: 1, sm: 2 },
                         boxShadow: '0 2px 8px rgba(245, 158, 11, 0.3)',
                         '&:hover': {
                             backgroundColor: '#D97706',
@@ -226,12 +237,39 @@ const EditReviewDialog: React.FC<EditReviewDialogProps> = ({
                     }}
                 >
                     {isLoading ? (
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <CircularProgress size={16} color="inherit" />
-                            Saving...
+                        <Box sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: { xs: 0.8, sm: 1 },
+                            justifyContent: 'center'
+                        }}>
+                            <CircularProgress
+                                color="inherit"
+                                sx={{
+                                    width: { xs: 14, sm: 16 },
+                                    height: { xs: 14, sm: 16 },
+                                }}
+                            />
+                            <Typography
+                                component="span"
+                                sx={{
+                                    fontSize: { xs: '0.9rem', sm: '1rem' },
+                                    fontWeight: 'inherit'
+                                }}
+                            >
+                                Saving...
+                            </Typography>
                         </Box>
                     ) : (
-                        'Save Changes'
+                        <Typography
+                            component="span"
+                            sx={{
+                                fontSize: { xs: '0.9rem', sm: '1rem' },
+                                fontWeight: 'inherit'
+                            }}
+                        >
+                            Save Changes
+                        </Typography>
                     )}
                 </Button>
             </DialogActions>

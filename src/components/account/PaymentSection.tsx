@@ -233,7 +233,14 @@ const PaymentSection: React.FC = () => {
 
     return (
         <Box>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+            <Box sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: { xs: 'flex-start', sm: 'center' },
+                flexDirection: { xs: 'column', sm: 'row' },
+                gap: { xs: 2, sm: 0 },
+                mb: 3
+            }}>
                 <Typography variant="h5" sx={{ fontWeight: 600, color: '#333' }}>
                     Payment Methods
                 </Typography>
@@ -243,10 +250,20 @@ const PaymentSection: React.FC = () => {
                     onClick={() => setShowForm(true)}
                     sx={{
                         backgroundColor: '#FF7043',
-                        '&:hover': { backgroundColor: '#FF5722' }
+                        '&:hover': { backgroundColor: '#FF5722' },
+                        fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                        px: { xs: 2, sm: 3 },
+                        py: { xs: 1, sm: 1.5 },
+                        minWidth: { xs: 'auto', sm: '120px' },
+                        width: { xs: '100%', sm: 'auto' }
                     }}
                 >
-                    Add Card
+                    <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+                        Add Card
+                    </Box>
+                    <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>
+                        Add
+                    </Box>
                 </Button>
             </Box>
 
@@ -335,8 +352,22 @@ const PaymentSection: React.FC = () => {
                             </Grid>
                         </Grid>
 
-                        <Box sx={{ mt: 3, display: 'flex', gap: 2 }}>
-                            <SaveButton onClick={handleSave}>
+                        <Box sx={{
+                            mt: 3,
+                            display: 'flex',
+                            gap: { xs: 1, sm: 2 },
+                            flexDirection: { xs: 'column', sm: 'row' }
+                        }}>
+                            <SaveButton
+                                onClick={handleSave}
+                                sx={{
+                                    fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                                    px: { xs: 2, sm: 4 },
+                                    py: { xs: 1.5, sm: 1.5 },
+                                    flex: { xs: 1, sm: 'none' },
+                                    minWidth: { sm: '140px' }
+                                }}
+                            >
                                 {editingCard ? 'Update Card' : 'Save Card'}
                             </SaveButton>
                             <Button
@@ -345,6 +376,11 @@ const PaymentSection: React.FC = () => {
                                 sx={{
                                     borderColor: '#ccc',
                                     color: '#666',
+                                    fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                                    px: { xs: 2, sm: 4 },
+                                    py: { xs: 1.5, sm: 1.5 },
+                                    flex: { xs: 1, sm: 'none' },
+                                    minWidth: { sm: '100px' }
                                 }}
                             >
                                 Cancel
@@ -408,16 +444,18 @@ const PaymentSection: React.FC = () => {
                                     </Box>
                                     <Box sx={{
                                         display: 'flex',
-                                        gap: 0.5,
+                                        gap: { xs: 0.25, sm: 0.5 },
                                         backgroundColor: 'rgba(255, 255, 255, 0.8)',
                                         borderRadius: '12px',
-                                        p: 0.5
+                                        p: { xs: 0.25, sm: 0.5 }
                                     }}>
                                         <IconButton
                                             size="small"
                                             onClick={() => handleEdit(card)}
                                             sx={{
                                                 color: '#FF7043',
+                                                width: { xs: 28, sm: 32 },
+                                                height: { xs: 28, sm: 32 },
                                                 '&:hover': {
                                                     backgroundColor: 'rgba(255, 112, 67, 0.1)',
                                                     transform: 'scale(1.1)'
@@ -432,6 +470,8 @@ const PaymentSection: React.FC = () => {
                                             onClick={() => handleDelete(card.id)}
                                             sx={{
                                                 color: '#f44336',
+                                                width: { xs: 28, sm: 32 },
+                                                height: { xs: 28, sm: 32 },
                                                 '&:hover': {
                                                     backgroundColor: 'rgba(244, 67, 54, 0.1)',
                                                     transform: 'scale(1.1)'
@@ -530,7 +570,8 @@ const PaymentSection: React.FC = () => {
                                             textTransform: 'none',
                                             fontWeight: 600,
                                             borderRadius: '12px',
-                                            py: 1,
+                                            py: { xs: 1, sm: 1 },
+                                            fontSize: { xs: '0.75rem', sm: '0.8rem' },
                                             background: 'rgba(255, 255, 255, 0.8)',
                                             backdropFilter: 'blur(10px)',
                                             '&:hover': {
@@ -542,7 +583,12 @@ const PaymentSection: React.FC = () => {
                                             transition: 'all 0.3s ease'
                                         }}
                                     >
-                                        Set as Default
+                                        <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+                                            Set as Default
+                                        </Box>
+                                        <Box component="span" sx={{ display: { xs: 'inline', sm: 'none' } }}>
+                                            Default
+                                        </Box>
                                     </Button>
                                 )}
 
@@ -587,7 +633,11 @@ const PaymentSection: React.FC = () => {
                         onClick={() => setShowForm(true)}
                         sx={{
                             backgroundColor: '#FF7043',
-                            '&:hover': { backgroundColor: '#FF5722' }
+                            '&:hover': { backgroundColor: '#FF5722' },
+                            fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                            px: { xs: 3, sm: 4 },
+                            py: { xs: 1.5, sm: 1.5 },
+                            minWidth: { xs: '200px', sm: '220px' }
                         }}
                     >
                         Add Your First Card
