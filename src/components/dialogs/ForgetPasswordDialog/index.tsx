@@ -111,16 +111,33 @@ export default function ForgotPasswordDialog({ open, onClose }: ForgotPasswordDi
                 }
             }}
         >
-            <DialogTitle sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                pb: 1
-            }}>
-                <Typography variant="h5" component="div" sx={{ fontWeight: 600 }}>
-                    Forget your password ?
+            <DialogTitle
+                sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    pb: 1,
+                }}
+            >
+                <Typography
+                    variant="h5"
+                    component="div"
+                    sx={{
+                        fontWeight: 600,
+                        fontSize: {
+                            xs: "1rem",
+                            sm: "1.25rem",
+                            md: "1.5rem",
+                        },
+                        textAlign: {
+                            xs: "center",
+                            sm: "left",
+                        },
+                        width: "100%",
+                    }}
+                >
+                    Forget your password?
                 </Typography>
-
             </DialogTitle>
 
             <DialogContent sx={{ pt: 1 }}>

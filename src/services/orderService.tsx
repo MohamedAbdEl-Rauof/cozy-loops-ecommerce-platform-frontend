@@ -2,8 +2,8 @@ import apiClient from '@/lib/apiClient'
 import { OrderResponse, OrdersResponse } from '@/types/order'
 
 export const orderService = {
-  getUserOrders: async (page = 1, limit = 10): Promise<OrdersResponse> => {
-    const response = await apiClient.get(`/api/orders?page=${page}&limit=${limit}`)
+  getUserOrders: async (): Promise<OrdersResponse> => {
+    const response = await apiClient.get(`/api/orders`)
     return response.data
   },
 

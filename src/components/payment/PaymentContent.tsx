@@ -132,6 +132,7 @@ const PaymentContent: React.FC = () => {
         );
     }
 
+
     return (
         <ProtectedRoute>
             <Box sx={{ bgcolor: '#f5f5f5', minHeight: '100vh' }}>
@@ -154,26 +155,9 @@ const PaymentContent: React.FC = () => {
 
                     {checkoutData ? (
                         <Grid container spacing={3}>
-                            <Grid size={{ xs: 12, md: 7 }}>
-                                <Paper elevation={3} sx={{ p: 3 }}>
-                                    <Typography variant="h5" gutterBottom sx={{ color: '#333', fontWeight: 600, mb: 3 }}>
-                                        Payment Information
-                                    </Typography>
-                                    <StripeCheckout
-                                        clientSecret={checkoutData.clientSecret}
-                                        publishableKey={checkoutData.publishableKey}
-                                        orderData={{
-                                            orderNumber: checkoutData.orderNumber,
-                                            orderId: checkoutData.orderId,
-                                            breakdown: checkoutData.breakdown
-                                        }}
-                                        onPaymentStatusChange={handlePaymentStatusChange}
-                                    />
-                                </Paper>
-                            </Grid>
-
-                            <Grid size={{ xs: 12, md: 5 }}>
-                                <Paper elevation={3} sx={{ p: 3, height: 'fit-content', position: 'sticky', top: 20 }}>
+                            {/* Order Summary - Shows first on mobile, second on desktop */}
+                            <Grid size={{ xs: 12, md: 5 }} sx={{ order: { xs: 1, md: 2 } }}>
+                                <Paper elevation={3} sx={{ p: 3, height: 'fit-content', position: { xs: 'static', md: 'sticky' }, top: 20 }}>
                                     <Typography variant="h5" gutterBottom sx={{ color: '#333', fontWeight: 600 }}>
                                         Order Summary
                                     </Typography>
@@ -208,6 +192,25 @@ const PaymentContent: React.FC = () => {
                                             ${checkoutData.breakdown.total.toFixed(2)}
                                         </Typography>
                                     </Box>
+                                </Paper>
+                            </Grid>
+
+                            {/* Payment Information - Shows second on mobile, first on desktop */}
+                            <Grid size={{ xs: 12, md: 7 }} sx={{ order: { xs: 2, md: 1 } }}>
+                                <Paper elevation={3} sx={{ p: 3 }}>
+                                    <Typography variant="h5" gutterBottom sx={{ color: '#333', fontWeight: 600, mb: 3 }}>
+                                        Payment Information
+                                    </Typography>
+                                    <StripeCheckout
+                                        clientSecret={checkoutData.clientSecret}
+                                        publishableKey={checkoutData.publishableKey}
+                                        orderData={{
+                                            orderNumber: checkoutData.orderNumber,
+                                            orderId: checkoutData.orderId,
+                                            breakdown: checkoutData.breakdown
+                                        }}
+                                        onPaymentStatusChange={handlePaymentStatusChange}
+                                    />
                                 </Paper>
                             </Grid>
                         </Grid>
