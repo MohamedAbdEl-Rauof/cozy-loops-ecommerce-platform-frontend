@@ -44,7 +44,7 @@ import { useWishlist } from "@/hooks/useWishlist"
 import type React from "react"
 
 const NavbarContainer = styled(Box)(() => ({
-    backgroundColor: "var(--foreground)",
+    backgroundColor: "#ededed",
 
 }))
 
@@ -511,7 +511,7 @@ const Navbar = ({
 
                             <Box
                                 sx={{
-                                    display: 'flex',
+                                    display: { xs: 'none', sm: 'flex' },
                                     alignItems: 'center',
                                     backgroundColor: "var(--foreground)",
                                     borderRadius: "24px",

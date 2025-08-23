@@ -340,13 +340,17 @@ export default function LoginPage() {
 
       <Dialog
         open={showSuccessAnimation}
+        maxWidth="sm"
+        fullWidth
         PaperProps={{
           sx: {
             borderRadius: 3,
             p: 4,
             textAlign: 'center',
-            minWidth: 600,
-            minHeight: 350
+            minWidth: { xs: 'auto', sm: 600 },
+            minHeight: 350,
+            mx: { xs: 2, sm: 0 }, 
+            width: { xs: 'calc(100vw - 32px)', sm: 'auto' },  
           }
         }}
         TransitionProps={{

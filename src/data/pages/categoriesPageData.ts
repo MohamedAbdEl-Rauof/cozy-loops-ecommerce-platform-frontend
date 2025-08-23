@@ -33,9 +33,9 @@ export const heroSectionData: ImageWithTextData = {
 };
 
 export const featuredCategoriesData: FeaturedCategoriesData = {
-    title: "Meet Fatma from Cairo – Creating jewelry inspired by tradition",
+    title: "Creating jewelry inspired by tradition.",
     isTitleCenter: false,
-    description: "Discover the stories behind our talented makers. Each artisan brings their unique cultural heritage and personal touch to every handcrafted piece.",
+    description: "Discover the stories behind our talented makers.",
     ctaText: "Featured Maker",
     image: "/images/shared/featuredCategories.jpg",
     buttonText: "View Profile",

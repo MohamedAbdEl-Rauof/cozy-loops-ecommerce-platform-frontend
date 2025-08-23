@@ -24,6 +24,7 @@ import {
     CircularProgress
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 
 import { MyCartProps } from '@/types/cart';
@@ -128,6 +129,7 @@ const MyCart: React.FC<MyCartProps> = ({
     const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const finalShippingCost = subtotal >= 500 ? 0 : shippingCost;
     const total = subtotal + finalShippingCost;
+    const router = useRouter();
 
     const handleQuantityChange = (itemId: string, change: number) => {
         const currentItem = cartItems.find(item => item.id === itemId);
@@ -143,6 +145,10 @@ const MyCart: React.FC<MyCartProps> = ({
 
     const handleProceedToCheckout = () => {
         onProceedToCheckout?.();
+    };
+
+    const handleStartShopping = () => {
+        router.push('/categories');
     };
 
     if (cartItems.length === 0) {
@@ -186,6 +192,29 @@ const MyCart: React.FC<MyCartProps> = ({
                     >
                         Add some products to your cart to get started.
                     </Typography>
+                    <Button
+                        variant="contained"
+                        size="large"
+                        onClick={handleStartShopping}
+                        sx={{
+                            borderRadius: '25px',
+                            padding: '12px 32px',
+                            fontWeight: 600,
+                            textTransform: 'none',
+                            fontSize: '1rem',
+                            background: 'linear-gradient(135deg, #ff7043 0%, #ff5722 100%)',
+                            color: 'white',
+                            boxShadow: '0 8px 25px rgba(255, 112, 67, 0.4)',
+                            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                            '&:hover': {
+                                background: 'linear-gradient(135deg, #ff5722 0%, #e64a19 100%)',
+                                transform: 'translateY(-2px)',
+                                boxShadow: '0 12px 35px rgba(255, 112, 67, 0.6)',
+                            }
+                        }}
+                    >
+                        Start Shopping
+                    </Button>
                 </Box>
             </Container>
         );
