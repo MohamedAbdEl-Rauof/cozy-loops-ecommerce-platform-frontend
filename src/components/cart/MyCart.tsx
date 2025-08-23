@@ -24,10 +24,10 @@ import {
     CircularProgress
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 
 import { MyCartProps } from '@/types/cart';
-import { useRouter } from 'next/navigation';
 
 const StyledTableContainer = styled(TableContainer)(() => ({
     borderRadius: '16px',
