@@ -39,7 +39,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         gap={2}
         sx={{ bgcolor: 'white' }}
       >
-        <CircularProgress />
+        <CircularProgress sx={{ color: '#FF7043' }} />
         <Typography style={{ color: 'black' }}>Checking authentication...</Typography>
       </Box>
     );

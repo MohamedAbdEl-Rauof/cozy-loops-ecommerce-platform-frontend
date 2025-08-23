@@ -218,8 +218,9 @@ const OrderConfirmationContent: React.FC = () => {
                         background: 'linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)'
                     }}
                 >
-                    <Grid container spacing={3} justifyContent="center">
-                        <Grid size={{ xs: 12, sm: 6 }}>
+
+                    <Grid container spacing={{ xs: 2, sm: 3 }} justifyContent="center">
+                        <Grid size={{ xs: 12, sm: 6, md: 5 }}>
                             <Button
                                 variant="contained"
                                 fullWidth
@@ -227,31 +228,38 @@ const OrderConfirmationContent: React.FC = () => {
                                 sx={{
                                     bgcolor: '#ff5722',
                                     color: 'white',
-                                    py: 2.5,
-                                    px: 3,
-                                    borderRadius: 2,
+                                    py: { xs: 2, sm: 2.5 },
+                                    px: { xs: 2, sm: 3 },
+                                    borderRadius: { xs: 1.5, sm: 2 },
                                     fontWeight: 600,
-                                    fontSize: '0.95rem',
+                                    fontSize: { xs: '0.875rem', sm: '0.95rem' },
                                     textTransform: 'none',
-                                    minHeight: 56,
+                                    minHeight: { xs: 48, sm: 56 },
                                     boxShadow: '0 4px 12px rgba(255, 87, 34, 0.3)',
                                     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                     '&:hover': {
                                         bgcolor: '#e64a19',
-                                        transform: 'translateY(-2px)',
-                                        boxShadow: '0 6px 20px rgba(255, 87, 34, 0.4)'
+                                        transform: { xs: 'none', sm: 'translateY(-2px)' },
+                                        boxShadow: {
+                                            xs: '0 4px 12px rgba(255, 87, 34, 0.4)',
+                                            sm: '0 6px 20px rgba(255, 87, 34, 0.4)'
+                                        }
                                     },
                                     '&:active': {
                                         transform: 'translateY(0px)'
+                                    },
+                                    '&:focus': {
+                                        outline: '2px solid #ff5722',
+                                        outlineOffset: '2px'
                                     }
                                 }}
-                                startIcon={<ViewIcon sx={{ fontSize: 20 }} />}
+                                startIcon={<ViewIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />}
                             >
                                 View Order Details
                             </Button>
                         </Grid>
 
-                        <Grid size={{ xs: 12, sm: 6 }}>
+                        <Grid size={{ xs: 12, sm: 6, md: 5 }}>
                             <Button
                                 variant="outlined"
                                 fullWidth
@@ -259,27 +267,35 @@ const OrderConfirmationContent: React.FC = () => {
                                 sx={{
                                     borderColor: '#9e9e9e',
                                     color: '#616161',
-                                    py: 2.5,
-                                    px: 3,
-                                    borderRadius: 2,
+                                    py: { xs: 2, sm: 2.5 },
+                                    px: { xs: 2, sm: 3 },
+                                    borderRadius: { xs: 1.5, sm: 2 },
                                     fontWeight: 600,
-                                    fontSize: '0.95rem',
+                                    fontSize: { xs: '0.875rem', sm: '0.95rem' },
                                     textTransform: 'none',
-                                    minHeight: 56,
-                                    borderWidth: 2,
+                                    minHeight: { xs: 48, sm: 56 },
+                                    borderWidth: { xs: 1.5, sm: 2 },
                                     transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                     '&:hover': {
                                         borderColor: '#757575',
                                         bgcolor: 'rgba(158, 158, 158, 0.08)',
                                         color: '#424242',
-                                        transform: 'translateY(-2px)',
-                                        boxShadow: '0 4px 12px rgba(158, 158, 158, 0.2)'
+                                        transform: { xs: 'none', sm: 'translateY(-2px)' },
+                                        boxShadow: {
+                                            xs: '0 2px 8px rgba(158, 158, 158, 0.15)',
+                                            sm: '0 4px 12px rgba(158, 158, 158, 0.2)'
+                                        }
                                     },
                                     '&:active': {
-                                        transform: 'translateY(0px)'
+                                        transform: 'translateY(0px)',
+                                        bgcolor: 'rgba(158, 158, 158, 0.12)'
+                                    },
+                                    '&:focus': {
+                                        outline: '2px solid #9e9e9e',
+                                        outlineOffset: '2px'
                                     }
                                 }}
-                                startIcon={<ReceiptIcon sx={{ fontSize: 20 }} />}
+                                startIcon={<ReceiptIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />}
                             >
                                 View All Orders
                             </Button>
