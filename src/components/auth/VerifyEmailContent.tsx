@@ -31,14 +31,12 @@ import {
     ListItemText
 } from '@mui/material';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useCallback, useEffect, useState } from 'react';
+import {useRouter, useSearchParams} from 'next/navigation';
+import React, {useCallback, useEffect, useState} from 'react';
 
-import { CountdownRedirect } from '@/components/auth/CountdownRedirect';
-import { useAuth } from '@/context/AuthContext';
-import { resendVerificationEmail } from "@/services/authService";
-
-export const dynamic = 'force-dynamic'
+import {CountdownRedirect} from '@/components/auth/CountdownRedirect';
+import {useAuth} from '@/context/AuthContext';
+import {resendVerificationEmail} from "@/services/authService";
 
 type VerificationStatus = 'pending' | 'success' | 'error';
 type SnackbarSeverity = 'success' | 'error' | 'info' | 'warning';
@@ -52,7 +50,7 @@ interface SnackbarState {
 export default function VerifyEmailContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
-    const { loginWithToken, isAuthenticated, isUserAuthenticated, loading: authLoading } = useAuth();
+    const {loginWithToken, isAuthenticated, isUserAuthenticated, loading: authLoading} = useAuth();
     const email = searchParams.get('email') || "example@email.com";
     const token = searchParams.get('token');
     const [verificationStatus, setVerificationStatus] = useState<VerificationStatus>(token ? 'pending' : 'success');
@@ -73,15 +71,6 @@ export default function VerifyEmailContent() {
             setShowAuthenticatedMessage(true);
         }
     }, [isAuthenticated, authLoading, isUserAuthenticated]);
-
-    useEffect(() => {
-        if (verificationStatus === 'success' && !token && redirectCountdown > 0) {
-            const timer = setTimeout(() => setRedirectCountdown(prev => prev - 1), 1000);
-            return () => clearTimeout(timer);
-        } else if (verificationStatus === 'success' && !token && redirectCountdown === 0) {
-            router.push('/auth/login?verified=true');
-        }
-    }, [verificationStatus, redirectCountdown, router, token]);
 
     useEffect(() => {
         if (verificationStatus === 'success' && token) {
@@ -114,6 +103,7 @@ export default function VerifyEmailContent() {
         });
     }, []);
 
+
     const handleVerificationSuccess = useCallback(async (authToken?: string) => {
         setVerificationStatus('success');
         setVerificationMessage('Your email has been successfully verified!');
@@ -130,7 +120,6 @@ export default function VerifyEmailContent() {
                         refreshTokenValue = tokenData.refreshToken;
                     }
                 } catch {
-                    console.error('Using token as string');
                 }
 
                 const loginSuccess = await loginWithToken(accessToken, refreshTokenValue);
@@ -154,7 +143,7 @@ export default function VerifyEmailContent() {
                 router.push('/auth/login?verified=true');
             }, 2000);
         } catch (error) {
-            console.error('Auto-login failed:', error);
+            console.error('Email verification failed:', error);
             showNotification('Email verified! Please log in to continue.', 'info');
             setTimeout(() => {
                 router.push('/auth/login?verified=true');
@@ -189,7 +178,7 @@ export default function VerifyEmailContent() {
                     `${process.env.NEXT_PUBLIC_API_URL!}/api/auth/verify-email/${token}?directLogin=true`,
                     {
                         method: 'GET',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: {'Content-Type': 'application/json'},
                         credentials: 'include'
                     }
                 );
@@ -212,7 +201,7 @@ export default function VerifyEmailContent() {
                             handleVerificationSuccess();
                         }
                     } catch (parseError) {
-                        console.error('Error parsing response:', parseError);
+                        console.error('Failed to parse response:', parseError);
                         handleVerificationSuccess();
                     }
                 } else if (response.status === 302) {
@@ -266,7 +255,7 @@ export default function VerifyEmailContent() {
     };
 
     const handleCloseSnackbar = () => {
-        setSnackbar(prev => ({ ...prev, open: false }));
+        setSnackbar(prev => ({...prev, open: false}));
     };
 
     if ((showAuthenticatedMessage || (!authLoading && isUserAuthenticated())) && !token) {
@@ -281,7 +270,7 @@ export default function VerifyEmailContent() {
 
     return (
         <>
-            <CssBaseline />
+            <CssBaseline/>
             <Box
                 sx={{
                     minHeight: '100vh',
@@ -307,9 +296,9 @@ export default function VerifyEmailContent() {
                         opacity: 0.9,
                     },
                     '@keyframes gradient': {
-                        '0%': { backgroundPosition: '0% 50%' },
-                        '50%': { backgroundPosition: '100% 50%' },
-                        '100%': { backgroundPosition: '0% 50%' }
+                        '0%': {backgroundPosition: '0% 50%'},
+                        '50%': {backgroundPosition: '100% 50%'},
+                        '100%': {backgroundPosition: '0% 50%'}
                     }
                 }}
             >
@@ -317,7 +306,7 @@ export default function VerifyEmailContent() {
                     <Paper
                         elevation={6}
                         sx={{
-                            p: { xs: 3, sm: 4 },
+                            p: {xs: 3, sm: 4},
                             width: '100%',
                             borderRadius: 2,
                             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
@@ -326,7 +315,7 @@ export default function VerifyEmailContent() {
                         }}
                     >
                         {token ? (
-                            <Box sx={{ textAlign: 'center' }}>
+                            <Box sx={{textAlign: 'center'}}>
                                 {verificationStatus === 'pending' ? (
                                     <>
                                         <Box
@@ -339,9 +328,9 @@ export default function VerifyEmailContent() {
                                                 perspective: '1000px',
                                                 animation: 'float 3s ease-in-out infinite',
                                                 '@keyframes float': {
-                                                    '0%': { transform: 'translateY(0px)' },
-                                                    '50%': { transform: 'translateY(-10px)' },
-                                                    '100%': { transform: 'translateY(0px)' }
+                                                    '0%': {transform: 'translateY(0px)'},
+                                                    '50%': {transform: 'translateY(-10px)'},
+                                                    '100%': {transform: 'translateY(0px)'}
                                                 }
                                             }}
                                         >
@@ -359,24 +348,24 @@ export default function VerifyEmailContent() {
                                                         left: `${Math.random() * 100}%`,
                                                         animation: `particle${i} ${2 + i * 0.5}s ease-in-out infinite`,
                                                         '@keyframes particle0': {
-                                                            '0%, 100%': { transform: 'translate(10px, 10px)' },
-                                                            '50%': { transform: 'translate(-10px, -10px)' }
+                                                            '0%, 100%': {transform: 'translate(10px, 10px)'},
+                                                            '50%': {transform: 'translate(-10px, -10px)'}
                                                         },
                                                         '@keyframes particle1': {
-                                                            '0%, 100%': { transform: 'translate(-15px, 5px)' },
-                                                            '50%': { transform: 'translate(15px, -5px)' }
+                                                            '0%, 100%': {transform: 'translate(-15px, 5px)'},
+                                                            '50%': {transform: 'translate(15px, -5px)'}
                                                         },
                                                         '@keyframes particle2': {
-                                                            '0%, 100%': { transform: 'translate(5px, -15px)' },
-                                                            '50%': { transform: 'translate(-5px, 15px)' }
+                                                            '0%, 100%': {transform: 'translate(5px, -15px)'},
+                                                            '50%': {transform: 'translate(-5px, 15px)'}
                                                         },
                                                         '@keyframes particle3': {
-                                                            '0%, 100%': { transform: 'translate(-10px, -10px)' },
-                                                            '50%': { transform: 'translate(10px, 10px)' }
+                                                            '0%, 100%': {transform: 'translate(-10px, -10px)'},
+                                                            '50%': {transform: 'translate(10px, 10px)'}
                                                         },
                                                         '@keyframes particle4': {
-                                                            '0%, 100%': { transform: 'translate(15px, -5px)' },
-                                                            '50%': { transform: 'translate(-15px, 5px)' }
+                                                            '0%, 100%': {transform: 'translate(15px, -5px)'},
+                                                            '50%': {transform: 'translate(-15px, 5px)'}
                                                         },
                                                     }}
                                                 />
@@ -396,9 +385,18 @@ export default function VerifyEmailContent() {
                                                     opacity: 0.6,
                                                     animation: 'pulse 2s ease-in-out infinite',
                                                     '@keyframes pulse': {
-                                                        '0%': { transform: 'translate(-50%, -50%) scale(0.9)', opacity: 0.8 },
-                                                        '50%': { transform: 'translate(-50%, -50%) scale(1.1)', opacity: 0.4 },
-                                                        '100%': { transform: 'translate(-50%, -50%) scale(0.9)', opacity: 0.8 }
+                                                        '0%': {
+                                                            transform: 'translate(-50%, -50%) scale(0.9)',
+                                                            opacity: 0.8
+                                                        },
+                                                        '50%': {
+                                                            transform: 'translate(-50%, -50%) scale(1.1)',
+                                                            opacity: 0.4
+                                                        },
+                                                        '100%': {
+                                                            transform: 'translate(-50%, -50%) scale(0.9)',
+                                                            opacity: 0.8
+                                                        }
                                                     }
                                                 }}
                                             />
@@ -416,8 +414,8 @@ export default function VerifyEmailContent() {
                                                     borderTopColor: 'primary.main',
                                                     animation: 'spin 1.5s linear infinite',
                                                     '@keyframes spin': {
-                                                        '0%': { transform: 'rotate(0deg)' },
-                                                        '100%': { transform: 'rotate(360deg)' }
+                                                        '0%': {transform: 'rotate(0deg)'},
+                                                        '100%': {transform: 'rotate(360deg)'}
                                                     }
                                                 }}
                                             />
@@ -435,8 +433,8 @@ export default function VerifyEmailContent() {
                                                     opacity: 0.7,
                                                     animation: 'spin-reverse 3s linear infinite',
                                                     '@keyframes spin-reverse': {
-                                                        '0%': { transform: 'rotate(360deg)' },
-                                                        '100%': { transform: 'rotate(0deg)' }
+                                                        '0%': {transform: 'rotate(360deg)'},
+                                                        '100%': {transform: 'rotate(0deg)'}
                                                     }
                                                 }}
                                             />
@@ -457,8 +455,8 @@ export default function VerifyEmailContent() {
                                                     boxShadow: '0 6px 16px rgba(0, 0, 0, 0.2), inset 0 -4px 8px rgba(0, 0, 0, 0.1), inset 0 4px 8px rgba(255, 255, 255, 0.2)',
                                                     animation: 'pulse-subtle 2s ease-in-out infinite',
                                                     '@keyframes pulse-subtle': {
-                                                        '0%, 100%': { transform: 'translate(-50%, -50%) scale(1)' },
-                                                        '50%': { transform: 'translate(-50%, -50%) scale(0.95)' }
+                                                        '0%, 100%': {transform: 'translate(-50%, -50%) scale(1)'},
+                                                        '50%': {transform: 'translate(-50%, -50%) scale(0.95)'}
                                                     }
                                                 }}
                                             >
@@ -468,9 +466,9 @@ export default function VerifyEmailContent() {
                                                         color: 'white',
                                                         animation: 'bounce 2s ease infinite',
                                                         '@keyframes bounce': {
-                                                            '0%, 20%, 50%, 80%, 100%': { transform: 'translateY(0)' },
-                                                            '40%': { transform: 'translateY(-6px)' },
-                                                            '60%': { transform: 'translateY(-3px)' }
+                                                            '0%, 20%, 50%, 80%, 100%': {transform: 'translateY(0)'},
+                                                            '40%': {transform: 'translateY(-6px)'},
+                                                            '60%': {transform: 'translateY(-3px)'}
                                                         }
                                                     }}
                                                 />
@@ -504,8 +502,8 @@ export default function VerifyEmailContent() {
                                                 mx: 'auto',
                                                 animation: 'fadeIn 1s ease-out',
                                                 '@keyframes fadeIn': {
-                                                    '0%': { opacity: 0, transform: 'translateY(10px)' },
-                                                    '100%': { opacity: 1, transform: 'translateY(0)' }
+                                                    '0%': {opacity: 0, transform: 'translateY(10px)'},
+                                                    '100%': {opacity: 1, transform: 'translateY(0)'}
                                                 }
                                             }}
                                         >
@@ -523,7 +521,7 @@ export default function VerifyEmailContent() {
                                                 }
                                             }}
                                         >
-                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                                            <Box sx={{display: 'flex', justifyContent: 'space-between', mb: 1}}>
                                                 {['Checking token', 'Activating account', 'Completing'].map((step, index) => (
                                                     <Box
                                                         key={index}
@@ -552,7 +550,7 @@ export default function VerifyEmailContent() {
                                                             }}
                                                         >
                                                             {index === 0 ? (
-                                                                <CheckIcon sx={{ fontSize: 16, color: 'white' }} />
+                                                                <CheckIcon sx={{fontSize: 16, color: 'white'}}/>
                                                             ) : (
                                                                 <Typography variant="caption" color="white">
                                                                     {index + 1}
@@ -563,7 +561,7 @@ export default function VerifyEmailContent() {
                                                             variant="caption"
                                                             color={index === 0 ? "primary.main" : "text.secondary"}
                                                             fontWeight={index === 0 ? "medium" : "normal"}
-                                                            sx={{ textAlign: 'center' }}
+                                                            sx={{textAlign: 'center'}}
                                                         >
                                                             {step}
                                                         </Typography>
@@ -625,12 +623,12 @@ export default function VerifyEmailContent() {
                                                         backgroundSize: '200% 100%',
                                                         animation: 'progressAnimation 2s linear infinite, widthAnimation 3s ease-in-out',
                                                         '@keyframes progressAnimation': {
-                                                            '0%': { backgroundPosition: '0% 0%' },
-                                                            '100%': { backgroundPosition: '200% 0%' }
+                                                            '0%': {backgroundPosition: '0% 0%'},
+                                                            '100%': {backgroundPosition: '200% 0%'}
                                                         },
                                                         '@keyframes widthAnimation': {
-                                                            '0%': { width: '0%' },
-                                                            '100%': { width: '33%' }
+                                                            '0%': {width: '0%'},
+                                                            '100%': {width: '33%'}
                                                         },
                                                         transition: 'width 0.5s ease-in-out',
                                                         boxShadow: '0 0 10px rgba(33, 150, 243, 0.5)'
@@ -656,8 +654,8 @@ export default function VerifyEmailContent() {
                                                                 opacity: 0.7,
                                                                 animation: `dotPulse 1.5s infinite ease-in-out ${dot * 0.2}s`,
                                                                 '@keyframes dotPulse': {
-                                                                    '0%, 100%': { transform: 'scale(0.8)', opacity: 0.5 },
-                                                                    '50%': { transform: 'scale(1.2)', opacity: 1 }
+                                                                    '0%, 100%': {transform: 'scale(0.8)', opacity: 0.5},
+                                                                    '50%': {transform: 'scale(1.2)', opacity: 1}
                                                                 }
                                                             }}
                                                         />
@@ -674,8 +672,8 @@ export default function VerifyEmailContent() {
                                                         fontStyle: 'italic',
                                                         animation: 'fadeInOut 2s infinite',
                                                         '@keyframes fadeInOut': {
-                                                            '0%, 100%': { opacity: 0.6 },
-                                                            '50%': { opacity: 1 }
+                                                            '0%, 100%': {opacity: 0.6},
+                                                            '50%': {opacity: 1}
                                                         }
                                                     }}
                                                 >
@@ -695,12 +693,12 @@ export default function VerifyEmailContent() {
                                                         mx: 'auto',
                                                         animation: 'slideIn 0.5s ease-out',
                                                         '@keyframes slideIn': {
-                                                            '0%': { opacity: 0, transform: 'translateY(20px)' },
-                                                            '100%': { opacity: 1, transform: 'translateY(0)' }
+                                                            '0%': {opacity: 0, transform: 'translateY(20px)'},
+                                                            '100%': {opacity: 1, transform: 'translateY(0)'}
                                                         }
                                                     }}
                                                 >
-                                                    <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+                                                    <Box sx={{display: 'flex', alignItems: 'flex-start'}}>
                                                         <LightbulbIcon
                                                             sx={{
                                                                 color: 'info.main',
@@ -708,17 +706,22 @@ export default function VerifyEmailContent() {
                                                                 mt: 0.5,
                                                                 animation: 'glow 2s infinite',
                                                                 '@keyframes glow': {
-                                                                    '0%, 100%': { opacity: 0.7 },
-                                                                    '50%': { opacity: 1, filter: 'drop-shadow(0 0 3px rgba(33, 150, 243, 0.5))' }
+                                                                    '0%, 100%': {opacity: 0.7},
+                                                                    '50%': {
+                                                                        opacity: 1,
+                                                                        filter: 'drop-shadow(0 0 3px rgba(33, 150, 243, 0.5))'
+                                                                    }
                                                                 }
                                                             }}
                                                         />
                                                         <Box>
-                                                            <Typography variant="subtitle2" fontWeight="medium" gutterBottom>
+                                                            <Typography variant="subtitle2" fontWeight="medium"
+                                                                        gutterBottom>
                                                                 While you wait:
                                                             </Typography>
                                                             <Typography variant="body2" color="text.secondary">
-                                                                Make sure to check your spam folder if you don&apos;t see our verification email.
+                                                                Make sure to check your spam folder if you don&apos;t
+                                                                see our verification email.
                                                                 You can also request a new verification email if needed.
                                                             </Typography>
                                                         </Box>
@@ -732,15 +735,15 @@ export default function VerifyEmailContent() {
                                                         opacity: 0,
                                                         animation: 'fadeIn 0.5s ease-out 5s forwards',
                                                         '@keyframes fadeIn': {
-                                                            '0%': { opacity: 0 },
-                                                            '100%': { opacity: 1 }
+                                                            '0%': {opacity: 0},
+                                                            '100%': {opacity: 1}
                                                         }
                                                     }}
                                                 >
                                                     <Button
                                                         variant="text"
                                                         size="small"
-                                                        startIcon={<RefreshIcon />}
+                                                        startIcon={<RefreshIcon/>}
                                                         onClick={handleResendVerification}
                                                         sx={{
                                                             textTransform: 'none',
@@ -760,7 +763,7 @@ export default function VerifyEmailContent() {
                                         <Typography variant="body1" color="text.secondary">
                                             Redirecting to homepage in <strong>{redirectCountdown}</strong> seconds...
                                         </Typography>
-                                        <Box sx={{ textAlign: 'center', mb: 4 }}>
+                                        <Box sx={{textAlign: 'center', mb: 4}}>
                                             <Box
                                                 sx={{
                                                     position: 'relative',
@@ -783,8 +786,8 @@ export default function VerifyEmailContent() {
                                                         opacity: 0.6,
                                                         animation: 'ripple 1.5s ease-out infinite',
                                                         '@keyframes ripple': {
-                                                            '0%': { transform: 'scale(0.8)', opacity: 1 },
-                                                            '100%': { transform: 'scale(1.2)', opacity: 0 }
+                                                            '0%': {transform: 'scale(0.8)', opacity: 1},
+                                                            '100%': {transform: 'scale(1.2)', opacity: 0}
                                                         }
                                                     }}
                                                 />
@@ -805,13 +808,13 @@ export default function VerifyEmailContent() {
                                                         boxShadow: '0 8px 24px rgba(0, 0, 0, 0.2)',
                                                         animation: 'bounce 0.5s ease-out',
                                                         '@keyframes bounce': {
-                                                            '0%': { transform: 'translate(-50%, -30%)', opacity: 0 },
-                                                            '50%': { transform: 'translate(-50%, -60%)' },
-                                                            '100%': { transform: 'translate(-50%, -50%)', opacity: 1 }
+                                                            '0%': {transform: 'translate(-50%, -30%)', opacity: 0},
+                                                            '50%': {transform: 'translate(-50%, -60%)'},
+                                                            '100%': {transform: 'translate(-50%, -50%)', opacity: 1}
                                                         }
                                                     }}
                                                 >
-                                                    <CheckCircleIcon sx={{ fontSize: 48, color: 'white' }} />
+                                                    <CheckCircleIcon sx={{fontSize: 48, color: 'white'}}/>
                                                 </Box>
                                             </Box>
 
@@ -826,8 +829,8 @@ export default function VerifyEmailContent() {
                                                     mb: 2,
                                                     animation: 'fadeIn 0.8s ease-out',
                                                     '@keyframes fadeIn': {
-                                                        '0%': { opacity: 0, transform: 'translateY(10px)' },
-                                                        '100%': { opacity: 1, transform: 'translateY(0)' }
+                                                        '0%': {opacity: 0, transform: 'translateY(10px)'},
+                                                        '100%': {opacity: 1, transform: 'translateY(0)'}
                                                     }
                                                 }}
                                             >
@@ -856,45 +859,45 @@ export default function VerifyEmailContent() {
                                                 bgcolor: 'success.50',
                                                 animation: 'slideUp 0.8s ease-out 0.5s both',
                                                 '@keyframes slideUp': {
-                                                    '0%': { opacity: 0, transform: 'translateY(20px)' },
-                                                    '100%': { opacity: 1, transform: 'translateY(0)' }
+                                                    '0%': {opacity: 0, transform: 'translateY(20px)'},
+                                                    '100%': {opacity: 1, transform: 'translateY(0)'}
                                                 }
                                             }}
                                         >
-                                            <CardContent sx={{ p: 2.5 }}>
-                                                <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 1.5 }}>
-                                                    <InfoIcon sx={{ mr: 1.5, color: 'success.main', mt: 0.5 }} />
+                                            <CardContent sx={{p: 2.5}}>
+                                                <Box sx={{display: 'flex', alignItems: 'flex-start', mb: 1.5}}>
+                                                    <InfoIcon sx={{mr: 1.5, color: 'success.main', mt: 0.5}}/>
                                                     <Typography variant="subtitle2" fontWeight="medium">
                                                         What happens next?
                                                     </Typography>
                                                 </Box>
 
                                                 <List dense disablePadding>
-                                                    <ListItem sx={{ px: 1, py: 0.5 }}>
-                                                        <ListItemIcon sx={{ minWidth: 28 }}>
-                                                            <CheckIcon sx={{ fontSize: 16, color: 'success.main' }} />
+                                                    <ListItem sx={{px: 1, py: 0.5}}>
+                                                        <ListItemIcon sx={{minWidth: 28}}>
+                                                            <CheckIcon sx={{fontSize: 16, color: 'success.main'}}/>
                                                         </ListItemIcon>
                                                         <ListItemText
                                                             primary="You can now log in to your account"
-                                                            primaryTypographyProps={{ variant: 'body2' }}
+                                                            primaryTypographyProps={{variant: 'body2'}}
                                                         />
                                                     </ListItem>
-                                                    <ListItem sx={{ px: 1, py: 0.5 }}>
-                                                        <ListItemIcon sx={{ minWidth: 28 }}>
-                                                            <CheckIcon sx={{ fontSize: 16, color: 'success.main' }} />
+                                                    <ListItem sx={{px: 1, py: 0.5}}>
+                                                        <ListItemIcon sx={{minWidth: 28}}>
+                                                            <CheckIcon sx={{fontSize: 16, color: 'success.main'}}/>
                                                         </ListItemIcon>
                                                         <ListItemText
                                                             primary="Access all features of your account"
-                                                            primaryTypographyProps={{ variant: 'body2' }}
+                                                            primaryTypographyProps={{variant: 'body2'}}
                                                         />
                                                     </ListItem>
-                                                    <ListItem sx={{ px: 1, py: 0.5 }}>
-                                                        <ListItemIcon sx={{ minWidth: 28 }}>
-                                                            <CheckIcon sx={{ fontSize: 16, color: 'success.main' }} />
+                                                    <ListItem sx={{px: 1, py: 0.5}}>
+                                                        <ListItemIcon sx={{minWidth: 28}}>
+                                                            <CheckIcon sx={{fontSize: 16, color: 'success.main'}}/>
                                                         </ListItemIcon>
                                                         <ListItemText
                                                             primary="You&apos;ll be redirected to login page shortly"
-                                                            primaryTypographyProps={{ variant: 'body2' }}
+                                                            primaryTypographyProps={{variant: 'body2'}}
                                                         />
                                                     </ListItem>
                                                 </List>
@@ -922,8 +925,8 @@ export default function VerifyEmailContent() {
                                                         strokeDashoffset: '100px',
                                                         animation: 'countdown 3s linear forwards',
                                                         '@keyframes countdown': {
-                                                            '0%': { strokeDashoffset: '0px' },
-                                                            '100%': { strokeDashoffset: '100px' }
+                                                            '0%': {strokeDashoffset: '0px'},
+                                                            '100%': {strokeDashoffset: '100px'}
                                                         }
                                                     }
                                                 }}
@@ -935,7 +938,7 @@ export default function VerifyEmailContent() {
                                     </>
                                 ) : (
                                     <>
-                                        <Box sx={{ textAlign: 'center', mb: 4 }}>
+                                        <Box sx={{textAlign: 'center', mb: 4}}>
                                             <Box
                                                 sx={{
                                                     position: 'relative',
@@ -958,13 +961,13 @@ export default function VerifyEmailContent() {
                                                         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
                                                         animation: 'pulse 2s infinite',
                                                         '@keyframes pulse': {
-                                                            '0%': { boxShadow: '0 0 0 0 rgba(211, 47, 47, 0.7)' },
-                                                            '70%': { boxShadow: '0 0 0 10px rgba(211, 47, 47, 0)' },
-                                                            '100%': { boxShadow: '0 0 0 0 rgba(211, 47, 47, 0)' }
+                                                            '0%': {boxShadow: '0 0 0 0 rgba(211, 47, 47, 0.7)'},
+                                                            '70%': {boxShadow: '0 0 0 10px rgba(211, 47, 47, 0)'},
+                                                            '100%': {boxShadow: '0 0 0 0 rgba(211, 47, 47, 0)'}
                                                         }
                                                     }}
                                                 >
-                                                    <ErrorOutlineIcon sx={{ fontSize: 48, color: 'white' }} />
+                                                    <ErrorOutlineIcon sx={{fontSize: 48, color: 'white'}}/>
                                                 </Box>
                                             </Box>
 
@@ -974,12 +977,12 @@ export default function VerifyEmailContent() {
                                                 align="center"
                                                 gutterBottom
                                                 fontWeight="bold"
-                                                sx={{ color: 'error.dark', mb: 2 }}
+                                                sx={{color: 'error.dark', mb: 2}}
                                             >
                                                 Verification Failed
                                             </Typography>
 
-                                            <Typography variant="body1" sx={{ mb: 3, maxWidth: '90%', mx: 'auto' }}>
+                                            <Typography variant="body1" sx={{mb: 3, maxWidth: '90%', mx: 'auto'}}>
                                                 {verificationMessage || 'Failed to verify email. Please try again later.'}
                                             </Typography>
                                         </Box>
@@ -993,51 +996,59 @@ export default function VerifyEmailContent() {
                                                 bgcolor: 'error.50',
                                             }}
                                         >
-                                            <CardContent sx={{ p: 2.5 }}>
-                                                <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 1.5 }}>
-                                                    <InfoIcon sx={{ mr: 1.5, color: 'error.main', mt: 0.5 }} />
+                                            <CardContent sx={{p: 2.5}}>
+                                                <Box sx={{display: 'flex', alignItems: 'flex-start', mb: 1.5}}>
+                                                    <InfoIcon sx={{mr: 1.5, color: 'error.main', mt: 0.5}}/>
                                                     <Typography variant="subtitle2" fontWeight="medium">
                                                         What might have happened?
                                                     </Typography>
                                                 </Box>
 
                                                 <List dense disablePadding>
-                                                    <ListItem sx={{ px: 1, py: 0.5 }}>
-                                                        <ListItemIcon sx={{ minWidth: 28 }}>
-                                                            <FiberManualRecordIcon sx={{ fontSize: 8, color: 'text.secondary' }} />
+                                                    <ListItem sx={{px: 1, py: 0.5}}>
+                                                        <ListItemIcon sx={{minWidth: 28}}>
+                                                            <FiberManualRecordIcon
+                                                                sx={{fontSize: 8, color: 'text.secondary'}}/>
                                                         </ListItemIcon>
                                                         <ListItemText
                                                             primary="The verification link may have expired"
-                                                            primaryTypographyProps={{ variant: 'body2' }}
+                                                            primaryTypographyProps={{variant: 'body2'}}
                                                         />
                                                     </ListItem>
-                                                    <ListItem sx={{ px: 1, py: 0.5 }}>
-                                                        <ListItemIcon sx={{ minWidth: 28 }}>
-                                                            <FiberManualRecordIcon sx={{ fontSize: 8, color: 'text.secondary' }} />
+                                                    <ListItem sx={{px: 1, py: 0.5}}>
+                                                        <ListItemIcon sx={{minWidth: 28}}>
+                                                            <FiberManualRecordIcon
+                                                                sx={{fontSize: 8, color: 'text.secondary'}}/>
                                                         </ListItemIcon>
                                                         <ListItemText
                                                             primary="The link might have been used already"
-                                                            primaryTypographyProps={{ variant: 'body2' }}
+                                                            primaryTypographyProps={{variant: 'body2'}}
                                                         />
                                                     </ListItem>
-                                                    <ListItem sx={{ px: 1, py: 0.5 }}>
-                                                        <ListItemIcon sx={{ minWidth: 28 }}>
-                                                            <FiberManualRecordIcon sx={{ fontSize: 8, color: 'text.secondary' }} />
+                                                    <ListItem sx={{px: 1, py: 0.5}}>
+                                                        <ListItemIcon sx={{minWidth: 28}}>
+                                                            <FiberManualRecordIcon
+                                                                sx={{fontSize: 8, color: 'text.secondary'}}/>
                                                         </ListItemIcon>
                                                         <ListItemText
                                                             primary="There might be a temporary system issue"
-                                                            primaryTypographyProps={{ variant: 'body2' }}
+                                                            primaryTypographyProps={{variant: 'body2'}}
                                                         />
                                                     </ListItem>
                                                 </List>
                                             </CardContent>
                                         </Card>
 
-                                        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, mb: 2 }}>
+                                        <Box sx={{
+                                            display: 'flex',
+                                            flexDirection: {xs: 'column', sm: 'row'},
+                                            gap: 2,
+                                            mb: 2
+                                        }}>
                                             <Button
                                                 variant="contained"
                                                 fullWidth
-                                                startIcon={<RefreshIcon />}
+                                                startIcon={<RefreshIcon/>}
                                                 sx={{
                                                     py: 1.2,
                                                     borderRadius: 2,
@@ -1056,7 +1067,7 @@ export default function VerifyEmailContent() {
                                             <Button
                                                 variant="outlined"
                                                 fullWidth
-                                                startIcon={<LoginIcon />}
+                                                startIcon={<LoginIcon/>}
                                                 sx={{
                                                     py: 1.2,
                                                     borderRadius: 2,
@@ -1075,22 +1086,23 @@ export default function VerifyEmailContent() {
                                             </Button>
                                         </Box>
 
-                                        <Divider sx={{ my: 3 }}>
+                                        <Divider sx={{my: 3}}>
                                             <Chip
                                                 label="Need Help?"
                                                 size="small"
-                                                sx={{ px: 1, fontWeight: 500 }}
+                                                sx={{px: 1, fontWeight: 500}}
                                             />
                                         </Divider>
 
-                                        <Typography variant="body2" align="center" color="text.secondary" sx={{ mb: 2 }}>
-                                            If you continue to experience issues, please contact our support team or request a new verification email.
+                                        <Typography variant="body2" align="center" color="text.secondary" sx={{mb: 2}}>
+                                            If you continue to experience issues, please contact our support team or
+                                            request a new verification email.
                                         </Typography>
 
                                         <Button
                                             variant="text"
                                             fullWidth
-                                            startIcon={<EmailIcon />}
+                                            startIcon={<EmailIcon/>}
                                             sx={{
                                                 py: 1,
                                                 borderRadius: 2,
@@ -1101,7 +1113,7 @@ export default function VerifyEmailContent() {
                                             disabled={isResendDisabled || loading}
                                         >
                                             {loading ? (
-                                                <CircularProgress size={20} sx={{ mr: 1 }} />
+                                                <CircularProgress size={20} sx={{mr: 1}}/>
                                             ) : isResendDisabled ? (
                                                 `Resend Available in ${resendCountdown}s`
                                             ) : (
@@ -1132,13 +1144,13 @@ export default function VerifyEmailContent() {
                                             boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
                                             animation: 'pulse2 2s infinite',
                                             '@keyframes pulse2': {
-                                                '0%': { boxShadow: '0 0 0 0 rgba(25, 118, 210, 0.7)' },
-                                                '70%': { boxShadow: '0 0 0 10px rgba(25, 118, 210, 0)' },
-                                                '100%': { boxShadow: '0 0 0 0 rgba(25, 118, 210, 0)' }
+                                                '0%': {boxShadow: '0 0 0 0 rgba(25, 118, 210, 0.7)'},
+                                                '70%': {boxShadow: '0 0 0 10px rgba(25, 118, 210, 0)'},
+                                                '100%': {boxShadow: '0 0 0 0 rgba(25, 118, 210, 0)'}
                                             }
                                         }}
                                     >
-                                        <MarkEmailReadIcon sx={{ fontSize: 40, color: 'white' }} />
+                                        <MarkEmailReadIcon sx={{fontSize: 40, color: 'white'}}/>
                                     </Box>
                                     <Typography
                                         component="h1"
@@ -1146,7 +1158,7 @@ export default function VerifyEmailContent() {
                                         align="center"
                                         gutterBottom
                                         fontWeight="bold"
-                                        sx={{ color: 'primary.dark' }}
+                                        sx={{color: 'primary.dark'}}
                                     >
                                         Verify Your Email
                                     </Typography>
@@ -1174,15 +1186,15 @@ export default function VerifyEmailContent() {
                                         bgcolor: 'primary.50',
                                     }}
                                 >
-                                    <CardContent sx={{ p: 2.5 }}>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                                            <EmailIcon sx={{ mr: 1.5, color: 'primary.main' }} />
+                                    <CardContent sx={{p: 2.5}}>
+                                        <Box sx={{display: 'flex', alignItems: 'center', mb: 2}}>
+                                            <EmailIcon sx={{mr: 1.5, color: 'primary.main'}}/>
                                             <Typography variant="subtitle1" fontWeight="medium">
                                                 Verification Email Sent
                                             </Typography>
                                         </Box>
 
-                                        <Typography variant="body2" sx={{ mb: 2 }}>
+                                        <Typography variant="body2" sx={{mb: 2}}>
                                             We&apos;ve sent a verification link to:
                                         </Typography>
 
@@ -1211,7 +1223,8 @@ export default function VerifyEmailContent() {
                                         </Box>
 
                                         <Typography variant="body2" color="text.secondary">
-                                            Please check your inbox and click the verification link to activate your account.
+                                            Please check your inbox and click the verification link to activate your
+                                            account.
                                         </Typography>
                                     </CardContent>
                                 </Card>
@@ -1219,7 +1232,7 @@ export default function VerifyEmailContent() {
                                 <Alert
                                     severity="info"
                                     variant="outlined"
-                                    icon={<InfoIcon />}
+                                    icon={<InfoIcon/>}
                                     sx={{
                                         mb: 3,
                                         borderRadius: 2,
@@ -1230,31 +1243,31 @@ export default function VerifyEmailContent() {
                                     }}
                                 >
                                     <Box>
-                                        <Typography variant="body2" paragraph sx={{ mt: 0 }}>
+                                        <Typography variant="body2" paragraph sx={{mt: 0}}>
                                             <strong>Can&apos;t find the email?</strong>
                                         </Typography>
-                                        <Typography variant="body2" component="div" sx={{ pl: 1 }}>
+                                        <Typography variant="body2" component="div" sx={{pl: 1}}>
                                             • Check your spam or junk folder
                                         </Typography>
-                                        <Typography variant="body2" component="div" sx={{ pl: 1 }}>
+                                        <Typography variant="body2" component="div" sx={{pl: 1}}>
                                             • Make sure your email address was entered correctly
                                         </Typography>
-                                        <Typography variant="body2" component="div" sx={{ pl: 1 }}>
+                                        <Typography variant="body2" component="div" sx={{pl: 1}}>
                                             • The verification link will expire in 24 hours
                                         </Typography>
                                     </Box>
                                 </Alert>
 
-                                <Divider sx={{ my: 3 }}>
+                                <Divider sx={{my: 3}}>
                                     <Chip
                                         label="Need Help?"
                                         size="small"
-                                        sx={{ px: 1, fontWeight: 500 }}
+                                        sx={{px: 1, fontWeight: 500}}
                                     />
                                 </Divider>
 
-                                <Box sx={{ mb: 2 }}>
-                                    <Typography variant="subtitle2" align="center" gutterBottom sx={{ mb: 2 }}>
+                                <Box sx={{mb: 2}}>
+                                    <Typography variant="subtitle2" align="center" gutterBottom sx={{mb: 2}}>
                                         Haven&apos;t received the verification email?
                                     </Typography>
 
@@ -1276,7 +1289,7 @@ export default function VerifyEmailContent() {
                                         onClick={handleResendVerification}
                                     >
                                         {loading ? (
-                                            <CircularProgress size={24} sx={{ color: 'white', position: 'absolute' }} />
+                                            <CircularProgress size={24} sx={{color: 'white', position: 'absolute'}}/>
                                         ) : isResendDisabled ? (
                                             `Resend Available in ${resendCountdown}s`
                                         ) : (
@@ -1285,7 +1298,7 @@ export default function VerifyEmailContent() {
                                     </Button>
                                 </Box>
 
-                                <Box sx={{ textAlign: 'center', mt: 3 }}>
+                                <Box sx={{textAlign: 'center', mt: 3}}>
                                     <Typography variant="body2" color="text.secondary">
                                         Return to{' '}
                                         <MuiLink
@@ -1294,7 +1307,7 @@ export default function VerifyEmailContent() {
                                             sx={{
                                                 fontWeight: 'medium',
                                                 textDecoration: 'none',
-                                                '&:hover': { textDecoration: 'underline' }
+                                                '&:hover': {textDecoration: 'underline'}
                                             }}
                                         >
                                             Login
@@ -1308,13 +1321,13 @@ export default function VerifyEmailContent() {
                             open={snackbar.open}
                             autoHideDuration={6000}
                             onClose={handleCloseSnackbar}
-                            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                            anchorOrigin={{vertical: 'top', horizontal: 'center'}}
                         >
                             <Alert
                                 onClose={handleCloseSnackbar}
                                 severity={snackbar.severity}
                                 variant="filled"
-                                sx={{ width: '100%' }}
+                                sx={{width: '100%'}}
                             >
                                 {snackbar.message}
                             </Alert>
