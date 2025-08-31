@@ -32,7 +32,7 @@ import {
 } from '@mui/material';
 import Link from 'next/link';
 import {useRouter, useSearchParams} from 'next/navigation';
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 
 import {CountdownRedirect} from '@/components/auth/CountdownRedirect';
 import {useAuth} from '@/context/AuthContext';
@@ -58,6 +58,8 @@ export default function VerifyEmailContent() {
     const [redirectCountdown, setRedirectCountdown] = useState(5);
     const [resendCountdown, setResendCountdown] = useState(60);
     const [isResendDisabled, setIsResendDisabled] = useState(true);
+    const [isRedirecting, setIsRedirecting] = useState(false);
+    const redirectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const [loading, setLoading] = useState(false);
     const [showAuthenticatedMessage, setShowAuthenticatedMessage] = useState(false);
     const [snackbar, setSnackbar] = useState<SnackbarState>({
@@ -67,24 +69,10 @@ export default function VerifyEmailContent() {
     });
 
     useEffect(() => {
-        if (isUserAuthenticated()) {
+        if (isUserAuthenticated() && !token && !isRedirecting) {
             setShowAuthenticatedMessage(true);
         }
-    }, [isAuthenticated, authLoading, isUserAuthenticated]);
-
-    useEffect(() => {
-        if (verificationStatus === 'success' && token) {
-            const timer = setTimeout(() => {
-                if (isUserAuthenticated()) {
-                    router.push('/');
-                } else {
-                    router.push('/auth/login?verified=true');
-                }
-            }, 3000);
-
-            return () => clearTimeout(timer);
-        }
-    }, [verificationStatus, token, router, isUserAuthenticated]);
+    }, [isAuthenticated, authLoading, isUserAuthenticated, token, isRedirecting]);
 
     useEffect(() => {
         if (resendCountdown > 0 && isResendDisabled) {
@@ -105,8 +93,11 @@ export default function VerifyEmailContent() {
 
 
     const handleVerificationSuccess = useCallback(async (authToken?: string) => {
+        if (isRedirecting) return;
+
         setVerificationStatus('success');
         setVerificationMessage('Your email has been successfully verified!');
+        setIsRedirecting(true);
 
         try {
             if (authToken) {
@@ -120,45 +111,40 @@ export default function VerifyEmailContent() {
                         refreshTokenValue = tokenData.refreshToken;
                     }
                 } catch {
+
                 }
 
                 const loginSuccess = await loginWithToken(accessToken, refreshTokenValue);
 
                 if (loginSuccess) {
                     showNotification('Email verified and logged in successfully!', 'success');
-                    setTimeout(() => {
+                    redirectTimeoutRef.current = setTimeout(() => {
                         router.push('/');
-                    }, 2000);
-                    return;
-                } else {
-                    showNotification('Email verified! Please log in to continue.', 'info');
-                    setTimeout(() => {
-                        router.push('/auth/login?verified=true');
                     }, 2000);
                     return;
                 }
             }
+
             showNotification('Email verified successfully! Please log in to continue.', 'success');
-            setTimeout(() => {
+            redirectTimeoutRef.current = setTimeout(() => {
                 router.push('/auth/login?verified=true');
             }, 2000);
         } catch (error) {
             console.error('Email verification failed:', error);
             showNotification('Email verified! Please log in to continue.', 'info');
-            setTimeout(() => {
+            redirectTimeoutRef.current = setTimeout(() => {
                 router.push('/auth/login?verified=true');
             }, 2000);
         }
-    }, [loginWithToken, router, showNotification]);
+    }, [loginWithToken, router, showNotification, isRedirecting]);
 
     useEffect(() => {
-        if (verificationStatus === 'success' && !token && redirectCountdown > 0) {
-            const timer = setTimeout(() => setRedirectCountdown(prev => prev - 1), 1000);
-            return () => clearTimeout(timer);
-        } else if (verificationStatus === 'success' && !token && redirectCountdown === 0) {
-            router.push('/auth/login?verified=true');
-        }
-    }, [verificationStatus, redirectCountdown, router, token]);
+        return () => {
+            if (redirectTimeoutRef.current) {
+                clearTimeout(redirectTimeoutRef.current);
+            }
+        };
+    }, []);
 
     useEffect(() => {
         const verifyToken = async () => {
