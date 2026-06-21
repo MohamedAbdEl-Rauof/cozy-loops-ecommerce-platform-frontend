@@ -1,4 +1,7 @@
-import apiClient from '@/lib/apiClient';
+// Auth-aware client: refreshes an expired access token and retries on 401.
+// This is what makes Stripe payment verification reliable after the redirect
+// back from checkout (previously failed intermittently once the token lapsed).
+import apiClient from '@/lib/apiWithAuth';
 
 interface ApiError {
   response?: {

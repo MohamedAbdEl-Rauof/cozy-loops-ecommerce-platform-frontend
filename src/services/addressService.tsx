@@ -1,4 +1,6 @@
-import apiClient from '@/lib/apiClient';
+// Auth-aware client: address endpoints are all authenticated, so refresh an
+// expired access token and retry on 401 instead of hard-failing.
+import apiClient from '@/lib/apiWithAuth';
 import { AddressFormData } from '@/types/address';
 
 export const getAddresses = async () => {

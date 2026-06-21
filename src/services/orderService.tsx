@@ -1,4 +1,5 @@
-import apiClient from '@/lib/apiClient'
+// Auth-aware client: refreshes an expired access token and retries on 401.
+import apiClient from '@/lib/apiWithAuth'
 import { OrderResponse, OrdersResponse } from '@/types/order'
 
 export const orderService = {

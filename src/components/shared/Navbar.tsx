@@ -133,7 +133,7 @@ const Navbar = ({
             sx={{
                 "& .MuiDrawer-paper": {
                     width: 280,
-                    backgroundColor: "var(--foreground)",
+                    backgroundColor: "#ffffff",
                     padding: "16px 0",
                 },
             }}
@@ -471,7 +471,9 @@ const Navbar = ({
                         position="static"
                         elevation={0}
                         sx={{
-                            backgroundColor: "var(--foreground)",
+                            // Light header (was var(--foreground) = #171717, which only
+                            // looked light when the OS dark-mode flip was active).
+                            backgroundColor: "#ededed",
                             borderBottom: "1px solid var(--border-light)",
                             px: { xs: 2, sm: 3, md: 6 }
                         }}
@@ -513,7 +515,7 @@ const Navbar = ({
                                 sx={{
                                     display: { xs: 'none', sm: 'flex' },
                                     alignItems: 'center',
-                                    backgroundColor: "var(--foreground)",
+                                    backgroundColor: "#ffffff",
                                     borderRadius: "24px",
                                     padding: "4px 12px",
                                     width: { xs: '40%', sm: '35%', md: '30%' },

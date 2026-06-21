@@ -53,9 +53,9 @@ export default function VerifyEmailContent() {
     const {loginWithToken, isAuthenticated, isUserAuthenticated, loading: authLoading} = useAuth();
     const email = searchParams.get('email') || "example@email.com";
     const token = searchParams.get('token');
-    const [verificationStatus, setVerificationStatus] = useState<VerificationStatus>(token ? 'pending' : 'success');
+    const [verificationStatus, setVerificationStatus] = useState<VerificationStatus>('pending');
     const [verificationMessage, setVerificationMessage] = useState('');
-    const [redirectCountdown, setRedirectCountdown] = useState(5);
+    const redirectCountdown = 5;
     const [resendCountdown, setResendCountdown] = useState(60);
     const [isResendDisabled, setIsResendDisabled] = useState(true);
     const [isRedirecting, setIsRedirecting] = useState(false);
@@ -215,15 +215,6 @@ export default function VerifyEmailContent() {
             verifyToken();
         }
     }, [token, handleVerificationSuccess, showNotification]);
-
-    useEffect(() => {
-        if (verificationStatus === 'success' && !token && redirectCountdown > 0) {
-            const timer = setTimeout(() => setRedirectCountdown(prev => prev - 1), 1000);
-            return () => clearTimeout(timer);
-        } else if (verificationStatus === 'success' && !token && redirectCountdown === 0) {
-            router.push('/auth/login?verified=true');
-        }
-    }, [verificationStatus, redirectCountdown, router, token]);
 
     const handleResendVerification = async () => {
         setLoading(true);
