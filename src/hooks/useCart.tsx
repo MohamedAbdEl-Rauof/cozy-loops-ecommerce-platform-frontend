@@ -2,12 +2,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
 import { useEffect } from 'react';
 
+import { useAuth } from '@/context/AuthContext';
 import { socket } from '@/lib/cartSocket';
 import { cartService } from '@/services/cartServices';
 import { CartUpdateData } from '@/types/cart';
 
 export const useCart = () => {
   const queryClient = useQueryClient();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     const handleCartUpdate = (updatedCart: CartUpdateData) => {
@@ -41,6 +43,9 @@ export const useCart = () => {
     queryKey: ['cart'],
     queryFn: cartService.getCart,
     staleTime: 5 * 60 * 1000,
+    // Only fetch the cart for signed-in users — the /api/cart endpoint is
+    // auth-protected, so firing it while logged out produced a 401 on every page.
+    enabled: isAuthenticated,
   });
 
   return {

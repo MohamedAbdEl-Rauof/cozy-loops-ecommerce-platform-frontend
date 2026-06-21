@@ -5,6 +5,7 @@ import {
     CreditCard,
     Favorite,
     ShoppingCart,
+    ShoppingBag,
     ExitToApp,
 } from '@mui/icons-material';
 import {
@@ -19,11 +20,13 @@ import {
     Typography,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
 import { useAuth } from "@/context/AuthContext";
 
 import AddressSection from './AddressSection';
+import OrdersSection from './OrdersSection';
 import PaymentSection from './PaymentSection';
 import ProfileSection from './ProfileSection';
 
@@ -46,7 +49,11 @@ const ContentPaper = styled(Paper)(() => ({
     minHeight: '500px',
 }));
 
-const NavItem = styled(ListItem)<{ active?: boolean }>(({ active }) => ({
+const NavItem = styled(ListItem, {
+    // `active` is a styling-only prop; don't forward it to the DOM <li>
+    // (was triggering a "Received `true` for a non-boolean attribute" warning).
+    shouldForwardProp: (prop) => prop !== 'active',
+})<{ active?: boolean }>(({ active }) => ({
     borderRadius: '8px',
     marginBottom: '8px',
     cursor: 'pointer',
@@ -67,20 +74,25 @@ const NavItem = styled(ListItem)<{ active?: boolean }>(({ active }) => ({
 const AccountPage: React.FC = () => {
     const [activeSection, setActiveSection] = useState('profile');
     const { logout } = useAuth();
+    const router = useRouter();
     const menuItems = [
         { id: 'profile', label: 'Profile', icon: Person },
+        { id: 'orders', label: 'Orders', icon: ShoppingBag },
         { id: 'addresses', label: 'Addresses', icon: LocationOn },
         { id: 'payments', label: 'Payment Methods', icon: CreditCard },
     ];
 
     const handleNavigation = (path: string) => {
-        window.location.href = path;
+        // Client-side navigation (was a full page reload via window.location).
+        router.push(path);
     };
 
     const renderContent = () => {
         switch (activeSection) {
             case 'profile':
                 return <ProfileSection />;
+            case 'orders':
+                return <OrdersSection />;
             case 'addresses':
                 return <AddressSection />;
             case 'payments':

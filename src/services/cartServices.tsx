@@ -1,4 +1,6 @@
-import apiClient from '@/lib/apiClient';
+// Use the auth-aware client so an expired 15-min access token is transparently
+// refreshed and the request retried (instead of surfacing a 401).
+import apiClient from '@/lib/apiWithAuth';
 import { AddToCartData, Cart, CartApiResponse, RemoveFromCartData, UpdateCartData } from '@/types/cart';
 
 export const cartService = {

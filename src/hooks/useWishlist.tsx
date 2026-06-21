@@ -1,13 +1,17 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
 
+import { useAuth } from '@/context/AuthContext';
 import { WishlistService } from '@/services/wishlistService';
 
 export const useWishlist = () => {
+    const { isAuthenticated } = useAuth();
     const query = useQuery({
         queryKey: ['wishlist'],
         queryFn: WishlistService.getWishlistItems,
         staleTime: 5 * 60 * 1000,
+        // /api/wishlist is auth-protected; only fetch when signed in.
+        enabled: isAuthenticated,
     });
 
     const isInWishlist = (productId: string): boolean => {

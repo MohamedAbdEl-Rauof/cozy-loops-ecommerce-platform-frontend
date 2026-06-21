@@ -184,9 +184,12 @@ const ProductsOfCategory: React.FC<ProductsOfCategoryProps> = ({
                                         <CardMedia
                                             component="img"
                                             height={280}
-                                            image={product.image}
+                                            image={product.image || '/images/categories.png'}
                                             alt={product.title}
                                             className="product-image"
+                                            onError={(e) => {
+                                                (e.currentTarget as HTMLImageElement).src = '/images/categories.png';
+                                            }}
                                             sx={{
                                                 objectFit: 'cover',
                                                 transition: 'transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
