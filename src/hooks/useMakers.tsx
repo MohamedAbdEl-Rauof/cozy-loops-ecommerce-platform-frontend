@@ -2,6 +2,15 @@ import { useQuery } from '@tanstack/react-query';
 
 import { makerService } from '@/services/makerService';
 
+export const useAllMakers = () => {
+  return useQuery({
+    queryKey: ['makers'],
+    queryFn: () => makerService.getAllMakers(),
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
+};
+
 export const useMakersBySlug = (slug: string) => {
   return useQuery({
     queryKey: ['maker', slug],

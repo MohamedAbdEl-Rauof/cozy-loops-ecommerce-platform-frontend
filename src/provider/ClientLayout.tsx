@@ -1,5 +1,6 @@
 "use client";
 
+import { Box } from "@mui/material";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { SnackbarProvider } from "notistack";
 
@@ -23,11 +24,17 @@ export default function ClientLayout({
         }}
       >
         <AuthProvider>
-          <Navbar />
-          <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
-            {children}
-          </GoogleOAuthProvider>
-          <Footer />
+          {/* Flex column shell so the footer sticks to the bottom and short
+              pages never expose the body background below the footer. */}
+          <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+            <Navbar />
+            <Box component="main" sx={{ flexGrow: 1 }}>
+              <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
+                {children}
+              </GoogleOAuthProvider>
+            </Box>
+            <Footer />
+          </Box>
         </AuthProvider>
       </SnackbarProvider>
     </QueryProvider>

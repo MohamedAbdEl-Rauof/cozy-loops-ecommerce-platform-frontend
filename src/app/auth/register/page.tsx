@@ -143,6 +143,7 @@ export default function RegistrationPage() {
       if (axios.isAxiosError(error)) {
         const errorMessage = error.response?.data?.message ||
           error.response?.data?.error ||
+          error.response?.data?.errors?.[0]?.msg ||
           "Registration failed. Please try again later.";
 
         setError(errorMessage);

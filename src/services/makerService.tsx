@@ -2,6 +2,14 @@ import apiClient from '@/lib/apiClient';
 import { Maker, MakerProductsData, MakerProductsResponse, MakerResponse } from '@/types/maker';
 
 export const makerService = {
+  async getAllMakers(): Promise<Maker[]> {
+    const response = await apiClient.get<{ success: boolean; data: Maker[] }>('/api/makers');
+    if (!response.data.success) {
+      throw new Error('API returned success: false');
+    }
+    return response.data.data;
+  },
+
   async getMakerById(makerId: string): Promise<Maker> {
     try {
       const response = await apiClient.get<MakerResponse>(`/api/makers/${makerId}`);

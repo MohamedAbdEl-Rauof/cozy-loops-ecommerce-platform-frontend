@@ -63,7 +63,8 @@ export const createCategoriesData = (
     'Discover the talented creators behind every handcrafted piece, each bringing their unique story and artistic vision to life.',
   categories:
     productsData?.products?.reduce((uniqueMakers: MakerCategory[], product: ProductData) => {
-      if (!product.maker) return uniqueMakers;
+      // Skip makers without a slug so artisan links never resolve to /makers/undefined.
+      if (!product.maker || !product.maker.slug) return uniqueMakers;
 
       const existingMaker = uniqueMakers.find((maker) => maker.id === product.maker!._id);
       if (!existingMaker) {

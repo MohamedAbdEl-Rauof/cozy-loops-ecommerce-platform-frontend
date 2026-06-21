@@ -42,13 +42,15 @@
   --font-mono: var(--font-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* NOTE: Cozy Loops is a light-only design. A previous
+   `@media (prefers-color-scheme: dark)` override set --background to #0a0a0a,
+   which showed as a black gap under the footer on short pages when the OS was
+   in dark mode. The override has been removed so the background stays white. */
 
+html,
+body {
+  min-height: 100%;
+}
 
 body {
   background: var(--background);
